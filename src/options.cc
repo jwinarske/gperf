@@ -979,7 +979,7 @@ Options::parse_options (int argc, char *argv[])
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
 ",
-                   "1989-1998, 2000-2002");
+                   "1989-1998, 2000-2003");
           fprintf (stdout, "Written by %s and %s.\n",
                    "Douglas C. Schmidt", "Bruno Haible");
           exit (0);
