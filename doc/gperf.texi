@@ -189,7 +189,8 @@ language processing tools, including GNU C, GNU C++, GNU Pascal, GNU
 Modula 3, and GNU indent.  Complete C++ source code for @code{gperf} is
 available via anonymous ftp from @code{ftp://ftp.gnu.org/pub/gnu/gperf/}.
 A paper describing @code{gperf}'s design and implementation in greater
-detail is available in the Second USENIX C++ Conference proceedings.
+detail is available in the Second USENIX C++ Conference proceedings
+or from @code{http://www.cs.wustl.edu/~schmidt/resume.html}.
 
 @node Search Structures, Description, Motivation, Top
 @chapter Static search structures and GNU @code{gperf}
@@ -977,8 +978,8 @@ lookups (note that the gcc compiler generally produces good code for
 
 @item
 In addition to improving the algorithm, it would also be useful to
-generate a C++ class or Ada package as the code output, in addition to
-the current C routines.
+generate an Ada package as the code output, in addition to the current
+C and C++ routines.
 @end itemize
 
 @node Implementation, Bibliography, Projects, Top
@@ -1027,19 +1028,22 @@ Hash Functions} Communications of the ACM, 28, 5(December 1985), 523-532
 [9] Schmidt, Douglas C. @i{GPERF: A Perfect Hash Function Generator}
 Second USENIX C++ Conference Proceedings, April 1990.
 
-[10] Sebesta, R.W. and Taylor, M.A. @i{Minimal Perfect Hash Functions
+[10] Schmidt, Douglas C. @i{GPERF: A Perfect Hash Function Generator}
+C++ Report, SIGS 10 10 (November/December 1998).
+
+[11] Sebesta, R.W. and Taylor, M.A. @i{Minimal Perfect Hash Functions
 for Reserved Word Lists}  SIGPLAN Notices, 20, 12(September 1985), 47-53.
 
-[11] Sprugnoli, R. @i{Perfect Hashing Functions: A Single Probe
+[12] Sprugnoli, R. @i{Perfect Hashing Functions: A Single Probe
 Retrieving Method for Static Sets} Communications of the ACM, 20
 11(November 1977), 841-850.
 
-[12] Stallman, Richard M. @i{Using and Porting GNU CC} Free Software Foundation,
+[13] Stallman, Richard M. @i{Using and Porting GNU CC} Free Software Foundation,
 1988.
 
-[13] Stroustrup, Bjarne @i{The C++ Programming Language.} Addison-Wesley, 1986.
+[14] Stroustrup, Bjarne @i{The C++ Programming Language.} Addison-Wesley, 1986.
 
-[14] Tiemann, Michael D. @i{User's Guide to GNU C++} Free Software
+[15] Tiemann, Michael D. @i{User's Guide to GNU C++} Free Software
 Foundation, 1989.
 
 @node Concept Index,  , Bibliography, Top
