@@ -114,7 +114,7 @@ Search::preprepare ()
         _min_key_len = keyword->_allchars_length;
     }
 
-  /* Exit program if an empty string is used as key, since the comparison
+  /* Exit program if an empty string is used as keyword, since the comparison
      expressions don't work correctly for looking up an empty string.  */
   if (_min_key_len == 0)
     {
@@ -123,6 +123,25 @@ Search::preprepare ()
                        "len == 0 before calling the gperf generated lookup function.\n");
       exit (1);
     }
+
+  /* Exit program if the characters in the keywords are not in the required
+     range.  */
+  if (option[SEVENBIT])
+    for (temp = _head; temp; temp = temp->rest())
+      {
+        KeywordExt *keyword = temp->first();
+
+        const char *k = keyword->_allchars;
+        for (int i = keyword->_allchars_length; i > 0; k++, i--)
+          if (!(static_cast<unsigned char>(*k) < 128))
+            {
+              fprintf (stderr, "Option --seven-bit has been specified,\n"
+                       "but keyword \"%.*s\" contains non-ASCII characters.\n"
+                       "Try removing option --seven-bit.\n",
+                       keyword->_allchars_length, keyword->_allchars);
+              exit (1);
+            }
+      }
 }
 
 /* ====================== Finding good byte positions ====================== */
