@@ -356,7 +356,7 @@ Search::reorder ()
     }
 }
 
-/* Returns the length of entire key list. */
+/* Returns the length of keyword list.  */
 
 int
 Search::keyword_list_length ()
@@ -364,7 +364,7 @@ Search::keyword_list_length ()
   return _list_len;
 }
 
-/* Returns length of longest key read. */
+/* Returns the maximum length of keywords.  */
 
 int
 Search::max_key_length ()
@@ -372,7 +372,7 @@ Search::max_key_length ()
   return _max_key_len;
 }
 
-/* Returns number of key positions.  */
+/* Returns the number of key positions.  */
 
 int
 Search::get_max_keysig_size ()
@@ -380,34 +380,44 @@ Search::get_max_keysig_size ()
   return option[ALLCHARS] ? _max_key_len : option.get_max_keysig_size ();
 }
 
-/* Generate a key set's hash value. */
+/* Computes a keyword's hash value, relative to the current _asso_values[],
+   and stores it in keyword->_hash_value.
+   This is called very frequently, and needs to be fast!  */
 
 inline int
-Search::hash (KeywordExt *key_node)
+Search::compute_hash (KeywordExt *keyword)
 {
-  int sum = option[NOLENGTH] ? 0 : key_node->_allchars_length;
+  int sum = option[NOLENGTH] ? 0 : keyword->_allchars_length;
 
-  const unsigned char *p = key_node->_selchars;
-  int i = key_node->_selchars_length;
+  const unsigned char *p = keyword->_selchars;
+  int i = keyword->_selchars_length;
   for (; i > 0; p++, i--)
       sum += _asso_values[*p];
 
-  return key_node->_hash_value = sum;
+  return keyword->_hash_value = sum;
 }
 
-/* Merge two disjoint hash key multisets to form the ordered disjoint union of the sets.
-   (In a multiset, an element can occur multiple times.)
-   Precondition: both set_1 and set_2 must be ordered. Returns the length
-   of the combined set. */
+/* Computes the disjoint union of two multisets of characters, i.e.
+   the set of characters that are contained with a different multiplicity
+   in set_1 and set_2.  This includes those characters which are contained
+   in one of the sets but not both.
+   Both sets set_1[0..size_1-1] and set_2[0..size_2-1] are given ordered.
+   The result, an ordered set (not multiset!) is stored in set_3[0...].
+   Returns the size of the resulting set.  */
 
 inline int
-Search::compute_disjoint_union  (const unsigned char *set_1, int size_1, const unsigned char *set_2, int size_2, unsigned char *set_3)
+compute_disjoint_union (const unsigned char *set_1, int size_1,
+                        const unsigned char *set_2, int size_2,
+                        unsigned char *set_3)
 {
   unsigned char *base = set_3;
 
   while (size_1 > 0 && size_2 > 0)
     if (*set_1 == *set_2)
-      set_1++, size_1--, set_2++, size_2--;
+      {
+        set_1++, size_1--;
+        set_2++, size_2--;
+      }
     else
       {
         unsigned char next;
@@ -437,27 +447,23 @@ Search::compute_disjoint_union  (const unsigned char *set_1, int size_1, const u
   return set_3 - base;
 }
 
-/* Sort the UNION_SET in increasing frequency of occurrence.
-   This speeds up later processing since we may assume the resulting
-   set (Set_3, in this case), is ordered. Uses insertion sort, since
-   the UNION_SET is typically short. */
+/* Sorts the given set in increasing frequency of _occurrences[].  */
 
 inline void
-Search::sort_set (unsigned char *union_set, int len)
+Search::sort_by_occurrence (unsigned char *set, int len)
 {
-  int i, j;
-
-  for (i = 0, j = len - 1; i < j; i++)
+  /* Use bubble sort, since the set is typically short.  */
+  for (int i = 1; i < len; i++)
     {
       int curr;
       unsigned char tmp;
 
-      for (curr = i + 1, tmp = union_set[curr];
-           curr > 0 && _occurrences[tmp] < _occurrences[union_set[curr-1]];
+      for (curr = i, tmp = set[curr];
+           curr > 0 && _occurrences[tmp] < _occurrences[set[curr-1]];
            curr--)
-        union_set[curr] = union_set[curr - 1];
+        set[curr] = set[curr - 1];
 
-      union_set[curr] = tmp;
+      set[curr] = tmp;
     }
 }
 
@@ -493,7 +499,7 @@ Search::affects_prev (unsigned char c, KeywordExt *curr)
       for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
         {
           KeywordExt *keyword = ptr->first();
-          if (_collision_detector->set_bit (hash (keyword))
+          if (_collision_detector->set_bit (compute_hash (keyword))
               && ++collisions >= _fewest_collisions)
             break;
           if (keyword == curr)
@@ -533,7 +539,7 @@ Search::change (KeywordExt *prior, KeywordExt *curr)
       fflush (stderr);
     }
   union_set_length = compute_disjoint_union (prior->_selchars, prior->_selchars_length, curr->_selchars, curr->_selchars_length, union_set);
-  sort_set (union_set, union_set_length);
+  sort_by_occurrence (union_set, union_set_length);
 
   /* Try changing some values, if change doesn't alter other values continue normal action. */
   _fewest_collisions++;
@@ -555,12 +561,10 @@ Search::change (KeywordExt *prior, KeywordExt *curr)
   for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
     {
       KeywordExt* keyword = ptr->first();
+      compute_hash (keyword);
       if (keyword == curr)
         break;
-      hash (keyword);
     }
-
-  hash (curr);
 
   if (option[DEBUG])
     {
@@ -628,7 +632,7 @@ Search::optimize ()
     {
       KeywordExt *currkw = curr->first();
 
-      hash (currkw);
+      compute_hash (currkw);
 
       for (KeywordExt_List *ptr = _head; ptr != curr; ptr = ptr->rest())
         {
@@ -649,7 +653,7 @@ Search::optimize ()
 
   for (curr = _head; curr; curr = curr->rest())
     {
-      unsigned int hashcode = hash (curr->first());
+      unsigned int hashcode = compute_hash (curr->first());
       if (_collision_detector->set_bit (hashcode))
         {
           if (option[DUP]) /* Keep track of this number... */

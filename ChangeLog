@@ -1,5 +1,13 @@
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.h (Search::compute_hash): Renamed from Search::hash.
+	(Search::compute_disjoint_union): Remove declaration.
+	(Search::sort_by_occurrence): Renamed from Search::sort_set.
+	* src/search.cc (Search::compute_hash): Renamed from Search::hash.
+	(compute_disjoint_union): Renamed from Search::compute_disjoint_union.
+	(Search::sort_by_occurrence): Renamed from Search::sort_set.
+	(Search::change): Simplify loop.
+
 	* src/search.h (Search::clear_determined): New declaration.
 	* src/search.cc (Search::clear_determined): New method.
 	(Search::already_determined): Optimize.

@@ -53,12 +53,22 @@ private:
   /* Reorders the keyword list so as to minimize search times.  */
   void                  reorder ();
 
+  /* Returns the length of keyword list.  */
   int                   keyword_list_length ();
+
+  /* Returns the maximum length of keywords.  */
   int                   max_key_length ();
+
+  /* Returns the number of key positions.  */
   int                   get_max_keysig_size ();
-  int                   hash (KeywordExt *key_node);
-  static int            compute_disjoint_union (const unsigned char *set_1, int size_1, const unsigned char *set_2, int size_2, unsigned char *set_3);
-  void                  sort_set (unsigned char *union_set, int len);
+
+  /* Computes a keyword's hash value, relative to the current _asso_values[],
+     and stores it in keyword->_hash_value.  */
+  int                   compute_hash (KeywordExt *key_node);
+
+  /* Sorts the given set in increasing frequency of _occurrences[].  */
+  void                  sort_by_occurrence (unsigned char *set, int len);
+
   bool                  affects_prev (unsigned char c, KeywordExt *curr);
   void                  change (KeywordExt *prior, KeywordExt *curr);
   void                  sort ();
