@@ -2,7 +2,7 @@
 
 /* Output routines.
 
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -82,12 +82,19 @@ private:
      comparison code in generated function 'in_word_set'.  */
   void                  output_keylength_table () const;
 
+  /* Prints out the string pool, containing the strings of the keyword table.
+   */
+  void                  output_string_pool () const;
+
   /* Prints out the array containing the keywords for the hash function.  */
   void                  output_keyword_table () const;
 
   /* Generates the large, sparse table that maps hash values into
      the smaller, contiguous range of the keyword table.  */
   void                  output_lookup_array () const;
+
+  /* Generate all pools needed for the lookup function.  */
+  void                  output_lookup_pools () const;
 
   /* Generate all the tables needed for the lookup function.  */
   void                  output_lookup_tables () const;
@@ -108,6 +115,8 @@ private:
   const char *          _return_type;
   /* Shorthand for user-defined struct tag type. */
   const char *          _struct_tag;
+  /* Element type of keyword array.  */
+  const char *          _wordlist_eltype;
   /* The C code from the declarations section.  */
   const char * const    _verbatim_declarations;
   const char * const    _verbatim_declarations_end;

@@ -832,16 +832,18 @@ Output::output_keylength_table () const
   column = 0;
   for (temp = _head, index = 0; temp; temp = temp->rest())
     {
+      KeywordExt *keyword = temp->first();
+
       /* If generating a switch statement, and there is no user defined type,
          we generate non-duplicates directly in the code.  Only duplicates go
          into the table.  */
-      if (option[SWITCH] && !option[TYPE] && !temp->first()->_duplicate_link)
+      if (option[SWITCH] && !option[TYPE] && !keyword->_duplicate_link)
         continue;
 
-      if (index < temp->first()->_hash_value && !option[SWITCH] && !option[DUP])
+      if (index < keyword->_hash_value && !option[SWITCH] && !option[DUP])
         {
           /* Some blank entries.  */
-          for ( ; index < temp->first()->_hash_value; index++)
+          for ( ; index < keyword->_hash_value; index++)
             {
               if (index > 0)
                 printf (",");
@@ -855,12 +857,12 @@ Output::output_keylength_table () const
         printf (",");
       if ((column++ % columns) == 0)
         printf("\n%s   ", indent);
-      printf ("%3d", temp->first()->_allchars_length);
+      printf ("%3d", keyword->_allchars_length);
       index++;
 
       /* Deal with duplicates specially.  */
-      if (temp->first()->_duplicate_link) // implies option[DUP]
-        for (KeywordExt *links = temp->first()->_duplicate_link; links; links = links->_duplicate_link)
+      if (keyword->_duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = keyword->_duplicate_link; links; links = links->_duplicate_link)
           {
             printf (",");
             if ((column++ % columns) == 0)
@@ -877,8 +879,111 @@ Output::output_keylength_table () const
 
 /* ------------------------------------------------------------------------- */
 
+/* Prints out the string pool, containing the strings of the keyword table.
+   Only called if option[SHAREDLIB].  */
+
+void
+Output::output_string_pool () const
+{
+  const char * const indent = option[TYPE] || option[GLOBAL] ? "" : "  ";
+  int index;
+  KeywordExt_List *temp;
+
+  printf ("%sstruct %s_t\n"
+          "%s  {\n",
+          indent, option.get_stringpool_name (), indent);
+  for (temp = _head, index = 0; temp; temp = temp->rest())
+    {
+      KeywordExt *keyword = temp->first();
+
+      /* If generating a switch statement, and there is no user defined type,
+         we generate non-duplicates directly in the code.  Only duplicates go
+         into the table.  */
+      if (option[SWITCH] && !option[TYPE] && !keyword->_duplicate_link)
+        continue;
+
+      if (!option[SWITCH] && !option[DUP])
+        index = keyword->_hash_value;
+
+      printf ("%s    char %s_str%d[sizeof(",
+              indent, option.get_stringpool_name (), index);
+      output_string (keyword->_allchars, keyword->_allchars_length);
+      printf (")];\n");
+
+      /* Deal with duplicates specially.  */
+      if (keyword->_duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = keyword->_duplicate_link; links; links = links->_duplicate_link)
+          if (!(links->_allchars_length == keyword->_allchars_length
+                && memcmp (links->_allchars, keyword->_allchars,
+                           keyword->_allchars_length) == 0))
+            {
+              index++;
+              printf ("%s    char %s_str%d[sizeof(",
+                      indent, option.get_stringpool_name (), index);
+              output_string (links->_allchars, links->_allchars_length);
+              printf (")];\n");
+            }
+
+      index++;
+    }
+  printf ("%s  };\n",
+          indent);
+
+  printf ("%sstatic %sstruct %s_t %s_contents =\n"
+          "%s  {\n",
+          indent, const_readonly_array, option.get_stringpool_name (),
+          option.get_stringpool_name (), indent);
+  for (temp = _head, index = 0; temp; temp = temp->rest())
+    {
+      KeywordExt *keyword = temp->first();
+
+      /* If generating a switch statement, and there is no user defined type,
+         we generate non-duplicates directly in the code.  Only duplicates go
+         into the table.  */
+      if (option[SWITCH] && !option[TYPE] && !keyword->_duplicate_link)
+        continue;
+
+      if (index > 0)
+        printf (",\n");
+
+      if (!option[SWITCH] && !option[DUP])
+        index = keyword->_hash_value;
+
+      printf ("%s    ",
+              indent);
+      output_string (keyword->_allchars, keyword->_allchars_length);
+
+      /* Deal with duplicates specially.  */
+      if (keyword->_duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = keyword->_duplicate_link; links; links = links->_duplicate_link)
+          if (!(links->_allchars_length == keyword->_allchars_length
+                && memcmp (links->_allchars, keyword->_allchars,
+                           keyword->_allchars_length) == 0))
+            {
+              index++;
+              printf (",\n");
+              printf ("%s    ",
+                      indent);
+              output_string (links->_allchars, links->_allchars_length);
+            }
+
+      index++;
+    }
+  if (index > 0)
+    printf ("\n");
+  printf ("%s  };\n",
+          indent);
+  printf ("%s#define %s ((%schar *) &%s_contents)\n",
+          indent, option.get_stringpool_name (), const_always,
+          option.get_stringpool_name ());
+  if (option[GLOBAL])
+    printf ("\n");
+}
+
+/* ------------------------------------------------------------------------- */
+
 static void
-output_keyword_entry (KeywordExt *temp, const char *indent)
+output_keyword_entry (KeywordExt *temp, int stringpool_index, const char *indent)
 {
   if (option[TYPE] && option.get_input_file_name ())
     printf ("#line %u \"%s\"\n",
@@ -886,7 +991,12 @@ output_keyword_entry (KeywordExt *temp, const char *indent)
   printf ("%s    ", indent);
   if (option[TYPE])
     printf ("{");
-  output_string (temp->_allchars, temp->_allchars_length);
+  if (option[SHAREDLIB])
+    printf ("(int)(long)&((struct %s_t *)0)->%s_str%d",
+            option.get_stringpool_name (), option.get_stringpool_name (),
+            stringpool_index);
+  else
+    output_string (temp->_allchars, temp->_allchars_length);
   if (option[TYPE])
     {
       if (strlen (temp->_rest) > 0)
@@ -904,14 +1014,14 @@ output_keyword_blank_entries (int count, const char *indent)
   int columns;
   if (option[TYPE])
     {
-      columns = 58 / (4 + (option[SHAREDLIB] ? 8 : 2)
+      columns = 58 / (4 + (option[SHAREDLIB] ? 2 : option[NULLSTRINGS] ? 8 : 2)
                         + strlen (option.get_initializer_suffix()));
       if (columns == 0)
         columns = 1;
     }
   else
     {
-      columns = (option[SHAREDLIB] ? 4 : 9);
+      columns = (option[SHAREDLIB] ? 9 : option[NULLSTRINGS] ? 4 : 9);
     }
   int column = 0;
   for (int i = 0; i < count; i++)
@@ -930,9 +1040,14 @@ output_keyword_blank_entries (int count, const char *indent)
       if (option[TYPE])
         printf ("{");
       if (option[SHAREDLIB])
-        printf ("(char*)0");
+        printf ("-1");
       else
-        printf ("\"\"");
+        {
+          if (option[NULLSTRINGS])
+            printf ("(char*)0");
+          else
+            printf ("\"\"");
+        }
       if (option[TYPE])
         printf ("%s}", option.get_initializer_suffix());
       column++;
@@ -945,12 +1060,12 @@ void
 Output::output_keyword_table () const
 {
   const char *indent  = option[GLOBAL] ? "" : "  ";
-  int         index;
+  int index;
   KeywordExt_List *temp;
 
   printf ("%sstatic ",
           indent);
-  output_const_type (const_readonly_array, _struct_tag);
+  output_const_type (const_readonly_array, _wordlist_eltype);
   printf ("%s[] =\n"
           "%s  {\n",
           option.get_wordlist_name (),
@@ -960,31 +1075,42 @@ Output::output_keyword_table () const
 
   for (temp = _head, index = 0; temp; temp = temp->rest())
     {
-      if (option[SWITCH] && !option[TYPE] && !temp->first()->_duplicate_link)
+      KeywordExt *keyword = temp->first();
+
+      /* If generating a switch statement, and there is no user defined type,
+         we generate non-duplicates directly in the code.  Only duplicates go
+         into the table.  */
+      if (option[SWITCH] && !option[TYPE] && !keyword->_duplicate_link)
         continue;
 
       if (index > 0)
         printf (",\n");
 
-      if (index < temp->first()->_hash_value && !option[SWITCH] && !option[DUP])
+      if (index < keyword->_hash_value && !option[SWITCH] && !option[DUP])
         {
           /* Some blank entries.  */
-          output_keyword_blank_entries (temp->first()->_hash_value - index, indent);
+          output_keyword_blank_entries (keyword->_hash_value - index, indent);
           printf (",\n");
-          index = temp->first()->_hash_value;
+          index = keyword->_hash_value;
         }
 
-      temp->first()->_final_index = index;
+      keyword->_final_index = index;
 
-      output_keyword_entry (temp->first(), indent);
+      output_keyword_entry (keyword, index, indent);
 
       /* Deal with duplicates specially.  */
-      if (temp->first()->_duplicate_link) // implies option[DUP]
-        for (KeywordExt *links = temp->first()->_duplicate_link; links; links = links->_duplicate_link)
+      if (keyword->_duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = keyword->_duplicate_link; links; links = links->_duplicate_link)
           {
             links->_final_index = ++index;
             printf (",\n");
-            output_keyword_entry (links, indent);
+            int stringpool_index =
+              (links->_allchars_length == keyword->_allchars_length
+               && memcmp (links->_allchars, keyword->_allchars,
+                          keyword->_allchars_length) == 0
+               ? keyword->_final_index
+               : links->_final_index);
+            output_keyword_entry (links, stringpool_index, indent);
           }
 
       index++;
@@ -1146,6 +1272,22 @@ Output::output_lookup_array () const
 }
 
 /* ------------------------------------------------------------------------- */
+
+/* Generate all pools needed for the lookup function.  */
+
+void
+Output::output_lookup_pools () const
+{
+  if (option[SWITCH])
+    {
+      if (option[TYPE] || (option[DUP] && _total_duplicates > 0))
+        output_string_pool ();
+    }
+  else
+    {
+      output_string_pool ();
+    }
+}
 
 /* Generate all the tables needed for the lookup function.  */
 
@@ -1340,10 +1482,10 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
             printf ("          register %s%s *lengthptr;\n",
                     const_always, smallest_integral_type (_max_key_len));
           printf ("          register ");
-          output_const_type (const_readonly_array, _struct_tag);
+          output_const_type (const_readonly_array, _wordlist_eltype);
           printf ("*wordptr;\n");
           printf ("          register ");
-          output_const_type (const_readonly_array, _struct_tag);
+          output_const_type (const_readonly_array, _wordlist_eltype);
           printf ("*wordendptr;\n");
         }
       if (option[TYPE])
@@ -1358,14 +1500,14 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
 
       output_switches (_head, num_switches, switch_size, _min_hash_value, _max_hash_value, 10);
 
+      printf ("          return 0;\n");
       if (option[DUP] && _total_duplicates > 0)
         {
           int indent = 8;
-          printf ("%*s  return 0;\n"
-                  "%*smulticompare:\n"
+          printf ("%*smulticompare:\n"
                   "%*s  while (wordptr < wordendptr)\n"
                   "%*s    {\n",
-                  indent, "", indent, "", indent, "", indent, "");
+                  indent, "", indent, "", indent, "");
           if (option[LENTABLE])
             {
               printf ("%*s      if (len == *lengthptr)\n"
@@ -1379,6 +1521,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
             printf ("wordptr->%s", option.get_slot_name ());
           else
             printf ("*wordptr");
+          if (option[SHAREDLIB])
+            printf (" + %s",
+                    option.get_stringpool_name ());
           printf (";\n\n"
                   "%*s      if (",
                   indent, "");
@@ -1397,17 +1542,21 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
             printf ("%*s      lengthptr++;\n",
                     indent, "");
           printf ("%*s      wordptr++;\n"
-                  "%*s    }\n",
-                  indent, "", indent, "");
+                  "%*s    }\n"
+                  "%*s  return 0;\n",
+                  indent, "", indent, "", indent, "");
         }
-      printf ("          return 0;\n"
-              "        compare:\n");
+      printf ("        compare:\n");
       if (option[TYPE])
         {
           printf ("          {\n"
-                  "            register %schar *s = resword->%s;\n\n"
-                  "            if (",
+                  "            register %schar *s = resword->%s",
                   const_always, option.get_slot_name ());
+          if (option[SHAREDLIB])
+            printf (" + %s",
+                    option.get_stringpool_name ());
+          printf (";\n\n"
+                  "            if (");
           comparison.output_comparison (Output_Expr1 ("str"), Output_Expr1 ("s"));
           printf (")\n"
                   "              return resword;\n"
@@ -1446,6 +1595,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                   indent, "", const_always, option.get_wordlist_name ());
           if (option[TYPE])
             printf (".%s", option.get_slot_name ());
+          if (option[SHAREDLIB])
+            printf (" + %s",
+                    option.get_stringpool_name ());
           printf (";\n\n"
                   "%*s      if (",
                   indent, "");
@@ -1476,12 +1628,12 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                         indent, "", const_always, smallest_integral_type (_max_key_len));
               printf ("%*s      register ",
                       indent, "");
-              output_const_type (const_readonly_array, _struct_tag);
+              output_const_type (const_readonly_array, _wordlist_eltype);
               printf ("*wordptr = &%s[TOTAL_KEYWORDS + lookup[offset]];\n",
                       option.get_wordlist_name ());
               printf ("%*s      register ",
                       indent, "");
-              output_const_type (const_readonly_array, _struct_tag);
+              output_const_type (const_readonly_array, _wordlist_eltype);
               printf ("*wordendptr = wordptr + -lookup[offset + 1];\n\n");
               printf ("%*s      while (wordptr < wordendptr)\n"
                       "%*s        {\n",
@@ -1499,6 +1651,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                 printf ("wordptr->%s", option.get_slot_name ());
               else
                 printf ("*wordptr");
+              if (option[SHAREDLIB])
+                printf (" + %s",
+                        option.get_stringpool_name ());
               printf (";\n\n"
                       "%*s          if (",
                       indent, "");
@@ -1534,18 +1689,55 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
               indent += 2;
             }
 
-          printf ("%*s{\n"
-                  "%*s  register %schar *s = %s[key]",
-                  indent, "",
-                  indent, "", const_always, option.get_wordlist_name ());
-
-          if (option[TYPE])
-            printf (".%s", option.get_slot_name ());
+          if (option[SHAREDLIB])
+            {
+              if (!option[LENTABLE])
+                {
+                  printf ("%*s{\n"
+                          "%*s  register int o = %s[key]",
+                          indent, "",
+                          indent, "", option.get_wordlist_name ());
+                  if (option[TYPE])
+                    printf (".%s", option.get_slot_name ());
+                  printf (";\n"
+                          "%*s  if (o >= 0)\n"
+                          "%*s    {\n",
+                          indent, "",
+                          indent, "");
+                  indent += 4;
+                  printf ("%*s  register %schar *s = o",
+                          indent, "", const_always);
+                }
+              else
+                {
+                  /* No need for the (o >= 0) test, because the
+                     (len == lengthtable[key]) test already guarantees that
+                     key points to nonempty table entry.  */
+                  printf ("%*s{\n"
+                          "%*s  register %schar *s = %s[key]",
+                          indent, "",
+                          indent, "", const_always,
+                          option.get_wordlist_name ());
+                  if (option[TYPE])
+                    printf (".%s", option.get_slot_name ());
+                }
+              printf (" + %s",
+                      option.get_stringpool_name ());
+            }
+          else
+            {
+              printf ("%*s{\n"
+                      "%*s  register %schar *s = %s[key]",
+                      indent, "",
+                      indent, "", const_always, option.get_wordlist_name ());
+              if (option[TYPE])
+                printf (".%s", option.get_slot_name ());
+            }
 
           printf (";\n\n"
                   "%*s  if (",
                   indent, "");
-          if (option[SHAREDLIB])
+          if (!option[SHAREDLIB] && option[NULLSTRINGS])
             printf ("s && ");
           comparison.output_comparison (Output_Expr1 ("str"), Output_Expr1 ("s"));
           printf (")\n"
@@ -1555,8 +1747,14 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
             printf ("&%s[key]", option.get_wordlist_name ());
           else
             printf ("s");
-          printf (";\n"
-                  "%*s}\n",
+          printf (";\n");
+          if (option[SHAREDLIB] && !option[LENTABLE])
+            {
+              indent -= 4;
+              printf ("%*s    }\n",
+                      indent, "");
+            }
+          printf ("%*s}\n",
                   indent, "");
         }
     }
@@ -1601,6 +1799,8 @@ Output::output_lookup_function () const
       output_constants (style);
     }
 
+  if (option[SHAREDLIB] && !(option[GLOBAL] || option[TYPE]))
+    output_lookup_pools ();
   if (!option[GLOBAL])
     output_lookup_tables ();
 
@@ -1645,6 +1845,8 @@ Output::output ()
       _return_type = (const_always[0] ? "const char *" : "char *");
       _struct_tag = (const_always[0] ? "const char *" : "char *");
     }
+
+  _wordlist_eltype = (option[SHAREDLIB] && !option[TYPE] ? "int" : _struct_tag);
 
   printf ("/* ");
   if (option[KRC])
@@ -1726,6 +1928,8 @@ Output::output ()
 
   output_hash_function ();
 
+  if (option[SHAREDLIB] && (option[GLOBAL] || option[TYPE]))
+    output_lookup_pools ();
   if (option[GLOBAL])
     output_lookup_tables ();
 

@@ -1,5 +1,5 @@
 /* Input routines.
-   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002-2003 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -527,6 +527,19 @@ Input::read_input ()
 
                 if (is_declaration (line, line_end, lineno, "global-table"))
                   option.set (GLOBAL);
+                else
+
+                if (is_declaration (line, line_end, lineno, "pic"))
+                  option.set (SHAREDLIB);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
+                                           "string-pool-name", &arg))
+                  option.set_stringpool_name (arg);
+                else
+
+                if (is_declaration (line, line_end, lineno, "null-strings"))
+                  option.set (NULLSTRINGS);
                 else
 
                 if (is_define_declaration (line, line_end, lineno,

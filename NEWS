@@ -23,6 +23,9 @@ New in 2.97:
     %enum
     %includes
     %global-table
+    %pic
+    %define string-pool-name NAME
+    %null-strings
     %define word-array-name NAME
     %switch=COUNT
     %omit-struct-type
@@ -41,8 +44,11 @@ New in 2.97:
   the table's size will grow as needed. Earlier versions of gperf bailed
   out with an "Internal error, duplicate hash code value".
 * The options -f/--fast and -o/--occurrence-sort have no effect any more.
-* Added option -P/--pic that optimizes the generated code for use in shared
-  libraries.
+* Added options -P/--pic and --null-strings that optimize the generated code
+  for use in shared libraries. -P/--pic does a perfect optimization but may
+  require some small code changes (see the documentation for details), whereas
+  --null-strings does only a half-hearted optimization but works without
+  needing any change to surrounding code.
 * Added option --ignore-case that produces a case independent lookup function.
 * Bug fixes.
 

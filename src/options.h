@@ -2,7 +2,7 @@
 
 /* Handles parsing the Options provided to the user.
 
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -81,34 +81,37 @@ enum Option_Type
   /* Make the keyword table a global variable.  */
   GLOBAL       = 1 << 12,
 
+  /* Use NULL strings instead of empty strings for empty table entries.  */
+  NULLSTRINGS  = 1 << 13,
+
   /* Optimize for position-independent code.  */
-  SHAREDLIB    = 1 << 13,
+  SHAREDLIB    = 1 << 14,
 
   /* Generate switch output to save space.  */
-  SWITCH       = 1 << 14,
+  SWITCH       = 1 << 15,
 
   /* Don't include user-defined type definition in output -- it's already
      defined elsewhere.  */
-  NOTYPE       = 1 << 15,
+  NOTYPE       = 1 << 16,
 
   /* --- Algorithm employed by gperf --- */
 
   /* Use the given key positions.  */
-  POSITIONS    = 1 << 16,
+  POSITIONS    = 1 << 17,
 
   /* Handle duplicate hash values for keywords.  */
-  DUP          = 1 << 17,
+  DUP          = 1 << 18,
 
   /* Don't include keyword length in hash computations.  */
-  NOLENGTH     = 1 << 18,
+  NOLENGTH     = 1 << 19,
 
   /* Randomly initialize the associated values table.  */
-  RANDOM       = 1 << 19,
+  RANDOM       = 1 << 20,
 
   /* --- Informative output --- */
 
   /* Enable debugging (prints diagnostics to stderr).  */
-  DEBUG        = 1 << 20
+  DEBUG        = 1 << 21
 };
 
 /* Class manager for gperf program Options.  */
@@ -189,6 +192,11 @@ public:
   /* Sets the hash table array name, if not already set.  */
   void                  set_wordlist_name (const char *name);
 
+  /* Returns the string pool name.  */
+  const char *          get_stringpool_name () const;
+  /* Sets the string pool name, if not already set.  */
+  void                  set_stringpool_name (const char *name);
+
   /* Returns the string used to delimit keywords from other attributes.  */
   const char *          get_delimiters () const;
   /* Sets the delimiters string, if not already set.  */
@@ -254,6 +262,9 @@ private:
 
   /* Name used for hash table array.  */
   const char *          _wordlist_name;
+
+  /* Name used for the string pool.  */
+  const char *          _stringpool_name;
 
   /* Separates keywords from other attributes.  */
   const char *          _delimiters;

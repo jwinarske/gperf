@@ -1,5 +1,48 @@
 2003-01-01  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h (NULLSTRINGS): New enum value.
+	(Options::get_stringpool_name, Options::set_stringpool_name): New
+	method declarations.
+	(Options::_stringpool_name): New field.
+	* src/options.icc (Options::get_stringpool_name): New method.
+	* src/options.cc (DEFAULT_STRINGPOOL_NAME): New variable.
+	(Options::long_usage): Document -Q and --null-strings.
+	(Options::Options): Initialize _stringpool_name.
+	(Options::~Options): Output _stringpool_name, NULLSTRINGS values too.
+	(Options::set_stringpool_name): New method.
+	(long_options): Add options --string-pool-name, --null-strings.
+	(Options::parse_options): Implement options -P, -Q and --null-strings.
+	* src/input.cc (Input::read_input): Recognize declarations %pic,
+	%define string-pool-name, %null-strings.
+	* src/output.h (Output::output_string_pool,
+	Output::output_lookup_pools): New method declarations.
+	(Output::_wordlist_eltype): New field.
+	* src/output.cc (Output::output_keylength_table): Trivial
+	simplification.
+	(Output::output_string_pool): New method.
+	(output_keyword_entry): Add stringpool_index argument. For SHAREDLIB,
+	use struct offsets.
+	(output_keyword_blank_entries): For SHAREDLIB, use -1 instead of "".
+	(Output::output_keyword_table): Use _wordlist_eltype instead of
+	_struct_tag. Compute stringpool_index for output_keyword_entry.
+	(Output::output_lookup_pools): New method.
+	(Output::output_lookup_function_body): Use _wordlist_eltype instead of
+	_struct_tag. For SHAREDLIB, use "+ stringpool" to convert offsets to
+	strings. Use "o >= 0" to test for nonempty table entry.
+	(Output::output_lookup_function): Call output_lookup_pools.
+	(Output::output): Initialize _wordlist_eltype. Call
+	output_lookup_pools.
+	* tests/jstest4.gperf: New file.
+	* tests/test-6.exp: Update.
+	* tests/Makefile.in (check-lang-syntax): Drop test of -p. Add tests of
+	-P and -Q.
+	* doc/gperf.texi (User-supplied Struct): Mention that first field has
+	to be of type 'int' if -P is given.
+	(Gperf Declarations): Document %pic, %define string-pool-name,
+	%null-strings.
+	(Output Details): Update description of option -P. Document options -Q
+	and --null-strings.
+
 	* tests/Makefile.in (check-link-c, check-ada, check-pascal,
 	check-test): Omit option -p.
 	* tests/c-parse.exp: Regenerated.
