@@ -1,5 +1,15 @@
 2002-12-12  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.h (Search::init_selchars_tuple,
+	Search::count_duplicates_tuple): Add alpha_unify argument.
+	(Search::count_duplicates_tuple): New method declaration.
+	* src/search.cc (Search::init_selchars_tuple,
+	Search::count_duplicates_tuple): Add alpha_unify argument.
+	(Search::find_positions): Update.
+	(Search::count_duplicates_tuple): New method.
+	(Search::count_duplicates_multiset): Free temp alpha_unify vector.
+	(Search::find_alpha_inc): Call count_duplicates_tuple.
+
 	* src/configure.in: Add test for stack-allocated variable-size arrays.
 	* src/config.h.in: Regenerated.
 	* src/search.cc: Include config.h.

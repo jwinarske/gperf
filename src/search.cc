@@ -58,7 +58,7 @@
 
 /* ================================ Theory ================================= */
 
-/* The most general form of the hash function is
+/* The general form of the hash function is
 
       hash (keyword) = sum (asso_values[keyword[i] + alpha_inc[i]] : i in Pos)
                        + len (keyword)
@@ -74,6 +74,8 @@
    Theorem 2: If all tuples (keyword[i] : i in Pos) are different, there
    are nonnegative integers alpha_inc[i] such that all multisets
    {keyword[i] + alpha_inc[i] : i in Pos} are different.
+
+   Define selchars[keyword] := {keyword[i] + alpha_inc[i] : i in Pos}.
 
    Theorem 3: If all multisets selchars[keyword] are different, there are
    nonnegative integers asso_values[c] such that all hash values
@@ -98,14 +100,25 @@
      proj1 : String --> Map (Pos --> N)
      proj2 : Map (Pos --> N) --> Map (Pos --> N) / S(Pos)
      proj3 : Map (Pos --> N) / S(Pos) --> N
-   where N denotes the set of nonnegative integers, and S(Pos) is the
-   symmetric group over Pos.
+   where
+     N denotes the set of nonnegative integers,
+     Map (A --> B) := Hom_Set (A, B) is the set of maps from A to B, and
+     S(Pos) is the symmetric group over Pos.
 
    This was the theory for option[NOLENGTH]; if !option[NOLENGTH], slight
    modifications apply:
      proj1 : String --> Map (Pos --> N) x N
      proj2 : Map (Pos --> N) x N --> Map (Pos --> N) / S(Pos) x N
      proj3 : Map (Pos --> N) / S(Pos) x N --> N
+
+   For a case-insensitive hash function, the general form is
+
+      hash (keyword) =
+        sum (asso_values[alpha_unify[keyword[i] + alpha_inc[i]]] : i in Pos)
+        + len (keyword)
+
+   where alpha_unify[c] is chosen so that an upper/lower case change in
+   keyword[i] doesn't change  alpha_unify[keyword[i] + alpha_inc[i]].
  */
 
 /* ==================== Initialization and Preparation ===================== */
@@ -118,17 +131,15 @@ Search::Search (KeywordExt_List *list)
 void
 Search::prepare ()
 {
-  KeywordExt_List *temp;
-
   /* Compute the total number of keywords.  */
   _total_keys = 0;
-  for (temp = _head; temp; temp = temp->rest())
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
     _total_keys++;
 
   /* Compute the minimum and maximum keyword length.  */
   _max_key_len = INT_MIN;
   _min_key_len = INT_MAX;
-  for (temp = _head; temp; temp = temp->rest())
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
     {
       KeywordExt *keyword = temp->first();
 
@@ -142,16 +153,16 @@ Search::prepare ()
      expressions don't work correctly for looking up an empty string.  */
   if (_min_key_len == 0)
     {
-      fprintf (stderr, "Empty input key is not allowed.\n"
-                       "To recognize an empty input key, your code should check for\n"
-                       "len == 0 before calling the gperf generated lookup function.\n");
+      fprintf (stderr, "Empty input keyword is not allowed.\n"
+               "To recognize an empty input keyword, your code should check for\n"
+               "len == 0 before calling the gperf generated lookup function.\n");
       exit (1);
     }
 
   /* Exit program if the characters in the keywords are not in the required
      range.  */
   if (option[SEVENBIT])
-    for (temp = _head; temp; temp = temp->rest())
+    for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
       {
         KeywordExt *keyword = temp->first();
 
@@ -185,6 +196,7 @@ Search::compute_alpha_unify () const
 {
   if (option[UPPERLOWER])
     {
+      /* Uppercase to lowercase mapping.  */
       unsigned int alpha_size = compute_alpha_size();
       unsigned int *alpha_unify = new unsigned int[alpha_size];
       for (unsigned int c = 0; c < alpha_size; c++)
@@ -194,15 +206,16 @@ Search::compute_alpha_unify () const
       return alpha_unify;
     }
   else
+    /* Identity mapping.  */
     return NULL;
 }
 
 /* Initializes each keyword's _selchars array.  */
 void
-Search::init_selchars_tuple (const Positions& positions) const
+Search::init_selchars_tuple (const Positions& positions, const unsigned int *alpha_unify) const
 {
   for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-    temp->first()->init_selchars_tuple(positions, _alpha_unify);
+    temp->first()->init_selchars_tuple(positions, alpha_unify);
 }
 
 /* Deletes each keyword's _selchars array.  */
@@ -218,12 +231,12 @@ Search::delete_selchars () const
      # K - # proj1 (K)
    where K is the multiset of given keywords.  */
 unsigned int
-Search::count_duplicates_tuple (const Positions& positions) const
+Search::count_duplicates_tuple (const Positions& positions, const unsigned int *alpha_unify) const
 {
   /* Run through the keyword list and count the duplicates incrementally.
      The result does not depend on the order of the keyword list, thanks to
      the formula above.  */
-  init_selchars_tuple (positions);
+  init_selchars_tuple (positions, alpha_unify);
 
   unsigned int count = 0;
   {
@@ -253,8 +266,8 @@ Search::find_positions ()
       return;
     }
 
-  /* Compute preliminary value for _alpha_unify.  */
-  _alpha_unify = compute_alpha_unify ();
+  /* Compute preliminary alpha_unify table.  */
+  unsigned int *alpha_unify = compute_alpha_unify ();
 
   /* 1. Find positions that must occur in order to distinguish duplicates.  */
   Positions mandatory;
@@ -322,7 +335,8 @@ Search::find_positions ()
   int imax = (_max_key_len - 1 < Positions::MAX_KEY_POS - 1
               ? _max_key_len - 1 : Positions::MAX_KEY_POS - 1);
   Positions current = mandatory;
-  unsigned int current_duplicates_count = count_duplicates_tuple (current);
+  unsigned int current_duplicates_count =
+    count_duplicates_tuple (current, alpha_unify);
   for (;;)
     {
       Positions best;
@@ -333,7 +347,8 @@ Search::find_positions ()
           {
             Positions tryal = current;
             tryal.add (i);
-            unsigned int try_duplicates_count = count_duplicates_tuple (tryal);
+            unsigned int try_duplicates_count =
+              count_duplicates_tuple (tryal, alpha_unify);
 
             /* We prefer 'try' to 'best' if it produces less duplicates,
                or if it produces the same number of duplicates but with
@@ -366,7 +381,8 @@ Search::find_positions ()
           {
             Positions tryal = current;
             tryal.remove (i);
-            unsigned int try_duplicates_count = count_duplicates_tuple (tryal);
+            unsigned int try_duplicates_count =
+              count_duplicates_tuple (tryal, alpha_unify);
 
             /* We prefer 'try' to 'best' if it produces less duplicates,
                or if it produces the same number of duplicates but with
@@ -406,7 +422,7 @@ Search::find_positions ()
                     tryal.remove (i2);
                     tryal.add (i3);
                     unsigned int try_duplicates_count =
-                      count_duplicates_tuple (tryal);
+                      count_duplicates_tuple (tryal, alpha_unify);
 
                     /* We prefer 'try' to 'best' if it produces less duplicates,
                        or if it produces the same number of duplicates but with
@@ -459,8 +475,21 @@ Search::find_positions ()
       fprintf (stderr, "\n");
     }
 
-  /* Free preliminary value for _alpha_unify.  */
-  delete[] _alpha_unify;
+  /* Free preliminary alpha_unify table.  */
+  delete[] alpha_unify;
+}
+
+/* Count the duplicate keywords that occur with the found set of positions.
+   In other words, it returns the difference
+     # K - # proj1 (K)
+   where K is the multiset of given keywords.  */
+unsigned int
+Search::count_duplicates_tuple () const
+{
+  unsigned int *alpha_unify = compute_alpha_unify ();
+  unsigned int count = count_duplicates_tuple (_key_positions, alpha_unify);
+  delete[] alpha_unify;
+  return count;
 }
 
 /* ===================== Finding good alpha increments ===================== */
@@ -558,9 +587,8 @@ Search::count_duplicates_multiset (const unsigned int *alpha_inc) const
   /* Run through the keyword list and count the duplicates incrementally.
      The result does not depend on the order of the keyword list, thanks to
      the formula above.  */
-  init_selchars_multiset (_key_positions,
-                          compute_alpha_unify (_key_positions, alpha_inc),
-                          alpha_inc);
+  unsigned int *alpha_unify = compute_alpha_unify (_key_positions, alpha_inc);
+  init_selchars_multiset (_key_positions, alpha_unify, alpha_inc);
 
   unsigned int count = 0;
   {
@@ -574,6 +602,7 @@ Search::count_duplicates_multiset (const unsigned int *alpha_inc) const
   }
 
   delete_selchars ();
+  delete[] alpha_unify;
 
   return count;
 }
@@ -586,9 +615,7 @@ Search::find_alpha_inc ()
   /* The goal is to choose _alpha_inc[] such that it doesn't introduce
      artificial duplicates.
      In other words, the goal is  # proj2 (proj1 (K)) = # proj1 (K).  */
-  _alpha_unify = compute_alpha_unify ();
-  unsigned int duplicates_goal = count_duplicates_tuple (_key_positions);
-  delete[] _alpha_unify;
+  unsigned int duplicates_goal = count_duplicates_tuple ();
 
   /* Start with zero increments.  This is sufficient in most cases.  */
   unsigned int *current = new unsigned int [_max_key_len];

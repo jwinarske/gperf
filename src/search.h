@@ -50,15 +50,18 @@ private:
   unsigned int *        compute_alpha_unify () const;
 
   /* Initializes each keyword's _selchars array.  */
-  void                  init_selchars_tuple (const Positions& positions) const;
+  void                  init_selchars_tuple (const Positions& positions, const unsigned int *alpha_unify) const;
   /* Deletes each keyword's _selchars array.  */
   void                  delete_selchars () const;
 
   /* Count the duplicate keywords that occur with a given set of positions.  */
-  unsigned int          count_duplicates_tuple (const Positions& positions) const;
+  unsigned int          count_duplicates_tuple (const Positions& positions, const unsigned int *alpha_unify) const;
 
   /* Find good key positions.  */
   void                  find_positions ();
+
+  /* Count the duplicate keywords that occur with the found set of positions.  */
+  unsigned int          count_duplicates_tuple () const;
 
   /* Computes the upper bound on the indices passed to asso_values[].  */
   unsigned int          compute_alpha_size (const unsigned int *alpha_inc) const;
