@@ -1,0 +1,139 @@
+/* Inline Functions for positions.{h,cc}.
+
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
+   and Bruno Haible <bruno@clisp.org>.
+
+   This file is part of GNU GPERF.
+
+   GNU GPERF is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   GNU GPERF is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; see the file COPYING.
+   If not, write to the Free Software Foundation, Inc.,
+   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+
+// This needs:
+//#include <string.h>
+
+/* ---------------------------- Class Positions ---------------------------- */
+
+/* Constructors.  */
+
+INLINE
+Positions::Positions ()
+  : _size (0)
+{
+}
+
+INLINE
+Positions::Positions (int pos1)
+  : _size (1)
+{
+  _positions[0] = pos1;
+}
+
+INLINE
+Positions::Positions (int pos1, int pos2)
+  : _size (2)
+{
+  _positions[0] = pos1;
+  _positions[1] = pos2;
+}
+
+/* Copy constructor.  */
+
+INLINE
+Positions::Positions (const Positions& src)
+  : _size (src._size)
+{
+  memcpy (_positions, src._positions, _size * sizeof (_positions[0]));
+}
+
+/* Assignment operator.  */
+
+INLINE Positions&
+Positions::operator= (const Positions& src)
+{
+  _size = src._size;
+  memcpy (_positions, src._positions, _size * sizeof (_positions[0]));
+  return *this;
+}
+
+/* Accessors.  */
+
+INLINE int
+Positions::operator[] (unsigned int index) const
+{
+  return _positions[index];
+}
+
+INLINE unsigned int
+Positions::get_size () const
+{
+  return _size;
+}
+
+/* Write access.  */
+
+INLINE unsigned char *
+Positions::pointer ()
+{
+  return _positions;
+}
+
+INLINE void
+Positions::set_size (unsigned int size)
+{
+  _size = size;
+}
+
+/* Sorts the array in reverse order.
+   Returns true if there are no duplicates, false otherwise.  */
+INLINE bool
+Positions::sort ()
+{
+  /* Bubble sort.  */
+  bool duplicate_free = true;
+  unsigned char *base = _positions;
+  unsigned int len = _size;
+
+  for (unsigned int i = 1; i < len; i++)
+    {
+      unsigned int j;
+      int tmp;
+
+      for (j = i, tmp = base[j]; j > 0 && tmp >= base[j - 1]; j--)
+        if ((base[j] = base[j - 1]) == tmp) /* oh no, a duplicate!!! */
+          duplicate_free = false;
+
+      base[j] = tmp;
+    }
+
+  return duplicate_free;
+}
+
+/* ------------------------- Class PositionIterator ------------------------ */
+
+/* Initializes an iterator through POSITIONS.  */
+INLINE
+PositionIterator::PositionIterator (Positions const& positions)
+  : _set (positions),
+    _index (0)
+{
+}
+
+/* Retrieves the next position, or EOS past the end.  */
+INLINE int
+PositionIterator::next ()
+{
+  return (_index < _set._size ? _set._positions[_index++] : EOS);
+}

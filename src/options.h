@@ -30,6 +30,7 @@
 #define options_h 1
 
 #include <stdio.h>
+#include "positions.h"
 
 /* Enumeration of the possible boolean options. */
 
@@ -101,79 +102,6 @@ enum Option_Type
 
   /* Assume 7-bit, not 8-bit, characters.  */
   SEVENBIT     = 1 << 21
-};
-
-/* This class denotes a set of key positions.  */
-
-class Positions
-{
-  friend class PositionIterator;
-public:
-  /* Denotes the last char of a keyword, depending on the keyword's length.  */
-  static const int      LASTCHAR = 0;
-
-  /* Maximum key position specifiable by the user.
-     Note that this must fit into the element type of _positions[], below.  */
-  static const int      MAX_KEY_POS = 255;
-
-  /* Constructors.  */
-                        Positions ();
-                        Positions (int pos1);
-                        Positions (int pos1, int pos2);
-
-  /* Copy constructor.  */
-                        Positions (const Positions& src);
-
-  /* Assignment operator.  */
-  Positions&            operator= (const Positions& src);
-
-  /* Accessors.  */
-  int                   operator[] (unsigned int index) const;
-  unsigned int          get_size () const;
-
-  /* Write access.  */
-  unsigned char *       pointer ();
-  void                  set_size (unsigned int size);
-
-  /* Sorts the array in reverse order.
-     Returns true if there are no duplicates, false otherwise.  */
-  bool                  sort ();
-
-  /* Set operations.  Assumes the array is in reverse order.  */
-  bool                  contains (int pos) const;
-  void                  add (int pos);
-  void                  remove (int pos);
-
-  /* Output in external syntax.  */
-  void                  print () const;
-
-private:
-  /* Number of positions.  */
-  unsigned int          _size;
-  /* Array of positions.  1 for the first char, 2 for the second char etc.,
-     LASTCHAR for the last char.
-     Note that since duplicates are eliminated, the maximum possible size
-     is MAX_KEY_POS + 1.  */
-  unsigned char         _positions[MAX_KEY_POS + 1];
-};
-
-/* This class denotes an iterator through a set of key positions.  */
-
-class PositionIterator
-{
-public:
-  /* Initializes an iterator through POSITIONS.  */
-                        PositionIterator (Positions const& positions);
-
-  /* End of iteration marker.  */
-  static const int      EOS = -1;
-
-  /* Retrieves the next position, or EOS past the end.  */
-  int                   next ();
-
-private:
-  const Positions&      _set;
-  unsigned int          _index;
 };
 
 /* Class manager for gperf program Options. */

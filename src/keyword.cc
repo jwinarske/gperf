@@ -26,7 +26,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "options.h"
+#include "positions.h"
 
 
 /* --------------------------- KeywordExt class --------------------------- */

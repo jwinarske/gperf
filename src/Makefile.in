@@ -61,7 +61,7 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-OBJECTS  = version.o options.o keyword.o keyword-list.o \
+OBJECTS  = version.o positions.o options.o keyword.o keyword-list.o \
            input.o bool-array.o hash-table.o search.o output.o main.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
@@ -85,20 +85,23 @@ $(TARGETPROG): $(OBJECTS)
 # Dependencies.
 CONFIG_H = config.h
 VERSION_H = version.h
-OPTIONS_H = options.h options.icc
+POSITIONS_H = positions.h positions.icc
+OPTIONS_H = options.h options.icc $(POSITIONS_H)
 KEYWORD_H = keyword.h keyword.icc
 KEYWORD_LIST_H = keyword-list.h keyword-list.icc $(KEYWORD_H)
 INPUT_H = input.h $(KEYWORD_LIST_H)
 BOOL_ARRAY_H = bool-array.h bool-array.icc $(OPTIONS_H)
 HASH_TABLE_H = hash-table.h $(KEYWORD_H)
-SEARCH_H = search.h $(KEYWORD_LIST_H) $(OPTIONS_H) $(BOOL_ARRAY_H)
-OUTPUT_H = output.h $(KEYWORD_LIST_H) $(OPTIONS_H)
+SEARCH_H = search.h $(KEYWORD_LIST_H) $(POSITIONS_H) $(BOOL_ARRAY_H)
+OUTPUT_H = output.h $(KEYWORD_LIST_H) $(POSITIONS_H)
 
 version.o : version.cc $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
+positions.o : positions.cc $(POSITIONS_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/positions.cc
 options.o : options.cc $(OPTIONS_H) $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/options.cc
-keyword.o : keyword.cc $(KEYWORD_H) $(OPTIONS_H)
+keyword.o : keyword.cc $(KEYWORD_H) $(POSITIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword.cc
 keyword-list.o : keyword-list.cc $(KEYWORD_LIST_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword-list.cc

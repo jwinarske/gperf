@@ -27,7 +27,7 @@
 #define output_h 1
 
 #include "keyword-list.h"
-#include "options.h"
+#include "positions.h"
 
 /* OSF/1 cxx needs these forward declarations. */
 struct Output_Constants;

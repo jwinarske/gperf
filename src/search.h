@@ -27,7 +27,7 @@
 #define search_h 1
 
 #include "keyword-list.h"
-#include "options.h"
+#include "positions.h"
 #include "bool-array.h"
 
 class Search

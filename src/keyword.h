@@ -26,7 +26,7 @@
 #ifndef keyword_h
 #define keyword_h 1
 
-/* Class defined in "options.h".  */
+/* Class defined in "positions.h".  */
 class Positions;
 
 /* An instance of this class is a keyword, as specified in the input file.  */

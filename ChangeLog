@@ -1,5 +1,20 @@
 2002-11-17  Bruno Haible  <bruno@clisp.org>
 
+	* src/positions.h: New file, extracted from options.h.
+	* src/positions.icc: New file, extracted from options.icc.
+	* src/positions.cc: New file, extracted from options.cc.
+	* src/options.h: Include positions.h. Move classes Positions and
+	PositionsIterator away.
+	* src/options.icc: Move classes Positions and PositionsIterator away.
+	* src/options.cc: Move class Positions away.
+	* src/keyword.cc: Include positions.h instead of options.h.
+	* src/output.h: Include positions.h instead of options.h.
+	* src/search.h: Include positions.h instead of options.h.
+	* src/Makefile.in (OBJECTS): Add positions.o.
+	(POSITIONS_H): New variable.
+	(OPTIONS_H, SEARCH_H, OUTPUT_H, keyword.o): Use it.
+	(positions.o): New rule.
+
 	* src/options.h (POSITIONS): New enum value.
 	(Positions::Positions): New copy constructor.
 	(Positions::operator=, Positions::contains, Position::add,
