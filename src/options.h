@@ -50,57 +50,54 @@ enum Option_Type
   /* Randomly initialize the associated values table.  */
   RANDOM       = 1 << 4,
 
-  /* Make default char positions be 1,$ (end of keyword).  */
-  DEFAULTCHARS = 1 << 5,
-
   /* Generate switch output to save space.  */
-  SWITCH       = 1 << 6,
+  SWITCH       = 1 << 5,
 
   /* Don't include keyword length in hash computations.  */
-  NOLENGTH     = 1 << 7,
+  NOLENGTH     = 1 << 6,
 
   /* Generate a length table for string comparison.  */
-  LENTABLE     = 1 << 8,
+  LENTABLE     = 1 << 7,
 
   /* Handle duplicate hash values for keywords.  */
-  DUP          = 1 << 9,
+  DUP          = 1 << 8,
 
   /* Generate the hash function "fast".  */
-  FAST         = 1 << 10,
+  FAST         = 1 << 9,
 
   /* Don't include user-defined type definition in output -- it's already
      defined elsewhere.  */
-  NOTYPE       = 1 << 11,
+  NOTYPE       = 1 << 10,
 
   /* Generate strncmp rather than strcmp.  */
-  COMP         = 1 << 12,
+  COMP         = 1 << 11,
 
   /* Make the keyword table a global variable.  */
-  GLOBAL       = 1 << 13,
+  GLOBAL       = 1 << 12,
 
   /* Make the generated tables readonly (const).  */
-  CONST        = 1 << 14,
+  CONST        = 1 << 13,
 
   /* Generate K&R C code: no prototypes, no const.  */
-  KRC          = 1 << 15,
+  KRC          = 1 << 14,
 
   /* Generate C code: no prototypes, but const (user can #define it away).  */
-  C            = 1 << 16,
+  C            = 1 << 15,
 
   /* Generate ISO/ANSI C code: prototypes and const, but no class.  */
-  ANSIC        = 1 << 17,
+  ANSIC        = 1 << 16,
 
   /* Generate C++ code: prototypes, const, class, inline, enum.  */
-  CPLUSPLUS    = 1 << 18,
+  CPLUSPLUS    = 1 << 17,
 
   /* Use enum for constants.  */
-  ENUM         = 1 << 19,
+  ENUM         = 1 << 18,
 
   /* Generate #include statements.  */
-  INCLUDE      = 1 << 20,
+  INCLUDE      = 1 << 21,
 
   /* Assume 7-bit, not 8-bit, characters.  */
-  SEVENBIT     = 1 << 21
+  SEVENBIT     = 1 << 22
 };
 
 /* This class denotes a set of key positions.  */
@@ -112,8 +109,9 @@ public:
   /* Denotes the last char of a keyword, depending on the keyword's length.  */
   static const int      LASTCHAR = 0;
 
-  /* Maximum size of the set.  */
-  static const int      MAX_KEY_POS = 127;
+  /* Maximum key position specifiable by the user.
+     Note that this must fit into the element type of _positions[], below.  */
+  static const int      MAX_KEY_POS = 255;
 
   /* Constructors.  */
                         Positions ();
@@ -133,11 +131,13 @@ public:
   bool                  sort ();
 
 private:
-  /* Number of positions, excluding the terminating PositionIterator::EOS.  */
+  /* Number of positions.  */
   unsigned int          _size;
   /* Array of positions.  1 for the first char, 2 for the second char etc.,
-     LASTCHAR for the last char.  PositionIterator::EOS past the end.  */
-  unsigned char         _positions[MAX_KEY_POS];
+     LASTCHAR for the last char.
+     Note that since duplicates are eliminated, the maximum possible size
+     is MAX_KEY_POS + 1.  */
+  unsigned char         _positions[MAX_KEY_POS + 1];
 };
 
 /* This class denotes an iterator through a set of key positions.  */
@@ -149,14 +149,14 @@ public:
                         PositionIterator (Positions const& positions);
 
   /* End of iteration marker.  */
-  static const int      EOS = Positions::MAX_KEY_POS;
+  static const int      EOS = -1;
 
   /* Retrieves the next position, or EOS past the end.  */
   int                   next ();
 
 private:
   const Positions&      _set;
-  int                   _index;
+  unsigned int          _index;
 };
 
 /* Class manager for gperf program Options. */

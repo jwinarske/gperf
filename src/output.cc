@@ -471,7 +471,10 @@ Output::output_hash_function ()
           "    };\n");
 
   /* Optimize special case of ``-k 1,$'' */
-  if (option[DEFAULTCHARS])
+  if (!option[ALLCHARS]
+      && option.get_key_positions().get_size() == 2
+      && option.get_key_positions()[0] == 1
+      && option.get_key_positions()[1] == Positions::LASTCHAR)
     printf ("  return %sasso_values[%sstr[len - 1]] + asso_values[%sstr[0]];\n",
             option[NOLENGTH] ? "" : "len + ",
             char_to_index, char_to_index);

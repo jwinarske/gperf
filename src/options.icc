@@ -21,11 +21,14 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+/* ---------------------------- Class Positions ---------------------------- */
+
+/* Constructors.  */
+
 INLINE
 Positions::Positions ()
   : _size (0)
 {
-  _positions[0] = PositionIterator::EOS;
 }
 
 INLINE
@@ -33,7 +36,6 @@ Positions::Positions (int key1)
   : _size (1)
 {
   _positions[0] = key1;
-  _positions[1] = PositionIterator::EOS;
 }
 
 INLINE
@@ -42,8 +44,9 @@ Positions::Positions (int key1, int key2)
 {
   _positions[0] = key1;
   _positions[1] = key2;
-  _positions[2] = PositionIterator::EOS;
 }
+
+/* Accessors.  */
 
 INLINE int
 Positions::operator[] (unsigned int index) const
@@ -56,6 +59,8 @@ Positions::get_size () const
 {
   return _size;
 }
+
+/* Write access.  */
 
 INLINE unsigned char *
 Positions::pointer ()
@@ -94,6 +99,9 @@ Positions::sort ()
   return duplicate_free;
 }
 
+/* ------------------------- Class PositionIterator ------------------------ */
+
+/* Initializes an iterator through POSITIONS.  */
 INLINE
 PositionIterator::PositionIterator (Positions const& positions)
   : _set (positions),
@@ -101,11 +109,14 @@ PositionIterator::PositionIterator (Positions const& positions)
 {
 }
 
+/* Retrieves the next position, or EOS past the end.  */
 INLINE int
 PositionIterator::next ()
 {
-  return _set._positions[_index++];
+  return (_index < _set._size ? _set._positions[_index++] : EOS);
 }
+
+/* ----------------------------- Class Options ----------------------------- */
 
 /* Tests a given boolean option.  Returns true if set, false otherwise.  */
 INLINE bool

@@ -69,7 +69,7 @@ Details in the output code:
 Algorithm employed by gperf:
   -k, --key-positions=KEYS
                          Select the key positions used in the hash function.
-                         The allowable choices range between 1-126, inclusive.
+                         The allowable choices range between 1-255, inclusive.
                          The positions are separated by commas, ranges may be
                          used, and key positions may occur in any order.
                          Also, the meta-character '*' causes the generated

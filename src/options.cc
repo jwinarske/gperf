@@ -177,7 +177,7 @@ Options::long_usage (FILE * stream) const
            "                         hash function to consider ALL key positions, and $\n"
            "                         indicates the \"final character\" of a key, e.g.,\n"
            "                         $,1,2,4,6-10.\n",
-           Positions::MAX_KEY_POS - 1);
+           Positions::MAX_KEY_POS);
   fprintf (stream,
            "  -l, --compare-strlen   Compare key lengths before trying a string\n"
            "                         comparison. This helps cut down on the number of\n"
@@ -294,12 +294,18 @@ Options::print_options () const
   printf (" */");
 }
 
+/* ------------------------------------------------------------------------- */
+
 /* Parses a string denoting key positions.  */
 
 class PositionStringParser
 {
 public:
-                        PositionStringParser (const char *str, int low_bound, int high_bound, int end_word_marker, int error_value, int end_marker);
+  /* Initializes a key position string parser for string STR.  */
+                        PositionStringParser (const char *str,
+                                              int low_bound, int high_bound,
+                                              int end_word_marker, int error_value, int end_marker);
+  /* Returns the next key position from the given string.  */
   int                   nextPosition ();
 private:
   /* A pointer to the string provided by the user.  */
@@ -314,67 +320,96 @@ private:
   int const             _error_value;
   /* Value returned after last key is processed.  */
   int const             _end_marker;
-  int                   _size;
-  int                   _curr_value;
-  int                   _upper_bound;
+  /* Intermediate state for producing a range of positions.  */
+  bool                  _in_range;           /* True while producing a range of positions.  */
+  int                   _range_upper_bound;  /* Upper bound (inclusive) of the range.  */
+  int                   _range_curr_value;   /* Last value returned.  */
 };
 
-PositionStringParser::PositionStringParser (const char *str, int low_bound, int high_bound, int end_word_marker, int error_value, int end_marker)
+/* Initializes a key position strng parser for string STR.  */
+PositionStringParser::PositionStringParser (const char *str,
+                                            int low_bound, int high_bound,
+                                            int end_word_marker, int error_value, int end_marker)
   : _str (str),
     _low_bound (low_bound),
     _high_bound (high_bound),
     _end_word_marker (end_word_marker),
     _error_value (error_value),
     _end_marker (end_marker),
-    _size (0),
-    _curr_value (0),
-    _upper_bound (0)
+    _in_range (false)
 {
 }
 
-int PositionStringParser::nextPosition ()
+/* Returns the next key position from the given string.  */
+int
+PositionStringParser::nextPosition ()
 {
-  if (_size)
+  if (_in_range)
     {
-      if (++_curr_value >= _upper_bound)
-        _size = 0;
-      return _curr_value;
+      /* We are inside a range.  Return the next value from the range.  */
+      if (++_range_curr_value >= _range_upper_bound)
+        _in_range = false;
+      return _range_curr_value;
     }
   else
     {
+      /* Continue parsing the given string.  */
       while (*_str)
         switch (*_str)
           {
-          default: return _error_value;
-          case ',': _str++; break;
-          case '$': _str++; return _end_word_marker;
+          case ',':
+            /* Skip the comma.  */
+            _str++;
+            break;
+          case '$':
+            /* Valid key position.  */
+            _str++;
+            return _end_word_marker;
           case '0': case '1': case '2': case '3': case '4':
           case '5': case '6': case '7': case '8': case '9':
-            for (_curr_value = 0; isdigit (static_cast<unsigned char>(*_str)); _str++)
-              _curr_value = _curr_value * 10 + (*_str - '0');
+            /* Valid key position.  */
+            {
+              int curr_value;
+              for (curr_value = 0; isdigit (static_cast<unsigned char>(*_str)); _str++)
+                curr_value = curr_value * 10 + (*_str - '0');
 
-            if (*_str == '-')
-              {
+              if (*_str == '-')
+                {
+                  _str++;
+                  /* Starting a range of key positions.  */
+                  _in_range = true;
 
-                for (_size = 1, _upper_bound = 0;
-                     isdigit (static_cast<unsigned char>(*++_str));
-                     _upper_bound = _upper_bound * 10 + (*_str - '0'));
+                  for (_range_upper_bound = 0;
+                       isdigit (static_cast<unsigned char>(*_str));
+                       _str++)
+                    _range_upper_bound = _range_upper_bound * 10 + (*_str - '0');
 
-                if (_upper_bound <= _curr_value || _upper_bound > _high_bound)
-                  return _error_value;
-              }
-            return _curr_value >= _low_bound && _curr_value <= _high_bound
-              ? _curr_value : _error_value;
+                  /* Verify range's upper bound.  */
+                  if (!(_range_upper_bound > curr_value && _range_upper_bound <= _high_bound))
+                    return _error_value;
+                  _range_curr_value = curr_value;
+                }
+
+              /* Verify range's lower bound.  */
+              if (!(curr_value >= _low_bound && curr_value <= _high_bound))
+                return _error_value;
+              return curr_value;
+            }
+          default:
+            /* Invalid syntax.  */
+            return _error_value;
           }
 
       return _end_marker;
     }
 }
 
+/* ------------------------------------------------------------------------- */
+
 /* Sets the default Options. */
 
 Options::Options ()
-  : _option_word (DEFAULTCHARS | C),
+  : _option_word (C),
     _iterations (0),
     _jump (DEFAULT_JUMP_VALUE),
     _initial_asso_value (0),
@@ -402,7 +437,6 @@ Options::~Options ()
                "\nORDER is.......: %s"
                "\nTYPE is........: %s"
                "\nRANDOM is......: %s"
-               "\nDEFAULTCHARS is: %s"
                "\nSWITCH is......: %s"
                "\nNOLENGTH is....: %s"
                "\nLENTABLE is....: %s"
@@ -434,7 +468,6 @@ Options::~Options ()
                _option_word & ORDER ? "enabled" : "disabled",
                _option_word & TYPE ? "enabled" : "disabled",
                _option_word & RANDOM ? "enabled" : "disabled",
-               _option_word & DEFAULTCHARS ? "enabled" : "disabled",
                _option_word & SWITCH ? "enabled" : "disabled",
                _option_word & NOLENGTH ? "enabled" : "disabled",
                _option_word & LENTABLE ? "enabled" : "disabled",
@@ -479,43 +512,43 @@ Options::~Options ()
 
 static const struct option long_options[] =
 {
-  { "delimiters", required_argument, 0, 'e' },
-  { "struct-type", no_argument, 0, 't' },
-  { "language", required_argument, 0, 'L' },
-  { "slot-name", required_argument, 0, 'K' },
-  { "initializer-suffix", required_argument, 0, 'F' },
-  { "hash-fn-name", required_argument, 0, 'H' },
-  { "lookup-fn-name", required_argument, 0, 'N' },
-  { "class-name", required_argument, 0, 'Z' },
-  { "seven-bit", no_argument, 0, '7' },
-  { "compare-strncmp", no_argument, 0, 'c' },
-  { "readonly-tables", no_argument, 0, 'C' },
-  { "enum", no_argument, 0, 'E' },
-  { "includes", no_argument, 0, 'I' },
-  { "global", no_argument, 0, 'G' },
-  { "word-array-name", required_argument, 0, 'W' },
-  { "switch", required_argument, 0, 'S' },
-  { "omit-struct-type", no_argument, 0, 'T' },
-  { "key-positions", required_argument, 0, 'k' },
-  { "compare-strlen", no_argument, 0, 'l' },
-  { "duplicates", no_argument, 0, 'D' },
-  { "fast", required_argument, 0, 'f' },
-  { "initial-asso", required_argument, 0, 'i' },
-  { "jump", required_argument, 0, 'j' },
-  { "no-strlen", no_argument, 0, 'n' },
-  { "occurrence-sort", no_argument, 0, 'o' },
-  { "random", no_argument, 0, 'r' },
-  { "size-multiple", required_argument, 0, 's' },
-  { "help", no_argument, 0, 'h' },
-  { "version", no_argument, 0, 'v' },
-  { "debug", no_argument, 0, 'd' },
-  { 0, no_argument, 0, 0 }
+  { "delimiters", required_argument, NULL, 'e' },
+  { "struct-type", no_argument, NULL, 't' },
+  { "language", required_argument, NULL, 'L' },
+  { "slot-name", required_argument, NULL, 'K' },
+  { "initializer-suffix", required_argument, NULL, 'F' },
+  { "hash-fn-name", required_argument, NULL, 'H' },
+  { "lookup-fn-name", required_argument, NULL, 'N' },
+  { "class-name", required_argument, NULL, 'Z' },
+  { "seven-bit", no_argument, NULL, '7' },
+  { "compare-strncmp", no_argument, NULL, 'c' },
+  { "readonly-tables", no_argument, NULL, 'C' },
+  { "enum", no_argument, NULL, 'E' },
+  { "includes", no_argument, NULL, 'I' },
+  { "global", no_argument, NULL, 'G' },
+  { "word-array-name", required_argument, NULL, 'W' },
+  { "switch", required_argument, NULL, 'S' },
+  { "omit-struct-type", no_argument, NULL, 'T' },
+  { "key-positions", required_argument, NULL, 'k' },
+  { "compare-strlen", no_argument, NULL, 'l' },
+  { "duplicates", no_argument, NULL, 'D' },
+  { "fast", required_argument, NULL, 'f' },
+  { "initial-asso", required_argument, NULL, 'i' },
+  { "jump", required_argument, NULL, 'j' },
+  { "no-strlen", no_argument, NULL, 'n' },
+  { "occurrence-sort", no_argument, NULL, 'o' },
+  { "random", no_argument, NULL, 'r' },
+  { "size-multiple", required_argument, NULL, 's' },
+  { "help", no_argument, NULL, 'h' },
+  { "version", no_argument, NULL, 'v' },
+  { "debug", no_argument, NULL, 'd' },
+  { NULL, no_argument, NULL, 0 }
 };
 
 void
 Options::parse_options (int argc, char *argv[])
 {
-  int    option_char;
+  int option_char;
 
   program_name = argv[0];
   _argument_count  = argc;
@@ -553,7 +586,7 @@ Options::parse_options (int argc, char *argv[])
             _option_word |= DUP;
             break;
           }
-        case 'e': /* Allows user to provide keyword/attribute separator */
+        case 'e':               /* Specify keyword/attribute separator */
           {
             _delimiters = /*getopt*/optarg;
             break;
@@ -563,7 +596,7 @@ Options::parse_options (int argc, char *argv[])
             _option_word |= ENUM;
             break;
           }
-        case 'f':               /* Generate the hash table ``fast.'' */
+        case 'f':               /* Generate the hash table "fast". */
           {
             _option_word |= FAST;
             if ((_iterations = atoi (/*getopt*/optarg)) < 0)
@@ -578,7 +611,7 @@ Options::parse_options (int argc, char *argv[])
             _initializer_suffix = /*getopt*/optarg;
             break;
           }
-        case 'g':               /* Use the ``inline'' keyword for generated sub-routines, ifdef __GNUC__. */
+        case 'g':               /* Use the 'inline' keyword for generated sub-routines, ifdef __GNUC__. */
           break;                /* This is now the default. */
         case 'G':               /* Make the keyword table a global variable. */
           {
@@ -622,30 +655,39 @@ Options::parse_options (int argc, char *argv[])
           }
         case 'k':               /* Sets key positions used for hash function. */
           {
-            const int BAD_VALUE = -1;
+            const int BAD_VALUE = -2;
             const int EOS = PositionIterator::EOS;
             int       value;
-            PositionStringParser sparser (/*getopt*/optarg, 1, Positions::MAX_KEY_POS - 1, Positions::LASTCHAR, BAD_VALUE, EOS);
+            PositionStringParser sparser (/*getopt*/optarg, 1, Positions::MAX_KEY_POS, Positions::LASTCHAR, BAD_VALUE, EOS);
 
             if (/*getopt*/optarg [0] == '*') /* Use all the characters for hashing!!!! */
-              _option_word = (_option_word & ~DEFAULTCHARS) | ALLCHARS;
+              _option_word |= ALLCHARS;
             else
               {
                 unsigned char *key_positions = _key_positions.pointer();
                 unsigned char *key_pos;
 
                 for (key_pos = key_positions; (value = sparser.nextPosition()) != EOS; key_pos++)
-                  if (value == BAD_VALUE)
-                    {
-                      fprintf (stderr, "Illegal key value or range, use 1,2,3-%d,'$' or '*'.\n",
-                                       Positions::MAX_KEY_POS - 1);
-                      short_usage (stderr);
-                      exit (1);
-                    }
-                  else
+                  {
+                    if (value == BAD_VALUE)
+                      {
+                        fprintf (stderr, "Illegal key value or range, use 1,2,3-%d,'$' or '*'.\n",
+                                         Positions::MAX_KEY_POS);
+                        short_usage (stderr);
+                        exit (1);
+                      }
+                    if (key_pos - key_positions == Positions::MAX_KEY_POS + 1)
+                      {
+                        /* More than Positions::MAX_KEY_POS + 1 key positions.
+                           Since all key positions are in the range
+                           1..Positions::MAX_KEY_POS or == Positions::LASTCHAR,
+                           there must be duplicates.  */
+                        fprintf (stderr, "Duplicate keys selected\n");
+                        short_usage (stderr);
+                        exit (1);
+                      }
                     *key_pos = value;
-
-                *key_pos = EOS;
+                  }
 
                 unsigned int total_keysig_size = key_pos - key_positions;
                 if (total_keysig_size == 0)
@@ -665,11 +707,6 @@ Options::parse_options (int argc, char *argv[])
                     short_usage (stderr);
                     exit (1);
                   }
-
-                if (!(_key_positions.get_size() == 2
-                      && _key_positions[0] == 1
-                      && _key_positions[1] == Positions::LASTCHAR))
-                  _option_word &= ~DEFAULTCHARS;
               }
             break;
           }
@@ -777,16 +814,16 @@ Options::parse_options (int argc, char *argv[])
 
     }
 
-  if (argv[/*getopt*/optind] && ! freopen (argv[/*getopt*/optind], "r", stdin))
+  if (/*getopt*/optind + 1 < argc)
     {
-      fprintf (stderr, "Cannot open keyword file `%s'\n", argv[/*getopt*/optind]);
+      fprintf (stderr, "Extra trailing arguments to %s.\n", program_name);
       short_usage (stderr);
       exit (1);
     }
 
-  if (++/*getopt*/optind < argc)
+  if (argv[/*getopt*/optind] && ! freopen (argv[/*getopt*/optind], "r", stdin))
     {
-      fprintf (stderr, "Extra trailing arguments to %s.\n", program_name);
+      fprintf (stderr, "Cannot open keyword file `%s'\n", argv[/*getopt*/optind]);
       short_usage (stderr);
       exit (1);
     }

@@ -1,5 +1,30 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h (DEFAULTCHARS): Remove.
+	(Positions::MAX_KEY_POS): Set to 255.
+	(Positions::_positions): Increase array size.
+	(PositionIterator::EOS): Set to -1.
+	(PositionIterator::_index): Change type to 'unsigned int'.
+	* src/options.icc (Positions::Positions): Don't store
+	PositionIterator::EOS.
+	(PositionIterator::next): Produce PositionIterator::EOS here.
+	* src/options.cc (Options::long_usage): Use MAX_KEY_POS, not
+	MAX_KEY_POS-1.
+	(PositionStringParser): Rename field _size to _in_range. Rename
+	field _curr_value to _range_curr_value. Rename field _upper_bound
+	to _range_upper_bound.
+	(PositionStringParser::nextPosition): Comments.
+	(Options::Options): Update.
+	(Options::~Options): Update.
+	(long_options): Use NULL, not 0.
+	(Options::parse_options): Set BAD_VALUE to -2; -1 is now EOS. Bug fix:
+	Check against array overflow when more than MAX_KEY_POS positions are
+	given. Don't store PositionIterator::EOS.
+	Check against extra arguments before opening the input file.
+	* src/output.cc (Output::output_hash_function): Change test which
+	was for option[DEFAULTCHARS].
+	* tests/test-6.exp: Update.
+
 	* src/options.h (Options::get_delimiters): Renamed from
 	Options::get_delimiter.
 	* src/options.icc (Options::get_delimiters): Renamed from
