@@ -27,6 +27,8 @@
 #include "output.h"
 
 
+/* ------------------------------------------------------------------------- */
+
 /* This Keyword factory produces KeywordExt instances.  */
 
 class KeywordExt_Factory : public Keyword_Factory
@@ -41,6 +43,7 @@ KeywordExt_Factory::create_keyword (const char *allchars, int allchars_length, c
   return new KeywordExt (allchars, allchars_length, rest);
 }
 
+/* ------------------------------------------------------------------------- */
 
 int
 main (int argc, char *argv[])
@@ -48,12 +51,12 @@ main (int argc, char *argv[])
   /* Set the Options.  Open the input file and assign stdin to it.  */
   option.parse_options (argc, argv);
 
-  /* Initialize the key word list. */
+  /* Initialize the keyword list.  */
   KeywordExt_Factory factory;
   Input inputter (stdin, &factory);
   inputter.read_keys ();
   /* We can cast the keyword list to KeywordExt_List* because its list
-     elements were created by KeywordExt_Factory. */
+     elements were created by KeywordExt_Factory.  */
   KeywordExt_List* list = static_cast<KeywordExt_List*>(inputter._head);
 
   /* Search for a good hash function.  */
@@ -76,11 +79,11 @@ main (int argc, char *argv[])
                     searcher._asso_values);
   outputter.output ();
 
-  /* Check for write error on stdout. */
+  /* Check for write error on stdout.  */
   int status = 0;
   if (fflush (stdout) || ferror (stdout))
     status = 1;
 
-  /* Don't use exit() here, it skips the destructors. */
+  /* Don't use exit() here, it skips the destructors.  */
   return status;
 }
