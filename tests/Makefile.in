@@ -260,7 +260,7 @@ check-lang-syntax : force
 mostlyclean : clean
 
 clean : force
-	$(RM) *.o core *inset.c output.* *.out aout cout m3out pout preout tmp-* valitest*
+	$(RM) *.o core *inset.c output.* *.out aout cout lu2out lu8out m3out pout preout tmp-* valitest*
 
 distclean : clean
 	$(RM) config.status config.log config.cache Makefile
