@@ -20,6 +20,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 #include "vectors.h"
 
-int Vectors::ALPHA_SIZE = MAX_ALPHA_SIZE;
+int Vectors::ALPHA_SIZE;
 int Vectors::_occurrences[MAX_ALPHA_SIZE];
 int Vectors::_asso_values[MAX_ALPHA_SIZE];

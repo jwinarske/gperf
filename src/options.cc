@@ -24,7 +24,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <ctype.h>  /* declares isdigit() */
 #include "getopt.h"
 #include "options.h"
-#include "vectors.h"
 #include "version.h"
 
 /* Global option coordinator for the entire program.  */
@@ -765,7 +764,6 @@ Options::parse_options (int argc, char *argv[])
         case '7':               /* Assume 7-bit characters. */
           {
             _option_word |= SEVENBIT;
-            Vectors::ALPHA_SIZE = 128;
             break;
           }
         default:

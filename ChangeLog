@@ -1,5 +1,10 @@
 2002-10-14  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.cc: Don't include "vector.h".
+	(Options::parse_options): Don't initialize Vectors::ALPHA_SIZE here.
+	* src/vectors.cc (Vectors::ALPHA_SIZE): Don't initialize here.
+	* src/gen-perf.cc (Gen_Perf::Gen_Perf): Initialize Vectors::ALPHA_SIZE.
+
 	* src/options.h (Positions): New class.
 	(PositionIterator): New class.
 	(Options::parse_options): Renamed from Options::operator().
