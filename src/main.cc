@@ -82,6 +82,7 @@ main (int argc, char *argv[])
         /* Output the hash function code.  */
         Output outputter (searcher._head,
                           inputter._struct_decl,
+                          inputter._struct_decl_lineno,
                           inputter._return_type,
                           inputter._struct_tag,
                           inputter._verbatim_declarations,

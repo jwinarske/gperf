@@ -187,11 +187,14 @@ Input::read_input ()
   _verbatim_declarations_end = NULL;
   _verbatim_declarations_lineno = 0;
   _struct_decl = NULL;
+  _struct_decl_lineno = 0;
   _return_type = NULL;
   _struct_tag = NULL;
   {
     unsigned int lineno = 1;
     char *struct_decl = NULL;
+    unsigned int *struct_decl_linenos = NULL;
+    unsigned int struct_decl_linecount = 0;
     for (const char *p = declarations; p < declarations_end; )
       {
         const char *line_end;
@@ -282,6 +285,18 @@ Input::read_input ()
             if (struct_decl)
               delete[] struct_decl;
             struct_decl = new_struct_decl;
+            /* Append the lineno to struct_decl_linenos.  */
+            unsigned int *new_struct_decl_linenos =
+              new unsigned int[struct_decl_linecount + 1];
+            if (struct_decl_linecount > 0)
+              memcpy (new_struct_decl_linenos, struct_decl_linenos,
+                      struct_decl_linecount * sizeof (unsigned int));
+            new_struct_decl_linenos[struct_decl_linecount] = lineno;
+            if (struct_decl_linenos)
+              delete[] struct_decl_linenos;
+            struct_decl_linenos = new_struct_decl_linenos;
+            /* Increment struct_decl_linecount.  */
+            struct_decl_linecount++;
           }
         lineno++;
         p = line_end;
@@ -301,8 +316,13 @@ Input::read_input ()
             /* Drop leading whitespace.  */
             {
               char *p = struct_decl;
+              unsigned int *l = struct_decl_linenos;
               while (p[0] == '\n' || p[0] == ' ' || p[0] == '\t')
-                p++;
+                {
+                  if (p[0] == '\n')
+                    l++;
+                  p++;
+                }
               if (p != struct_decl)
                 {
                   size_t len = strlen (p);
@@ -311,6 +331,7 @@ Input::read_input ()
                   delete[] struct_decl;
                   struct_decl = new_struct_decl;
                 }
+              _struct_decl_lineno = *l;
             }
             /* Drop trailing whitespace.  */
             for (char *p = struct_decl + strlen (struct_decl); p > struct_decl;)
@@ -364,6 +385,9 @@ Input::read_input ()
         return_type[struct_tag_length + 2] = '\0';
         _return_type = return_type;
       }
+
+    if (struct_decl_linenos)
+      delete[] struct_decl_linenos;
   }
 
   /* Parse the keywords section.  */
@@ -579,6 +603,7 @@ Input::read_input ()
             /* Allocate Keyword and add it to the list.  */
             Keyword *new_kw = _factory->create_keyword (keyword, keyword_length,
                                                         rest);
+            new_kw->_lineno = lineno;
             *list_tail = new Keyword_List (new_kw);
             list_tail = &(*list_tail)->rest();
           }

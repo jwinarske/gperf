@@ -81,8 +81,8 @@ static const char *char_to_index;
      consecutive list elements.
  */
 Output::Output (KeywordExt_List *head, const char *struct_decl,
-                const char *return_type, const char *struct_tag,
-                const char *verbatim_declarations,
+                unsigned int struct_decl_lineno, const char *return_type,
+                const char *struct_tag, const char *verbatim_declarations,
                 const char *verbatim_declarations_end,
                 unsigned int verbatim_declarations_lineno,
                 const char *verbatim_code, const char *verbatim_code_end,
@@ -90,7 +90,8 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 int total_keys, int total_duplicates, int max_key_len,
                 int min_key_len, int alpha_size, const int *occurrences,
                 const int *asso_values)
-  : _head (head), _struct_decl (struct_decl), _return_type (return_type),
+  : _head (head), _struct_decl (struct_decl),
+    _struct_decl_lineno (struct_decl_lineno), _return_type (return_type),
     _struct_tag (struct_tag),
     _verbatim_declarations (verbatim_declarations),
     _verbatim_declarations_end (verbatim_declarations_end),
@@ -688,6 +689,9 @@ Output::output_keylength_table () const
 static void
 output_keyword_entry (KeywordExt *temp, const char *indent)
 {
+  if (option[TYPE] && option.get_input_file_name ())
+    printf ("#line %u \"%s\"\n",
+            temp->_lineno, option.get_input_file_name ());
   printf ("%s    ", indent);
   if (option[TYPE])
     printf ("{");
@@ -1499,7 +1503,12 @@ Output::output ()
     }
 
   if (option[TYPE] && !option[NOTYPE]) /* Output type declaration now, reference it later on.... */
-    printf ("%s\n", _struct_decl);
+    {
+      if (option.get_input_file_name ())
+        printf ("#line %u \"%s\"\n",
+                _struct_decl_lineno, option.get_input_file_name ());
+      printf ("%s\n", _struct_decl);
+    }
 
   if (option[INCLUDE])
     printf ("#include <string.h>\n"); /* Declare strlen(), strcmp(), strncmp(). */

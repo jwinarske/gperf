@@ -1,5 +1,16 @@
 2002-11-10  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword.h (Keyword::_lineno): New field.
+	* src/input.h (Input::_struct_decl_lineno): New field.
+	* src/input.cc (Input::read_input): Set _struct_decl_lineno. Fill
+	each keyword's _lineno field.
+	* src/main.cc (main): Pass _struct_decl_lineno from Input to Output.
+	* src/output.h (Output::Output) Add struct_decl_lineno argument.
+	(Output::_struct_decl_lineno): New field.
+	* src/output.cc (Output::Output) Add struct_decl_lineno argument.
+	(output_keyword_entry): Emit #line directive before table entry.
+	(Output::output): Emit #line directive before _struct_decl.
+
 	Fix memory leaks.
 	* src/keyword.h (empty_string): New declaration.
 	* src/keyword.cc (empty_string): New variable.

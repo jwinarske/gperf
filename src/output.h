@@ -38,6 +38,7 @@ public:
   /* Constructor.  */
                         Output (KeywordExt_List *head,
                                 const char *struct_decl,
+                                unsigned int struct_decl_lineno,
                                 const char *return_type,
                                 const char *struct_tag,
                                 const char *verbatim_declarations,
@@ -97,6 +98,7 @@ private:
 
   /* Declaration of struct type for a keyword and its attributes.  */
   const char * const    _struct_decl;
+  unsigned int const    _struct_decl_lineno;
   /* Pointer to return type for lookup function. */
   const char *          _return_type;
   /* Shorthand for user-defined struct tag type. */

@@ -54,6 +54,7 @@ public:
   unsigned int          _verbatim_code_lineno;
   /* Declaration of struct type for a keyword and its attributes.  */
   const char *          _struct_decl;
+  unsigned int          _struct_decl_lineno;
   /* Return type of the lookup function.  */
   const char *          _return_type;
   /* Shorthand for user-defined struct tag type.  */

@@ -40,6 +40,8 @@ struct Keyword
   int const             _allchars_length;
   /* Additional stuff seen on the same line of the input file.  */
   const char *const     _rest;
+  /* Line number of this keyword in the input file.  */
+  unsigned int          _lineno;
 };
 
 /* A keyword, in the context of a given keyposition list.  */
