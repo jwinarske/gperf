@@ -23,8 +23,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 /* Like the glibc functions get_line and get_delim, except that the result
    must be freed using delete[], not free().  */
 
+/* Reads up to (and including) a newline from STREAM into *LINEPTR
+   (and null-terminate it). *LINEPTR is a pointer returned from new [] (or
+   NULL), pointing to *N characters of space.  It is realloc'd as
+   necessary.  Returns the number of characters read (not including the
+   null terminator), or -1 on error or immediate EOF.  */
 extern int get_line (char **lineptr, size_t *n, FILE *stream);
 
+/* Reads up to (and including) a DELIMITER from STREAM into *LINEPTR
+   (and null-terminate it). *LINEPTR is a pointer returned from new [] (or
+   NULL), pointing to *N characters of space.  It is realloc'd as
+   necessary.  Returns the number of characters read (not including the
+   null terminator), or -1 on error or immediate EOF.  */
 extern int get_delim (char **lineptr, size_t *n, int delimiter, FILE *stream);
 
 #endif /* not GETLINE_H_ */

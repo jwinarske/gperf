@@ -29,11 +29,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 /* Always add at least this many bytes when extending the buffer.  */
 #define MIN_CHUNK 64
 
-/* Read up to (and including) a TERMINATOR from STREAM into *LINEPTR
-   + OFFSET (and null-terminate it). *LINEPTR is a pointer returned from
-   malloc (or NULL), pointing to *N characters of space.  It is realloc'd
-   as necessary.  Return the number of characters read (not including the
-   null terminator), or -1 on error or EOF.
+/* Reads up to (and including) a TERMINATOR from STREAM into *LINEPTR + OFFSET
+   (and null-terminate it). *LINEPTR is a pointer returned from new [] (or
+   NULL), pointing to *N characters of space.  It is realloc'd as
+   necessary.  Returns the number of characters read (not including the
+   null terminator), or -1 on error or immediate EOF.
    NOTE: There is another getstr() function declared in <curses.h>.  */
 
 static int
