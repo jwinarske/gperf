@@ -1,5 +1,8 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/key-list.cc (Key_List::output_hash_function): When outputting
+          __inline, take advantage of C++ compilers which have inline.
+
         * src/key-list.cc (Output_Compare_Strncmp::output_comparison):
           After the call to strncmp, verify that expr2 is not longer than
           `len'.

@@ -833,6 +833,10 @@ Key_List::output_hash_function (void)
   else if (option[KRC] | option[C] | option[ANSIC])
     printf ("#ifdef __GNUC__\n"
             "__inline\n"
+            "#else\n"
+            "#ifdef __cplusplus\n"
+            "inline\n"
+            "#endif\n"
             "#endif\n");
 
   if (option[KRC] | option[C] | option[ANSIC])
