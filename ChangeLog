@@ -1,5 +1,16 @@
 2003-04-12  Bruno Haible  <bruno@clisp.org>
 
+	* doc/configure.in (mandir): Change default value.
+	* doc/Makefile.in (docdir): Use datadir instead of prefix.
+	* Makefile.msvc (datadir): New variable.
+	(mandir, docdir): Use it instead of prefix.
+	(install, installdirs): Update.
+	* Makefile.vms (datadir): New variable.
+	(mandir, docdir): Use it instead of prefix.
+	(install, installdirs): Update.
+
+2003-04-12  Bruno Haible  <bruno@clisp.org>
+
 	* README.vms: New file.
 	* Makefile.vms: New file.
 	* Makefile.devel (src/config.h_vms): New rule.

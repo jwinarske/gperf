@@ -25,10 +25,11 @@
 # Directories used by "make install":
 prefix = SYS$DATA:[
 exec_prefix = $(prefix)
+datadir = $(prefix).share
 bindir = $(exec_prefix).bin
-mandir = $(prefix).man
+mandir = $(datadir).man
 man1dir = $(mandir).man1
-docdir = $(prefix).doc.gperf
+docdir = $(datadir).doc.gperf
 
 # Programs used by "make":
 
@@ -135,10 +136,11 @@ install : all force
 	create /directory $(exec_prefix)]
 	create /directory $(bindir)]
 	$(INSTALL_PROGRAM) gperf.exe $(bindir)]gperf.exe
+	create /directory $(datadir)]
 	create /directory $(mandir)]
 	create /directory $(man1dir)]
 	$(INSTALL_DATA) [.doc]gperf.1 $(man1dir)]gperf.1
-	create /directory $(prefix).doc]
+	create /directory $(datadir).doc]
 	create /directory $(docdir)]
 	$(INSTALL_DATA) [.doc]gperf.html $(docdir)]gperf.html
 
@@ -146,9 +148,10 @@ installdirs : force
 	create /directory $(prefix)]
 	create /directory $(exec_prefix)]
 	create /directory $(bindir)]
+	create /directory $(datadir)]
 	create /directory $(mandir)]
 	create /directory $(man1dir)]
-	create /directory $(prefix).doc]
+	create /directory $(datadir).doc]
 	create /directory $(docdir)]
 
 uninstall : force
