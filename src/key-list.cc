@@ -1523,8 +1523,14 @@ Key_List::output_lookup_function_body (const Output_Compare& comparison)
 {
   T (Trace t ("Key_List::output_lookup_function_body");)
 
-  printf ("  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)\n"
-          "    {\n"
+  /* Since `len' is of type `unsigned int', we can avoid comparing it
+     against zero. */
+  if (min_key_len == 0)
+    printf ("  if (len <= MAX_WORD_LENGTH)\n");
+  else
+    printf ("  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)\n");
+
+  printf ("    {\n"
           "      register int key = %s (str, len);\n\n",
           option.get_hash_name ());
 
