@@ -7,7 +7,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 1 January 2003
+@set UPDATED 1 March 2003
 @set EDITION 2.7.2
 @set VERSION 2.7.2
 @c ---------------------
@@ -472,12 +472,21 @@ The default is C.
 
 @item %define slot-name @var{name}
 @cindex @samp{%define slot-name}
-This option is only useful when option @samp{-t} (or, equivalently, the
+This declaration is only useful when option @samp{-t} (or, equivalently, the
 @samp{%struct-type} declaration) has been given.
 By default, the program assumes the structure component identifier for
 the keyword is @samp{name}.  This option allows an arbitrary choice of
 identifier for this component, although it still must occur as the first
 field in your supplied @code{struct}.
+
+@item %define initializer-suffix @var{initializers}
+@cindex @samp{%define initializer-suffix}
+This declaration is only useful when option @samp{-t} (or, equivalently, the
+@samp{%struct-type} declaration) has been given.
+It permits to specify initializers for the structure members following
+@var{slot-name} in empty hash table entries.  The list of initializers
+should start with a comma.  By default, the emitted code will
+zero-initialize structure members following @var{slot-name}.
 
 @item %define hash-function-name @var{name}
 @cindex @samp{%define hash-function-name}

@@ -171,11 +171,13 @@ public:
 
   /* Returns the keyword key name.  */
   const char *          get_slot_name () const;
-  /* Set the keyword key name, if not already set.  */
+  /* Sets the keyword key name, if not already set.  */
   void                  set_slot_name (const char *name);
 
   /* Returns the struct initializer suffix.  */
   const char *          get_initializer_suffix () const;
+  /* Sets the struct initializer suffix, if not already set.  */
+  void                  set_initializer_suffix (const char *initializers);
 
   /* Returns the generated class name.  */
   const char *          get_class_name () const;

@@ -487,6 +487,11 @@ Input::read_input ()
                 else
 
                 if (is_define_declaration (line, line_end, lineno,
+                                           "initializer-suffix", &arg))
+                  option.set_initializer_suffix (arg);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
                                            "hash-function-name", &arg))
                   option.set_hash_name (arg);
                 else

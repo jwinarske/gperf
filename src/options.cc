@@ -593,12 +593,20 @@ Options::set_function_name (const char *name)
     _function_name = name;
 }
 
-/* Set the keyword key name, if not already set.  */
+/* Sets the keyword key name, if not already set.  */
 void
 Options::set_slot_name (const char *name)
 {
   if (_slot_name == DEFAULT_SLOT_NAME)
     _slot_name = name;
+}
+
+/* Sets the struct initializer suffix, if not already set.  */
+void
+Options::set_initializer_suffix (const char *initializers)
+{
+  if (_initializer_suffix == DEFAULT_INITIALIZER_SUFFIX)
+    _initializer_suffix = initializers;
 }
 
 /* Sets the generated class name, if not already set.  */

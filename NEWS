@@ -13,6 +13,7 @@ New in 2.97:
     %ignore-case
     %language=LANGUAGE-NAME
     %define slot-name NAME
+    %define initializer-suffix INITIALIZERS
     %define hash-function-name NAME
     %define lookup-function-name NAME
     %define class-name NAME

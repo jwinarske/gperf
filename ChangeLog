@@ -1,3 +1,13 @@
+2003-03-01  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.h (Options::set_initializer_suffix): New declaration.
+	* src/options.cc (Options::set_initializer_suffix): New method.
+	* src/input.cc (Input::read_input): Recognize %define
+	initializer-suffix.
+	* doc/gperf.texi (Gperf Declarations): Document %define
+	initializer-suffix.
+	* NEWS: Update.
+
 2003-02-26  Bruno Haible  <bruno@clisp.org>
 
 	* Makefile.msvc: New file.
