@@ -1,5 +1,7 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * tests/validate: Don't run -traditional tests by default.
+
         * src/main.cc (main): Check for write error on stdout before returning.
 
         * src/Makefile.in (LDFLAGS): New definition, to catch the value given at
