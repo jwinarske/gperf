@@ -97,8 +97,8 @@ void KeywordExt::init_selchars (int *occurrences)
         }
 
       /* Didn't get any hits and user doesn't want to consider the
-        keylength, so there are essentially no usable hash positions! */
-      if (ptr == _selchars && option[NOLENGTH])
+         keylength, so there are essentially no usable hash positions! */
+      if (ptr == key_set && option[NOLENGTH])
         {
           fprintf (stderr, "Can't hash keyword %.*s with chosen key positions.\n",
                    _allchars_length, _allchars);

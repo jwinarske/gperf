@@ -1,5 +1,9 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	Bug fix.
+	* src/keyword.cc (KeywordExt::init_selchars): Avoid comparison with
+	uninitialized member variable. Found with 'valgrind'.
+
 	* src/version.cc: Include version.h.
 	* src/Makefile.in (OBJECTS): Reorder.
 	(KEYWORD_H, KEYWORD_LIST_H, INPUT_H, SEARCH_H, OUTPUT_H): New
