@@ -1,3 +1,17 @@
+2003-01-01  Bruno Haible  <bruno@clisp.org>
+
+	* src/output.c (Output_Compare::output_firstchar_comparison): New
+	method.
+	(Output_Compare_Strcmp::output_comparison,
+	Output_Compare_Strncmp::output_comparison,
+	Output_Compare_Memcmp::output_comparison): Use it.
+	* tests/permutc2.exp: Update.
+
+	* tests/smtp.gperf: New file, based on a contribution by Bruce Lilly.
+	* tests/Makefile.in (check-smtp): New rule.
+	(check): Depend on it.
+	(clean): Update.
+
 2002-12-12  Bruno Haible  <bruno@clisp.org>
 
 	* src/search.h (Search::init_selchars_tuple,

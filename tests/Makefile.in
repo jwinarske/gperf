@@ -1,6 +1,6 @@
 # Makefile for gperf/tests
 
-# Copyright (C) 1989, 1992, 1993, 1995, 1998, 2000, 2002 Free Software Foundation, Inc.
+# Copyright (C) 1989, 1992, 1993, 1995, 1998, 2000, 2002, 2003 Free Software Foundation, Inc.
 # Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 # and Bruno Haible <bruno@clisp.org>.
 #
@@ -58,7 +58,7 @@ installdirs :
 
 uninstall :
 
-check : check-link-c check-link-c++ check-c check-ada check-modula3 check-pascal check-lang-utf8 check-lang-ucs2 check-test
+check : check-link-c check-link-c++ check-c check-ada check-modula3 check-pascal check-lang-utf8 check-lang-ucs2 check-smtp check-test
 	@true
 
 extracheck : @CHECK_LANG_SYNTAX@
@@ -120,6 +120,19 @@ check-lang-ucs2:
 	@echo "testing UCS-2 encoded languages, all items should be found in the set"
 	./lu2out -v < $(srcdir)/lang-ucs2.in > lang-ucs2.out
 	diff $(srcdir)/lang-ucs2.exp lang-ucs2.out
+
+# check case-insensitive lookup
+check-smtp:
+	@echo "testing SMTP keywords, case-insensitive"
+	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case $(srcdir)/smtp.gperf > smtp.c
+	$(CC) $(CFLAGS) -o smtp smtp.c
+	./smtp
+	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case --compare-strncmp $(srcdir)/smtp.gperf > smtp.c
+	$(CC) $(CFLAGS) -o smtp smtp.c
+	./smtp
+	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case --compare-lengths $(srcdir)/smtp.gperf > smtp.c
+	$(CC) $(CFLAGS) -o smtp smtp.c
+	./smtp
 
 # these next 5 are demos that show off the generated code
 check-test:
@@ -273,7 +286,7 @@ check-lang-syntax : force
 mostlyclean : clean
 
 clean : force
-	$(RM) *.o core *inset.c output.* *.out aout cout lu2out lu8out m3out pout preout tmp-* valitest*
+	$(RM) *.o core *inset.c output.* *.out aout cout lu2out lu8out m3out pout preout smtp.c smtp tmp-* valitest*
 
 distclean : clean
 	$(RM) config.status config.log config.cache Makefile

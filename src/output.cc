@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -144,22 +144,22 @@ Output::num_hash_values () const
 
 struct Output_Constants
 {
-  virtual void output_start () = 0;
-  virtual void output_item (const char *name, int value) = 0;
-  virtual void output_end () = 0;
-  Output_Constants () {}
-  virtual ~Output_Constants () {}
+  virtual void          output_start () = 0;
+  virtual void          output_item (const char *name, int value) = 0;
+  virtual void          output_end () = 0;
+                        Output_Constants () {}
+  virtual               ~Output_Constants () {}
 };
 
 /* This class outputs an enumeration in #define syntax.  */
 
 struct Output_Defines : public Output_Constants
 {
-  virtual void output_start ();
-  virtual void output_item (const char *name, int value);
-  virtual void output_end ();
-  Output_Defines () {}
-  virtual ~Output_Defines () {}
+  virtual void          output_start ();
+  virtual void          output_item (const char *name, int value);
+  virtual void          output_end ();
+                        Output_Defines () {}
+  virtual               ~Output_Defines () {}
 };
 
 void Output_Defines::output_start ()
@@ -180,11 +180,12 @@ void Output_Defines::output_end ()
 
 struct Output_Enum : public Output_Constants
 {
-  virtual void output_start ();
-  virtual void output_item (const char *name, int value);
-  virtual void output_end ();
-  Output_Enum (const char *indent) : _indentation (indent) {}
-  virtual ~Output_Enum () {}
+  virtual void          output_start ();
+  virtual void          output_item (const char *name, int value);
+  virtual void          output_end ();
+                        Output_Enum (const char *indent)
+                          : _indentation (indent) {}
+  virtual               ~Output_Enum () {}
 private:
   const char *_indentation;
   bool _pending_comma;
@@ -407,18 +408,18 @@ output_const_type (const char *const_string, const char *type_string)
 
 struct Output_Expr
 {
-  virtual void output_expr () const = 0;
-  Output_Expr () {}
-  virtual ~Output_Expr () {}
+  virtual void          output_expr () const = 0;
+                        Output_Expr () {}
+  virtual               ~Output_Expr () {}
 };
 
 /* This class outputs an expression formed by a single string.  */
 
 struct Output_Expr1 : public Output_Expr
 {
-  virtual void output_expr () const;
-  Output_Expr1 (const char *piece1) : _p1 (piece1) {}
-  virtual ~Output_Expr1 () {}
+  virtual void          output_expr () const;
+                        Output_Expr1 (const char *piece1) : _p1 (piece1) {}
+  virtual               ~Output_Expr1 () {}
 private:
   const char *_p1;
 };
@@ -435,10 +436,10 @@ void Output_Expr1::output_expr () const
 
 struct Output_Expr2 : public Output_Expr
 {
-  virtual void output_expr () const;
-  Output_Expr2 (const char *piece1, const char *piece2)
-    : _p1 (piece1), _p2 (piece2) {}
-  virtual ~Output_Expr2 () {}
+  virtual void          output_expr () const;
+                        Output_Expr2 (const char *piece1, const char *piece2)
+                          : _p1 (piece1), _p2 (piece2) {}
+  virtual               ~Output_Expr2 () {}
 private:
   const char *_p1;
   const char *_p2;
@@ -462,37 +463,76 @@ struct Output_Compare
      the string being looked up.  expr2 outputs a simple expression of type
      'const char *' referring to the constant string stored in the gperf
      generated hash table.  */
-  virtual void output_comparison (const Output_Expr& expr1,
-                                  const Output_Expr& expr2) const = 0;
-  Output_Compare () {}
-  virtual ~Output_Compare () {}
+  virtual void          output_comparison (const Output_Expr& expr1,
+                                           const Output_Expr& expr2) const = 0;
+  /* Outputs the comparison expression for the first byte.
+     Returns true if the this comparison is complete.  */
+  bool                  output_firstchar_comparison (const Output_Expr& expr1,
+                                                     const Output_Expr& expr2) const;
+                        Output_Compare () {}
+  virtual               ~Output_Compare () {}
 };
+
+bool Output_Compare::output_firstchar_comparison (const Output_Expr& expr1,
+                                                  const Output_Expr& expr2) const
+{
+  /* First, we emit a comparison of the first byte of the two strings.
+     This catches most cases where the string being looked up is not in the
+     hash table but happens to have the same hash code as an element of the
+     hash table.  */
+  if (option[UPPERLOWER])
+    {
+      /* Incomplete comparison, just for speedup.  */
+      printf ("(((unsigned char)*");
+      expr1.output_expr ();
+      printf (" ^ (unsigned char)*");
+      expr2.output_expr ();
+      printf (") & ~32) == 0");
+      return false;
+    }
+  else
+    {
+      /* Complete comparison.  */
+      printf ("*");
+      expr1.output_expr ();
+      printf (" == *");
+      expr2.output_expr ();
+      return true;
+    }
+}
 
 /* This class outputs a comparison using strcmp.  */
 
 struct Output_Compare_Strcmp : public Output_Compare
 {
-  virtual void output_comparison (const Output_Expr& expr1,
-                                  const Output_Expr& expr2) const;
-  Output_Compare_Strcmp () {}
-  virtual ~Output_Compare_Strcmp () {}
+  virtual void          output_comparison (const Output_Expr& expr1,
+                                           const Output_Expr& expr2) const;
+                        Output_Compare_Strcmp () {}
+  virtual               ~Output_Compare_Strcmp () {}
 };
 
 void Output_Compare_Strcmp::output_comparison (const Output_Expr& expr1,
                                                const Output_Expr& expr2) const
 {
-  printf ("*");
-  expr1.output_expr ();
-  printf (" == *");
-  expr2.output_expr ();
+  bool firstchar_done = output_firstchar_comparison (expr1, expr2);
   printf (" && !");
   if (option[UPPERLOWER])
     printf ("gperf_case_");
   printf ("strcmp (");
-  expr1.output_expr ();
-  printf (" + 1, ");
-  expr2.output_expr ();
-  printf (" + 1)");
+  if (firstchar_done)
+    {
+      expr1.output_expr ();
+      printf (" + 1, ");
+      expr2.output_expr ();
+      printf (" + 1");
+    }
+  else
+    {
+      expr1.output_expr ();
+      printf (", ");
+      expr2.output_expr ();
+    }
+  printf (")");
 }
 
 /* This class outputs a comparison using strncmp.
@@ -501,27 +541,35 @@ void Output_Compare_Strcmp::output_comparison (const Output_Expr& expr1,
 
 struct Output_Compare_Strncmp : public Output_Compare
 {
-  virtual void output_comparison (const Output_Expr& expr1,
-                                  const Output_Expr& expr2) const;
-  Output_Compare_Strncmp () {}
-  virtual ~Output_Compare_Strncmp () {}
+  virtual void          output_comparison (const Output_Expr& expr1,
+                                           const Output_Expr& expr2) const;
+                        Output_Compare_Strncmp () {}
+  virtual               ~Output_Compare_Strncmp () {}
 };
 
 void Output_Compare_Strncmp::output_comparison (const Output_Expr& expr1,
                                                 const Output_Expr& expr2) const
 {
-  printf ("*");
-  expr1.output_expr ();
-  printf (" == *");
-  expr2.output_expr ();
+  bool firstchar_done = output_firstchar_comparison (expr1, expr2);
   printf (" && !");
   if (option[UPPERLOWER])
     printf ("gperf_case_");
   printf ("strncmp (");
-  expr1.output_expr ();
-  printf (" + 1, ");
-  expr2.output_expr ();
-  printf (" + 1, len - 1) && ");
+  if (firstchar_done)
+    {
+      expr1.output_expr ();
+      printf (" + 1, ");
+      expr2.output_expr ();
+      printf (" + 1, len - 1");
+    }
+  else
+    {
+      expr1.output_expr ();
+      printf (", ");
+      expr2.output_expr ();
+      printf (", len");
+    }
+  printf (") && ");
   expr2.output_expr ();
   printf ("[len] == '\\0'");
 }
@@ -533,27 +581,35 @@ void Output_Compare_Strncmp::output_comparison (const Output_Expr& expr1,
 
 struct Output_Compare_Memcmp : public Output_Compare
 {
-  virtual void output_comparison (const Output_Expr& expr1,
-                                  const Output_Expr& expr2) const;
-  Output_Compare_Memcmp () {}
-  virtual ~Output_Compare_Memcmp () {}
+  virtual void          output_comparison (const Output_Expr& expr1,
+                                           const Output_Expr& expr2) const;
+                        Output_Compare_Memcmp () {}
+  virtual               ~Output_Compare_Memcmp () {}
 };
 
 void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
                                                const Output_Expr& expr2) const
 {
-  printf ("*");
-  expr1.output_expr ();
-  printf (" == *");
-  expr2.output_expr ();
+  bool firstchar_done = output_firstchar_comparison (expr1, expr2);
   printf (" && !");
   if (option[UPPERLOWER])
     printf ("gperf_case_");
   printf ("memcmp (");
-  expr1.output_expr ();
-  printf (" + 1, ");
-  expr2.output_expr ();
-  printf (" + 1, len - 1)");
+  if (firstchar_done)
+    {
+      expr1.output_expr ();
+      printf (" + 1, ");
+      expr2.output_expr ();
+      printf (" + 1, len - 1");
+    }
+  else
+    {
+      expr1.output_expr ();
+      printf (", ");
+      expr2.output_expr ();
+      printf (", len");
+    }
+  printf (")");
 }
 
 /* ------------------------------------------------------------------------- */

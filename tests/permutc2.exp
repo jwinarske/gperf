@@ -108,7 +108,7 @@ in_word_set (str, len)
         {
           register const char *s = wordlist[key];
 
-          if (*str == *s && !gperf_case_strcmp (str + 1, s + 1))
+          if ((((unsigned char)*str ^ (unsigned char)*s) & ~32) == 0 && !gperf_case_strcmp (str, s))
             return s;
         }
     }
