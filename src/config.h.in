@@ -1,23 +1,20 @@
-/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.in by autoheader.  */
 
 /* Define if the C++ compiler supports stack-allocated variable-size arrays.
    */
 #undef HAVE_DYNAMIC_ARRAY
 
-/* Define if the C++ compiler supports "throw ()" declarations.  */
-#undef HAVE_THROW_DECL
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
 
-/* Define if you have the getrlimit function.  */
-#undef HAVE_GETRLIMIT
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
 
-/* Define if you have the setrlimit function.  */
-#undef HAVE_SETRLIMIT
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
 
-/* Define if you have the <sys/resource.h> header file.  */
-#undef HAVE_SYS_RESOURCE_H
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
 
-/* Define if you have the <sys/time.h> header file.  */
-#undef HAVE_SYS_TIME_H
-
-/* Define if you have the <unistd.h> header file.  */
-#undef HAVE_UNISTD_H
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
