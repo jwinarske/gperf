@@ -142,11 +142,6 @@ extern Options option;
 #endif
 #endif
 
-/* Set to 1 if the stack is large enough for holding a text line. */
-#ifndef LARGE_STACK
-#define LARGE_STACK 1
-#endif
-
 #ifdef __OPTIMIZE__
 
 #define INLINE inline

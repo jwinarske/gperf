@@ -1,5 +1,14 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* lib/getline.h: New file.
+	* lib/getline.cc: New file.
+	* lib/Makefile.in (OBJECTS): Add getline.o.
+	(getline.o): New rule.
+	* src/read-line.h (Read_Line::readln_aux): Remove declaration.
+	* src/read-line.cc (Read_Line::readln_aux): Remove function.
+	* src/read-line.icc (Read_Line::get_line): Use ::get_line.
+	* src/options.h (LARGE_STACK): Remove macro.
+
 	* src/bool-array.h (STORAGE_TYPE): Remove type.
 	Use 'unsigned int' instead of STORAGE_TYPE.
 	* src/bool-array.cc: Likewise.

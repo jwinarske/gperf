@@ -21,8 +21,9 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 // This needs:
 //#include <stdio.h>
+//#include "getline.h"
 
-/* Returns the ``next'' line, ignoring comments beginning with '#'. */
+/* Returns the "next" line, ignoring comments beginning with '#'.  */
 INLINE char *
 Read_Line::get_line (void)
 {
@@ -41,5 +42,16 @@ Read_Line::get_line (void)
     return (char *)0;
 
   ungetc (c, stdin);
-  return readln_aux (0);
+
+  char *line = (char *)0;
+  size_t linesize = 0;
+  int length = ::get_line (&line, &linesize, fp);
+  if (length < 0)
+    {
+      delete[] line;
+      return (char *)0;
+    }
+  if (length > 0 && line[length - 1] == '\n')
+    line[length - 1] = '\0';
+  return line;
 }

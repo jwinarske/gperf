@@ -29,11 +29,11 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #define read_line_h 1
 
 #include <stdio.h>
+#include "getline.h"
 
 class Read_Line
 {
 private:
-  char *readln_aux (int chunks);
   FILE *fp;                       /* FILE pointer to the input stream. */
 
 public:
