@@ -24,4 +24,5 @@
 /* Specification. */
 #include "version.h"
 
+/* Current release version. */
 const char *version_string = "2.7.2";
