@@ -1,5 +1,9 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 
+/* Define if the C++ compiler supports stack-allocated variable-size arrays.
+   */
+#undef HAVE_DYNAMIC_ARRAY
+
 /* Define if the C++ compiler supports "throw ()" declarations.  */
 #undef HAVE_THROW_DECL
 

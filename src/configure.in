@@ -40,6 +40,19 @@ CL_PROG_INSTALL
 dnl
 dnl           checks for compiler characteristics
 dnl
+AC_MSG_CHECKING([for stack-allocated variable-size arrays])
+AC_CACHE_VAL(gp_cv_cxx_dynamic_array, [
+AC_LANG_SAVE()
+AC_LANG_CPLUSPLUS()
+AC_TRY_COMPILE([int func (int n) { int dynamic_array[n]; }], [],
+gp_cv_cxx_dynamic_array=yes, gp_cv_cxx_dynamic_array=no)
+AC_LANG_RESTORE()
+])
+AC_MSG_RESULT($gp_cv_cxx_dynamic_array)
+if test $gp_cv_cxx_dynamic_array = yes; then
+  AC_DEFINE(HAVE_DYNAMIC_ARRAY, 1,
+    [Define if the C++ compiler supports stack-allocated variable-size arrays.])
+fi
 dnl
 dnl           checks for functions and declarations
 dnl

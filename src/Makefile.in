@@ -111,7 +111,7 @@ bool-array.o : bool-array.cc $(BOOL_ARRAY_H) $(OPTIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/bool-array.cc
 hash-table.o : hash-table.cc $(HASH_TABLE_H) $(OPTIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/hash-table.cc
-search.o : search.cc $(SEARCH_H) $(OPTIONS_H) $(HASH_TABLE_H)
+search.o : search.cc $(SEARCH_H) $(OPTIONS_H) $(HASH_TABLE_H) $(CONFIG_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/search.cc
 output.o : output.cc $(OUTPUT_H) $(OPTIONS_H) $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/output.cc

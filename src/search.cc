@@ -31,8 +31,32 @@
 #include <limits.h> /* defines INT_MIN, INT_MAX, UINT_MAX */
 #include "options.h"
 #include "hash-table.h"
+#include "config.h"
+
+/* ============================== Portability ============================== */
+
 /* Assume ISO C++ 'for' scoping rule.  */
 #define for if (0) ; else for
+
+/* Dynamically allocated array with dynamic extent:
+
+   Example:
+       DYNAMIC_ARRAY (my_array, int, n);
+       ...
+       FREE_DYNAMIC_ARRAY (my_array);
+
+   Attention: depending on your implementation my_array is either the array
+   itself or a pointer to the array! Always use my_array only as expression!
+ */
+#if HAVE_DYNAMIC_ARRAY
+  #define DYNAMIC_ARRAY(var,eltype,size) eltype var[size]
+  #define FREE_DYNAMIC_ARRAY(var)
+#else
+  #define DYNAMIC_ARRAY(var,eltype,size) eltype *var = new eltype[size]
+  #define FREE_DYNAMIC_ARRAY(var) delete[] var
+#endif
+
+/* ================================ Theory ================================= */
 
 /* The most general form of the hash function is
 
@@ -589,7 +613,7 @@ Search::find_alpha_inc ()
           }
       }
 
-      unsigned int indices[nindices];
+      DYNAMIC_ARRAY (indices, unsigned int, nindices);
       {
         unsigned int j = 0;
         PositionIterator iter = _key_positions.iterator(_max_key_len);
@@ -608,8 +632,8 @@ Search::find_alpha_inc ()
       /* Perform several rounds of searching for a good alpha increment.
          Each round reduces the number of artificial collisions by adding
          an increment in a single key position.  */
-      unsigned int best[_max_key_len];
-      unsigned int tryal[_max_key_len];
+      DYNAMIC_ARRAY (best, unsigned int, _max_key_len);
+      DYNAMIC_ARRAY (tryal, unsigned int, _max_key_len);
       do
         {
           /* An increment of 1 is not always enough.  Try higher increments
@@ -644,6 +668,8 @@ Search::find_alpha_inc ()
             }
         }
       while (current_duplicates_count > duplicates_goal);
+      FREE_DYNAMIC_ARRAY (tryal);
+      FREE_DYNAMIC_ARRAY (best);
 
       if (option[DEBUG])
         {
@@ -661,6 +687,7 @@ Search::find_alpha_inc ()
               }
           fprintf (stderr, "\n");
         }
+      FREE_DYNAMIC_ARRAY (indices);
     }
 
   _alpha_inc = current;
@@ -1003,7 +1030,7 @@ Search::count_possible_collisions (EquivalenceClass *partition, unsigned int c) 
      Return the sum of this expression over all equivalence classes.  */
   unsigned int sum = 0;
   unsigned int m = _max_selchars_length;
-  unsigned int split_cardinalities[m+1];
+  DYNAMIC_ARRAY (split_cardinalities, unsigned int, m + 1);
   for (EquivalenceClass *cls = partition; cls; cls = cls->_next)
     {
       for (unsigned int i = 0; i <= m; i++)
@@ -1025,6 +1052,7 @@ Search::count_possible_collisions (EquivalenceClass *partition, unsigned int c) 
       for (unsigned int i = 0; i <= m; i++)
         sum -= split_cardinalities[i] * split_cardinalities[i];
     }
+  FREE_DYNAMIC_ARRAY (split_cardinalities);
   return sum;
 }
 
@@ -1231,7 +1259,7 @@ Search::find_asso_values ()
         }
 
       unsigned int iterations = 0;
-      unsigned int iter[k];
+      DYNAMIC_ARRAY (iter, unsigned int, k);
       for (unsigned int i = 0; i < k; i++)
         iter[i] = 0;
       unsigned int ii = (_jump != 0 ? k - 1 : 0);
@@ -1384,6 +1412,8 @@ Search::find_asso_values ()
                 ii = 0;
             }
         }
+      FREE_DYNAMIC_ARRAY (iter);
+
       if (option[DEBUG])
         {
           fprintf (stderr, "Step %u chose _asso_values[", stepno);
