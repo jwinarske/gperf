@@ -267,7 +267,7 @@ Options::print_options () const
               putchar ('"');
               for (; *arg; arg++)
                 {
-                  if (*arg == '\"' || *arg == '\\' || *arg == '$')
+                  if (*arg == '\"' || *arg == '\\' || *arg == '$' || *arg == '`')
                     putchar ('\\');
                   putchar (*arg);
                 }

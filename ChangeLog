@@ -1,6 +1,10 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
 	Bug fix.
+	* src/options.cc (Options::print_options): Escape backquote inside
+	double-quoted strings.
+
+	Bug fix.
 	* src/keyword.cc (KeywordExt::init_selchars): Avoid comparison with
 	uninitialized member variable. Found with 'valgrind'.
 
