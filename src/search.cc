@@ -1091,7 +1091,7 @@ Search::find_asso_values ()
                                  union_index + 1, _asso_values[c]);
                         fflush (stderr);
                       }
-                    goto RECURSE;
+                    goto RECURSE_COLLISION;
                    BACKTRACK_COLLISION: ;
                     if (option[DEBUG])
                       {
@@ -1133,16 +1133,15 @@ Search::find_asso_values ()
             sp--;
             curr = sp->_curr;
             prior = sp->_prior;
+            if (prior == NULL)
+              goto BACKTRACK_NO_COLLISION;
             union_set = sp->_union_set;
             union_set_length = sp->_union_set_length;
             union_index = sp->_union_index;
             c = sp->_c;
             original_asso_value = sp->_original_asso_value;
             iter = sp->_iter;
-            if (prior != NULL)
-              goto BACKTRACK_COLLISION;
-            else
-              goto BACKTRACK_NO_COLLISION;
+            goto BACKTRACK_COLLISION;
           }
 
         /* No solution found after an exhaustive search!
@@ -1156,15 +1155,17 @@ Search::find_asso_values ()
           fprintf (stderr, "try options -m or -r.\n\n");
         exit (1);
       }
-   RECURSE:
-    /*sp->_curr = curr;*/ // redundant
-    sp->_prior = prior;
+     goto RECURSE_NO_COLLISION;
+   RECURSE_COLLISION:
     /*sp->_union_set = union_set;*/ // redundant
     sp->_union_set_length = union_set_length;
     sp->_union_index = union_index;
     sp->_c = c;
     sp->_original_asso_value = original_asso_value;
     sp->_iter = iter;
+   RECURSE_NO_COLLISION:
+    /*sp->_curr = curr;*/ // redundant
+    sp->_prior = prior;
     sp++;
     if (sp - stack < _list_len)
       goto STARTOUTERLOOP;
