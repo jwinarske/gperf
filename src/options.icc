@@ -125,6 +125,13 @@ Options::operator[] (Option_Type option) const
   return _option_word & option;
 }
 
+/* Sets a given boolean option.  */
+INLINE void
+Options::set (Option_Type option)
+{
+  _option_word |= option;
+}
+
 /* Returns the input file name.  */
 INLINE const char *
 Options::get_input_file_name () const
@@ -190,9 +197,9 @@ Options::get_function_name () const
 
 /* Returns the keyword key name.  */
 INLINE const char *
-Options::get_key_name () const
+Options::get_slot_name () const
 {
-  return _key_name;
+  return _slot_name;
 }
 
 /* Returns the struct initializer suffix.  */

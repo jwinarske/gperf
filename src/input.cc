@@ -46,6 +46,187 @@ pretty_input_file_name ()
     return "(standard input)";
 }
 
+/* Returns true if the given line contains a "%DECL" declaration.  */
+static bool
+is_declaration (const char *line, const char *line_end, unsigned int lineno,
+                const char *decl)
+{
+  /* Skip '%'.  */
+  line++;
+
+  /* Skip DECL.  */
+  for (const char *d = decl; *d; d++)
+    {
+      if (!(line < line_end))
+        return false;
+      if (!(*line == *d || (*d == '-' && *line == '_')))
+        return false;
+      line++;
+    }
+  if (line < line_end
+      && ((*line >= 'A' && *line <= 'Z')
+          || (*line >= 'a' && *line <= 'z')
+          || *line == '-' || *line == '_'))
+    return false;
+
+  /* OK, found DECL.  */
+
+  /* Skip whitespace.  */
+  while (line < line_end && (*line == ' ' || *line == '\t'))
+    line++;
+
+  /* Expect end of line.  */
+  if (line < line_end && *line != '\n')
+    {
+      fprintf (stderr, "%s:%u: junk after declaration\n",
+               pretty_input_file_name (), lineno);
+      exit (1);
+    }
+
+  return true;
+}
+
+/* Tests if the given line contains a "%DECL=ARG" declaration.
+   If yes, it sets *ARGP to the argument, and returns true.
+   Otherwise, it returns false.  */
+static bool
+is_declaration_with_arg (const char *line, const char *line_end,
+                         unsigned int lineno,
+                         const char *decl, char **argp)
+{
+  /* Skip '%'.  */
+  line++;
+
+  /* Skip DECL.  */
+  for (const char *d = decl; *d; d++)
+    {
+      if (!(line < line_end))
+        return false;
+      if (!(*line == *d || (*d == '-' && *line == '_')))
+        return false;
+      line++;
+    }
+  if (line < line_end
+      && ((*line >= 'A' && *line <= 'Z')
+          || (*line >= 'a' && *line <= 'z')
+          || *line == '-' || *line == '_'))
+    return false;
+
+  /* OK, found DECL.  */
+
+  /* Skip '='.  */
+  if (!(line < line_end && *line == '='))
+    {
+      fprintf (stderr, "%s:%u: missing argument in %%%s=ARG declaration.\n",
+               pretty_input_file_name (), lineno, decl);
+      exit (1);
+    }
+  line++;
+
+  /* The next word is the argument.  */
+  char *arg = new char[line_end - line + 1];
+  char *p = arg;
+  while (line < line_end && !(*line == ' ' || *line == '\t' || *line == '\n'))
+    *p++ = *line++;
+  *p = '\0';
+
+  /* Skip whitespace.  */
+  while (line < line_end && (*line == ' ' || *line == '\t'))
+    line++;
+
+  /* Expect end of line.  */
+  if (line < line_end && *line != '\n')
+    {
+      fprintf (stderr, "%s:%u: junk after declaration\n",
+               pretty_input_file_name (), lineno);
+      exit (1);
+    }
+
+  *argp = arg;
+  return true;
+}
+
+/* Tests if the given line contains a "%define DECL ARG" declaration.
+   If yes, it sets *ARGP to the argument, and returns true.
+   Otherwise, it returns false.  */
+static bool
+is_define_declaration (const char *line, const char *line_end,
+                       unsigned int lineno,
+                       const char *decl, char **argp)
+{
+  /* Skip '%'.  */
+  line++;
+
+  /* Skip "define".  */
+  {
+    for (const char *d = "define"; *d; d++)
+      {
+        if (!(line < line_end))
+          return false;
+        if (!(*line == *d))
+          return false;
+        line++;
+      }
+    if (!(line < line_end && (*line == ' ' || *line == '\t')))
+      return false;
+  }
+
+  /* Skip whitespace.  */
+  while (line < line_end && (*line == ' ' || *line == '\t'))
+    line++;
+
+  /* Skip DECL.  */
+  for (const char *d = decl; *d; d++)
+    {
+      if (!(line < line_end))
+        return false;
+      if (!(*line == *d || (*d == '-' && *line == '_')))
+        return false;
+      line++;
+    }
+  if (line < line_end
+      && ((*line >= 'A' && *line <= 'Z')
+          || (*line >= 'a' && *line <= 'z')
+          || *line == '-' || *line == '_'))
+    return false;
+
+  /* OK, found DECL.  */
+
+  /* Skip whitespace.  */
+  if (!(line < line_end && (*line == ' ' || *line == '\t')))
+    {
+      fprintf (stderr, "%s:%u:"
+               " missing argument in %%define %s ARG declaration.\n",
+               pretty_input_file_name (), lineno, decl);
+      exit (1);
+    }
+  do
+    line++;
+  while (line < line_end && (*line == ' ' || *line == '\t'));
+
+  /* The next word is the argument.  */
+  char *arg = new char[line_end - line + 1];
+  char *p = arg;
+  while (line < line_end && !(*line == ' ' || *line == '\t' || *line == '\n'))
+    *p++ = *line++;
+  *p = '\0';
+
+  /* Skip whitespace.  */
+  while (line < line_end && (*line == ' ' || *line == '\t'))
+    line++;
+
+  /* Expect end of line.  */
+  if (line < line_end && *line != '\n')
+    {
+      fprintf (stderr, "%s:%u: junk after declaration\n",
+               pretty_input_file_name (), lineno);
+      exit (1);
+    }
+
+  *argp = arg;
+  return true;
+}
+
 /* Reads the entire input file.  */
 void
 Input::read_input ()
@@ -208,18 +389,18 @@ Input::read_input ()
     char *struct_decl = NULL;
     unsigned int *struct_decl_linenos = NULL;
     unsigned int struct_decl_linecount = 0;
-    for (const char *p = declarations; p < declarations_end; )
+    for (const char *line = declarations; line < declarations_end; )
       {
         const char *line_end;
-        line_end = (const char *) memchr (p, '\n', declarations_end - p);
+        line_end = (const char *) memchr (line, '\n', declarations_end - line);
         if (line_end != NULL)
           line_end++;
         else
           line_end = declarations_end;
 
-        if (*p == '%')
+        if (*line == '%')
           {
-            if (p[1] == '{')
+            if (line[1] == '{')
               {
                 /* Handle %{.  */
                 if (_verbatim_declarations != NULL)
@@ -231,10 +412,10 @@ Input::read_input ()
                              pretty_input_file_name (), lineno);
                     exit (1);
                   }
-                _verbatim_declarations = p + 2;
+                _verbatim_declarations = line + 2;
                 _verbatim_declarations_lineno = lineno;
               }
-            else if (p[1] == '}')
+            else if (line[1] == '}')
               {
                 /* Handle %}.  */
                 if (_verbatim_declarations == NULL)
@@ -251,11 +432,11 @@ Input::read_input ()
                              pretty_input_file_name (), lineno);
                     exit (1);
                   }
-                _verbatim_declarations_end = p;
+                _verbatim_declarations_end = line;
                 /* Give a warning if the rest of the line is nonempty.  */
                 bool nonempty_line = false;
                 const char *q;
-                for (q = p + 2; q < line_end; q++)
+                for (q = line + 2; q < line_end; q++)
                   {
                     if (*q == '\n')
                       {
@@ -280,9 +461,98 @@ Input::read_input ()
               }
             else
               {
-                fprintf (stderr, "%s:%u: unrecognized %% directive\n",
-                         pretty_input_file_name (), lineno);
-                exit (1);
+                char *arg;
+
+                if (is_declaration_with_arg (line, line_end, lineno,
+                                             "delimiters", &arg))
+                  option.set_delimiters (arg);
+                else
+
+                if (is_declaration (line, line_end, lineno, "struct-type"))
+                  option.set (TYPE);
+                else
+
+                if (is_declaration_with_arg (line, line_end, lineno,
+                                             "language", &arg))
+                  option.set_language (arg);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
+                                           "slot-name", &arg))
+                  option.set_slot_name (arg);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
+                                           "hash-function-name", &arg))
+                  option.set_hash_name (arg);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
+                                           "lookup-function-name", &arg))
+                  option.set_function_name (arg);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
+                                           "class-name", &arg))
+                  option.set_class_name (arg);
+                else
+
+                if (is_declaration (line, line_end, lineno, "7bit"))
+                  option.set (SEVENBIT);
+                else
+
+                if (is_declaration (line, line_end, lineno, "compare-lengths"))
+                  option.set (LENTABLE);
+                else
+
+                if (is_declaration (line, line_end, lineno, "compare-strncmp"))
+                  option.set (COMP);
+                else
+
+                if (is_declaration (line, line_end, lineno, "readonly-tables"))
+                  option.set (CONST);
+                else
+
+                if (is_declaration (line, line_end, lineno, "enum"))
+                  option.set (ENUM);
+                else
+
+                if (is_declaration (line, line_end, lineno, "includes"))
+                  option.set (INCLUDE);
+                else
+
+                if (is_declaration (line, line_end, lineno, "global-table"))
+                  option.set (GLOBAL);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
+                                           "word-array-name", &arg))
+                  option.set_wordlist_name (arg);
+                else
+
+                if (is_declaration_with_arg (line, line_end, lineno,
+                                             "switch", &arg))
+                  {
+                    option.set_total_switches (atoi (arg));
+                    if (option.get_total_switches () <= 0)
+                      {
+                        fprintf (stderr, "%s:%u: number of switches %s"
+                                 " must be a positive number\n",
+                                 pretty_input_file_name (), lineno, arg);
+                        exit (1);
+                      }
+                  }
+                else
+
+                if (is_declaration (line, line_end, lineno, "omit-struct-type"))
+                  option.set (NOTYPE);
+                else
+
+                  {
+                    fprintf (stderr, "%s:%u: unrecognized %% directive\n",
+                             pretty_input_file_name (), lineno);
+                    exit (1);
+                  }
               }
           }
         else if (!(_verbatim_declarations != NULL
@@ -290,12 +560,12 @@ Input::read_input ()
           {
             /* Append the line to struct_decl.  */
             size_t old_len = (struct_decl ? strlen (struct_decl) : 0);
-            size_t line_len = line_end - p;
+            size_t line_len = line_end - line;
             size_t new_len = old_len + line_len + 1;
             char *new_struct_decl = new char[new_len];
             if (old_len > 0)
               memcpy (new_struct_decl, struct_decl, old_len);
-            memcpy (new_struct_decl + old_len, p, line_len);
+            memcpy (new_struct_decl + old_len, line, line_len);
             new_struct_decl[old_len + line_len] = '\0';
             if (struct_decl)
               delete[] struct_decl;
@@ -314,7 +584,7 @@ Input::read_input ()
             struct_decl_linecount++;
           }
         lineno++;
-        p = line_end;
+        line = line_end;
       }
     if (_verbatim_declarations != NULL && _verbatim_declarations_end == NULL)
       {

@@ -41,10 +41,10 @@ const char *program_name;
 static const int DEFAULT_JUMP_VALUE = 5;
 
 /* Default name for generated lookup function.  */
-static const char *const DEFAULT_NAME = "in_word_set";
+static const char *const DEFAULT_FUNCTION_NAME = "in_word_set";
 
 /* Default name for the key component.  */
-static const char *const DEFAULT_KEY = "name";
+static const char *const DEFAULT_SLOT_NAME = "name";
 
 /* Default struct initializer suffix.  */
 static const char *const DEFAULT_INITIALIZER_SUFFIX = "";
@@ -428,14 +428,15 @@ Options::Options ()
   : _option_word (C),
     _input_file_name (NULL),
     _output_file_name (NULL),
+    _language (NULL),
     _iterations (0),
     _jump (DEFAULT_JUMP_VALUE),
     _initial_asso_value (0),
     _asso_iterations (0),
     _total_switches (1),
     _size_multiple (1),
-    _function_name (DEFAULT_NAME),
-    _key_name (DEFAULT_KEY),
+    _function_name (DEFAULT_FUNCTION_NAME),
+    _slot_name (DEFAULT_SLOT_NAME),
     _initializer_suffix (DEFAULT_INITIALIZER_SUFFIX),
     _class_name (DEFAULT_CLASS_NAME),
     _hash_name (DEFAULT_HASH_NAME),
@@ -476,7 +477,7 @@ Options::~Options ()
                "\nlookup function name = %s"
                "\nhash function name = %s"
                "\nword list name = %s"
-               "\nkey name = %s"
+               "\nslot name = %s"
                "\ninitializer suffix = %s"
                "\nasso_values iterations = %d"
                "\njump value = %d"
@@ -505,7 +506,7 @@ Options::~Options ()
                _option_word & INCLUDE ? "enabled" : "disabled",
                _option_word & SEVENBIT ? "enabled" : "disabled",
                _iterations,
-               _function_name, _hash_name, _wordlist_name, _key_name,
+               _function_name, _hash_name, _wordlist_name, _slot_name,
                _initializer_suffix, _asso_iterations, _jump, _size_multiple,
                _initial_asso_value, _delimiters, _total_switches);
       if (_option_word & ALLCHARS)
@@ -525,6 +526,91 @@ Options::~Options ()
 
       fprintf (stderr, "finished dumping Options\n");
     }
+}
+
+
+/* Sets the output language, if not already set.  */
+void
+Options::set_language (const char *language)
+{
+  if (_language == NULL)
+    {
+      _language = language;
+      _option_word &= ~(KRC | C | ANSIC | CPLUSPLUS);
+      if (!strcmp (language, "KR-C"))
+        _option_word |= KRC;
+      else if (!strcmp (language, "C"))
+        _option_word |= C;
+      else if (!strcmp (language, "ANSI-C"))
+        _option_word |= ANSIC;
+      else if (!strcmp (language, "C++"))
+        _option_word |= CPLUSPLUS;
+      else
+        {
+          fprintf (stderr, "unsupported language option %s, defaulting to C\n",
+                   language);
+          _option_word |= C;
+        }
+    }
+}
+
+/* Sets the total number of switch statements, if not already set.  */
+void
+Options::set_total_switches (int total_switches)
+{
+  if (!(_option_word & SWITCH))
+    {
+      _option_word |= SWITCH;
+      _total_switches = total_switches;
+    }
+}
+
+/* Sets the generated function name, if not already set.  */
+void
+Options::set_function_name (const char *name)
+{
+  if (_function_name == DEFAULT_FUNCTION_NAME)
+    _function_name = name;
+}
+
+/* Set the keyword key name, if not already set.  */
+void
+Options::set_slot_name (const char *name)
+{
+  if (_slot_name == DEFAULT_SLOT_NAME)
+    _slot_name = name;
+}
+
+/* Sets the generated class name, if not already set.  */
+void
+Options::set_class_name (const char *name)
+{
+  if (_class_name == DEFAULT_CLASS_NAME)
+    _class_name = name;
+}
+
+/* Sets the hash function name, if not already set.  */
+void
+Options::set_hash_name (const char *name)
+{
+  if (_hash_name == DEFAULT_HASH_NAME)
+    _hash_name = name;
+}
+
+/* Sets the hash table array name, if not already set.  */
+void
+Options::set_wordlist_name (const char *name)
+{
+  if (_wordlist_name == DEFAULT_WORDLIST_NAME)
+    _wordlist_name = name;
+}
+
+/* Sets the delimiters string, if not already set.  */
+void
+Options::set_delimiters (const char *delimiters)
+{
+  if (_delimiters == DEFAULT_DELIMITERS)
+    _delimiters = delimiters;
 }
 
 
@@ -737,7 +823,7 @@ Options::parse_options (int argc, char *argv[])
           }
         case 'K':               /* Make this the keyname for the keyword component field. */
           {
-            _key_name = /*getopt*/optarg;
+            _slot_name = /*getopt*/optarg;
             break;
           }
         case 'l':               /* Create length table to avoid extra string compares. */
@@ -747,20 +833,8 @@ Options::parse_options (int argc, char *argv[])
           }
         case 'L':               /* Deal with different generated languages. */
           {
-            _option_word &= ~(KRC | C | ANSIC | CPLUSPLUS);
-            if (!strcmp (/*getopt*/optarg, "KR-C"))
-              _option_word |= KRC;
-            else if (!strcmp (/*getopt*/optarg, "C"))
-              _option_word |= C;
-            else if (!strcmp (/*getopt*/optarg, "ANSI-C"))
-              _option_word |= ANSIC;
-            else if (!strcmp (/*getopt*/optarg, "C++"))
-              _option_word |= CPLUSPLUS;
-            else
-              {
-                fprintf (stderr, "unsupported language option %s, defaulting to C\n", /*getopt*/optarg);
-                _option_word |= C;
-              }
+            _language = NULL;
+            set_language (/*getopt*/optarg);
             break;
           }
         case 'm':               /* Multiple iterations for finding good asso_values.  */
@@ -805,7 +879,8 @@ Options::parse_options (int argc, char *argv[])
         case 'S':               /* Generate switch statement output, rather than lookup table. */
           {
             _option_word |= SWITCH;
-            if ((_total_switches = atoi (/*getopt*/optarg)) <= 0)
+            _total_switches = atoi (/*getopt*/optarg);
+            if (_total_switches <= 0)
               {
                 fprintf (stderr, "number of switches %s must be a positive number\n", /*getopt*/optarg);
                 short_usage (stderr);

@@ -9,6 +9,24 @@ New in 2.8:
     --compare-strlen        -->   --compare-lengths
     --global                -->   --global-table
   The older variants are still supported for backward compatibility.
+* The following options can now be specified inside the input file:
+    %delimiters=DELIMITER-LIST
+    %struct-type
+    %language=LANGUAGE-NAME
+    %define slot-name NAME
+    %define hash-function-name NAME
+    %define lookup-function-name NAME
+    %define class-name NAME
+    %7bit
+    %compare-lengths
+    %compare-strncmp
+    %readonly-tables
+    %enum
+    %includes
+    %global-table
+    %define word-array-name NAME
+    %switch=COUNT
+    %omit-struct-type
 * If the input file is given by name, the output file will now contain
   #line directives referring to the input file.
 * Bug fixes.

@@ -180,12 +180,17 @@ public:
 
   /* Tests a given boolean option.  Returns true if set, false otherwise.  */
   bool                  operator[] (Option_Type option) const;
+  /* Sets a given boolean option.  */
+  void                  set (Option_Type option);
 
   /* Returns the input file name.  */
   const char *          get_input_file_name () const;
 
   /* Returns the output file name.  */
   const char *          get_output_file_name () const;
+
+  /* Sets the output language, if not already set.  */
+  void                  set_language (const char *language);
 
   /* Returns the iterations value.  */
   int                   get_iterations () const;
@@ -201,30 +206,44 @@ public:
 
   /* Returns the total number of switch statements to generate.  */
   int                   get_total_switches () const;
+  /* Sets the total number of switch statements, if not already set.  */
+  void                  set_total_switches (int total_switches);
 
   /* Returns the factor by which to multiply the generated table's size.  */
   int                   get_size_multiple () const;
 
   /* Returns the generated function name.  */
   const char *          get_function_name () const;
+  /* Sets the generated function name, if not already set.  */
+  void                  set_function_name (const char *name);
 
   /* Returns the keyword key name.  */
-  const char *          get_key_name () const;
+  const char *          get_slot_name () const;
+  /* Set the keyword key name, if not already set.  */
+  void                  set_slot_name (const char *name);
 
   /* Returns the struct initializer suffix.  */
   const char *          get_initializer_suffix () const;
 
   /* Returns the generated class name.  */
   const char *          get_class_name () const;
+  /* Sets the generated class name, if not already set.  */
+  void                  set_class_name (const char *name);
 
   /* Returns the hash function name.  */
   const char *          get_hash_name () const;
+  /* Sets the hash function name, if not already set.  */
+  void                  set_hash_name (const char *name);
 
   /* Returns the hash table array name.  */
   const char *          get_wordlist_name () const;
+  /* Sets the hash table array name, if not already set.  */
+  void                  set_wordlist_name (const char *name);
 
   /* Returns the string used to delimit keywords from other attributes.  */
   const char *          get_delimiters () const;
+  /* Sets the delimiters string, if not already set.  */
+  void                  set_delimiters (const char *delimiters);
 
   /* Returns key positions.
      Only to be called if !options[ALLCHARS].  */
@@ -256,6 +275,9 @@ private:
   /* Name of output file.  */
   char *                _output_file_name;
 
+  /* The output language.  */
+  const char *          _language;
+
   /* Amount to iterate when a collision occurs.  */
   int                   _iterations;
 
@@ -278,7 +300,7 @@ private:
   const char *          _function_name;
 
   /* Name used for keyword key.  */
-  const char *          _key_name;
+  const char *          _slot_name;
 
   /* Suffix for empty struct initializers.  */
   const char *          _initializer_suffix;

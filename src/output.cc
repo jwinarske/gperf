@@ -1210,7 +1210,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
           printf ("%*s      register %schar *s = ",
                   indent, "", const_always);
           if (option[TYPE])
-            printf ("wordptr->%s", option.get_key_name ());
+            printf ("wordptr->%s", option.get_slot_name ());
           else
             printf ("*wordptr");
           printf (";\n\n"
@@ -1241,7 +1241,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
           printf ("          {\n"
                   "            register %schar *s = resword->%s;\n\n"
                   "            if (",
-                  const_always, option.get_key_name ());
+                  const_always, option.get_slot_name ());
           comparison.output_comparison (Output_Expr1 ("str"), Output_Expr1 ("s"));
           printf (")\n"
                   "              return resword;\n"
@@ -1279,7 +1279,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                   indent, "",
                   indent, "", const_always, option.get_wordlist_name ());
           if (option[TYPE])
-            printf (".%s", option.get_key_name ());
+            printf (".%s", option.get_slot_name ());
           printf (";\n\n"
                   "%*s      if (",
                   indent, "");
@@ -1330,7 +1330,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
               printf ("%*s          register %schar *s = ",
                       indent, "", const_always);
               if (option[TYPE])
-                printf ("wordptr->%s", option.get_key_name ());
+                printf ("wordptr->%s", option.get_slot_name ());
               else
                 printf ("*wordptr");
               printf (";\n\n"
@@ -1374,7 +1374,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                   indent, "", const_always, option.get_wordlist_name ());
 
           if (option[TYPE])
-            printf (".%s", option.get_key_name ());
+            printf (".%s", option.get_slot_name ());
 
           printf (";\n\n"
                   "%*s  if (",

@@ -1,5 +1,35 @@
 2002-11-16  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h (Options::get_slot_name): Renamed from
+	Options::get_key_name.
+	(Options::set, Options::set_language, Options::set_total_switches,
+	Options::set_function_name, Options::set_slot_name,
+	Options::set_class_name, Options::set_hash_name,
+	Options::set_wordlist_name, Options::set_delimiters): New method
+	declarations.
+	(Options::_language): New field.
+	(Options::_slot_name): Renamed from Options::_key_name.
+	* src/options.icc (Options::set): New method.
+	(Options::get_slot_name): Renamed from Options::get_key_name.
+	* src/options.cc (DEFAULT_FUNCTION_NAME): Renamed from DEFAULT_NAME.
+	(DEFAULT_SLOT_NAME): Renamed from DEFAULT_NAME.
+	(Options::Options): Initialize _language. Update.
+	(Options::~Options): Update.
+	(Options::set_language, Options::set_total_switches,
+	Options::set_function_name, Options::set_slot_name,
+	Options::set_class_name, Options::set_hash_name,
+	Options::set_wordlist_name, Options::set_delimiters): New methods.
+	(Options::parse_options): Call set_language. Update.
+	* src/input.cc (is_declaration, is_declaration_with_arg,
+	is_define_declaration): New functions.
+	(Input::read_input): Accept %DECL declarations.
+	* src/output.cc (Output::output_lookup_function_body): Update.
+	* doc/gperf.texi (Declarations): Add new subnodes.
+	(User-supplied Struct, Gperf Declarations, C Code Inclusion): New
+	nodes.
+	(Keywords, Output Format, Binary Strings, Options): Mention %
+	declarations as being equivalent to the command line options.
+
 	* src/options.cc (Options::long_usage): Rename options -H, -N, -l, -G.
 	(long_options): Add --hash-function-name, --lookup-function-name,
 	--compare-lengths.

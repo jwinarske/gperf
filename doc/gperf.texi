@@ -7,7 +7,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 12 November 2002
+@set UPDATED 16 November 2002
 @set EDITION 2.7.2
 @set VERSION 2.7.2
 @c ---------------------
@@ -118,9 +118,15 @@ High-Level Description of GNU @code{gperf}
 
 Input Format to @code{gperf}
 
-* Declarations::                @code{struct} Declarations and C Code Inclusion.
+* Declarations::                Declarations.
 * Keywords::                    Format for Keyword Entries.
 * Functions::                   Including Additional C Functions.
+
+Declarations
+
+* User-supplied Struct::        Specifying keywords with attributes.
+* Gperf Declarations::          Embedding command line options in the input.
+* C Code Inclusion::            Including C declarations and definitions.
 
 Invoking @code{gperf}
 
@@ -314,27 +320,54 @@ functions
 @end group
 @end example
 
-@emph{Unlike} @code{flex} or @code{bison}, all sections of
-@code{gperf}'s input are optional.  The following sections describe the
+@emph{Unlike} @code{flex} or @code{bison}, the declarations section and
+the functions section are optional.  The following sections describe the
 input format for each section.
 
 @menu
-* Declarations::                @code{struct} Declarations and C Code Inclusion.
+* Declarations::                Declarations.
 * Keywords::                    Format for Keyword Entries.
 * Functions::                   Including Additional C Functions.
 @end menu
 
+It is possible to omit the declaration section entirely, if the @samp{-t}
+option is not given.  In this case the input file begins directly with the
+first keyword line, e.g.:
+
+@example
+@group
+january
+february
+march
+april
+...
+@end group
+@end example
+
 @node Declarations, Keywords, Input Format, Input Format
-@subsection @code{struct} Declarations and C Code Inclusion
+@subsection Declarations
 
 The keyword input file optionally contains a section for including
-arbitrary C declarations and definitions, as well as provisions for
-providing a user-supplied @code{struct}.  If the @samp{-t} option
+arbitrary C declarations and definitions, @code{gperf} declarations that
+act like command-line options, as well as for providing a user-supplied
+@code{struct}.
+
+@menu
+* User-supplied Struct::        Specifying keywords with attributes.
+* Gperf Declarations::          Embedding command line options in the input.
+* C Code Inclusion::            Including C declarations and definitions.
+@end menu
+
+@node User-supplied Struct, Gperf Declarations, Declarations, Declarations
+@subsubsection User-supplied @code{struct}
+
+If the @samp{-t} option (or, equivalently, the @samp{%struct-type} declaration)
 @emph{is} enabled, you @emph{must} provide a C @code{struct} as the last
 component in the declaration section from the input file.  The first
 field in this struct must be a @code{char *} or @code{const char *}
 identifier called @samp{name}, although it is possible to modify this
-field's name with the @samp{-K} option described below.
+field's name with the @samp{-K} option (or, equivalently, the
+@samp{%define slot-name}) described below.
 
 Here is a simple example, using months of the year and their attributes as
 input:
@@ -364,6 +397,174 @@ other fields are a pair of consecutive percent signs, @samp{%%},
 appearing left justified in the first column, as in the UNIX utility
 @code{lex}.
 
+@node Gperf Declarations, C Code Inclusion, User-supplied Struct, Declarations
+@subsubsection Gperf Declarations
+
+The declaration section can contain @code{gperf} declarations.  They
+influence the way @code{gperf} works, like command line options do.
+In fact, every such declaration is equivalent to a command line option.
+There are three forms of declarations:
+
+@enumerate
+@item
+Declarations without argument, like @samp{%compare-lengths}.
+
+@item
+Declarations with an argument, like @samp{%switch=@var{count}}.
+
+@item
+Declarations of names of entities in the output file, like
+@samp{%define lookup-function-name @var{name}}.
+@end enumerate
+
+When a declaration is given both in the input file and as a command line
+option, the command-line option's value prevails.
+
+The following @code{gperf} declarations are available.
+
+@table @samp
+@item %delimiters=@var{delimiter-list}
+@cindex @samp{%delimiters}
+Allows you to provide a string containing delimiters used to
+separate keywords from their attributes.  The default is ",".  This
+option is essential if you want to use keywords that have embedded
+commas or newlines.
+
+@item %struct-type
+@cindex @samp{%struct-type}
+Allows you to include a @code{struct} type declaration for generated
+code; see above for an example.
+
+@item %language=@var{language-name}
+@cindex @samp{%language}
+Instructs @code{gperf} to generate code in the language specified by the
+option's argument.  Languages handled are currently:
+
+@table @samp
+@item KR-C
+Old-style K&R C. This language is understood by old-style C compilers and
+ANSI C compilers, but ANSI C compilers may flag warnings (or even errors)
+because of lacking @samp{const}.
+
+@item C
+Common C. This language is understood by ANSI C compilers, and also by
+old-style C compilers, provided that you @code{#define const} to empty
+for compilers which don't know about this keyword.
+
+@item ANSI-C
+ANSI C. This language is understood by ANSI C compilers and C++ compilers.
+
+@item C++
+C++. This language is understood by C++ compilers.
+@end table
+
+The default is C.
+
+@item %define slot-name @var{name}
+@cindex @samp{%define slot-name}
+This option is only useful when option @samp{-t} (or, equivalently, the
+@samp{%struct-type} declaration) has been given.
+By default, the program assumes the structure component identifier for
+the keyword is @samp{name}.  This option allows an arbitrary choice of
+identifier for this component, although it still must occur as the first
+field in your supplied @code{struct}.
+
+@item %define hash-function-name @var{name}
+@cindex @samp{%define hash-function-name}
+Allows you to specify the name for the generated hash function.  Default
+name is @samp{hash}.  This option permits the use of two hash tables in
+the same file.
+
+@item %define lookup-function-name @var{name}
+@cindex @samp{%define lookup-function-name}
+Allows you to specify the name for the generated lookup function.
+Default name is @samp{in_word_set}.  This option permits multiple
+generated hash functions to be used in the same application.
+
+@item %define class-name @var{name}
+@cindex @samp{%define class-name}
+This option is only useful when option @samp{-L C++} (or, equivalently,
+the @samp{%language=C++} declaration) has been given.  It
+allows you to specify the name of generated C++ class.  Default name is
+@code{Perfect_Hash}.
+
+@item %7bit
+@cindex @samp{%7bit}
+This option specifies that all strings that will be passed as arguments
+to the generated hash function and the generated lookup function will
+solely consist of 7-bit ASCII characters (bytes in the range 0..127).
+(Note that the ANSI C functions @code{isalnum} and @code{isgraph} do
+@emph{not} guarantee that a byte is in this range. Only an explicit
+test like @samp{c >= 'A' && c <= 'Z'} guarantees this.)
+
+@item %compare-lengths
+@cindex @samp{%compare-lengths}
+Compare keyword lengths before trying a string comparison.  This option
+is mandatory for binary comparisons (@pxref{Binary Strings}).  It also might
+cut down on the number of string comparisons made during the lookup, since
+keywords with different lengths are never compared via @code{strcmp}.
+However, using @samp{%compare-lengths} might greatly increase the size of the
+generated C code if the lookup table range is large (which implies that
+the switch option @samp{-S} or @samp{%switch} is not enabled), since the length
+table contains as many elements as there are entries in the lookup table.
+
+@item %compare-strncmp
+@cindex @samp{%compare-strncmp}
+Generates C code that uses the @code{strncmp} function to perform
+string comparisons.  The default action is to use @code{strcmp}.
+
+@item %readonly-tables
+@cindex @samp{%readonly-tables}
+Makes the contents of all generated lookup tables constant, i.e.,
+``readonly''.  Many compilers can generate more efficient code for this
+by putting the tables in readonly memory.
+
+@item %enum
+@cindex @samp{%enum}
+Define constant values using an enum local to the lookup function rather
+than with #defines.  This also means that different lookup functions can
+reside in the same file.  Thanks to James Clark @code{<jjc@@ai.mit.edu>}.
+
+@item %includes
+@cindex @samp{%includes}
+Include the necessary system include file, @code{<string.h>}, at the
+beginning of the code.  By default, this is not done; the user must
+include this header file himself to allow compilation of the code.
+
+@item %global-table
+@cindex @samp{%global-table}
+Generate the static table of keywords as a static global variable,
+rather than hiding it inside of the lookup function (which is the
+default behavior).
+
+@item %define word-array-name @var{name}
+@cindex @samp{%define word-array-name}
+Allows you to specify the name for the generated array containing the
+hash table.  Default name is @samp{wordlist}.  This option permits the
+use of two hash tables in the same file, even when the option @samp{-G}
+(or, equivalently, the @samp{%global-table} declaration) is given.
+
+@item %switch=@var{count}
+@cindex @samp{%switch}
+Causes the generated C code to use a @code{switch} statement scheme,
+rather than an array lookup table.  This can lead to a reduction in both
+time and space requirements for some input files.  The argument to this
+option determines how many @code{switch} statements are generated. A
+value of 1 generates 1 @code{switch} containing all the elements, a
+value of 2 generates 2 tables with 1/2 the elements in each
+@code{switch}, etc.  This is useful since many C compilers cannot
+correctly generate code for large @code{switch} statements. This option
+was inspired in part by Keith Bostic's original C program.
+
+@item %omit-struct-type
+@cindex @samp{%omit-struct-type}
+Prevents the transfer of the type declaration to the output file.  Use
+this option if the type is already defined elsewhere.
+@end table
+
+@node C Code Inclusion,  , Gperf Declarations, Declarations
+@subsubsection C Code Inclusion
+
 @cindex @samp{%@{}
 @cindex @samp{%@}}
 Using a syntax similar to GNU utilities @code{flex} and @code{bison}, it
@@ -385,20 +586,6 @@ struct months @{ char *name; int number; int days; int leap_days; @};
 january,   1, 31, 31
 february,  2, 28, 29
 march,     3, 31, 31
-...
-@end group
-@end example
-
-It is possible to omit the declaration section entirely, if the @samp{-t}
-option is not given.  In this case
-the input file begins directly with the first keyword line, e.g.:
-
-@example
-@group
-january
-february
-march
-april
 ...
 @end group
 @end example
@@ -446,7 +633,8 @@ Additional fields may optionally follow the leading keyword.  Fields
 should be separated by commas, and terminate at the end of line.  What
 these fields mean is entirely up to you; they are used to initialize the
 elements of the user-defined @code{struct} provided by you in the
-declaration section.  If the @samp{-t} option is @emph{not} enabled
+declaration section.  If the @samp{-t} option (or, equivalently, the
+@samp{%struct-type} declaration) is @emph{not} enabled
 these fields are simply ignored.  All previous examples except the last
 one contain keyword attributes.
 
@@ -479,18 +667,21 @@ local static array.  The associated values table is constructed
 internally by @code{gperf} and later output as a static local C array
 called @samp{hash_table}. The relevant selected positions (i.e. indices
 into @var{str}) are specified via the @samp{-k} option when running
-@code{gperf}, as detailed in the @emph{Options} section below(@pxref{Options}).
+@code{gperf}, as detailed in the @emph{Options} section below (@pxref{Options}).
 @end deftypefun
 
 @deftypefun {} in_word_set (const char * @var{str}, unsigned int @var{len})
 If @var{str} is in the keyword set, returns a pointer to that
-keyword. More exactly, if the option @samp{-t} was given, it returns
+keyword. More exactly, if the option @samp{-t} (or, equivalently, the
+@samp{%struct-type} declaration) was given, it returns
 a pointer to the matching keyword's structure. Otherwise it returns
 @code{NULL}.
 @end deftypefun
 
-If the option @samp{-c} is not used, @var{str} must be a NUL terminated
-string of exactly length @var{len}. If @samp{-c} is used, @var{str} must
+If the option @samp{-c} (or, equivalently, the @samp{%compare-strncmp}
+declaration) is not used, @var{str} must be a NUL terminated
+string of exactly length @var{len}. If @samp{-c} (or, equivalently, the
+@samp{%compare-strncmp} declaration) is used, @var{str} must
 simply be an array of @var{len} bytes and does not need to be NUL
 terminated.
 
@@ -512,7 +703,9 @@ degree of optimization, this method often results in smaller and faster
 code.
 @end table
 
-If the @samp{-t} and @samp{-S} options are omitted, the default action
+If the @samp{-t} and @samp{-S} options (or, equivalently, the
+@samp{%struct-type} and @samp{%switch} declarations) are omitted, the default
+action
 is to generate a @code{char *} array containing the keywords, together with
 additional empty strings used for padding the array.  By experimenting
 with the various input and output options, and timing the resulting C
@@ -529,17 +722,20 @@ that the keywords in the input file must not contain NUL bytes,
 and the @var{str} argument passed to @code{hash} or @code{in_word_set}
 must be NUL terminated and have exactly length @var{len}.
 
-If option @samp{-c} is used, then the @var{str} argument does not need
+If option @samp{-c} (or, equivalently, the @samp{%compare-strncmp}
+declaration) is used, then the @var{str} argument does not need
 to be NUL terminated. The code generated by @code{gperf} will only
 access the first @var{len}, not @var{len+1}, bytes starting at @var{str}.
 However, the keywords in the input file still must not contain NUL
 bytes.
 
-If option @samp{-l} is used, then the hash table performs binary
+If option @samp{-l} (or, equivalently, the @samp{%compare-lengths}
+declaration) is used, then the hash table performs binary
 comparison. The keywords in the input file may contain NUL bytes,
 written in string syntax as @code{\000} or @code{\x00}, and the code
 generated by @code{gperf} will treat NUL like any other byte.
-Also, in this case the @samp{-c} option is ignored.
+Also, in this case the @samp{-c} option (or, equivalently, the
+@samp{%compare-strncmp} declaration) is ignored.
 
 @node Options, Bugs, Description, Top
 @chapter Invoking @code{gperf}
@@ -572,11 +768,14 @@ or if it is @samp{-}.
 @node Input Details, Output Language, Output File, Options
 @section Options that affect Interpretation of the Input File
 
+These options are also available as declarations in the input file
+(@pxref{Gperf Declarations}).
+
 @table @samp
 @item -e @var{keyword-delimiter-list}
 @itemx --delimiters=@var{keyword-delimiter-list}
 @cindex Delimiters
-Allows the user to provide a string containing delimiters used to
+Allows you to provide a string containing delimiters used to
 separate keywords from their attributes.  The default is ",".  This
 option is essential if you want to use keywords that have embedded
 commas or newlines.  One useful trick is to use -e'TAB', where TAB is
@@ -594,6 +793,9 @@ Modula 3 and JavaScript reserved words are distributed with this release.
 
 @node Output Language, Output Details, Input Details, Options
 @section Options to specify the Language for the Output Code
+
+These options are also available as declarations in the input file
+(@pxref{Gperf Declarations}).
 
 @table @samp
 @item -L @var{generated-language-name}
@@ -633,20 +835,25 @@ This option is supported for compatibility with previous releases of
 @node Output Details, Algorithmic Details, Output Language, Options
 @section Options for fine tuning Details in the Output Code
 
+Most of these options are also available as declarations in the input file
+(@pxref{Gperf Declarations}).
+
 @table @samp
 @item -K @var{slot-name}
 @itemx --slot-name=@var{slot-name}
 @cindex Slot name
-This option is only useful when option @samp{-t} has been given.
+This option is only useful when option @samp{-t} (or, equivalently, the
+@samp{%struct-type} declaration) has been given.
 By default, the program assumes the structure component identifier for
-the keyword is @samp{slot-name}.  This option allows an arbitrary choice of
+the keyword is @samp{name}.  This option allows an arbitrary choice of
 identifier for this component, although it still must occur as the first
 field in your supplied @code{struct}.
 
 @item -F @var{initializers}
 @itemx --initializer-suffix=@var{initializers}
 @cindex Initializers
-This option is only useful when option @samp{-t} has been given.
+This option is only useful when option @samp{-t} (or, equivalently, the
+@samp{%struct-type} declaration) has been given.
 It permits to specify initializers for the structure members following
 @var{slot-name} in empty hash table entries.  The list of initializers
 should start with a comma.  By default, the emitted code will
@@ -661,14 +868,14 @@ the same file.
 @item -N @var{lookup-function-name}
 @itemx --lookup-function-name=@var{lookup-function-name}
 Allows you to specify the name for the generated lookup function.
-Default name is @samp{in_word_set}.  This option permits completely
-automatic generation of perfect hash functions, especially when multiple
-generated hash functions are used in the same application.
+Default name is @samp{in_word_set}.  This option permits multiple
+generated hash functions to be used in the same application.
 
 @item -Z @var{class-name}
 @itemx --class-name=@var{class-name}
 @cindex Class name
-This option is only useful when option @samp{-L C++} has been given.  It
+This option is only useful when option @samp{-L C++} (or, equivalently,
+the @samp{%language=C++} declaration) has been given.  It
 allows you to specify the name of generated C++ class.  Default name is
 @code{Perfect_Hash}.
 
@@ -691,8 +898,8 @@ cut down on the number of string comparisons made during the lookup, since
 keywords with different lengths are never compared via @code{strcmp}.
 However, using @samp{-l} might greatly increase the size of the
 generated C code if the lookup table range is large (which implies that
-the switch option @samp{-S} is not enabled), since the length table
-contains as many elements as there are entries in the lookup table.
+the switch option @samp{-S} or @samp{%switch} is not enabled), since the length
+table contains as many elements as there are entries in the lookup table.
 
 @item -c
 @itemx --compare-strncmp
@@ -729,7 +936,7 @@ default behavior).
 Allows you to specify the name for the generated array containing the
 hash table.  Default name is @samp{wordlist}.  This option permits the
 use of two hash tables in the same file, even when the option @samp{-G}
-is given.
+(or, equivalently, the @samp{%global-table} declaration) is given.
 
 @item -S @var{total-switch-statements}
 @itemx --switch=@var{total-switch-statements}
@@ -836,7 +1043,8 @@ choose the best results.  This increases the running time by a factor of
 Provides an initial @var{value} for the associate values array.  Default
 is 0.  Increasing the initial value helps inflate the final table size,
 possibly leading to more time efficient keyword lookups.  Note that this
-option is not particularly useful when @samp{-S} is used.  Also,
+option is not particularly useful when @samp{-S} (or, equivalently,
+@samp{%switch}) is used.  Also,
 @samp{-i} is overridden when the @samp{-r} option is used.
 
 @item -j @var{jump-value}
@@ -896,7 +1104,8 @@ values are useful for limiting the overall size of the generated hash
 table, though this usually increases the number of duplicate hash
 values.
 
-If `generate switch' option @samp{-S} is @emph{not} enabled, the maximum
+If `generate switch' option @samp{-S} (or, equivalently, @samp{%switch}) is
+@emph{not} enabled, the maximum
 associated value influences the static array table size, and a larger
 table should decrease the time required for an unsuccessful search, at
 the expense of extra table space.
