@@ -1102,7 +1102,7 @@ fi
 
                       echo $ac_n "checking for working throw()""... $ac_c" 1>&6
 echo "configure:1105: checking for working throw()" >&5
-if eval "test \"`echo '$''{'gp_cxx_throw_decl'+set}'`\" = set"; then
+if eval "test \"`echo '$''{'gp_cv_cxx_throw_decl'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   
@@ -1125,12 +1125,12 @@ int main() {
 EOF
 if { (eval echo configure:1127: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
-  gp_cxx_throw_decl=yes
+  gp_cv_cxx_throw_decl=yes
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
   rm -rf conftest*
-  gp_cxx_throw_decl=no
+  gp_cv_cxx_throw_decl=no
 fi
 rm -f conftest*
 ac_ext=c
@@ -1143,8 +1143,8 @@ cross_compiling=$ac_cv_prog_cc_cross
 
 fi
 
-echo "$ac_t""$gp_cxx_throw_decl" 1>&6
-if test $gp_cxx_throw_decl = yes; then
+echo "$ac_t""$gp_cv_cxx_throw_decl" 1>&6
+if test $gp_cv_cxx_throw_decl = yes; then
   cat >> confdefs.h <<\EOF
 #define HAVE_THROW_DECL 1
 EOF
