@@ -1,4 +1,5 @@
-This is gperf.info, produced by makeinfo version 4.3 from gperf.texi.
+Dies ist gperf.info, hergestellt von Makeinfo Version 4.3 aus
+gperf.texi.
 
 INFO-DIR-SECTION Programming Tools
 START-INFO-DIR-ENTRY
@@ -6,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
    This file documents the features of the GNU Perfect Hash Function
-Generator 3.0.
+Generator 3.0.1.
 
    Copyright (C) 1989-2003 Free Software Foundation, Inc.
 
@@ -669,7 +670,7 @@ not given, or of type `int' if the option `-P' (or, equivalently, the
    Here is a simple example, using months of the year and their
 attributes as input:
 
-     struct months { char *name; int number; int days; int leap_days; };
+     struct month { char *name; int number; int days; int leap_days; };
      %%
      january,   1, 31, 31
      february,  2, 28, 29
@@ -687,6 +688,14 @@ attributes as input:
    Separating the `struct' declaration from the list of keywords and
 other fields are a pair of consecutive percent signs, `%%', appearing
 left justified in the first column, as in the UNIX utility `lex'.
+
+   If the `struct' has already been declared in an include file, it can
+be mentioned in an abbreviated form, like this:
+
+     struct month;
+     %%
+     january,   1, 31, 31
+     ...
 
 
 File: gperf.info,  Node: Gperf Declarations,  Next: C Code Inclusion,  Prev: User-supplied Struct,  Up: Declarations
@@ -891,9 +900,9 @@ fragment based on the previous example that illustrates this feature:
      %{
      #include <assert.h>
      /* This section of code is inserted directly into the output. */
-     int return_month_days (struct months *months, int is_leap_year);
+     int return_month_days (struct month *months, int is_leap_year);
      %}
-     struct months { char *name; int number; int days; int leap_days; };
+     struct month { char *name; int number; int days; int leap_days; };
      %%
      january,   1, 31, 31
      february,  2, 28, 29
@@ -1011,7 +1020,7 @@ command-line option.  Both functions require two arguments, a string,
 `char *' STR, and a length parameter, `int' LEN.  Their default
 function prototypes are as follows:
 
- - Function: unsigned int hash (const char * STR, unsigned int LEN)
+ - Funktion: unsigned int hash (const char * STR, unsigned int LEN)
      By default, the generated `hash' function returns an integer value
      created by adding LEN to several user-specified STR byte positions
      indexed into an "associated values" table stored in a local static
@@ -1021,7 +1030,7 @@ function prototypes are as follows:
      STR) are specified via the `-k' option when running `gperf', as
      detailed in the _Options_ section below (*note Options::).
 
- - Function:  in_word_set (const char * STR, unsigned int LEN)
+ - Funktion:  in_word_set (const char * STR, unsigned int LEN)
      If STR is in the keyword set, returns a pointer to that keyword.
      More exactly, if the option `-t' (or, equivalently, the
      `%struct-type' declaration) was given, it returns a pointer to the
@@ -1654,32 +1663,32 @@ Concept Index
 
 
 Tag Table:
-Node: Top1234
-Node: Copying3318
-Node: Contributors22507
-Node: Motivation23700
-Node: Search Structures24828
-Node: Description28383
-Node: Input Format30276
-Node: Declarations31413
-Node: User-supplied Struct31989
-Node: Gperf Declarations33405
-Node: C Code Inclusion41815
-Node: Keywords42644
-Node: Functions44580
-Node: Controls for GNU indent45106
-Node: Output Format46045
-Node: Binary Strings48829
-Node: Options49972
-Node: Output File50757
-Node: Input Details51141
-Node: Output Language52972
-Node: Output Details54383
-Node: Algorithmic Details61298
-Node: Verbosity66547
-Node: Bugs67250
-Node: Projects68842
-Node: Bibliography69970
-Node: Concept Index72026
+Node: Top1240
+Node: Copying3324
+Node: Contributors22513
+Node: Motivation23706
+Node: Search Structures24834
+Node: Description28389
+Node: Input Format30282
+Node: Declarations31419
+Node: User-supplied Struct31995
+Node: Gperf Declarations33594
+Node: C Code Inclusion42004
+Node: Keywords42831
+Node: Functions44767
+Node: Controls for GNU indent45293
+Node: Output Format46232
+Node: Binary Strings49016
+Node: Options50159
+Node: Output File50944
+Node: Input Details51328
+Node: Output Language53159
+Node: Output Details54570
+Node: Algorithmic Details61485
+Node: Verbosity66734
+Node: Bugs67437
+Node: Projects69029
+Node: Bibliography70157
+Node: Concept Index72213
 
 End Tag Table
