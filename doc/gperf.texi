@@ -14,7 +14,7 @@ END-INFO-DIR-ENTRY
 @ifinfo
 This file documents the features of the GNU Perfect Hash Function Generator
 
-Copyright (C) 1989-1998 Free Software Foundation, Inc.
+Copyright (C) 1989-2000 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -57,7 +57,7 @@ Free Software Foundation instead of in the original English.
 @center for version 2.7
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1989-1998 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2000 Free Software Foundation, Inc.
 
 
 Permission is granted to make and distribute verbatim copies of
