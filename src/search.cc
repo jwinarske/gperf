@@ -31,6 +31,8 @@
 #include <limits.h> /* defines INT_MIN, INT_MAX, UINT_MAX */
 #include "options.h"
 #include "hash-table.h"
+/* Assume ISO C++ 'for' scoping rule.  */
+#define for if (0) ; else for
 
 /* The most general form of the hash function is
 
