@@ -1,5 +1,11 @@
 2002-11-16  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.cc (Options::long_usage): Rename options -H, -N, -l, -G.
+	(long_options): Add --hash-function-name, --lookup-function-name,
+	--compare-lengths.
+	* doc/gperf.texi (Output Details): Rename options -H, -N, -l, -G.
+	* tests/test-6.exp: Update.
+
 	* src/options.cc (DEFAULT_DELIMITERS): Remove newline.
 	* src/options.cc (Options::long_usage): Change default --delimiters.
 	* doc/gperf.texi (Input Details): Likewise.

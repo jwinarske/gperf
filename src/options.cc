@@ -125,11 +125,11 @@ Options::long_usage (FILE * stream) const
            "                         Initializers for additional components in the keyword\n"
            "                         structure.\n");
   fprintf (stream,
-           "  -H, --hash-fn-name=NAME\n"
+           "  -H, --hash-function-name=NAME\n"
            "                         Specify name of generated hash function. Default is\n"
            "                         'hash'.\n");
   fprintf (stream,
-           "  -N, --lookup-fn-name=NAME\n"
+           "  -N, --lookup-function-name=NAME\n"
            "                         Specify name of generated lookup function. Default\n"
            "                         name is 'in_word_set'.\n");
   fprintf (stream,
@@ -138,7 +138,7 @@ Options::long_usage (FILE * stream) const
   fprintf (stream,
            "  -7, --seven-bit        Assume 7-bit characters.\n");
   fprintf (stream,
-           "  -l, --compare-strlen   Compare key lengths before trying a string\n"
+           "  -l, --compare-lengths  Compare key lengths before trying a string\n"
            "                         comparison. This is necessary if the keywords\n"
            "                         contain NUL bytes. It also helps cut down on the\n"
            "                         number of string comparisons made during the lookup.\n");
@@ -155,7 +155,7 @@ Options::long_usage (FILE * stream) const
            "  -I, --includes         Include the necessary system include file <string.h>\n"
            "                         at the beginning of the code.\n");
   fprintf (stream,
-           "  -G, --global           Generate the static table of keywords as a static\n"
+           "  -G, --global-table     Generate the static table of keywords as a static\n"
            "                         global variable, rather than hiding it inside of the\n"
            "                         lookup function (which is the default behavior).\n");
   fprintf (stream,
@@ -538,20 +538,23 @@ static const struct option long_options[] =
   { "language", required_argument, NULL, 'L' },
   { "slot-name", required_argument, NULL, 'K' },
   { "initializer-suffix", required_argument, NULL, 'F' },
-  { "hash-fn-name", required_argument, NULL, 'H' },
-  { "lookup-fn-name", required_argument, NULL, 'N' },
+  { "hash-fn-name", required_argument, NULL, 'H' }, /* backward compatibility */
+  { "hash-function-name", required_argument, NULL, 'H' },
+  { "lookup-fn-name", required_argument, NULL, 'N' }, /* backward compatibility */
+  { "lookup-function-name", required_argument, NULL, 'N' },
   { "class-name", required_argument, NULL, 'Z' },
   { "seven-bit", no_argument, NULL, '7' },
   { "compare-strncmp", no_argument, NULL, 'c' },
   { "readonly-tables", no_argument, NULL, 'C' },
   { "enum", no_argument, NULL, 'E' },
   { "includes", no_argument, NULL, 'I' },
-  { "global", no_argument, NULL, 'G' },
+  { "global-table", no_argument, NULL, 'G' },
   { "word-array-name", required_argument, NULL, 'W' },
   { "switch", required_argument, NULL, 'S' },
   { "omit-struct-type", no_argument, NULL, 'T' },
   { "key-positions", required_argument, NULL, 'k' },
-  { "compare-strlen", no_argument, NULL, 'l' },
+  { "compare-strlen", no_argument, NULL, 'l' }, /* backward compatibility */
+  { "compare-lengths", no_argument, NULL, 'l' },
   { "duplicates", no_argument, NULL, 'D' },
   { "fast", required_argument, NULL, 'f' },
   { "initial-asso", required_argument, NULL, 'i' },

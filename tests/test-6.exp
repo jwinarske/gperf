@@ -33,16 +33,16 @@ Details in the output code:
   -F, --initializer-suffix=INITIALIZERS
                          Initializers for additional components in the keyword
                          structure.
-  -H, --hash-fn-name=NAME
+  -H, --hash-function-name=NAME
                          Specify name of generated hash function. Default is
                          'hash'.
-  -N, --lookup-fn-name=NAME
+  -N, --lookup-function-name=NAME
                          Specify name of generated lookup function. Default
                          name is 'in_word_set'.
   -Z, --class-name=NAME  Specify name of generated C++ class. Default name is
                          'Perfect_Hash'.
   -7, --seven-bit        Assume 7-bit characters.
-  -l, --compare-strlen   Compare key lengths before trying a string
+  -l, --compare-lengths  Compare key lengths before trying a string
                          comparison. This is necessary if the keywords
                          contain NUL bytes. It also helps cut down on the
                          number of string comparisons made during the lookup.
@@ -54,7 +54,7 @@ Details in the output code:
                          lookup function rather than with defines.
   -I, --includes         Include the necessary system include file <string.h>
                          at the beginning of the code.
-  -G, --global           Generate the static table of keywords as a static
+  -G, --global-table     Generate the static table of keywords as a static
                          global variable, rather than hiding it inside of the
                          lookup function (which is the default behavior).
   -W, --word-array-name=NAME

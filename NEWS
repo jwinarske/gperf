@@ -3,6 +3,12 @@ New in 2.8:
 * Added option -m/--multiple-iterations that reduces the size of the
   generated table.
 * Added option --output that allows to specify the output file name.
+* Some options have been renamed:
+    --hash-fn-name=NAME     -->   --hash-function-name=NAME
+    --lookup-fn-name=NAME   -->   --lookup-function-name=NAME
+    --compare-strlen        -->   --compare-lengths
+    --global                -->   --global-table
+  The older variants are still supported for backward compatibility.
 * If the input file is given by name, the output file will now contain
   #line directives referring to the input file.
 * Bug fixes.

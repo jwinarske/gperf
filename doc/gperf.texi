@@ -653,13 +653,13 @@ should start with a comma.  By default, the emitted code will
 zero-initialize structure members following @var{slot-name}.
 
 @item -H @var{hash-function-name}
-@itemx --hash-fn-name=@var{hash-function-name}
+@itemx --hash-function-name=@var{hash-function-name}
 Allows you to specify the name for the generated hash function.  Default
 name is @samp{hash}.  This option permits the use of two hash tables in
 the same file.
 
 @item -N @var{lookup-function-name}
-@itemx --lookup-fn-name=@var{lookup-function-name}
+@itemx --lookup-function-name=@var{lookup-function-name}
 Allows you to specify the name for the generated lookup function.
 Default name is @samp{in_word_set}.  This option permits completely
 automatic generation of perfect hash functions, especially when multiple
@@ -684,7 +684,7 @@ default in versions of @code{gperf} earlier than 2.7; now the default is
 to support 8-bit and multibyte characters.
 
 @item -l
-@itemx --compare-strlen
+@itemx --compare-lengths
 Compare keyword lengths before trying a string comparison.  This option
 is mandatory for binary comparisons (@pxref{Binary Strings}).  It also might
 cut down on the number of string comparisons made during the lookup, since
@@ -718,7 +718,7 @@ beginning of the code.  By default, this is not done; the user must
 include this header file himself to allow compilation of the code.
 
 @item -G
-@itemx --global
+@itemx --global-table
 Generate the static table of keywords as a static global variable,
 rather than hiding it inside of the lookup function (which is the
 default behavior).
