@@ -1,3 +1,14 @@
+2003-03-19  Bruno Haible  <bruno@clisp.org>
+
+	* src/output.cc (Output::output_hash_function): Avoid lint warning if
+	not all arguments of the hash function are used. Avoid lint warning
+	for fallthrough in switch.
+	* tests/c-parse.exp, tests/charsets.exp, tests/chill.exp,
+	tests/cplusplus.exp, tests/java.exp, tests/languages.exp,
+	tests/modula2.exp, tests/objc.exp: All /*FALLTHROUGH*/ to expected
+	output.
+	Reported by Bruce Lilly <blilly@erols.com>.
+
 2003-03-01  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.h (Options::set_initializer_suffix): New declaration.

@@ -95,6 +95,7 @@ hash (str, len)
     {
       default:
         hval += asso_values[(unsigned char)str[21]];
+      /*FALLTHROUGH*/
       case 21:
       case 20:
       case 19:
@@ -107,24 +108,34 @@ hash (str, len)
       case 12:
       case 11:
         hval += asso_values[(unsigned char)str[10]+1];
+      /*FALLTHROUGH*/
       case 10:
         hval += asso_values[(unsigned char)str[9]];
+      /*FALLTHROUGH*/
       case 9:
         hval += asso_values[(unsigned char)str[8]+1];
+      /*FALLTHROUGH*/
       case 8:
         hval += asso_values[(unsigned char)str[7]+3];
+      /*FALLTHROUGH*/
       case 7:
         hval += asso_values[(unsigned char)str[6]];
+      /*FALLTHROUGH*/
       case 6:
         hval += asso_values[(unsigned char)str[5]];
+      /*FALLTHROUGH*/
       case 5:
         hval += asso_values[(unsigned char)str[4]];
+      /*FALLTHROUGH*/
       case 4:
         hval += asso_values[(unsigned char)str[3]];
+      /*FALLTHROUGH*/
       case 3:
         hval += asso_values[(unsigned char)str[2]];
+      /*FALLTHROUGH*/
       case 2:
         hval += asso_values[(unsigned char)str[1]+1];
+      /*FALLTHROUGH*/
       case 1:
         hval += asso_values[(unsigned char)str[0]];
         break;

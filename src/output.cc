@@ -738,6 +738,15 @@ Output::output_hash_function () const
             "#endif\n"
             "#endif\n");
 
+  if (/* The function does not use the 'str' argument?  */
+      _key_positions.get_size() == 0
+      || /* The function uses 'str', but not the 'len' argument?  */
+         (option[NOLENGTH]
+          && _key_positions[0] < _min_key_len
+          && _key_positions[_key_positions.get_size() - 1] != Positions::LASTCHAR))
+    /* Pacify lint.  */
+    printf ("/*ARGSUSED*/\n");
+
   if (option[KRC] | option[C] | option[ANSIC])
     printf ("static ");
   printf ("unsigned int\n");
@@ -862,6 +871,8 @@ Output::output_hash_function () const
               int i = key_pos;
               do
                 {
+                  if (i > key_pos)
+                    printf ("      /*FALLTHROUGH*/\n"); /* Pacify lint.  */
                   for ( ; i > key_pos; i--)
                     printf ("      case %d:\n", i);
 
@@ -873,6 +884,8 @@ Output::output_hash_function () const
                 }
               while (key_pos != PositionIterator::EOS && key_pos != Positions::LASTCHAR);
 
+              if (i >= _min_key_len)
+                printf ("      /*FALLTHROUGH*/\n"); /* Pacify lint.  */
               for ( ; i >= _min_key_len; i--)
                 printf ("      case %d:\n", i);
             }

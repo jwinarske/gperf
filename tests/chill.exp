@@ -84,62 +84,91 @@ hash (str, len)
     {
       default:
         hval += asso_values[(unsigned char)str[29]];
+      /*FALLTHROUGH*/
       case 29:
         hval += asso_values[(unsigned char)str[28]];
+      /*FALLTHROUGH*/
       case 28:
         hval += asso_values[(unsigned char)str[27]];
+      /*FALLTHROUGH*/
       case 27:
         hval += asso_values[(unsigned char)str[26]];
+      /*FALLTHROUGH*/
       case 26:
         hval += asso_values[(unsigned char)str[25]];
+      /*FALLTHROUGH*/
       case 25:
         hval += asso_values[(unsigned char)str[24]];
+      /*FALLTHROUGH*/
       case 24:
         hval += asso_values[(unsigned char)str[23]];
+      /*FALLTHROUGH*/
       case 23:
         hval += asso_values[(unsigned char)str[22]];
+      /*FALLTHROUGH*/
       case 22:
         hval += asso_values[(unsigned char)str[21]];
+      /*FALLTHROUGH*/
       case 21:
         hval += asso_values[(unsigned char)str[20]];
+      /*FALLTHROUGH*/
       case 20:
         hval += asso_values[(unsigned char)str[19]];
+      /*FALLTHROUGH*/
       case 19:
         hval += asso_values[(unsigned char)str[18]];
+      /*FALLTHROUGH*/
       case 18:
         hval += asso_values[(unsigned char)str[17]];
+      /*FALLTHROUGH*/
       case 17:
         hval += asso_values[(unsigned char)str[16]];
+      /*FALLTHROUGH*/
       case 16:
         hval += asso_values[(unsigned char)str[15]];
+      /*FALLTHROUGH*/
       case 15:
         hval += asso_values[(unsigned char)str[14]];
+      /*FALLTHROUGH*/
       case 14:
         hval += asso_values[(unsigned char)str[13]];
+      /*FALLTHROUGH*/
       case 13:
         hval += asso_values[(unsigned char)str[12]];
+      /*FALLTHROUGH*/
       case 12:
         hval += asso_values[(unsigned char)str[11]];
+      /*FALLTHROUGH*/
       case 11:
         hval += asso_values[(unsigned char)str[10]];
+      /*FALLTHROUGH*/
       case 10:
         hval += asso_values[(unsigned char)str[9]];
+      /*FALLTHROUGH*/
       case 9:
         hval += asso_values[(unsigned char)str[8]];
+      /*FALLTHROUGH*/
       case 8:
         hval += asso_values[(unsigned char)str[7]];
+      /*FALLTHROUGH*/
       case 7:
         hval += asso_values[(unsigned char)str[6]];
+      /*FALLTHROUGH*/
       case 6:
         hval += asso_values[(unsigned char)str[5]];
+      /*FALLTHROUGH*/
       case 5:
         hval += asso_values[(unsigned char)str[4]];
+      /*FALLTHROUGH*/
       case 4:
         hval += asso_values[(unsigned char)str[3]];
+      /*FALLTHROUGH*/
       case 3:
         hval += asso_values[(unsigned char)str[2]];
+      /*FALLTHROUGH*/
       case 2:
         hval += asso_values[(unsigned char)str[1]+1];
+      /*FALLTHROUGH*/
       case 1:
         hval += asso_values[(unsigned char)str[0]];
         break;

@@ -99,11 +99,14 @@ hash (str, len)
     {
       default:
         hval += asso_values[(unsigned char)str[4]+1];
+      /*FALLTHROUGH*/
       case 4:
       case 3:
         hval += asso_values[(unsigned char)str[2]];
+      /*FALLTHROUGH*/
       case 2:
         hval += asso_values[(unsigned char)str[1]+9];
+      /*FALLTHROUGH*/
       case 1:
         hval += asso_values[(unsigned char)str[0]];
         break;
