@@ -1,5 +1,24 @@
 2002-11-17  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword.h (KeywordExt::_selchars): Change type to
+	'const unsigned int *'.
+	* src/keyword.cc (sort_char_set): Change argument type to
+	'unsigned int *'.
+	(KeywordExt::init_selchars): Update.
+	* src/search.h (Search::sort_by_occurrence): Change argument type to
+	'unsigned int *'.
+	(Search::try_asso_value): Change argument type to 'unsigned int'.
+	(Search::_union_set): Change type to 'unsigned int *'.
+	* src/search.cc (Search::prepare, Search::compute_occurrence,
+	Search::set_determined, Search::already_determined,
+	Search::prepare_asso_values, Search::compute_hash): Update.
+	(compute_disjoint_union): Change argument types to 'unsigned int *'.
+	(Search::sort_by_occurrence): Likewise.
+	(Search::try_asso_value): Change argument type to 'unsigned int'.
+	(Search::change_some_asso_value, Search::~Search): Update.
+	* src/hash-table.cc (Hash_Table::~Hash_Table, Hash_Table::equal,
+	Hash_Table::insert): Update.
+
 	* src/positions.h: New file, extracted from options.h.
 	* src/positions.icc: New file, extracted from options.icc.
 	* src/positions.cc: New file, extracted from options.cc.

@@ -31,14 +31,14 @@
 
 /* --------------------------- KeywordExt class --------------------------- */
 
-/* Sort a small set of 'unsigned char', base[0..len-1], in place.  */
-static inline void sort_char_set (unsigned char *base, int len)
+/* Sort a small set of 'unsigned int', base[0..len-1], in place.  */
+static inline void sort_char_set (unsigned int *base, int len)
 {
   /* Bubble sort is sufficient here.  */
   for (int i = 1; i < len; i++)
     {
       int j;
-      unsigned char tmp;
+      unsigned int tmp;
 
       for (j = i, tmp = base[j]; j > 0 && tmp < base[j - 1]; j--)
         base[j] = base[j - 1];
@@ -61,9 +61,9 @@ void
 KeywordExt::init_selchars (bool use_all_chars, const Positions& positions)
 {
   const char *k = _allchars;
-  unsigned char *key_set =
-    new unsigned char[(use_all_chars ? _allchars_length : positions.get_size ())];
-  unsigned char *ptr = key_set;
+  unsigned int *key_set =
+    new unsigned int[(use_all_chars ? _allchars_length : positions.get_size ())];
+  unsigned int *ptr = key_set;
 
   if (use_all_chars)
     /* Use all the character positions in the KEY.  */

@@ -104,10 +104,15 @@ Hash_Table::~Hash_Table ()
 
       for (int i = _size - 1; i >= 0; i--)
         if (_table[i])
-          fprintf (stderr, "%8d, %*.*s, %.*s\n",
-                   i,
-                   field_width, _table[i]->_selchars_length, _table[i]->_selchars,
-                   _table[i]->_allchars_length, _table[i]->_allchars);
+          {
+            fprintf (stderr, "%8d, ", i);
+            if (field_width > _table[i]->_selchars_length)
+              fprintf (stderr, "%*s", field_width - _table[i]->_selchars_length, "");
+            for (int j = 0; j < _table[i]->_selchars_length; j++)
+              putc (_table[i]->_selchars[j], stderr);
+            fprintf (stderr, ", %.*s\n",
+                     _table[i]->_allchars_length, _table[i]->_allchars);
+          }
 
       fprintf (stderr, "\nend dumping hash table\n\n");
     }
@@ -119,7 +124,8 @@ inline bool
 Hash_Table::equal (KeywordExt *item1, KeywordExt *item2) const
 {
   return item1->_selchars_length == item2->_selchars_length
-         && memcmp (item1->_selchars, item2->_selchars, item2->_selchars_length)
+         && memcmp (item1->_selchars, item2->_selchars,
+                    item2->_selchars_length * sizeof (unsigned int))
             == 0
          && (_ignore_length
              || item1->_allchars_length == item2->_allchars_length);
@@ -130,7 +136,9 @@ Hash_Table::equal (KeywordExt *item1, KeywordExt *item2) const
 KeywordExt *
 Hash_Table::insert (KeywordExt *item)
 {
-  unsigned hash_val = hashpjw (item->_selchars, item->_selchars_length);
+  unsigned hash_val =
+    hashpjw (reinterpret_cast<const unsigned char *>(item->_selchars),
+             item->_selchars_length * sizeof (unsigned int));
   unsigned int probe = hash_val & (_size - 1);
   unsigned int increment =
     (((hash_val >> _log_size)

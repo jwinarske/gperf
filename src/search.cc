@@ -316,10 +316,14 @@ Search::prepare ()
 
             /* Complain if user hasn't enabled the duplicate option. */
             if (!option[DUP] || option[DEBUG])
-              fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"%.*s\".\n",
-                               keyword->_allchars_length, keyword->_allchars,
-                               other_keyword->_allchars_length, other_keyword->_allchars,
-                               keyword->_selchars_length, keyword->_selchars);
+              {
+                fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"",
+                         keyword->_allchars_length, keyword->_allchars,
+                         other_keyword->_allchars_length, other_keyword->_allchars);
+                for (int j = 0; j < keyword->_selchars_length; j++)
+                  putc (keyword->_selchars[j], stderr);
+                fprintf (stderr, "\".\n");
+              }
           }
         else
           {
@@ -358,7 +362,7 @@ Search::prepare ()
   for (temp = _head; temp; temp = temp->rest())
     {
       KeywordExt *keyword = temp->first();
-      const unsigned char *ptr = keyword->_selchars;
+      const unsigned int *ptr = keyword->_selchars;
       for (int count = keyword->_selchars_length; count > 0; ptr++, count--)
         _occurrences[*ptr]++;
     }
@@ -377,7 +381,7 @@ Search::compute_occurrence (KeywordExt *ptr) const
 {
   int value = 0;
 
-  const unsigned char *p = ptr->_selchars;
+  const unsigned int *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
     value += _occurrences[*p];
@@ -407,7 +411,7 @@ Search::clear_determined ()
 inline void
 Search::set_determined (KeywordExt *keyword)
 {
-  const unsigned char *p = keyword->_selchars;
+  const unsigned int *p = keyword->_selchars;
   unsigned int i = keyword->_selchars_length;
   for (; i > 0; p++, i--)
     _determined[*p] = true;
@@ -419,7 +423,7 @@ Search::set_determined (KeywordExt *keyword)
 inline bool
 Search::already_determined (KeywordExt *keyword) const
 {
-  const unsigned char *p = keyword->_selchars;
+  const unsigned int *p = keyword->_selchars;
   unsigned int i = keyword->_selchars_length;
   for (; i > 0; p++, i--)
     if (!_determined[*p])
@@ -563,7 +567,7 @@ Search::prepare_asso_values ()
   _collision_detector = new Bool_Array (_max_hash_value + 1);
 
   /* Allocate scratch set.  */
-  _union_set = new unsigned char [2 * get_max_keysig_size ()];
+  _union_set = new unsigned int [2 * get_max_keysig_size ()];
 
   if (option[DEBUG])
     fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
@@ -607,7 +611,7 @@ Search::compute_hash (KeywordExt *keyword) const
 {
   int sum = option[NOLENGTH] ? 0 : keyword->_allchars_length;
 
-  const unsigned char *p = keyword->_selchars;
+  const unsigned int *p = keyword->_selchars;
   int i = keyword->_selchars_length;
   for (; i > 0; p++, i--)
       sum += _asso_values[*p];
@@ -624,11 +628,11 @@ Search::compute_hash (KeywordExt *keyword) const
    Returns the size of the resulting set.  */
 
 inline int
-compute_disjoint_union (const unsigned char *set_1, int size_1,
-                        const unsigned char *set_2, int size_2,
-                        unsigned char *set_3)
+compute_disjoint_union (const unsigned int *set_1, int size_1,
+                        const unsigned int *set_2, int size_2,
+                        unsigned int *set_3)
 {
-  unsigned char *base = set_3;
+  unsigned int *base = set_3;
 
   while (size_1 > 0 && size_2 > 0)
     if (*set_1 == *set_2)
@@ -638,7 +642,7 @@ compute_disjoint_union (const unsigned char *set_1, int size_1,
       }
     else
       {
-        unsigned char next;
+        unsigned int next;
         if (*set_1 < *set_2)
           next = *set_1++, size_1--;
         else
@@ -649,7 +653,7 @@ compute_disjoint_union (const unsigned char *set_1, int size_1,
 
   while (size_1 > 0)
     {
-      unsigned char next;
+      unsigned int next;
       next = *set_1++, size_1--;
       if (set_3 == base || next != set_3[-1])
         *set_3++ = next;
@@ -657,7 +661,7 @@ compute_disjoint_union (const unsigned char *set_1, int size_1,
 
   while (size_2 > 0)
     {
-      unsigned char next;
+      unsigned int next;
       next = *set_2++, size_2--;
       if (set_3 == base || next != set_3[-1])
         *set_3++ = next;
@@ -668,13 +672,13 @@ compute_disjoint_union (const unsigned char *set_1, int size_1,
 /* Sorts the given set in increasing frequency of _occurrences[].  */
 
 inline void
-Search::sort_by_occurrence (unsigned char *set, int len) const
+Search::sort_by_occurrence (unsigned int *set, int len) const
 {
   /* Use bubble sort, since the set is typically short.  */
   for (int i = 1; i < len; i++)
     {
       int curr;
-      unsigned char tmp;
+      unsigned int tmp;
 
       for (curr = i, tmp = set[curr];
            curr > 0 && _occurrences[tmp] < _occurrences[set[curr-1]];
@@ -696,7 +700,7 @@ Search::sort_by_occurrence (unsigned char *set, int len) const
    This is called very frequently, and needs to be fast!  */
 
 inline bool
-Search::try_asso_value (unsigned char c, KeywordExt *curr, int iterations)
+Search::try_asso_value (unsigned int c, KeywordExt *curr, int iterations)
 {
   int original_value = _asso_values[c];
 
@@ -760,7 +764,7 @@ Search::change_some_asso_value (KeywordExt *prior, KeywordExt *curr)
      change an _asso_values[c] for a character c that contributes to the
      hash functions of prior and curr with different multiplicity.
      So we compute the set of such c.  */
-  unsigned char *union_set = _union_set;
+  unsigned int *union_set = _union_set;
   int union_set_length =
     compute_disjoint_union (prior->_selchars, prior->_selchars_length,
                             curr->_selchars, curr->_selchars_length,
@@ -778,7 +782,7 @@ Search::change_some_asso_value (KeywordExt *prior, KeywordExt *curr)
       ? option.get_iterations ()
       : keyword_list_length ();
 
-  const unsigned char *p = union_set;
+  const unsigned int *p = union_set;
   int i = union_set_length;
   for (; i > 0; p++, i--)
     if (!try_asso_value (*p, curr, iterations))
@@ -1006,10 +1010,16 @@ Search::~Search ()
       fprintf (stderr, "\nList contents are:\n(hash value, key length, index, %*s, keyword):\n",
                field_width, "selchars");
       for (KeywordExt_List *ptr = _head; ptr; ptr = ptr->rest())
-        fprintf (stderr, "%11d,%11d,%6d, %*.*s, %.*s\n",
-                 ptr->first()->_hash_value, ptr->first()->_allchars_length, ptr->first()->_final_index,
-                 field_width, ptr->first()->_selchars_length, ptr->first()->_selchars,
-                 ptr->first()->_allchars_length, ptr->first()->_allchars);
+        {
+          fprintf (stderr, "%11d,%11d,%6d, ",
+                   ptr->first()->_hash_value, ptr->first()->_allchars_length, ptr->first()->_final_index);
+          if (field_width > ptr->first()->_selchars_length)
+            fprintf (stderr, "%*s", field_width - ptr->first()->_selchars_length, "");
+          for (int j = 0; j < ptr->first()->_selchars_length; j++)
+            putc (ptr->first()->_selchars[j], stderr);
+          fprintf (stderr, ", %.*s\n",
+                   ptr->first()->_allchars_length, ptr->first()->_allchars);
+        }
 
       fprintf (stderr, "End dumping list.\n\n");
     }

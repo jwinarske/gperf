@@ -59,7 +59,7 @@ struct KeywordExt : public Keyword
   /* The selected characters that participate for the hash function,
      selected according to the keyposition list, as a canonically reordered
      multiset.  */
-  const unsigned char * _selchars;
+  const unsigned int *  _selchars;
   int                   _selchars_length;
   /* Chained list of keywords having the same _selchars and
      - if !option[NOLENGTH] - also the same _allchars_length.

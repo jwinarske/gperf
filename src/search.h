@@ -80,10 +80,10 @@ private:
   int                   compute_hash (KeywordExt *keyword) const;
 
   /* Sorts the given set in increasing frequency of _occurrences[].  */
-  void                  sort_by_occurrence (unsigned char *set, int len) const;
+  void                  sort_by_occurrence (unsigned int *set, int len) const;
 
   /* Tries various other values for _asso_values[c].  */
-  bool                  try_asso_value (unsigned char c, KeywordExt *curr, int iterations);
+  bool                  try_asso_value (unsigned int c, KeywordExt *curr, int iterations);
 
   /* Attempts to change an _asso_value[], in order to resolve a hash value
      collision between the two given keywords.  */
@@ -152,7 +152,7 @@ private:
   int                   _fewest_collisions;
 
   /* Scratch set, used during Search::change_some_asso_value.  */
-  unsigned char *       _union_set;
+  unsigned int *        _union_set;
 
   /* Number of keyword being handled during Search::find_asso_values.  */
   int                   _num_done;
