@@ -452,8 +452,8 @@ Contributors to GNU `gperf' Utility
      net.sources around 1984.  The current program is a heavily
      modified, enhanced, and extended implementation of Keith's basic
      idea, created at the University of California, Irvine.  Bugs,
-     patches, and suggestions should be reported to
-     `<bug-gnu-utils@gnu.org>'.
+     patches, and suggestions should be reported to both
+     `<bug-gnu-utils@gnu.org>' and `<gperf-bugs@lists.sourceforge.net>'.
 
    * Special thanks is extended to Michael Tiemann and Doug Lea, for
      providing a useful compiler, and for giving me a forum to exhibit
@@ -1365,25 +1365,25 @@ Tag Table:
 Node: Top1236
 Node: Copying3130
 Node: Contributors22321
-Node: Motivation23534
-Node: Search Structures24610
-Node: Description28155
-Node: Input Format30056
-Node: Declarations30898
-Node: Keywords33222
-Node: Functions34977
-Node: Output Format35471
-Node: Binary Strings38067
-Node: Options39073
-Node: Input Details39779
-Node: Output Language40844
-Node: Output Details42148
-Node: Algorithmic Details46796
-Node: Verbosity54238
-Node: Bugs54941
-Node: Projects57169
-Node: Implementation58746
-Node: Bibliography59463
-Node: Concept Index61406
+Node: Motivation23580
+Node: Search Structures24656
+Node: Description28201
+Node: Input Format30102
+Node: Declarations30944
+Node: Keywords33268
+Node: Functions35023
+Node: Output Format35517
+Node: Binary Strings38113
+Node: Options39119
+Node: Input Details39825
+Node: Output Language40890
+Node: Output Details42194
+Node: Algorithmic Details46842
+Node: Verbosity54284
+Node: Bugs54987
+Node: Projects57215
+Node: Implementation58792
+Node: Bibliography59509
+Node: Concept Index61452
 
 End Tag Table

@@ -7,7 +7,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 20 August 2000
+@set UPDATED 26 September 2000
 @set EDITION 2.7.2
 @set VERSION 2.7.2
 @c ---------------------
@@ -154,7 +154,8 @@ Bostic's algorithm written in C, and distributed to net.sources around
 1984.  The current program is a heavily modified, enhanced, and extended
 implementation of Keith's basic idea, created at the University of
 California, Irvine.  Bugs, patches, and suggestions should be reported
-to @code{<bug-gnu-utils@@gnu.org>}.
+to both @code{<bug-gnu-utils@@gnu.org>} and
+@code{<gperf-bugs@@lists.sourceforge.net>}.
 
 @item
 Special thanks is extended to Michael Tiemann and Doug Lea, for
