@@ -58,9 +58,11 @@ WARN_CFLAGS = -W1
 
 !if $(DEBUG)
 OPTIMFLAGS = -Od -Z7
+DEBUGFLAGS = -Z7
 !else
 # Some people prefer -O2 -G6 instead of -O1, but -O2 is not reliable in MSVC5.
 OPTIMFLAGS = -D_NDEBUG -O1
+DEBUGFLAGS =
 !endif
 
 CFLAGS = $(MFLAGS) $(WARN_CFLAGS) $(OPTIMFLAGS)
@@ -149,7 +151,7 @@ src\main.obj : src\main.cc $(OPTIONS_H) $(INPUT_H) $(SEARCH_H) $(OUTPUT_H)
 	$(CXX) $(INCLUDES) $(CXXFLAGS) -c src\main.cc -Fosrc\main.obj
 
 gperf.exe : $(OBJECTS)
-	$(CC) $(OBJECTS) -Fegperf.exe
+	$(CC) $(MFLAGS) $(DEBUGFLAGS) $(OBJECTS) -Fegperf.exe
 
 install : all force
 	-mkdir $(prefix)
