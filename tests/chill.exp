@@ -1,4 +1,4 @@
-/* C code produced by gperf version 2.7 */
+/* C code produced by gperf version 2.7.2 */
 /* Command-line: ../src/gperf -L C -F ', 0, 0, 0' -D -E -S1 -p -j1 -i 1 -g -o -t -k'*'  */
 struct resword {
   const char  *name;
@@ -11,6 +11,10 @@ extern tree ridpointers [];
 
 #ifdef __GNUC__
 __inline
+#else
+#ifdef __cplusplus
+inline
+#endif
 #endif
 static unsigned int
 hash (str, len)

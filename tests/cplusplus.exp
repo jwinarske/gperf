@@ -1,4 +1,4 @@
-/* C code produced by gperf version 2.7 */
+/* C code produced by gperf version 2.7.2 */
 /* Command-line: ../src/gperf -L C -F ', 0, 0' -p -j1 -g -o -t -N is_reserved_word -k'1,4,7,$'  */
 /* Command-line: gperf -L KR-C -F ', 0, 0' -p -j1 -g -o -t -N is_reserved_word -k1,4,$,7 gplus.gperf  */
 struct resword { const char *name; short token; enum rid rid;};
@@ -12,6 +12,10 @@ struct resword { const char *name; short token; enum rid rid;};
 
 #ifdef __GNUC__
 __inline
+#else
+#ifdef __cplusplus
+inline
+#endif
 #endif
 static unsigned int
 hash (str, len)
