@@ -153,7 +153,7 @@ Bostic's algorithm written in C, and distributed to net.sources around
 1984.  The current program is a heavily modified, enhanced, and extended
 implementation of Keith's basic idea, created at the University of
 California, Irvine.  Bugs, patches, and suggestions should be reported
-to @code{<bug-gnu-utils@@gnu.org>} and @code{<schmidt@@ics.uci.edu>}.
+to @code{<bug-gnu-utils@@gnu.org>}.
 
 @item
 Special thanks is extended to Michael Tiemann and Doug Lea, for
@@ -181,13 +181,9 @@ the lookup table.
 lexical analyzers in several production and research compilers and
 language processing tools, including GNU C, GNU C++, GNU Pascal, GNU
 Modula 3, and GNU indent.  Complete C++ source code for @code{gperf} is
-available via anonymous ftp from @code{ics.uci.edu} and
-@code{ftp.santafe.edu}.  @code{gperf} was also distributed along with
-the GNU libg++ library for several years.  A highly portable,
-functionally equivalent K&R C version of @code{gperf} is archived in
-comp.sources.unix, volume 20.  Finally, a paper describing
-@code{gperf}'s design and implementation in greater detail is available
-in the Second USENIX C++ Conference proceedings.
+available via anonymous ftp from @code{ftp://ftp.gnu.org/pub/gnu/gperf/}.
+A paper describing @code{gperf}'s design and implementation in greater
+detail is available in the Second USENIX C++ Conference proceedings.
 
 @node Search Structures, Description, Motivation, Top
 @chapter Static search structures and GNU @code{gperf}
@@ -455,7 +451,7 @@ section is valid C.
 
 @node Output Format,  , Input Format, Description
 @section Output Format for Generated C Code with @code{gperf}
-@cindex @code{hash_table}
+@cindex hash table
 
 Several options control how the generated C code appears on the standard 
 output.  Two C function are generated.  They are called @code{hash} and 
@@ -483,12 +479,13 @@ a pointer to the matching keyword's structure. Otherwise it returns
 @code{NULL}.
 @end deftypefun
 
-Two options, @samp{-g} (assume you are compiling with GNU C and its
-@code{inline} feature) and @samp{-a} (assume ANSI C-style function
-prototypes), alter the content of both the generated @code{hash} and
-@code{in_word_set} routines.  However, function @code{in_word_set} may
-be modified more extensively, in response to your option settings.  The
-options that affect the @code{in_word_set} structure are:
+If the option @samp{-c} is not used, @var{str} must be a NUL terminated
+string of exactly length @var{len}. If @samp{-c} is used, @var{str} must
+simply be an array of @var{len} characters and does not need to be NUL
+terminated.
+
+The code generated for these two functions is affected by the following
+options:
 
 @table @samp
 @item -t

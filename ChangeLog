@@ -1,5 +1,9 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * doc/gperf.texi: The bug report address is <bug-gnu-utils@gnu.org>.
+          The download address is ftp.gnu.org. Remove mention of -a and -g
+          options (now nops). Explain effect of -c option.
+
         * doc/configure.in (PACKAGE): New variable.
         * doc/Makefile.in (datadir, docdir): New variables.
           (dvidir, htmldir): Change values.
