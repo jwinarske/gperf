@@ -64,7 +64,7 @@ extracheck : @CHECK_LANG_SYNTAX@
 check-link-c: force
 	@echo "performing some tests of the perfect hash generator"
 	$(CC) -c $(CFLAGS) $(srcdir)/test.c
-	$(GPERF) -p -c -l -S1 -o $(srcdir)/c.gperf > cinset.c
+	$(GPERF) -p -c -l -S1 -I -o $(srcdir)/c.gperf > cinset.c
 	$(CC) $(CFLAGS) -o cout cinset.c test.o
 
 check-link-c++: force
@@ -75,27 +75,27 @@ check-c:
 	diff $(srcdir)/c.exp c.out
 
 check-ada:
-	$(GPERF) -k1,4,'$$' $(srcdir)/ada.gperf > adainset.c
+	$(GPERF) -k1,4,'$$' -I $(srcdir)/ada.gperf > adainset.c
 # double '$$' is only there since make gets confused; program wants only 1 '$'
 	$(CC) $(CFLAGS) -o aout adainset.c test.o
 	@echo "testing Ada reserved words, all items should be found in the set"
 	./aout -v < $(srcdir)/ada.gperf > ada-res.out
 	diff $(srcdir)/ada-res.exp ada-res.out
-	$(GPERF) -p -D -k1,'$$' -s 2 -o $(srcdir)/adadefs.gperf > preinset.c
+	$(GPERF) -p -D -k1,'$$' -s 2 -I -o $(srcdir)/adadefs.gperf > preinset.c
 	$(CC) $(CFLAGS) -o preout preinset.c test.o
 	@echo "testing Ada predefined words, all items should be found in the set"
 	./preout -v < $(srcdir)/adadefs.gperf > ada-pred.out
 	diff $(srcdir)/ada-pred.exp ada-pred.out
 
 check-modula3:
-	$(GPERF) -k1,2,'$$' -o $(srcdir)/modula3.gperf > m3inset.c
+	$(GPERF) -k1,2,'$$' -I -o $(srcdir)/modula3.gperf > m3inset.c
 	$(CC) $(CFLAGS) -o m3out m3inset.c test.o
 	@echo "testing Modula3 reserved words, all items should be found in the set"
 	./m3out -v < $(srcdir)/modula3.gperf > modula.out
 	diff $(srcdir)/modula.exp modula.out
 
 check-pascal:
-	$(GPERF) -o -S2 -p < $(srcdir)/pascal.gperf > pinset.c
+	$(GPERF) -o -S2 -p -I < $(srcdir)/pascal.gperf > pinset.c
 	$(CC) $(CFLAGS) -o pout pinset.c test.o
 	@echo "testing Pascal reserved words, all items should be found in the set"
 	./pout -v < $(srcdir)/pascal.gperf > pascal.out

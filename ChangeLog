@@ -1,3 +1,8 @@
+2002-10-03  Bruno Haible  <bruno@clisp.org>
+
+	* tests/Makefile.in: Use gperf option -I, to avoid gcc-3.x warnings.
+	* tests/test.c: Don't use gets(), to avoid warnings.
+
 2001-08-02  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
 	* doc/gperf.texi: Change bug report address to <bug-gnu-gperf@gnu.org>.
