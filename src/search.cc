@@ -42,7 +42,6 @@ Search::Search (KeywordExt_List *list)
     _determined (new bool[_alpha_size])
 {
   memset (_asso_values, 0, _alpha_size * sizeof (_asso_values[0]));
-  memset (_determined, 0, _alpha_size * sizeof (_determined[0]));
 }
 
 void
@@ -231,7 +230,11 @@ Search::merge_sort (KeywordExt_List *head)
     }
 }
 
-/* Returns the frequency of occurrence of elements in the key set. */
+/* Computes the sum of occurrences of the _selchars of a keyword.
+   This is a kind of correlation measure: Keywords which have many
+   selected characters in common with other keywords have a high
+   occurrence sum.  Keywords whose selected characters don't occur
+   in other keywords have a low occurrence sum.  */
 
 inline int
 Search::compute_occurrence (KeywordExt *ptr)
@@ -246,43 +249,55 @@ Search::compute_occurrence (KeywordExt *ptr)
   return value;
 }
 
-/* Enables the index location of all key set elements that are now
-   determined. */
+/* Auxiliary function for reorder():
+   Sets all alphabet characters as undetermined.  */
 
 inline void
-Search::set_determined (KeywordExt *ptr)
+Search::clear_determined ()
 {
-  const unsigned char *p = ptr->_selchars;
-  unsigned int i = ptr->_selchars_length;
+  memset (_determined, 0, _alpha_size * sizeof (_determined[0]));
+}
+
+/* Auxiliary function for reorder():
+   Sets all selected characters of the keyword as determined.  */
+
+inline void
+Search::set_determined (KeywordExt *keyword)
+{
+  const unsigned char *p = keyword->_selchars;
+  unsigned int i = keyword->_selchars_length;
   for (; i > 0; p++, i--)
     _determined[*p] = true;
 }
 
-/* Returns TRUE if PTR's key set is already completely determined. */
+/* Auxiliary function for reorder():
+   Returns true if the keyword's selected characters are all determined.  */
 
 inline bool
-Search::already_determined (KeywordExt *ptr)
+Search::already_determined (KeywordExt *keyword)
 {
-  bool is_determined = true;
+  const unsigned char *p = keyword->_selchars;
+  unsigned int i = keyword->_selchars_length;
+  for (; i > 0; p++, i--)
+    if (!_determined[*p])
+      return false;
 
-  const unsigned char *p = ptr->_selchars;
-  unsigned int i = ptr->_selchars_length;
-  for (; is_determined && i > 0; p++, i--)
-    is_determined = _determined[*p];
-
-  return is_determined;
+  return true;
 }
 
-/* Reorders the table by first sorting the list so that frequently occuring
-   keys appear first, and then the list is reordered so that keys whose values
-   are already determined will be placed towards the front of the list.  This
-   helps prune the search time by handling inevitable collisions early in the
-   search process.  See Cichelli's paper from Jan 1980 JACM for details.... */
+/* Reorders the keyword list so as to minimize search times.
+   First the list is reordered so that frequently occuring keys appear first.
+   Then the list is reordered so that keys whose values are already determined
+   will be placed towards the front of the list.  This helps prune the search
+   time by handling inevitable collisions early in the search process.  See
+   Cichelli's paper from Jan 1980 JACM for details.... */
 
 void
 Search::reorder ()
 {
   KeywordExt_List *ptr;
+
+  /* Compute the _occurrence valuation of every keyword on the list.  */
   for (ptr = _head; ptr; ptr = ptr->rest())
     {
       KeywordExt *keyword = ptr->first();
@@ -290,32 +305,53 @@ Search::reorder ()
       keyword->_occurrence = compute_occurrence (keyword);
     }
 
+  /* Sort the list by decreasing _occurrence valuation.  */
   _hash_sort = false;
   _occurrence_sort = true;
-
   _head = merge_sort (_head);
 
-  for (ptr = _head; ptr->rest(); ptr = ptr->rest())
+  /* Reorder the list to maximize the efficiency of the search.  */
+
+  /* At the beginning, consider that no asso_values[c] is fixed.  */
+  clear_determined ();
+  for (ptr = _head; ptr != NULL && ptr->rest() != NULL; ptr = ptr->rest())
     {
-      set_determined (ptr->first());
+      KeywordExt *keyword = ptr->first();
 
-      if (!already_determined (ptr->rest()->first()))
+      /* Then we'll fix asso_values[c] for all c occurring in this keyword.  */
+      set_determined (keyword);
+
+      /* Then we wish to test for hash value collisions the remaining keywords
+         whose hash value is completely determined, as quickly as possible.
+         For this purpose, move all the completely determined keywords in the
+         remaining list immediately past this keyword.  */
+      KeywordExt_List *curr_ptr;
+      KeywordExt_List *next_ptr; /* = curr_ptr->rest() */
+      for (curr_ptr = ptr, next_ptr = curr_ptr->rest();
+           next_ptr != NULL;
+           next_ptr = curr_ptr->rest())
         {
-          KeywordExt_List *trail_ptr = ptr->rest();
-          KeywordExt_List *run_ptr   = trail_ptr->rest();
+          KeywordExt *next_keyword = next_ptr->first();
 
-          for (; run_ptr; run_ptr = trail_ptr->rest())
+          if (already_determined (next_keyword))
             {
-
-              if (already_determined (run_ptr->first()))
-                {
-                  trail_ptr->rest() = run_ptr->rest();
-                  run_ptr->rest()   = ptr->rest();
-                  ptr = ptr->rest() = run_ptr;
-                }
+              if (curr_ptr == ptr)
+                /* Keep next_ptr where it is.  */
+                curr_ptr = next_ptr;
               else
-                trail_ptr = run_ptr;
+                {
+                  /* Remove next_ptr from its current list position... */
+                  curr_ptr->rest() = next_ptr->rest();
+                  /* ... and insert it right after ptr.  */
+                  next_ptr->rest() = ptr->rest();
+                  ptr->rest() = next_ptr;
+                }
+
+              /* Advance ptr.  */
+              ptr = ptr->rest();
             }
+          else
+            curr_ptr = next_ptr;
         }
     }
 }
@@ -427,8 +463,8 @@ Search::sort_set (unsigned char *union_set, int len)
 
 /* Find out how character value change affects successfully hashed items.
    Returns FALSE if no other hash values are affected, else returns TRUE.
-   Note that because Option.Get_Asso_Max is a power of two we can guarantee
-   that all legal Asso_Values are visited without repetition since
+   Note that because option.get_asso_max() is a power of two we can guarantee
+   that all valid asso_values are visited without repetition since
    Option.Get_Jump was forced to be an odd value! */
 
 inline bool
@@ -438,7 +474,7 @@ Search::affects_prev (unsigned char c, KeywordExt *curr)
   int total_iterations = !option[FAST]
     ? get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
 
-  /* Try all legal associated values. */
+  /* Try all valid associated values. */
 
   for (int i = total_iterations - 1; i >= 0; i--)
     {
@@ -569,7 +605,7 @@ Search::optimize ()
       srand (reinterpret_cast<long>(time (0)));
 
       for (int i = 0; i < _alpha_size; i++)
-        _asso_values[i] = (rand () & asso_value_max - 1);
+        _asso_values[i] = rand () & (asso_value_max - 1);
     }
   else
     {

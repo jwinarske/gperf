@@ -1,5 +1,12 @@
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.h (Search::clear_determined): New declaration.
+	* src/search.cc (Search::clear_determined): New method.
+	(Search::already_determined): Optimize.
+	(Search::reorder): Even when the next keyword after the current one
+	is completely determined, move all determined keywords after the
+	current one.
+
 	Compute the occurrences after removal of duplicates, not before.
 	* src/keyword.h (KeywordExt::init_selchars): Remove occurrences
 	argument.

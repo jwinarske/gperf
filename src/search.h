@@ -43,10 +43,16 @@ private:
   /* Sorts a list using the recursive merge sort algorithm.  */
   KeywordExt_List *     merge_sort (KeywordExt_List *head);
 
+  /* Computes the sum of occurrences of the _selchars of a keyword.  */
   int                   compute_occurrence (KeywordExt *ptr);
-  void                  set_determined (KeywordExt *ptr);
-  bool                  already_determined (KeywordExt *ptr);
+
+  /* Auxiliary functions used by Search::reorder().  */
+  void                  clear_determined ();
+  void                  set_determined (KeywordExt *keyword);
+  bool                  already_determined (KeywordExt *keyword);
+  /* Reorders the keyword list so as to minimize search times.  */
   void                  reorder ();
+
   int                   keyword_list_length ();
   int                   max_key_length ();
   int                   get_max_keysig_size ();
@@ -95,7 +101,9 @@ private:
   /* True if sorting by hash value.  */
   bool                  _hash_sort;
 
-  bool * const          _determined;                           /* Used in function reorder, below. */
+  /* Vector used during Search::reorder().  */
+  bool * const          _determined;
+
   int                   _num_done;          /* Number of keywords processed without a collision. */
   int                   _fewest_collisions; /* Records fewest # of collisions for asso value. */
   int                   _max_hash_value;    /* Maximum possible hash value. */
