@@ -50,7 +50,7 @@ private:
   unsigned int *        compute_alpha_unify () const;
 
   /* Initializes each keyword's _selchars array.  */
-  void                  init_selchars_tuple (bool use_all_chars, const Positions& positions) const;
+  void                  init_selchars_tuple (const Positions& positions) const;
   /* Deletes each keyword's _selchars array.  */
   void                  delete_selchars () const;
 
@@ -67,7 +67,7 @@ private:
   unsigned int *        compute_alpha_unify (const Positions& positions, const unsigned int *alpha_inc) const;
 
   /* Initializes each keyword's _selchars array.  */
-  void                  init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc) const;
+  void                  init_selchars_multiset (const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc) const;
 
   /* Count the duplicate keywords that occur with the given set of positions
      and a given alpha_inc[] array.  */

@@ -119,7 +119,7 @@ private:
   int const             _max_key_len;
   /* Minimum length of the shortest keyword. */
   int const             _min_key_len;
-  /* Key positions.  Only to be used if !options[ALLCHARS].  */
+  /* Key positions.  */
   Positions const       _key_positions;
   /* Adjustments to add to bytes add specific key positions.  */
   const unsigned int * const _alpha_inc;

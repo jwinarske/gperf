@@ -175,10 +175,10 @@ Search::compute_alpha_unify () const
 
 /* Initializes each keyword's _selchars array.  */
 void
-Search::init_selchars_tuple (bool use_all_chars, const Positions& positions) const
+Search::init_selchars_tuple (const Positions& positions) const
 {
   for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-    temp->first()->init_selchars_tuple(use_all_chars, positions, _alpha_unify);
+    temp->first()->init_selchars_tuple(positions, _alpha_unify);
 }
 
 /* Deletes each keyword's _selchars array.  */
@@ -199,7 +199,7 @@ Search::count_duplicates_tuple (const Positions& positions) const
   /* Run through the keyword list and count the duplicates incrementally.
      The result does not depend on the order of the keyword list, thanks to
      the formula above.  */
-  init_selchars_tuple (option[ALLCHARS], positions);
+  init_selchars_tuple (positions);
 
   unsigned int count = 0;
   {
@@ -411,7 +411,7 @@ Search::find_positions ()
     {
       /* Print the result.  */
       fprintf (stderr, "\nComputed positions: ");
-      PositionReverseIterator iter (_key_positions);
+      PositionReverseIterator iter = _key_positions.reviterator();
       bool seen_lastchar = false;
       bool first = true;
       for (int i; (i = iter.next ()) != PositionReverseIterator::EOS; )
@@ -482,49 +482,29 @@ Search::compute_alpha_unify (const Positions& positions, const unsigned int *alp
         {
           KeywordExt *keyword = temp->first();
 
-          if (option[ALLCHARS])
-            /* Iterate through all character positions.  */
-            for (int i = 0; i < keyword->_allchars_length; i++)
-              {
-                unsigned int c = static_cast<unsigned char>(keyword->_allchars[i]);
-                if (c >= 'A' && c <= 'Z')
-                  c += 'a' - 'A';
-                if (c >= 'a' && c <= 'z')
-                  {
-                    c += alpha_inc[i];
-                    /* Unify c with c - ('a'-'A').  */
-                    unsigned int d = alpha_unify[c];
-                    unsigned int b = c - ('a'-'A');
-                    for (int a = b; a >= 0 && alpha_unify[a] == b; a -= ('a'-'A'))
-                      alpha_unify[a] = d;
-                  }
-              }
-          else
-            {
-              /* Iterate through the selected character positions.  */
-              PositionIterator iter (positions);
+          /* Iterate through the selected character positions.  */
+          PositionIterator iter = positions.iterator(keyword->_allchars_length);
 
-              for (int i; (i = iter.next ()) != PositionIterator::EOS; )
+          for (int i; (i = iter.next ()) != PositionIterator::EOS; )
+            {
+              unsigned int c;
+              if (i == Positions::LASTCHAR)
+                c = static_cast<unsigned char>(keyword->_allchars[keyword->_allchars_length - 1]);
+              else if (i < keyword->_allchars_length)
+                c = static_cast<unsigned char>(keyword->_allchars[i]);
+              else
+                abort ();
+              if (c >= 'A' && c <= 'Z')
+                c += 'a' - 'A';
+              if (c >= 'a' && c <= 'z')
                 {
-                  unsigned int c;
-                  if (i == Positions::LASTCHAR)
-                    c = static_cast<unsigned char>(keyword->_allchars[keyword->_allchars_length - 1]);
-                  else if (i < keyword->_allchars_length)
-                    c = static_cast<unsigned char>(keyword->_allchars[i]);
-                  else
-                    continue;
-                  if (c >= 'A' && c <= 'Z')
-                    c += 'a' - 'A';
-                  if (c >= 'a' && c <= 'z')
-                    {
-                      if (i != Positions::LASTCHAR)
-                        c += alpha_inc[i];
-                      /* Unify c with c - ('a'-'A').  */
-                      unsigned int d = alpha_unify[c];
-                      unsigned int b = c - ('a'-'A');
-                      for (int a = b; a >= 0 && alpha_unify[a] == b; a -= ('a'-'A'))
-                        alpha_unify[a] = d;
-                    }
+                  if (i != Positions::LASTCHAR)
+                    c += alpha_inc[i];
+                  /* Unify c with c - ('a'-'A').  */
+                  unsigned int d = alpha_unify[c];
+                  unsigned int b = c - ('a'-'A');
+                  for (int a = b; a >= 0 && alpha_unify[a] == b; a -= ('a'-'A'))
+                    alpha_unify[a] = d;
                 }
             }
         }
@@ -537,10 +517,10 @@ Search::compute_alpha_unify (const Positions& positions, const unsigned int *alp
 
 /* Initializes each keyword's _selchars array.  */
 void
-Search::init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc) const
+Search::init_selchars_multiset (const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc) const
 {
   for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-    temp->first()->init_selchars_multiset(use_all_chars, positions, alpha_unify, alpha_inc);
+    temp->first()->init_selchars_multiset(positions, alpha_unify, alpha_inc);
 }
 
 /* Count the duplicate keywords that occur with the given set of positions
@@ -554,7 +534,7 @@ Search::count_duplicates_multiset (const unsigned int *alpha_inc) const
   /* Run through the keyword list and count the duplicates incrementally.
      The result does not depend on the order of the keyword list, thanks to
      the formula above.  */
-  init_selchars_multiset (option[ALLCHARS], _key_positions,
+  init_selchars_multiset (_key_positions,
                           compute_alpha_unify (_key_positions, alpha_inc),
                           alpha_inc);
 
@@ -596,35 +576,34 @@ Search::find_alpha_inc ()
     {
       /* Look which _alpha_inc[i] we are free to increment.  */
       unsigned int nindices;
-      if (option[ALLCHARS])
-        nindices = _max_key_len;
-      else
-        {
-          /* Ignore Positions::LASTCHAR.  Remember that since Positions are
-             sorted in decreasing order, Positions::LASTCHAR comes last.  */
-          nindices = (_key_positions.get_size() == 0
-                      || _key_positions[_key_positions.get_size() - 1]
-                         != Positions::LASTCHAR
-                      ? _key_positions.get_size()
-                      : _key_positions.get_size() - 1);
-        }
+      {
+        nindices = 0;
+        PositionIterator iter = _key_positions.iterator(_max_key_len);
+        for (;;)
+          {
+            int key_pos = iter.next ();
+            if (key_pos == PositionIterator::EOS)
+              break;
+            if (key_pos != Positions::LASTCHAR)
+              nindices++;
+          }
+      }
 
       unsigned int indices[nindices];
-      if (option[ALLCHARS])
-        for (unsigned int j = 0; j < nindices; j++)
-          indices[j] = j;
-      else
-        {
-          PositionIterator iter (_key_positions);
-          for (unsigned int j = 0; j < nindices; j++)
-            {
-              int key_pos = iter.next ();
-              if (key_pos == PositionIterator::EOS
-                  || key_pos == Positions::LASTCHAR)
-                abort ();
-              indices[j] = key_pos;
-            }
-        }
+      {
+        unsigned int j = 0;
+        PositionIterator iter = _key_positions.iterator(_max_key_len);
+        for (;;)
+          {
+            int key_pos = iter.next ();
+            if (key_pos == PositionIterator::EOS)
+              break;
+            if (key_pos != Positions::LASTCHAR)
+              indices[j++] = key_pos;
+          }
+        if (!(j == nindices))
+          abort ();
+      }
 
       /* Perform several rounds of searching for a good alpha increment.
          Each round reduces the number of artificial collisions by adding
@@ -670,32 +649,16 @@ Search::find_alpha_inc ()
         {
           /* Print the result.  */
           fprintf (stderr, "\nComputed alpha increments: ");
-          if (option[ALLCHARS])
-            {
-              bool first = true;
-              for (unsigned int j = 0; j < nindices; j++)
-                if (current[indices[j]] != 0)
-                  {
-                    if (!first)
-                      fprintf (stderr, ", ");
-                    fprintf (stderr, "%u:+%u",
-                             indices[j] + 1, current[indices[j]]);
-                    first = false;
-                  }
-            }
-          else
-            {
-              bool first = true;
-              for (unsigned int j = nindices; j-- > 0; )
-                if (current[indices[j]] != 0)
-                  {
-                    if (!first)
-                      fprintf (stderr, ", ");
-                    fprintf (stderr, "%u:+%u",
-                             indices[j] + 1, current[indices[j]]);
-                    first = false;
-                  }
-            }
+          bool first = true;
+          for (unsigned int j = nindices; j-- > 0; )
+            if (current[indices[j]] != 0)
+              {
+                if (!first)
+                  fprintf (stderr, ", ");
+                fprintf (stderr, "%u:+%u",
+                         indices[j] + 1, current[indices[j]]);
+                first = false;
+              }
           fprintf (stderr, "\n");
         }
     }
@@ -713,8 +676,7 @@ Search::prepare ()
   KeywordExt_List *temp;
 
   /* Initialize each keyword's _selchars array.  */
-  init_selchars_multiset(option[ALLCHARS], _key_positions,
-                         _alpha_unify, _alpha_inc);
+  init_selchars_multiset(_key_positions, _alpha_unify, _alpha_inc);
 
   /* Check for duplicates, i.e. keywords with the same _selchars array
      (and - if !option[NOLENGTH] - also the same length).
@@ -831,7 +793,7 @@ Search::max_key_length () const
 int
 Search::get_max_keysig_size () const
 {
-  return option[ALLCHARS] ? _max_key_len : _key_positions.get_size();
+  return _key_positions.is_useall() ? _max_key_len : _key_positions.get_size();
 }
 
 /* ---------------------- Finding good asso_values[] ----------------------- */

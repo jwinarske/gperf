@@ -514,14 +514,14 @@ Options::~Options ()
                _function_name, _hash_name, _wordlist_name, _slot_name,
                _initializer_suffix, _asso_iterations, _jump, _size_multiple,
                _initial_asso_value, _delimiters, _total_switches);
-      if (_option_word & ALLCHARS)
+      if (_key_positions.is_useall())
         fprintf (stderr, "all characters are used in the hash function\n");
       else
         {
           fprintf (stderr, "maximum keysig size = %d\nkey positions are: \n",
                    _key_positions.get_size());
 
-          PositionIterator iter (_key_positions);
+          PositionIterator iter = _key_positions.iterator();
           for (int pos; (pos = iter.next()) != PositionIterator::EOS; )
             if (pos == Positions::LASTCHAR)
               fprintf (stderr, "$\n");
@@ -773,9 +773,10 @@ Options::parse_options (int argc, char *argv[])
             PositionStringParser sparser (/*getopt*/optarg, 1, Positions::MAX_KEY_POS, Positions::LASTCHAR, BAD_VALUE, EOS);
 
             if (/*getopt*/optarg [0] == '*') /* Use all the characters for hashing!!!! */
-              _option_word |= ALLCHARS;
+              _key_positions.set_useall(true);
             else
               {
+                _key_positions.set_useall(false);
                 int *key_positions = _key_positions.pointer();
                 int *key_pos;
 

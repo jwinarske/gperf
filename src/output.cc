@@ -606,7 +606,7 @@ Output::output_hash_function () const
   printf ("{\n");
 
   /* First the asso_values array.  */
-  if (option[ALLCHARS] || _key_positions.get_size() > 0)
+  if (_key_positions.get_size() > 0)
     {
       printf ("  static %s%s asso_values[] =\n"
               "    {",
@@ -633,31 +633,7 @@ Output::output_hash_function () const
               "    };\n");
     }
 
-  if (option[ALLCHARS])
-    {
-      /* User wants *all* characters considered in hash.  */
-      printf ("  register int hval = %s;\n\n"
-              "  switch (%s)\n"
-              "    {\n"
-              "      default:\n",
-              option[NOLENGTH] ? "0" : "len",
-              option[NOLENGTH] ? "len" : "hval");
-
-      for (int i = _max_key_len; i > 0; i--)
-        {
-          printf ("      case %d:\n"
-                  "        hval += asso_values[%sstr[%d]",
-                  i, char_to_index, i - 1);
-          if (_alpha_inc[i - 1])
-            printf ("+%u", _alpha_inc[i - 1]);
-          printf ("];\n");
-        }
-
-      printf ("        break;\n"
-              "    }\n"
-              "  return hval;\n");
-    }
-  else if (_key_positions.get_size() == 0)
+  if (_key_positions.get_size() == 0)
     {
       /* Trivial case: No key positions at all.  */
       printf ("  return %s;\n",
@@ -668,7 +644,7 @@ Output::output_hash_function () const
       /* Iterate through the key positions.  Remember that Positions::sort()
          has sorted them in decreasing order, with Positions::LASTCHAR coming
          last.  */
-      PositionIterator iter (_key_positions);
+      PositionIterator iter = _key_positions.iterator(_max_key_len);
       int key_pos;
 
       /* Get the highest key position.  */

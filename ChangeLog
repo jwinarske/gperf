@@ -1,3 +1,55 @@
+2002-12-12  Bruno Haible  <bruno@clisp.org>
+
+	* src/positions.h (Positions::is_useall, Positions::set_useall,
+	Positions::iterator, Positions::reviterator): New method declarations.
+	(Positions::_useall): New field.
+	(PositionIterator): Make constructor private. Add a constructor and a
+	copy constructor.
+	(PositionIterator::remaining): New declaration.
+	(PositionReverseIterator): Make constructor private. Add a constructor
+	and a copy constructor.
+	(PositionReverseIterator::remaining): New declaration.
+	(PositionReverseIterator::_minindex): New field.
+	* src/positions.icc (Positions::Positions): Initialize _useall.
+	(Positions::operator=): Likewise.
+	(Positions::is_useall, Positions::set_useall): New methods.
+	(Positions::sort): Do nothing if _useall is set.
+	(Positions::iterator, Positions::reviterator): New methods.
+	(PositionIterator::PositionIterator): New constructor.
+	(PositionIterator::remaining): New method.
+	(PositionReverseIterator::PositionReverseIterator): New constructor.
+	(PositionReverseIterator::next): Use _minindex as bound.
+	(PositionReverseIterator::remaining): New method.
+	* src/positions.cc (Positions::add, Positions::remove): Reset the
+	useall flag.
+	(Positions::print): Handle the useall case.
+	* src/options.h (ALLCHARS): Remove.
+	* src/options.cc (Options::~Options): Update.
+	(Options::parse_options): Use Positions::set_useall().
+	* src/keyword.h (KeywordExt::init_selchars_tuple,
+	KeywordExt::init_selchars_multiset, KeywordExt::init_selchars_low):
+	Remove use_all_chars argument.
+	* src/keyword.cc (KeywordExt::init_selchars_low): Remove use_all_chars
+	argument. Tell the position iterator to stop at _allchars_length.
+	Remove special case code for -k'*'.
+	(KeywordExt::init_selchars_tuple, KeywordExt::init_selchars_multiset):
+	Remove use_all_chars argument.
+	* src/search.h (Search::init_selchars_tuple): Remove use_all_chars
+	argument.
+	(Search::init_selchars_multiset): Likewise.
+	* src/search.cc (Search::init_selchars_tuple): Remove use_all_chars
+	argument.
+	(Search::count_duplicates_tuple, Search::find_positions): Update.
+	(Search::compute_alpha_unify): Remove special case code for -k'*'.
+	(Search::init_selchars_multiset): Remove use_all_chars argument.
+	(Search::count_duplicates_multiset): Update.
+	(Search::find_alpha_inc): Remove special case code for -k'*'.
+	(Search::prepare): Update.
+	(Search::get_max_keysig_size): Update.
+	* src/output.cc (Output::output_hash_function): Remove special case
+	code for -k'*'.
+	* tests/chill.exp: Regenerated.
+
 2002-12-11  Bruno Haible  <bruno@clisp.org>
 
 	Change the positions to be 0-based, instead of 1-based.

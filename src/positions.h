@@ -57,16 +57,29 @@ public:
   Positions&            operator= (const Positions& src);
 
   /* Accessors.  */
+  bool                  is_useall () const;
   int                   operator[] (unsigned int index) const;
   unsigned int          get_size () const;
 
   /* Write access.  */
+  void                  set_useall (bool useall);
   int *                 pointer ();
   void                  set_size (unsigned int size);
 
   /* Sorts the array in reverse order.
      Returns true if there are no duplicates, false otherwise.  */
   bool                  sort ();
+
+  /* Creates an iterator, returning the positions in descending order.  */
+  PositionIterator      iterator () const;
+  /* Creates an iterator, returning the positions in descending order,
+     that apply to strings of length <= maxlen.  */
+  PositionIterator      iterator (int maxlen) const;
+  /* Creates an iterator, returning the positions in ascending order.  */
+  PositionReverseIterator reviterator () const;
+  /* Creates an iterator, returning the positions in ascending order,
+     that apply to strings of length <= maxlen.  */
+  PositionReverseIterator reviterator (int maxlen) const;
 
   /* Set operations.  Assumes the array is in reverse order.  */
   bool                  contains (int pos) const;
@@ -77,6 +90,8 @@ public:
   void                  print () const;
 
 private:
+  /* The special case denoted by '*'.  */
+  bool                  _useall;
   /* Number of positions.  */
   unsigned int          _size;
   /* Array of positions.  0 for the first char, 1 for the second char etc.,
@@ -88,9 +103,10 @@ private:
 
 class PositionIterator
 {
+  friend class Positions;
 public:
-  /* Initializes an iterator through POSITIONS.  */
-                        PositionIterator (Positions const& positions);
+  /* Copy constructor.  */
+                        PositionIterator (const PositionIterator& src);
 
   /* End of iteration marker.  */
   enum {                EOS = -2 };
@@ -98,7 +114,16 @@ public:
   /* Retrieves the next position, or EOS past the end.  */
   int                   next ();
 
+  /* Returns the number of remaining positions, i.e. how often next() will
+     return a value != EOS.  */
+  unsigned int          remaining () const;
+
 private:
+  /* Initializes an iterator through POSITIONS.  */
+                        PositionIterator (Positions const& positions);
+  /* Initializes an iterator through POSITIONS, ignoring positions >= maxlen.  */
+                        PositionIterator (Positions const& positions, int maxlen);
+
   const Positions&      _set;
   unsigned int          _index;
 };
@@ -108,9 +133,10 @@ private:
 
 class PositionReverseIterator
 {
+  friend class Positions;
 public:
-  /* Initializes an iterator through POSITIONS.  */
-                        PositionReverseIterator (Positions const& positions);
+  /* Copy constructor.  */
+                        PositionReverseIterator (const PositionReverseIterator& src);
 
   /* End of iteration marker.  */
   enum {                EOS = -2 };
@@ -118,9 +144,19 @@ public:
   /* Retrieves the next position, or EOS past the end.  */
   int                   next ();
 
+  /* Returns the number of remaining positions, i.e. how often next() will
+     return a value != EOS.  */
+  unsigned int          remaining () const;
+
 private:
+  /* Initializes an iterator through POSITIONS.  */
+                        PositionReverseIterator (Positions const& positions);
+  /* Initializes an iterator through POSITIONS, ignoring positions >= maxlen.  */
+                        PositionReverseIterator (Positions const& positions, int maxlen);
+
   const Positions&      _set;
   unsigned int          _index;
+  unsigned int          _minindex;
 };
 
 #ifdef __OPTIMIZE__

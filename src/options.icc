@@ -135,8 +135,7 @@ Options::get_delimiters () const
   return _delimiters;
 }
 
-/* Returns key positions.
-   Only to be used if !options[ALLCHARS].  */
+/* Returns key positions.  */
 INLINE const Positions&
 Options::get_key_positions () const
 {

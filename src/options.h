@@ -96,22 +96,19 @@ enum Option_Type
   /* Use the given key positions.  */
   POSITIONS    = 1 << 16,
 
-  /* Use all characters in hash function.  */
-  ALLCHARS     = 1 << 17,
-
   /* Handle duplicate hash values for keywords.  */
-  DUP          = 1 << 18,
+  DUP          = 1 << 17,
 
   /* Don't include keyword length in hash computations.  */
-  NOLENGTH     = 1 << 19,
+  NOLENGTH     = 1 << 18,
 
   /* Randomly initialize the associated values table.  */
-  RANDOM       = 1 << 20,
+  RANDOM       = 1 << 19,
 
   /* --- Informative output --- */
 
   /* Enable debugging (prints diagnostics to stderr).  */
-  DEBUG        = 1 << 21
+  DEBUG        = 1 << 20
 };
 
 /* Class manager for gperf program Options.  */
@@ -197,8 +194,7 @@ public:
   /* Sets the delimiters string, if not already set.  */
   void                  set_delimiters (const char *delimiters);
 
-  /* Returns key positions.
-     Only to be used if !options[ALLCHARS].  */
+  /* Returns key positions.  */
   const Positions&      get_key_positions () const;
 
 private:

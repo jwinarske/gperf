@@ -50,6 +50,8 @@ Positions::contains (int pos) const
 void
 Positions::add (int pos)
 {
+  set_useall (false);
+
   unsigned int count = _size;
 
   if (count == MAX_SIZE)
@@ -78,6 +80,8 @@ Positions::add (int pos)
 void
 Positions::remove (int pos)
 {
+  set_useall (false);
+
   unsigned int count = _size;
   if (count > 0)
     {
@@ -120,40 +124,45 @@ Positions::remove (int pos)
 void
 Positions::print () const
 {
-  bool first = true;
-  bool seen_LASTCHAR = false;
-  unsigned int count = _size;
-  const int *p = _positions + _size - 1;
-
-  for (; count > 0; p--)
+  if (_useall)
+    printf ("*");
+  else
     {
-      count--;
-      if (*p == LASTCHAR)
-        seen_LASTCHAR = true;
-      else
+      bool first = true;
+      bool seen_LASTCHAR = false;
+      unsigned int count = _size;
+      const int *p = _positions + _size - 1;
+
+      for (; count > 0; p--)
+        {
+          count--;
+          if (*p == LASTCHAR)
+            seen_LASTCHAR = true;
+          else
+            {
+              if (!first)
+                printf (",");
+              printf ("%d", *p + 1);
+              if (count > 0 && p[-1] == *p + 1)
+                {
+                  printf ("-");
+                  do
+                    {
+                      p--;
+                      count--;
+                    }
+                  while (count > 0 && p[-1] == *p + 1);
+                  printf ("%d", *p + 1);
+                }
+              first = false;
+            }
+        }
+      if (seen_LASTCHAR)
         {
           if (!first)
             printf (",");
-          printf ("%d", *p + 1);
-          if (count > 0 && p[-1] == *p + 1)
-            {
-              printf ("-");
-              do
-                {
-                  p--;
-                  count--;
-                }
-              while (count > 0 && p[-1] == *p + 1);
-              printf ("%d", *p + 1);
-            }
-          first = false;
+          printf ("$");
         }
-    }
-  if (seen_LASTCHAR)
-    {
-      if (!first)
-        printf (",");
-      printf ("$");
     }
 }
 
