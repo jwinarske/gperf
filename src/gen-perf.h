@@ -3,7 +3,7 @@
 /* Provides high-level routines to manipulate the keyword list
    structures the code generation output.
 
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -28,12 +28,13 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA  02111, USA. */
 #include "key-list.h"
 #include "bool-array.h"
 
-class Gen_Perf : private Key_List, private Bool_Array
+class Gen_Perf : private Key_List
 {
 private:
   int         max_hash_value;    /* Maximum possible hash value. */
   int         fewest_collisions; /* Records fewest # of collisions for asso value. */
   int         num_done;          /* Number of keywords processed without a collision. */
+  Bool_Array *collision_detector;
 
   void        change (List_Node *prior, List_Node *curr);
   int         affects_prev (char c, List_Node *curr);

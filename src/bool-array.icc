@@ -24,56 +24,47 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 //#include <string.h>
 //#include "options.h"
 
+/* Initializes the bit array with room for s bits, numbered from 0 to s-1. */
 INLINE
-Bool_Array::Bool_Array (void)
+Bool_Array::Bool_Array (unsigned int s)
+  : size (s), iteration_number (1), storage_array (new unsigned int [s])
 {
-  storage_array = 0;
-  iteration_number = size = 0;
-}
-
-INLINE void
-Bool_Array::init (unsigned int *buffer, unsigned int s)
-{
-  size             = s;
-  iteration_number = 1;
-  storage_array    = buffer;
-  memset (storage_array, 0, s * sizeof (*storage_array));
+  memset (storage_array, 0, s * sizeof (unsigned int));
   if (option[DEBUG])
     fprintf (stderr, "\nbool array size = %d, total bytes = %d\n",
              size, (unsigned int) (size * sizeof (*storage_array)));
 }
 
+/* Sets the specified bit to one.  Returns its previous value (0 or 1).  */
 INLINE int
-Bool_Array::find (int index)
+Bool_Array::set_bit (unsigned int index)
 {
   if (storage_array[index] == iteration_number)
+    /* The bit was set since the last clear() call.  */
     return 1;
   else
     {
+      /* The last operation on this bit was clear().  Set it now.  */
       storage_array[index] = iteration_number;
       return 0;
     }
 }
 
+/* Resets all bits to zero.  */
 INLINE void
-Bool_Array::reset (void)
+Bool_Array::clear (void)
 {
   /* If we wrap around it's time to zero things out again!  However, this only
-     occurs once about every 2^31 or 2^15 iterations, so it should probably
-     never happen! */
+     occurs once about every 2^32 iterations, so it will not happen more
+     frequently than once per second.  */
 
   if (++iteration_number == 0)
     {
-      if (option[DEBUG])
-        {
-          fprintf (stderr, "(re-initializing bool_array)...");
-          fflush (stderr);
-        }
       iteration_number = 1;
-      memset (storage_array, 0, size * sizeof (*storage_array));
+      memset (storage_array, 0, size * sizeof (unsigned int));
       if (option[DEBUG])
         {
-          fprintf (stderr, "done\n");
+          fprintf (stderr, "(re-initialized bool_array)\n");
           fflush (stderr);
         }
     }

@@ -1,5 +1,13 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/bool-array.h (Bool_Array): Make all members non-static.
+	Add an argument to the constructor. Remove init(), rename reset() to
+	clear(), rename find() to set_bit().
+	* src/bool-array.icc: Move init() code into the constructor.
+	Rename reset() to clear(), rename find() to set_bit().
+	* src/gen-perf.h (Gen_Perf): Add collision_detector member.
+	* src/gen-perf.cc: Update.
+
 	* src/gen-perf.h (Gen_Perf::doit_all): Renamed from
 	Gen_Perf::operator ().
 	* src/gen-perf.cc (Gen_Perf::doit_all): Renamed from

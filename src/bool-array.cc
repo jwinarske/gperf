@@ -24,14 +24,10 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <string.h>
 #include "options.h"
 
-unsigned int * Bool_Array::storage_array;
-unsigned int Bool_Array::iteration_number;
-unsigned int Bool_Array::size;
-
-/* Prints out debugging diagnostics. */
-
+/* Frees this object.  */
 Bool_Array::~Bool_Array (void)
 {
+  /* Print out debugging diagnostics. */
   if (option[DEBUG])
     fprintf (stderr, "\ndumping boolean array information\n"
              "size = %d\niteration number = %d\nend of array dump\n",

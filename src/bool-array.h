@@ -21,25 +21,38 @@ You should have received a copy of the GNU General Public License
 along with GNU GPERF; see the file COPYING.  If not, write to the Free
 Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
-/* Define and implement a simple boolean array abstraction,
-   uses an Iteration Numbering implementation to save on initialization time. */
-
 #ifndef bool_array_h
 #define bool_array_h 1
 
+/* A Bool_Array instance is a bit array of fixed size, optimized for being
+   filled sparsely and cleared frequently.  For example, when processing
+   tests/chill.gperf, the array will be:
+     - of size 15391,
+     - clear will be called 3509 times,
+     - set_bit will be called 300394 times.
+   With a conventional bit array implementation, clear would be too slow.
+   With a tree/hash based bit array implementation, set_bit would be slower. */
 class Bool_Array
 {
-private:
-  static unsigned int *storage_array;    /* Initialization of the index space. */
-  static unsigned int  iteration_number; /* Keep track of the current iteration. */
-  static unsigned int  size;             /* Keep track of array size. */
-
 public:
-       Bool_Array (void);
-      ~Bool_Array (void);
-  static void init (unsigned int *buffer, unsigned int s);
-  static int  find (int hash_value);
-  static void reset (void);
+  /* Initializes the bit array with room for s bits, numbered from 0 to s-1. */
+  Bool_Array (unsigned int s);
+
+  /* Frees this object.  */
+  ~Bool_Array (void);
+
+  /* Resets all bits to zero.  */
+  void clear (void);
+
+  /* Sets the specified bit to one.  Returns its previous value (0 or 1).  */
+  int set_bit (unsigned int index);
+
+private:
+  unsigned int size;              /* Size of array.  */
+  unsigned int iteration_number;  /* Number of times clear() was called + 1. */
+  /* For each index, we store in storage_array[index] the iteration_number at
+     the time set_bit(index) was last called.  */
+  unsigned int *storage_array;  
 };
 
 #ifdef __OPTIMIZE__  /* efficiency hack! */

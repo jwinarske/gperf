@@ -71,6 +71,7 @@ Gen_Perf::Gen_Perf (void)
     }
   max_hash_value = Key_List::max_key_length () + option.get_asso_max () *
     option.get_max_keysig_size ();
+  collision_detector = new Bool_Array (max_hash_value + 1);
 
   if (option[DEBUG])
     fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
@@ -183,13 +184,13 @@ Gen_Perf::affects_prev (char c, List_Node *curr)
         & (option.get_asso_max () - 1);
 
       /* Iteration Number array is a win, O(1) intialization time! */
-      reset ();
+      collision_detector->clear ();
 
       /* See how this asso_value change affects previous keywords.  If
          it does better than before we'll take it! */
 
       for (List_Node *ptr = head;
-           !Bool_Array::find (hash (ptr)) || ++collisions < fewest_collisions;
+           !collision_detector->set_bit (hash (ptr)) || ++collisions < fewest_collisions;
            ptr = ptr->next)
         if (ptr == curr)
           {
@@ -274,18 +275,6 @@ Gen_Perf::change (List_Node *prior, List_Node *curr)
 int
 Gen_Perf::doit_all (void)
 {
-#if LARGE_STACK_ARRAYS
-  unsigned int buffer[max_hash_value + 1];
-#else
-  // Note: we don't use new, because that invokes a custom operator new.
-  unsigned int *buffer
-    = (unsigned int*) malloc (sizeof(unsigned int) * (max_hash_value + 1));
-  if (buffer == NULL)
-    abort ();
-#endif
-
-  Bool_Array::init (buffer, max_hash_value + 1);
-
   List_Node *curr;
   for (curr = head; curr; curr = curr->next)
     {
@@ -302,19 +291,16 @@ Gen_Perf::doit_all (void)
 
   /* Make one final check, just to make sure nothing weird happened.... */
 
-  Bool_Array::reset ();
+  collision_detector->clear ();
 
   for (curr = head; curr; curr = curr->next)
-    if (Bool_Array::find (hash (curr)))
+    if (collision_detector->set_bit (hash (curr)))
       if (option[DUP]) /* Keep track of this number... */
         total_duplicates++;
       else /* Yow, big problems.  we're outta here! */
         {
           fprintf (stderr, "\nInternal error, duplicate value %d:\n"
                            "try options -D or -r, or use new key positions.\n\n", hash (curr));
-#if !LARGE_STACK_ARRAYS
-          free ((char *) buffer);
-#endif
           return 1;
         }
 
@@ -324,9 +310,6 @@ Gen_Perf::doit_all (void)
 
   sort ();
   output ();
-#if !LARGE_STACK_ARRAYS
-  free ((char *) buffer);
-#endif
   return 0;
 }
 
@@ -346,5 +329,6 @@ Gen_Perf::~Gen_Perf (void)
       fprintf (stderr, "end table dumping\n");
 
     }
+  delete collision_detector;
 }
 
