@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GNU GPERF; see the file COPYING.  If not, write to the Free
 Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
+#include <stddef.h>
 #include "keyword.h"
 
 
@@ -27,6 +28,15 @@ Keyword::Keyword (const char *s, int s_len, const char *r)
   : allchars (s), allchars_length (s_len), rest (r)
 {
 }
+
+
+/* KeywordExt class.  */
+
+KeywordExt::KeywordExt (const char *s, int s_len, const char *r)
+  : Keyword (s, s_len, r), duplicate_link (NULL), final_index (0)
+{
+}
+
 
 /* Keyword_Factory class.  */
 

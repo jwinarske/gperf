@@ -152,8 +152,8 @@ Gen_Perf::hash (List_Node *key_node)
 {
   int sum = option[NOLENGTH] ? 0 : key_node->allchars_length;
 
-  const char *p = key_node->char_set;
-  int i = key_node->char_set_length;
+  const char *p = key_node->selchars;
+  int i = key_node->selchars_length;
   for (; i > 0; p++, i--)
       sum += asso_values[(unsigned char)(*p)];
 
@@ -227,7 +227,7 @@ Gen_Perf::change (List_Node *prior, List_Node *curr)
                curr->hash_value);
       fflush (stderr);
     }
-  union_set_length = compute_disjoint_union (prior->char_set, prior->char_set_length, curr->char_set, curr->char_set_length, union_set);
+  union_set_length = compute_disjoint_union (prior->selchars, prior->selchars_length, curr->selchars, curr->selchars_length, union_set);
   sort_set (union_set, union_set_length);
 
   /* Try changing some values, if change doesn't alter other values continue normal action. */

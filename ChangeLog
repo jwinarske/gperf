@@ -1,5 +1,14 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword.h (KeywordExt): New class.
+	* src/keyword.cc (KeywordExt): New constructor.
+	* src/list-node.h (List_Node): Inherit from KeywordExt.
+	* src/list-node.cc: Update.
+	* src/gen-perf.cc: Update.
+	* src/hash-table.cc: Update.
+	* src/key-list.cc: Update.
+	(output_keyword_entry): Change argument type to KeywordExt*.
+
 	* src/keyword.h: New file.
 	* src/keyword.cc: New file.
 	* src/list-node.h (List_Node): Extend Keyword.

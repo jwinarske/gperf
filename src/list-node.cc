@@ -56,7 +56,7 @@ List_Node::set_sort (char *base, int len)
    the INDEX field to some useful value. */
 
 List_Node::List_Node (const char *k, int len, const char *r):
-     Keyword (k, len, r), link (0), next (0), index (0)
+     KeywordExt (k, len, r), next (NULL)
 {
   char *key_set = new char[(option[ALLCHARS] ? len : option.get_max_keysig_size ())];
   char *ptr = key_set;
@@ -68,7 +68,7 @@ List_Node::List_Node (const char *k, int len, const char *r):
   else                          /* Only use those character positions specified by the user. */
     {
       /* Iterate through the list of key_positions, initializing occurrences table
-         and char_set (via char * pointer ptr). */
+         and selchars (via char * pointer ptr). */
 
       for (option.reset (); (i = option.get ()) != EOS; )
         {
@@ -83,7 +83,7 @@ List_Node::List_Node (const char *k, int len, const char *r):
 
       /* Didn't get any hits and user doesn't want to consider the
         keylength, so there are essentially no usable hash positions! */
-      if (ptr == char_set && option[NOLENGTH])
+      if (ptr == selchars && option[NOLENGTH])
         {
           fprintf (stderr, "Can't hash keyword %.*s with chosen key positions.\n",
                    allchars_length, allchars);
@@ -94,6 +94,6 @@ List_Node::List_Node (const char *k, int len, const char *r):
   /* Sort the KEY_SET items alphabetically. */
   set_sort (key_set, ptr - key_set);
 
-  char_set = key_set;
-  char_set_length = ptr - key_set;
+  selchars = key_set;
+  selchars_length = ptr - key_set;
 }

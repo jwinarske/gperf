@@ -405,15 +405,15 @@ Key_List::read_keys (void)
               total_duplicates++;
               list_len--;
               trail->next = temp->next;
-              temp->link  = ptr->link;
-              ptr->link   = temp;
+              temp->duplicate_link  = ptr->duplicate_link;
+              ptr->duplicate_link   = temp;
 
               /* Complain if user hasn't enabled the duplicate option. */
               if (!option[DUP] || option[DEBUG])
                 fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"%.*s\".\n",
                                  temp->allchars_length, temp->allchars,
                                  ptr->allchars_length, ptr->allchars,
-                                 temp->char_set_length, temp->char_set);
+                                 temp->selchars_length, temp->selchars);
             }
           else
             trail = temp;
@@ -524,8 +524,8 @@ Key_List::get_occurrence (List_Node *ptr)
 {
   int value = 0;
 
-  const char *p = ptr->char_set;
-  unsigned int i = ptr->char_set_length;
+  const char *p = ptr->selchars;
+  unsigned int i = ptr->selchars_length;
   for (; i > 0; p++, i--)
     value += occurrences[(unsigned char)(*p)];
 
@@ -538,8 +538,8 @@ Key_List::get_occurrence (List_Node *ptr)
 inline void
 Key_List::set_determined (List_Node *ptr)
 {
-  const char *p = ptr->char_set;
-  unsigned int i = ptr->char_set_length;
+  const char *p = ptr->selchars;
+  unsigned int i = ptr->selchars_length;
   for (; i > 0; p++, i--)
     determined[(unsigned char)(*p)] = 1;
 }
@@ -551,8 +551,8 @@ Key_List::already_determined (List_Node *ptr)
 {
   int is_determined = 1;
 
-  const char *p = ptr->char_set;
-  unsigned int i = ptr->char_set_length;
+  const char *p = ptr->selchars;
+  unsigned int i = ptr->selchars_length;
   for (; is_determined && i > 0; p++, i--)
     is_determined = determined[(unsigned char)(*p)];
 
@@ -1148,7 +1148,7 @@ Key_List::output_keylength_table (void)
   for (temp = head, index = 0; temp; temp = temp->next)
     {
       if (option[SWITCH] && !option[TYPE]
-          && !(temp->link
+          && !(temp->duplicate_link
                || (temp->next && temp->hash_value == temp->next->hash_value)))
         continue;
 
@@ -1172,8 +1172,8 @@ Key_List::output_keylength_table (void)
       printf ("%3d", temp->allchars_length);
 
       /* Deal with links specially. */
-      if (temp->link) // implies option[DUP]
-        for (List_Node *links = temp->link; links; links = links->link)
+      if (temp->duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = temp->duplicate_link; links; links = links->duplicate_link)
           {
             ++index;
             printf (",");
@@ -1193,7 +1193,7 @@ Key_List::output_keylength_table (void)
 /* ------------------------------------------------------------------------- */
 
 static void
-output_keyword_entry (List_Node *temp, const char *indent)
+output_keyword_entry (KeywordExt *temp, const char *indent)
 {
   printf ("%s    ", indent);
   if (option[TYPE])
@@ -1207,7 +1207,7 @@ output_keyword_entry (List_Node *temp, const char *indent)
     }
   if (option[DEBUG])
     printf (" /* hash value = %d, index = %d */",
-            temp->hash_value, temp->index);
+            temp->hash_value, temp->final_index);
 }
 
 static void
@@ -1268,7 +1268,7 @@ Key_List::output_keyword_table (void)
   for (temp = head, index = 0; temp; temp = temp->next)
     {
       if (option[SWITCH] && !option[TYPE]
-          && !(temp->link
+          && !(temp->duplicate_link
                || (temp->next && temp->hash_value == temp->next->hash_value)))
         continue;
 
@@ -1283,15 +1283,15 @@ Key_List::output_keyword_table (void)
           index = temp->hash_value;
         }
 
-      temp->index = index;
+      temp->final_index = index;
 
       output_keyword_entry (temp, indent);
 
       /* Deal with links specially. */
-      if (temp->link) // implies option[DUP]
-        for (List_Node *links = temp->link; links; links = links->link)
+      if (temp->duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = temp->duplicate_link; links; links = links->duplicate_link)
           {
-            links->index = ++index;
+            links->final_index = ++index;
             printf (",\n");
             output_keyword_entry (links, indent);
           }
@@ -1339,27 +1339,27 @@ Key_List::output_lookup_array (void)
       for (List_Node *temp = head; temp; temp = temp->next)
         {
           int hash_value = temp->hash_value;
-          lookup_array[hash_value] = temp->index;
+          lookup_array[hash_value] = temp->final_index;
           if (option[DEBUG])
             fprintf (stderr, "keyword = %.*s, index = %d\n",
-                     temp->allchars_length, temp->allchars, temp->index);
-          if (temp->link
+                     temp->allchars_length, temp->allchars, temp->final_index);
+          if (temp->duplicate_link
               || (temp->next && hash_value == temp->next->hash_value))
             {
               /* Start a duplicate entry. */
               dup_ptr->hash_value = hash_value;
-              dup_ptr->index      = temp->index;
-              dup_ptr->count      = 1;
+              dup_ptr->index = temp->final_index;
+              dup_ptr->count = 1;
 
               for (;;)
                 {
-                  for (List_Node *ptr = temp->link; ptr; ptr = ptr->link)
+                  for (KeywordExt *ptr = temp->duplicate_link; ptr; ptr = ptr->duplicate_link)
                     {
                       dup_ptr->count++;
                       if (option[DEBUG])
                         fprintf (stderr,
                                  "static linked keyword = %.*s, index = %d\n",
-                                 ptr->allchars_length, ptr->allchars, ptr->index);
+                                 ptr->allchars_length, ptr->allchars, ptr->final_index);
                     }
 
                   if (!(temp->next && hash_value == temp->next->hash_value))
@@ -1370,7 +1370,7 @@ Key_List::output_lookup_array (void)
                   dup_ptr->count++;
                   if (option[DEBUG])
                     fprintf (stderr, "dynamic linked keyword = %.*s, index = %d\n",
-                             temp->allchars_length, temp->allchars, temp->index);
+                             temp->allchars_length, temp->allchars, temp->final_index);
                 }
               assert (dup_ptr->count >= 2);
               dup_ptr++;
@@ -1404,7 +1404,7 @@ Key_List::output_lookup_array (void)
           lookup_array_size += 2;
         found_i:
           /* Put in an indirection from dup_ptr->hash_value to i.
-             At i and i+1 store dup_ptr->index and dup_ptr->count. */
+             At i and i+1 store dup_ptr->final_index and dup_ptr->count. */
           assert (lookup_array[dup_ptr->hash_value] == dup_ptr->index);
           lookup_array[dup_ptr->hash_value] = - 1 - total_keys - i;
           lookup_array[i] = - total_keys + dup_ptr->index;
@@ -1505,19 +1505,19 @@ output_switch_case (List_Node *list, int indent, int *jumps_away)
             indent, "", list->hash_value, list->allchars_length, list->allchars);
 
   if (option[DUP]
-      && (list->link
+      && (list->duplicate_link
           || (list->next && list->hash_value == list->next->hash_value)))
     {
       if (option[LENTABLE])
         printf ("%*slengthptr = &lengthtable[%d];\n",
-                indent, "", list->index);
+                indent, "", list->final_index);
       printf ("%*swordptr = &%s[%d];\n",
-              indent, "", option.get_wordlist_name (), list->index);
+              indent, "", option.get_wordlist_name (), list->final_index);
 
       int count = 0;
       for (List_Node *temp = list; ; temp = temp->next)
         {
-          for (List_Node *links = temp; links; links = links->link)
+          for (KeywordExt *links = temp; links; links = links->duplicate_link)
             count++;
           if (!(temp->next && temp->hash_value == temp->next->hash_value))
             break;
@@ -1542,7 +1542,7 @@ output_switch_case (List_Node *list, int indent, int *jumps_away)
       printf ("%*sresword = ",
               indent, "");
       if (option[TYPE])
-        printf ("&%s[%d]", option.get_wordlist_name (), list->index);
+        printf ("&%s[%d]", option.get_wordlist_name (), list->final_index);
       else
         output_string (list->allchars, list->allchars_length);
       printf (";\n");
@@ -2064,12 +2064,12 @@ Key_List::dump ()
   int field_width = option.get_max_keysig_size ();
 
   fprintf (stderr, "\nList contents are:\n(hash value, key length, index, %*s, keyword):\n",
-           field_width, "char_set");
+           field_width, "selchars");
 
   for (List_Node *ptr = head; ptr; ptr = ptr->next)
     fprintf (stderr, "%11d,%11d,%6d, %*.*s, %.*s\n",
-             ptr->hash_value, ptr->allchars_length, ptr->index,
-             field_width, ptr->char_set_length, ptr->char_set,
+             ptr->hash_value, ptr->allchars_length, ptr->final_index,
+             field_width, ptr->selchars_length, ptr->selchars,
              ptr->allchars_length, ptr->allchars);
 }
 

@@ -30,12 +30,34 @@ struct Keyword
   /* Constructor.  */
   Keyword (const char *allchars, int allchars_length, const char *rest);
 
-  /* Data members.  */
+  /* Data members defined immediately by the input file.  */
   /* The keyword as a string, possibly containing NUL bytes.  */
   const char *const allchars;
   const int allchars_length;
   /* Additional stuff seen on the same line of the input file.  */
   const char *const rest;
+};
+
+/* A keyword, in the context of a given keyposition list.  */
+struct KeywordExt : public Keyword
+{
+  /* Constructor.  */
+  KeywordExt (const char *allchars, int allchars_length, const char *rest);
+
+  /* Data members depending on the keyposition list.  */
+  /* The selected characters that participate for the hash function,
+     reordered according to the keyposition list.  */
+  const char * selchars;
+  int selchars_length;
+  /* Chained list of keywords having the same selchars.  */
+  KeywordExt * duplicate_link;
+
+  /* Data members used by the algorithm.  */
+  int occurrence; /* A metric for frequency of key set occurrences. */
+  int hash_value; /* Hash value for the key. */
+
+  /* Data members used by the output routines.  */
+  int final_index;
 };
 
 /* A factory for creating Keyword instances.  */
@@ -45,8 +67,8 @@ public:
   Keyword_Factory ();
   virtual ~Keyword_Factory ();
   /* Creates a new Keyword.  */
-  virtual Keyword create_keyword (const char *allchars, int allchars_length,
-                                  const char *rest) = 0;
+  virtual Keyword * create_keyword (const char *allchars, int allchars_length,
+                                    const char *rest) = 0;
 };
 
 #endif

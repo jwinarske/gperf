@@ -27,15 +27,9 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "vectors.h"
 #include "keyword.h"
 
-struct List_Node : public Keyword, private Vectors
+struct List_Node : public KeywordExt, private Vectors
 {
-  List_Node  *link;              /* TRUE if key has an identical KEY_SET as another key. */
   List_Node  *next;              /* Points to next element on the list. */
-  const char *char_set;          /* Set of characters to hash, specified by user. */
-  int         char_set_length;   /* Length of char_set. */
-  int         hash_value;        /* Hash value for the key. */
-  int         occurrence;        /* A metric for frequency of key set occurrences. */
-  int         index;             /* Position of this node relative to other nodes. */
 
               List_Node (const char *key, int len, const char *rest);
   static void set_sort (char *base, int len);
