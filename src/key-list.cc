@@ -1044,7 +1044,11 @@ output_keyword_entry (List_Node *temp, const char *indent)
     printf ("{");
   output_string (temp->key);
   if (option[TYPE])
-    printf (",%s}", temp->rest);
+    {
+      if (strlen (temp->rest) > 0)
+        printf (",%s", temp->rest);
+      printf ("}");
+    }
   if (option[DEBUG])
     printf (" /* hash value = %d, index = %d */",
             temp->hash_value, temp->index);
