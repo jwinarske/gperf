@@ -163,6 +163,10 @@ creation.
 
 In addition, Adam de Boor and Nels Olson provided many tips and insights
 that greatly helped improve the quality and functionality of @code{gperf}.
+
+@item
+A testsuite was added by Bruno Haible. He also rewrote the output
+routines for better reliability.
 @end itemize
 
 @node Motivation, Search Structures, Contributors, Top
