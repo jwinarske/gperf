@@ -1,5 +1,8 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/configure.in: Rename cache variable gp_cxx_throw_decl to
+          gp_cv_cxx_throw_decl.
+
         * src/key-list.cc (Key_List::output_hash_function): When outputting
           __inline, take advantage of C++ compilers which have inline.
 
