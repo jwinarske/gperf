@@ -805,7 +805,9 @@ void Output_Compare_Strncmp::output_comparison (const Output_Expr& expr1,
   expr1.output_expr ();
   printf (" + 1, ");
   expr2.output_expr ();
-  printf (" + 1, len - 1)");
+  printf (" + 1, len - 1) && ");
+  expr2.output_expr ();
+  printf ("[len] == '\\0'");
 }
 
 /* ------------------------------------------------------------------------- */

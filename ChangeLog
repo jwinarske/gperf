@@ -1,5 +1,10 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/key-list.cc (Output_Compare_Strncmp::output_comparison):
+          After the call to strncmp, verify that expr2 is not longer than
+          `len'.
+          Reported by Carlo Wood <carlo@runaway.xs4all.nl>.
+
         * src/key-list.cc (Key_List::output_lookup_function_body): Avoid
           emitting the loop for dealing with duplicates if
           total_duplicates == 0.
