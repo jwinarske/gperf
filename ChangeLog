@@ -1,5 +1,21 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        Make the structure initializers customizable. Based on a patch by
+        Kaveh R. Ghazi <ghazi@caip.rutgers.edu>.
+        * src/options.h (Options::get_initializer_suffix,
+          Options::initializer_suffix): New declarations.
+        * src/options.icc (Options::get_initializer_suffix): New function.
+        * src/options.cc (DEFAULT_INITIALIZER_SUFFIX): New constant.
+          (Options::initializer_suffix): New variable.
+          (Options::long_usage): Document option "-F".
+          (Options constructor): Initialize initializer_suffix.
+          (Options destructor): Dump initializer_suffix.
+          (long_options): Add option "-F".
+          (Options::operator()): Accept option "-F". Sets initializer_suffix.
+        * src/key-list.cc (output_keyword_blank_entries): Output
+          initializer_suffix.
+        * doc/gperf.texi: Document option "-F".
+
         * COPYING: Replace with GPL version 2 (with new FSF address and Y2K safe
           year format).
 

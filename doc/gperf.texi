@@ -517,7 +517,7 @@ the literal tab character.
 
 @item -t
 Allows you to include a @code{struct} type declaration for generated
-code.  Any text before a pair of consecutive %% is consider part of the
+code.  Any text before a pair of consecutive %% is considered part of the
 type declaration.  Key words and additional fields may follow this, one
 group of fields per line.  A set of examples for generating perfect hash
 tables and functions for Ada, C, and G++, Pascal, and Modula 2 and 3
@@ -577,6 +577,13 @@ By default, the program assumes the structure component identifier for
 the keyword is @samp{name}.  This option allows an arbitrary choice of
 identifier for this component, although it still must occur as the first
 field in your supplied @code{struct}.
+
+@item -F @var{initializers}
+This option is only useful when option @samp{-t} has been given.
+It permits to specify initializers for the structure members following
+@var{key name} in empty hash table entries.  The list of initializers
+should start with a comma.  By default, the emitted code will
+zero-initialize structure members following @var{key name}.
 
 @item -H @var{hash function name}
 Allows you to specify the name for the generated hash function.  Default

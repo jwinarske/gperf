@@ -1,5 +1,5 @@
 /* Routines for building, ordering, and printing the keyword list.
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -1053,7 +1053,17 @@ output_keyword_entry (List_Node *temp, const char *indent)
 static void
 output_keyword_blank_entries (int count, const char *indent)
 {
-  const int columns = 9;
+  int columns;
+  if (option[TYPE])
+    {
+      columns = 58 / (6 + strlen (option.get_initializer_suffix()));
+      if (columns == 0)
+        columns = 1;
+    }
+  else
+    {
+      columns = 9;
+    }
   int column = 0;
   for (int i = 0; i < count; i++)
     {
@@ -1069,7 +1079,7 @@ output_keyword_blank_entries (int count, const char *indent)
             printf (", ");
         }
       if (option[TYPE])
-        printf ("{\"\"}");
+        printf ("{\"\"%s}", option.get_initializer_suffix());
       else
         printf ("\"\"");
       column++;
