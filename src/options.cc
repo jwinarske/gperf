@@ -671,7 +671,7 @@ Options::parse_options (int argc, char *argv[])
                   {
                     if (value == BAD_VALUE)
                       {
-                        fprintf (stderr, "Illegal key value or range, use 1,2,3-%d,'$' or '*'.\n",
+                        fprintf (stderr, "Invalid key value or range, use 1,2,3-%d,'$' or '*'.\n",
                                          Positions::MAX_KEY_POS);
                         short_usage (stderr);
                         exit (1);

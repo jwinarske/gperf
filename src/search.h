@@ -47,9 +47,9 @@ private:
   int                   max_key_length ();
   int                   get_max_keysig_size ();
   int                   hash (KeywordExt *key_node);
-  static int            compute_disjoint_union (const char *set_1, int size_1, const char *set_2, int size_2, char *set_3);
-  void                  sort_set (char *union_set, int len);
-  bool                  affects_prev (char c, KeywordExt *curr);
+  static int            compute_disjoint_union (const unsigned char *set_1, int size_1, const unsigned char *set_2, int size_2, unsigned char *set_3);
+  void                  sort_set (unsigned char *union_set, int len);
+  bool                  affects_prev (unsigned char c, KeywordExt *curr);
   void                  change (KeywordExt *prior, KeywordExt *curr);
   void                  sort ();
 public:

@@ -27,10 +27,12 @@
 #define keyword_h 1
 
 /* An instance of this class is a keyword, as specified in the input file.  */
+
 struct Keyword
 {
   /* Constructor.  */
-                        Keyword (const char *allchars, int allchars_length, const char *rest);
+                        Keyword (const char *allchars, int allchars_length,
+                                 const char *rest);
 
   /* Data members defined immediately by the input file.  */
   /* The keyword as a string, possibly containing NUL bytes.  */
@@ -41,15 +43,18 @@ struct Keyword
 };
 
 /* A keyword, in the context of a given keyposition list.  */
+
 struct KeywordExt : public Keyword
 {
   /* Constructor.  */
-                        KeywordExt (const char *allchars, int allchars_length, const char *rest);
+                        KeywordExt (const char *allchars, int allchars_length,
+                                    const char *rest);
 
   /* Data members depending on the keyposition list.  */
   /* The selected characters that participate for the hash function,
-     reordered according to the keyposition list.  */
-  const char *          _selchars;
+     selected according to the keyposition list, as a canonically reordered
+     multiset.  */
+  const unsigned char * _selchars;
   int                   _selchars_length;
   /* Chained list of keywords having the same selchars.  */
   KeywordExt *          _duplicate_link;
@@ -59,22 +64,37 @@ struct KeywordExt : public Keyword
   void                  init_selchars (int *occurrences);
 
   /* Data members used by the algorithm.  */
-  int                   _occurrence; /* A metric for frequency of key set occurrences. */
-  int                   _hash_value; /* Hash value for the key. */
+  int                   _occurrence; /* Frequency of key set occurrences.  */
+  int                   _hash_value; /* Hash value for the keyword.  */
 
   /* Data members used by the output routines.  */
   int                   _final_index;
 };
 
-/* A factory for creating Keyword instances.  */
+/* An abstract factory for creating Keyword instances.
+   This factory is used to make the Input class independent of the concrete
+   class KeywordExt.  */
+
 class Keyword_Factory
 {
 public:
+  /* Constructor.  */
                         Keyword_Factory ();
+  /* Destructor.  */
   virtual               ~Keyword_Factory ();
+
   /* Creates a new Keyword.  */
-  virtual Keyword *     create_keyword (const char *allchars, int allchars_length,
+  virtual /*abstract */ Keyword *
+                        create_keyword (const char *allchars, int allchars_length,
                                         const char *rest) = 0;
 };
+
+#ifdef __OPTIMIZE__
+
+#define INLINE inline
+#include "keyword.icc"
+#undef INLINE
+
+#endif
 
 #endif

@@ -1,5 +1,30 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* lib/hashpjw.h (hashpjw): Change argument type to 'unsigned char *'.
+	* lib/hash.cc (hashpjw): Likewise.
+	* src/keyword.icc: New file.
+	* src/keyword.h: Include keyword.icc.
+	(KeywordExt::_selchars): Change type to 'unsigned char *'.
+	* src/keyword.cc: Include keyword.icc.
+	(Keyword::Keyword, KeywordExt::KeywordExt): Move to keyword.icc.
+	(sort_char_set): Change argument type to 'unsigned char *'.
+	(KeywordExt::init_selchars): Update.
+	* src/search.h (Search::compute_disjoint_union): Change argument types
+	to 'unsigned char *'.
+	(Search::sort_set): Likewise.
+	(Search::affects_prev): Change argument type to 'unsigned char'.
+	* src/search.cc (Search::prepare): Initialize _duplicate_link here.
+	(Search::get_occurrence, Search::set_determined,
+	Search::already_determined, Search::hash): Update.
+	(Search::compute_disjoint_union): Change argument types to
+	'unsigned char *'.
+	(Search::sort_set): Likewise.
+	(Search::affects_prev): Change argument type to 'unsigned char'.
+	(Search::change): Update.
+	* src/Makefile.in (KEYWORD_H): Add keyword.icc.
+
+	* src/options.cc (Options::parse_options): Fix error message.
+
 	* src/read-line.h (Read_Line::Read_Line): Make FILE* argument
 	mandatory. Move body to read-line.icc.
 	* src/read-line.icc (Read_Line::Read_Line): New constructor.

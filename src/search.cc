@@ -98,7 +98,10 @@ Search::prepare ()
                              keyword->_selchars_length, keyword->_selchars);
         }
       else
-        trail = temp;
+        {
+          temp->first()->_duplicate_link = NULL;
+          trail = temp;
+        }
 
       /* Update minimum and maximum keyword length, if needed. */
       if (_max_key_len < keyword->_allchars_length)
@@ -203,10 +206,10 @@ Search::get_occurrence (KeywordExt *ptr)
 {
   int value = 0;
 
-  const char *p = ptr->_selchars;
+  const unsigned char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
-    value += _occurrences[static_cast<unsigned char>(*p)];
+    value += _occurrences[*p];
 
   return value;
 }
@@ -217,10 +220,10 @@ Search::get_occurrence (KeywordExt *ptr)
 inline void
 Search::set_determined (KeywordExt *ptr)
 {
-  const char *p = ptr->_selchars;
+  const unsigned char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
-    _determined[static_cast<unsigned char>(*p)] = true;
+    _determined[*p] = true;
 }
 
 /* Returns TRUE if PTR's key set is already completely determined. */
@@ -230,10 +233,10 @@ Search::already_determined (KeywordExt *ptr)
 {
   bool is_determined = true;
 
-  const char *p = ptr->_selchars;
+  const unsigned char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; is_determined && i > 0; p++, i--)
-    is_determined = _determined[static_cast<unsigned char>(*p)];
+    is_determined = _determined[*p];
 
   return is_determined;
 }
@@ -316,10 +319,10 @@ Search::hash (KeywordExt *key_node)
 {
   int sum = option[NOLENGTH] ? 0 : key_node->_allchars_length;
 
-  const char *p = key_node->_selchars;
+  const unsigned char *p = key_node->_selchars;
   int i = key_node->_selchars_length;
   for (; i > 0; p++, i--)
-      sum += _asso_values[static_cast<unsigned char>(*p)];
+      sum += _asso_values[*p];
 
   return key_node->_hash_value = sum;
 }
@@ -330,16 +333,16 @@ Search::hash (KeywordExt *key_node)
    of the combined set. */
 
 inline int
-Search::compute_disjoint_union  (const char *set_1, int size_1, const char *set_2, int size_2, char *set_3)
+Search::compute_disjoint_union  (const unsigned char *set_1, int size_1, const unsigned char *set_2, int size_2, unsigned char *set_3)
 {
-  char *base = set_3;
+  unsigned char *base = set_3;
 
   while (size_1 > 0 && size_2 > 0)
     if (*set_1 == *set_2)
       set_1++, size_1--, set_2++, size_2--;
     else
       {
-        char next;
+        unsigned char next;
         if (*set_1 < *set_2)
           next = *set_1++, size_1--;
         else
@@ -350,7 +353,7 @@ Search::compute_disjoint_union  (const char *set_1, int size_1, const char *set_
 
   while (size_1 > 0)
     {
-      char next;
+      unsigned char next;
       next = *set_1++, size_1--;
       if (set_3 == base || next != set_3[-1])
         *set_3++ = next;
@@ -358,7 +361,7 @@ Search::compute_disjoint_union  (const char *set_1, int size_1, const char *set_
 
   while (size_2 > 0)
     {
-      char next;
+      unsigned char next;
       next = *set_2++, size_2--;
       if (set_3 == base || next != set_3[-1])
         *set_3++ = next;
@@ -372,17 +375,17 @@ Search::compute_disjoint_union  (const char *set_1, int size_1, const char *set_
    the UNION_SET is typically short. */
 
 inline void
-Search::sort_set (char *union_set, int len)
+Search::sort_set (unsigned char *union_set, int len)
 {
   int i, j;
 
   for (i = 0, j = len - 1; i < j; i++)
     {
       int curr;
-      char tmp;
+      unsigned char tmp;
 
       for (curr = i + 1, tmp = union_set[curr];
-           curr > 0 && _occurrences[static_cast<unsigned char>(tmp)] < _occurrences[static_cast<unsigned char>(union_set[curr-1])];
+           curr > 0 && _occurrences[tmp] < _occurrences[union_set[curr-1]];
            curr--)
         union_set[curr] = union_set[curr - 1];
 
@@ -397,9 +400,9 @@ Search::sort_set (char *union_set, int len)
    Option.Get_Jump was forced to be an odd value! */
 
 inline bool
-Search::affects_prev (char c, KeywordExt *curr)
+Search::affects_prev (unsigned char c, KeywordExt *curr)
 {
-  int original_char = _asso_values[static_cast<unsigned char>(c)];
+  int original_char = _asso_values[c];
   int total_iterations = !option[FAST]
     ? get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
 
@@ -409,8 +412,8 @@ Search::affects_prev (char c, KeywordExt *curr)
     {
       int collisions = 0;
 
-      _asso_values[static_cast<unsigned char>(c)] =
-        (_asso_values[static_cast<unsigned char>(c)] + (option.get_jump () ? option.get_jump () : rand ()))
+      _asso_values[c] =
+        (_asso_values[c] + (option.get_jump () ? option.get_jump () : rand ()))
         & (get_asso_max () - 1);
 
       /* Iteration Number array is a win, O(1) intialization time! */
@@ -436,7 +439,7 @@ Search::affects_prev (char c, KeywordExt *curr)
     }
 
   /* Restore original values, no more tries. */
-  _asso_values[static_cast<unsigned char>(c)] = original_char;
+  _asso_values[c] = original_char;
   /* If we're this far it's time to try the next character.... */
   return true;
 }
@@ -446,11 +449,11 @@ Search::affects_prev (char c, KeywordExt *curr)
 void
 Search::change (KeywordExt *prior, KeywordExt *curr)
 {
-  static char *union_set;
+  static unsigned char *union_set;
   int union_set_length;
 
   if (!union_set)
-    union_set = new char [2 * get_max_keysig_size ()];
+    union_set = new unsigned char [2 * get_max_keysig_size ()];
 
   if (option[DEBUG])
     {
@@ -467,7 +470,7 @@ Search::change (KeywordExt *prior, KeywordExt *curr)
   /* Try changing some values, if change doesn't alter other values continue normal action. */
   _fewest_collisions++;
 
-  const char *p = union_set;
+  const unsigned char *p = union_set;
   int i = union_set_length;
   for (; i > 0; p++, i--)
     if (!affects_prev (*p, curr))
@@ -475,7 +478,7 @@ Search::change (KeywordExt *prior, KeywordExt *curr)
         if (option[DEBUG])
           {
             fprintf (stderr, " by changing asso_value['%c'] (char #%d) to %d\n",
-                     *p, p - union_set + 1, _asso_values[static_cast<unsigned char>(*p)]);
+                     *p, p - union_set + 1, _asso_values[*p]);
             fflush (stderr);
           }
         return; /* Good, doesn't affect previous hash values, we'll take it. */
