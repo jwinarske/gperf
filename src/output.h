@@ -34,7 +34,7 @@ struct Output_Compare;
 class Output
 {
 public:
-                        Output (KeywordExt_List *head, const char *array_type, const char *return_type, const char *struct_tag, int additional_code, const char *include_src, int total_keys, int total_duplicates, int max_key_len, int min_key_len, Vectors *v);
+                        Output (KeywordExt_List *head, const char *array_type, const char *return_type, const char *struct_tag, bool additional_code, const char *include_src, int total_keys, int total_duplicates, int max_key_len, int min_key_len, Vectors *v);
   void                  output ();
 private:
   void                  compute_min_max ();
@@ -58,7 +58,7 @@ private:
   /* Shorthand for user-defined struct tag type. */
   const char *          _struct_tag;
   /* True if any additional C code is included. */
-  int                   _additional_code;
+  bool                  _additional_code;
   /* C source code to be included verbatim. */
   const char *          _include_src;
   /* Total number of keys, counting duplicates. */

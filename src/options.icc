@@ -68,12 +68,12 @@ Positions::set_size (unsigned int size)
 }
 
 /* Sorts the array in reverse order.
-   Returns 1 if there are no duplicates, 0 otherwise.  */
-INLINE int
+   Returns true if there are no duplicates, false otherwise.  */
+INLINE bool
 Positions::sort ()
 {
   /* Bubble sort.  */
-  int duplicate_free = 1;
+  bool duplicate_free = true;
   unsigned char *base = _positions;
   unsigned int len = _size;
 
@@ -84,7 +84,7 @@ Positions::sort ()
 
       for (j = i, tmp = base[j]; j > 0 && tmp >= base[j - 1]; j--)
         if ((base[j] = base[j - 1]) == tmp) /* oh no, a duplicate!!! */
-          duplicate_free = 0;
+          duplicate_free = false;
 
       base[j] = tmp;
     }
@@ -105,8 +105,8 @@ PositionIterator::next ()
   return _set._positions[_index++];
 }
 
-/* Tests a given boolean option.  Returns 1 if set, 0 otherwise.  */
-INLINE int
+/* Tests a given boolean option.  Returns true if set, false otherwise.  */
+INLINE bool
 Options::operator[] (Option_Type option) const
 {
   return _option_word & option;

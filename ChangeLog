@@ -1,3 +1,31 @@
+2002-11-02  Bruno Haible  <bruno@clisp.org>
+
+	Start using bool.
+	* src/bool-array.h (Bool_Array::set_bit): Change return type to bool.
+	* src/bool-array.icc (Bool_Array::set_bit): Likewise.
+	* src/gen-perf.h (Gen_Perf::affects_prev): Likewise.
+	* src/gen-perf.cc (Gen_Perf::affects_prev): Likewise.
+	* src/hash-table.h (Hash_Table::_ignore_length): Change type to bool.
+	(Hash_Table::Hash_Table): Change 3rd argument type to bool.
+	* src/hash-table.cc (Hash_Table::Hash_Table): Likewise.
+	* src/input.h (Input::_additional_code): Change type to bool.
+	* src/input.cc (Input::read_keys): Update.
+	* src/key-list.h (Key_List::_occurrence_sort, Key_List::_hash_sort,
+	Key_List::_additional_code): Change type to bool.
+	(Key_List::_determined): Change element type to bool.
+	(Key_List::already_determined): Change return type to bool.
+	* src/key-list.cc (Key_List::_determined): Change element type to bool.
+	(Key_List::set_determined): Update.
+	(Key_List::already_determined): Change return type to bool.
+	(Key_List::reorder, Key_List::sort, Key_List::Key_List): Update.
+	* src/options.h (Positions::sort): Change return type to bool.
+	(Options::operator[]): Likewise.
+	* src/options.icc (Positions::sort): Change return type to bool.
+	(Options::operator[]): Likewise.
+	* src/output.h (Output::Output): Change 5th argument type to bool.
+	(Output::_additional_code): Change type to bool.
+	* src/output.cc (Output::Output): Change 5th argument type to bool.
+
 2002-10-16  Bruno Haible  <bruno@clisp.org>
 
 	* src/*.h: Align all member names at column 24.

@@ -32,10 +32,10 @@ private:
   KeywordExt **         _table;      /* Vector of pointers to linked lists of keywords. */
   int                   _size;       /* Size of the vector. */
   int                   _collisions; /* Find out how well our double hashing is working! */
-  int                   _ignore_length;
+  bool                  _ignore_length;
 
 public:
-                        Hash_Table (KeywordExt **t, int s, int ignore_len);
+                        Hash_Table (KeywordExt **t, int s, bool ignore_len);
                         ~Hash_Table ();
   KeywordExt *          insert (KeywordExt *item);
 };

@@ -37,7 +37,7 @@ private:
   Bool_Array *          _collision_detector;
 
   void                  change (KeywordExt *prior, KeywordExt *curr);
-  int                   affects_prev (char c, KeywordExt *curr);
+  bool                  affects_prev (char c, KeywordExt *curr);
   static int            hash (KeywordExt *key_node);
   static int            compute_disjoint_union (const char *set_1, int size_1, const char *set_2, int size_2, char *set_3);
   static void           sort_set (char *union_set, int len);

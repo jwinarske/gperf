@@ -343,5 +343,5 @@ Input::read_keys ()
 
   /* See if any additional C code is included at end of this file. */
   if (ptr)
-    _additional_code = 1;
+    _additional_code = true;
 }

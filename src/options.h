@@ -127,8 +127,8 @@ public:
   void                  set_size (unsigned int size);
 
   /* Sorts the array in reverse order.
-     Returns 1 if there are no duplicates, 0 otherwise.  */
-  int                   sort ();
+     Returns true if there are no duplicates, false otherwise.  */
+  bool                  sort ();
 
 private:
   /* Number of positions, excluding the terminating PositionIterator::EOS.  */
@@ -176,8 +176,8 @@ public:
 
   /* Accessors.  */
 
-  /* Tests a given boolean option.  Returns 1 if set, 0 otherwise.  */
-  int                   operator[] (Option_Type option) const;
+  /* Tests a given boolean option.  Returns true if set, false otherwise.  */
+  bool                  operator[] (Option_Type option) const;
 
   /* Returns the iterations value.  */
   int                   get_iterations () const;

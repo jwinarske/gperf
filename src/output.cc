@@ -65,16 +65,16 @@ static const char *char_to_index;
 /* ------------------------------------------------------------------------- */
 
 /* Constructor.  */
-Output::Output (KeywordExt_List *head_, const char *array_type_,
-                const char *return_type_, const char *struct_tag_,
-                int additional_code_, const char *include_src_,
-                int total_keys_, int total_duplicates_, int max_key_len_,
-                int min_key_len_, Vectors *v_)
-  : _head (head_), _array_type (array_type_), _return_type (return_type_),
-    _struct_tag (struct_tag_), _additional_code (additional_code_),
-    _include_src (include_src_), _total_keys (total_keys_),
-    _total_duplicates (total_duplicates_), _max_key_len (max_key_len_),
-    _min_key_len (min_key_len_), _v (v_)
+Output::Output (KeywordExt_List *head, const char *array_type,
+                const char *return_type, const char *struct_tag,
+                bool additional_code, const char *include_src,
+                int total_keys, int total_duplicates, int max_key_len,
+                int min_key_len, Vectors *v)
+  : _head (head), _array_type (array_type), _return_type (return_type),
+    _struct_tag (struct_tag), _additional_code (additional_code),
+    _include_src (include_src), _total_keys (total_keys),
+    _total_duplicates (total_duplicates), _max_key_len (max_key_len),
+    _min_key_len (min_key_len), _v (v)
 {
 }
 

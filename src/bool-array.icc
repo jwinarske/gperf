@@ -38,18 +38,19 @@ Bool_Array::Bool_Array (unsigned int size)
              _size, (unsigned int) (_size * sizeof (_storage_array[0])));
 }
 
-/* Sets the specified bit to one.  Returns its previous value (0 or 1).  */
-INLINE int
+/* Sets the specified bit to true.
+   Returns its previous value (false or true).  */
+INLINE bool
 Bool_Array::set_bit (unsigned int index)
 {
   if (_storage_array[index] == _iteration_number)
     /* The bit was set since the last clear() call.  */
-    return 1;
+    return true;
   else
     {
       /* The last operation on this bit was clear().  Set it now.  */
       _storage_array[index] = _iteration_number;
-      return 0;
+      return false;
     }
 }
 

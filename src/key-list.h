@@ -43,19 +43,19 @@ protected:
   int                   _max_key_len;                          /* Maximum length of the longest keyword. */
   int                   _min_key_len;                          /* Minimum length of the shortest keyword. */
 private:
-  int                   _occurrence_sort;                      /* True if sorting by occurrence. */
-  int                   _hash_sort;                            /* True if sorting by hash value. */
+  bool                  _occurrence_sort;                      /* True if sorting by occurrence. */
+  bool                  _hash_sort;                            /* True if sorting by hash value. */
 protected:
-  int                   _additional_code;                      /* True if any additional C code is included. */
+  bool                  _additional_code;                      /* True if any additional C code is included. */
 private:
   int                   _list_len;                             /* Length of head's Key_List, not counting duplicates. */
 protected:
   int                   _total_keys;                           /* Total number of keys, counting duplicates. */
   int                   _size;                                 /* Range of the hash table. */
 private:
-  static int            _determined[MAX_ALPHA_SIZE];           /* Used in function reorder, below. */
+  static bool           _determined[MAX_ALPHA_SIZE];           /* Used in function reorder, below. */
   static int            get_occurrence (KeywordExt *ptr);
-  static int            already_determined (KeywordExt *ptr);
+  static bool           already_determined (KeywordExt *ptr);
   static void           set_determined (KeywordExt *ptr);
   void                  dump ();
   KeywordExt_List *     merge (KeywordExt_List *list1, KeywordExt_List *list2);

@@ -34,7 +34,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
    This compromises information hiding somewhat, but greatly reduces
    memory fragmentation, since we can now use alloca! */
 
-Hash_Table::Hash_Table (KeywordExt **table_ptr, int s, int ignore_len):
+Hash_Table::Hash_Table (KeywordExt **table_ptr, int s, bool ignore_len):
      _table (table_ptr), _size (s), _collisions (0), _ignore_length (ignore_len)
 {
   memset ((char *) _table, 0, _size * sizeof (*_table));

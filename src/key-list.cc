@@ -32,7 +32,7 @@ static const int TABLE_MULTIPLE     = 10;
 /* Efficiently returns the least power of two greater than or equal to X! */
 #define POW(X) ((!X)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
 
-int Key_List::_determined[MAX_ALPHA_SIZE];
+bool Key_List::_determined[MAX_ALPHA_SIZE];
 
 /* Destructor dumps diagnostics during debugging. */
 
@@ -232,15 +232,15 @@ Key_List::set_determined (KeywordExt *ptr)
   const char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
-    _determined[(unsigned char)(*p)] = 1;
+    _determined[(unsigned char)(*p)] = true;
 }
 
 /* Returns TRUE if PTR's key set is already completely determined. */
 
-inline int
+inline bool
 Key_List::already_determined (KeywordExt *ptr)
 {
-  int is_determined = 1;
+  bool is_determined = true;
 
   const char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
@@ -267,8 +267,8 @@ Key_List::reorder ()
       keyword->_occurrence = get_occurrence (keyword);
     }
 
-  _hash_sort = 0;
-  _occurrence_sort = 1;
+  _hash_sort = false;
+  _occurrence_sort = true;
 
   _head = merge_sort (_head);
 
@@ -302,8 +302,8 @@ Key_List::reorder ()
 void
 Key_List::sort ()
 {
-  _hash_sort       = 1;
-  _occurrence_sort = 0;
+  _hash_sort       = true;
+  _occurrence_sort = false;
 
   _head = merge_sort (_head);
 }
@@ -337,7 +337,7 @@ Key_List::Key_List ()
   _struct_tag       = 0;
   _head             = 0;
   _total_duplicates = 0;
-  _additional_code  = 0;
+  _additional_code  = false;
 }
 
 /* Returns the length of entire key list. */

@@ -168,7 +168,7 @@ Gen_Perf::hash (KeywordExt *key_node)
    that all legal Asso_Values are visited without repetition since
    Option.Get_Jump was forced to be an odd value! */
 
-inline int
+inline bool
 Gen_Perf::affects_prev (char c, KeywordExt *curr)
 {
   int original_char = _asso_values[(unsigned char)c];
@@ -202,7 +202,7 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
               _fewest_collisions = collisions;
               if (option[DEBUG])
                 fprintf (stderr, "- resolved after %d iterations", total_iterations - i);
-              return 0;
+              return false;
             }
         }
     }
@@ -210,7 +210,7 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
   /* Restore original values, no more tries. */
   _asso_values[(unsigned char)c] = original_char;
   /* If we're this far it's time to try the next character.... */
-  return 1;
+  return true;
 }
 
 /* Change a character value, try least-used characters first. */

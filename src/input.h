@@ -45,7 +45,7 @@ public:
   const char *          _return_type;                          /* Pointer to return type for lookup function. */
   const char *          _struct_tag;                           /* Shorthand for user-defined struct tag type. */
   const char *          _include_src;                          /* C source code to be included verbatim. */
-  int                   _additional_code;                      /* True if any additional C code is included. */
+  bool                  _additional_code;                      /* True if any additional C code is included. */
   KeywordExt_List *     _head;                            /* Points to the head of the linked list. */
 };
 
