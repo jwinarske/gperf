@@ -51,6 +51,7 @@ TEXI2HTML = texi2html
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
+MKINSTALLDIRS = $(SHELL) $(srcdir)/../mkinstalldirs
 
 #### End of system configuration section. ####
 
@@ -92,29 +93,23 @@ gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 
 
 install : all force
-	if [ ! -d $(DESTDIR)$(infodir) ] ; then mkdir $(DESTDIR)$(infodir) ; fi
+	$(MKINSTALLDIRS) $(DESTDIR)$(infodir)
 	$(INSTALL_DATA) $(srcdir)/gperf.info $(DESTDIR)$(infodir)/gperf.info
-	if [ ! -d $(DESTDIR)$(mandir) ] ; then mkdir $(DESTDIR)$(mandir) ; fi
-	if [ ! -d $(DESTDIR)$(man1dir) ] ; then mkdir $(DESTDIR)$(man1dir) ; fi
+	$(MKINSTALLDIRS) $(DESTDIR)$(man1dir)
 	$(INSTALL_DATA) $(srcdir)/gperf.1 $(DESTDIR)$(man1dir)/gperf.1
-	if [ ! -d $(DESTDIR)$(datadir)/doc ] ; then mkdir $(DESTDIR)$(datadir)/doc ; fi
-	if [ ! -d $(DESTDIR)$(docdir) ] ; then mkdir $(DESTDIR)$(docdir) ; fi
-#	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
+#	$(MKINSTALLDIRS) $(DESTDIR)$(dvidir)
 #	$(INSTALL_DATA) $(srcdir)/gperf.dvi $(DESTDIR)$(dvidir)/gperf.dvi
-#	if [ ! -d $(DESTDIR)$(psdir) ] ; then mkdir $(DESTDIR)$(psdir) ; fi
+#	$(MKINSTALLDIRS) $(DESTDIR)$(psdir)
 #	$(INSTALL_DATA) $(srcdir)/gperf.ps $(DESTDIR)$(dvidir)/gperf.ps
-	if [ ! -d $(DESTDIR)$(htmldir) ] ; then mkdir $(DESTDIR)$(htmldir) ; fi
+	$(MKINSTALLDIRS) $(DESTDIR)$(htmldir)
 	$(INSTALL_DATA) $(srcdir)/gperf.html $(DESTDIR)$(htmldir)/gperf.html
 
 installdirs : force
-	if [ ! -d $(DESTDIR)$(infodir) ] ; then mkdir $(DESTDIR)$(infodir) ; fi
-	if [ ! -d $(DESTDIR)$(mandir) ] ; then mkdir $(DESTDIR)$(mandir) ; fi
-	if [ ! -d $(DESTDIR)$(man1dir) ] ; then mkdir $(DESTDIR)$(man1dir) ; fi
-	if [ ! -d $(DESTDIR)$(datadir)/doc ] ; then mkdir $(DESTDIR)$(datadir)/doc ; fi
-	if [ ! -d $(DESTDIR)$(docdir) ] ; then mkdir $(DESTDIR)$(docdir) ; fi
-#	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
-#	if [ ! -d $(DESTDIR)$(psdir) ] ; then mkdir $(DESTDIR)$(psdir) ; fi
-	if [ ! -d $(DESTDIR)$(htmldir) ] ; then mkdir $(DESTDIR)$(htmldir) ; fi
+	$(MKINSTALLDIRS) $(DESTDIR)$(infodir)
+	$(MKINSTALLDIRS) $(DESTDIR)$(man1dir)
+#	$(MKINSTALLDIRS) $(DESTDIR)$(dvidir)
+#	$(MKINSTALLDIRS) $(DESTDIR)$(psdir)
+	$(MKINSTALLDIRS) $(DESTDIR)$(htmldir)
 
 uninstall : force
 	$(RM) $(DESTDIR)$(infodir)/gperf.info
