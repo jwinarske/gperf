@@ -27,6 +27,7 @@
 #include <stdlib.h> /* declares exit(), rand(), srand() */
 #include <string.h> /* declares memset(), memcmp() */
 #include <time.h> /* declares time() */
+#include <math.h> /* declares exp() */
 #include <limits.h> /* defines INT_MIN, INT_MAX, UINT_MAX */
 #include "options.h"
 #include "hash-table.h"
@@ -904,7 +905,7 @@ Search::compute_hash (KeywordExt *keyword) const
   const unsigned int *p = keyword->_selchars;
   int i = keyword->_selchars_length;
   for (; i > 0; p++, i--)
-      sum += _asso_values[*p];
+    sum += _asso_values[*p];
 
   return keyword->_hash_value = sum;
 }
@@ -962,20 +963,96 @@ compute_disjoint_union (const unsigned int *set_1, int size_1,
 /* Sorts the given set in increasing frequency of _occurrences[].  */
 
 inline void
-Search::sort_by_occurrence (unsigned int *set, int len) const
+Search::sort_by_occurrence (unsigned int *set, unsigned int len) const
 {
   /* Use bubble sort, since the set is typically short.  */
-  for (int i = 1; i < len; i++)
+  for (unsigned int i = 1; i < len; i++)
     {
-      int curr;
+      unsigned int j;
       unsigned int tmp;
 
-      for (curr = i, tmp = set[curr];
-           curr > 0 && _occurrences[tmp] < _occurrences[set[curr-1]];
-           curr--)
-        set[curr] = set[curr - 1];
+      for (j = i, tmp = set[j];
+           j > 0 && _occurrences[tmp] < _occurrences[set[j-1]];
+           j--)
+        set[j] = set[j - 1];
 
-      set[curr] = tmp;
+      set[j] = tmp;
+    }
+}
+
+/* Computes the frequency of occurrence of a character among the keywords
+   up to the given keyword.  */
+inline unsigned int
+Search::compute_occurrence (unsigned int c, KeywordExt *curr) const
+{
+  unsigned int occurrence = 0;
+
+  for (KeywordExt_List *temp = _head; ; temp = temp->rest())
+    {
+      KeywordExt *keyword = temp->first();
+
+      int m = keyword->_selchars_length;
+      for (int i = 0; i < m; i++)
+        if (keyword->_selchars[i] == c)
+          {
+            occurrence++;
+            break;
+          }
+
+      if (keyword == curr)
+        break;
+    }
+
+  return occurrence;
+}
+
+/* Sorts the given set in increasing frequency of occurrences among the
+   keywords up to the given keyword.  */
+
+inline void
+Search::sort_by_occurrence (unsigned int *set, unsigned int len, KeywordExt *curr) const
+{
+  unsigned int occurrences[len];
+
+  for (unsigned int j = 0; j < len; j++)
+    occurrences[j] = 0;
+  for (KeywordExt_List *temp = _head; ; temp = temp->rest())
+    {
+      KeywordExt *keyword = temp->first();
+
+      int m = keyword->_selchars_length;
+      for (unsigned int j = 0; j < len; j++)
+        {
+          unsigned int c = set[j];
+
+          for (int i = 0; i < m; i++)
+            if (keyword->_selchars[i] == c)
+              {
+                occurrences[j]++;
+                break;
+              }
+        }
+
+      if (keyword == curr)
+        break;
+    }
+
+  /* Use bubble sort, since the set is typically short.  */
+  for (unsigned int i = 1; i < len; i++)
+    {
+      unsigned int j;
+      unsigned int set_tmp, occ_tmp;
+
+      for (j = i, set_tmp = set[j], occ_tmp = occurrences[j];
+           j > 0 && occ_tmp < occurrences[j-1];
+           j--)
+        {
+          set[j] = set[j - 1];
+          occurrences[j] = occurrences[j - 1];
+        }
+
+      set[j] = set_tmp;
+      occurrences[j] = occ_tmp;
     }
 }
 
@@ -1152,11 +1229,25 @@ Search::find_asso_values ()
         /* Sort by decreasing occurrence: Try least-used characters c first.
            The idea is that this reduces the number of freshly introduced
            collisions.  */
-        sort_by_occurrence (union_set, union_set_length);
+        if (option[OPT_CHOICE])
+          sort_by_occurrence (union_set, union_set_length, curr);
+        else
+          sort_by_occurrence (union_set, union_set_length);
 
         for (union_index = 0; union_index < union_set_length; union_index++)
           {
             c = union_set[union_index];
+
+            if (option[DEBUG])
+              {
+                unsigned int n = sp - stack + 1;
+                unsigned int o = compute_occurrence (c, curr);
+                fprintf (stderr, "Expected number of iterations between %g and %g\n",
+                         exp (static_cast<double>((2*n-o)*o)
+                              / static_cast<double>(2*_max_hash_value)),
+                         exp (static_cast<double>((2*n-o)*o)
+                              / static_cast<double>(2*_asso_value_max)));
+              }
 
             /* Try various other values for _asso_values[c].  A value is
                successful if, with it, the recomputed hash values for the

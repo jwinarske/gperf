@@ -90,8 +90,15 @@ private:
      and stores it in keyword->_hash_value.  */
   int                   compute_hash (KeywordExt *keyword) const;
 
+  /* Computes the frequency of occurrence of a character among the keywords
+     up to the given keyword.  */
+  unsigned int          compute_occurrence (unsigned int c, KeywordExt *curr) const;
+
   /* Sorts the given set in increasing frequency of _occurrences[].  */
-  void                  sort_by_occurrence (unsigned int *set, int len) const;
+  void                  sort_by_occurrence (unsigned int *set, unsigned int len) const;
+  /* Sorts the given set in increasing frequency of occurrences among the
+     keywords up to the given keyword.  */
+  void                  sort_by_occurrence (unsigned int *set, unsigned int len, KeywordExt *curr) const;
 
   bool                  has_collisions (KeywordExt *curr);
 

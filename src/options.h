@@ -101,7 +101,10 @@ enum Option_Type
   INCLUDE      = 1 << 20,
 
   /* Assume 7-bit, not 8-bit, characters.  */
-  SEVENBIT     = 1 << 21
+  SEVENBIT     = 1 << 21,
+
+  /* Apply optimized collision resolution to speed-up search time.  */
+  OPT_CHOICE   = 1 << 22
 };
 
 /* Class manager for gperf program Options. */

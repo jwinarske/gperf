@@ -473,6 +473,7 @@ Options::~Options ()
                "\nENUM is........: %s"
                "\nINCLUDE is.....: %s"
                "\nSEVENBIT is....: %s"
+               "\nOPT_CHOICE is..: %s"
                "\niterations = %d"
                "\nlookup function name = %s"
                "\nhash function name = %s"
@@ -505,6 +506,7 @@ Options::~Options ()
                _option_word & ENUM ? "enabled" : "disabled",
                _option_word & INCLUDE ? "enabled" : "disabled",
                _option_word & SEVENBIT ? "enabled" : "disabled",
+               _option_word & OPT_CHOICE ? "enabled" : "disabled",
                _iterations,
                _function_name, _hash_name, _wordlist_name, _slot_name,
                _initializer_suffix, _asso_iterations, _jump, _size_multiple,
@@ -648,6 +650,7 @@ static const struct option long_options[] =
   { "multiple-iterations", required_argument, NULL, 'm' },
   { "no-strlen", no_argument, NULL, 'n' },
   { "occurrence-sort", no_argument, NULL, 'o' },
+  { "optimized-collision-resolution", no_argument, NULL, 'O' },
   { "random", no_argument, NULL, 'r' },
   { "size-multiple", required_argument, NULL, 's' },
   { "help", no_argument, NULL, 'h' },
@@ -667,7 +670,7 @@ Options::parse_options (int argc, char *argv[])
 
   while ((option_char =
             getopt_long (_argument_count, _argument_vector,
-                         "acCdDe:Ef:F:gGhH:i:Ij:k:K:lL:m:nN:oprs:S:tTvW:Z:7",
+                         "acCdDe:Ef:F:gGhH:i:Ij:k:K:lL:m:nN:oOprs:S:tTvW:Z:7",
                          long_options, NULL))
          != -1)
     {
@@ -860,6 +863,11 @@ Options::parse_options (int argc, char *argv[])
         case 'o':               /* Order input by frequency of key set occurrence. */
           {
             _option_word |= ORDER;
+            break;
+          }
+        case 'O':               /* Optimized choice during collision resolution.  */
+          {
+            _option_word |= OPT_CHOICE;
             break;
           }
         case 'p':               /* Generated lookup function a pointer instead of int. */
