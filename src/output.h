@@ -27,7 +27,6 @@
 #define output_h 1
 
 #include "keyword-list.h"
-#include "vectors.h"
 
 /* OSF/1 cxx needs these forward declarations. */
 struct Output_Constants;
@@ -36,7 +35,7 @@ struct Output_Compare;
 class Output
 {
 public:
-                        Output (KeywordExt_List *head, const char *array_type, const char *return_type, const char *struct_tag, bool additional_code, const char *include_src, int total_keys, int total_duplicates, int max_key_len, int min_key_len, Vectors *v);
+                        Output (KeywordExt_List *head, const char *array_type, const char *return_type, const char *struct_tag, bool additional_code, const char *include_src, int total_keys, int total_duplicates, int max_key_len, int min_key_len, int alpha_size, const int *occurrences, const int *asso_values);
   void                  output ();
 private:
   void                  compute_min_max ();
@@ -75,7 +74,12 @@ private:
   int                   _min_hash_value;
   /* Maximum hash value for all keywords. */
   int                   _max_hash_value;
-  Vectors *             _v;
+  /* Size of alphabet. */
+  int const             _alpha_size;
+  /* Counts occurrences of each key set character. */
+  const int * const     _occurrences;
+  /* Value associated with each character. */
+  const int * const     _asso_values;
 };
 
 #endif

@@ -51,7 +51,6 @@ main (int argc, char *argv[])
   /* Initialize the key word list. */
   KeywordExt_Factory factory;
   Input inputter (&factory);
-  Vectors::ALPHA_SIZE = (option[SEVENBIT] ? 128 : 256);
   inputter.read_keys ();
   /* We can cast the keyword list to KeywordExt_List* because its list
      elements were created by KeywordExt_Factory. */
@@ -72,7 +71,9 @@ main (int argc, char *argv[])
                     searcher._total_duplicates,
                     searcher._max_key_len,
                     searcher._min_key_len,
-                    &searcher);
+                    searcher._alpha_size,
+                    searcher._occurrences,
+                    searcher._asso_values);
   outputter.output ();
 
   /* Check for write error on stdout. */

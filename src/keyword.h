@@ -26,8 +26,6 @@
 #ifndef keyword_h
 #define keyword_h 1
 
-#include "vectors.h"
-
 /* An instance of this class is a keyword, as specified in the input file.  */
 struct Keyword
 {
@@ -37,7 +35,7 @@ struct Keyword
   /* Data members defined immediately by the input file.  */
   /* The keyword as a string, possibly containing NUL bytes.  */
   const char *const     _allchars;
-  const int             _allchars_length;
+  int const             _allchars_length;
   /* Additional stuff seen on the same line of the input file.  */
   const char *const     _rest;
 };

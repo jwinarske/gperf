@@ -1,5 +1,31 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/vectors.h: Remove file.
+	* src/vectors.cc: Remove file.
+	* src/search.h: Don't include vectors.h.
+	(Search): Don't inherit from Vectors. New fields _alpha_size,
+	_occurrences, _asso_values.
+	(Search::_determined, Search::get_occurrence, Search::set_determined,
+	Search::already_determined, Search::hash, Search::sort_set): Make
+	nonstatic.
+	* src/search.cc (Search::Search): Initialize _alpha_size, _occurrences,
+	_asso_values, _determined.
+	(Search::optimize, Search::~Search): Update.
+	* src/output.h: Don't include vectors.h.
+	(Output): Remove field _v. New fields _alpha_size, _occurrences,
+	_asso_values.
+	(Output::Output): Replace Vectors* argument with alpha_size,
+	occurrences, asso_values.
+	* src/output.cc (Output::Output): Replace Vectors* argument with
+	alpha_size, occurrences, asso_values.
+	(Output::output_hash_function): Update.
+	* src/main.cc (main): Don't set Vectors::ALPHA_SIZE.
+	Pass _alpha_size, _occurrences, _asso_values from Search to Output.
+	* src/keyword.h: Don't include vectors.h.
+	* src/Makefile.in (OBJECTS): Remove vectors.o.
+	(VECTORS_H): Remove variable.
+	(vectors.o): Remove rule.
+
 	* src/search.h: New file, combines src/key-list.h, src/gen-perf.h.
 	* src/search,cc: New file, combines src/key-list.cc, src/gen-perf.cc.
 	* src/key-list.h: Remove file.

@@ -36,11 +36,13 @@ static const int TABLE_MULTIPLE     = 10;
 #define POW(X) ((!X)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
 
 Search::Search (KeywordExt_List *list)
-  : _head (list)
+  : _head (list),
+    _alpha_size (option[SEVENBIT] ? 128 : 256),
+    _occurrences (new int[_alpha_size]),
+    _asso_values (new int[_alpha_size]),
+    _determined (new bool[_alpha_size])
 {
 }
-
-bool Search::_determined[MAX_ALPHA_SIZE];
 
 void
 Search::prepare ()
@@ -529,7 +531,7 @@ Search::optimize ()
     {
       srand (reinterpret_cast<long>(time (0)));
 
-      for (int i = 0; i < ALPHA_SIZE; i++)
+      for (int i = 0; i < _alpha_size; i++)
         _asso_values[i] = (rand () & asso_value_max - 1);
     }
   else
@@ -537,7 +539,7 @@ Search::optimize ()
       int asso_value = option.get_initial_asso_value ();
 
       if (asso_value)           /* Initialize array if user requests non-zero default. */
-        for (int i = ALPHA_SIZE - 1; i >= 0; i--)
+        for (int i = _alpha_size - 1; i >= 0; i--)
           _asso_values[i] = asso_value & get_asso_max () - 1;
     }
   _max_hash_value = max_key_length () + get_asso_max () * get_max_keysig_size ();
@@ -603,7 +605,7 @@ Search::~Search ()
     {
       fprintf (stderr, "\ndumping occurrence and associated values tables\n");
 
-      for (int i = 0; i < ALPHA_SIZE; i++)
+      for (int i = 0; i < _alpha_size; i++)
         if (_occurrences[i])
           fprintf (stderr, "asso_values[%c] = %6d, occurrences[%c] = %6d\n",
                    i, _asso_values[i], i, _occurrences[i]);

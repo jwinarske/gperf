@@ -27,10 +27,9 @@
 #define search_h 1
 
 #include "keyword-list.h"
-#include "vectors.h"
 #include "bool-array.h"
 
-class Search : public Vectors
+class Search
 {
 public:
                         Search (KeywordExt_List *list);
@@ -40,16 +39,16 @@ private:
   void                  prepare ();
   KeywordExt_List *     merge (KeywordExt_List *list1, KeywordExt_List *list2);
   KeywordExt_List *     merge_sort (KeywordExt_List *head);
-  static int            get_occurrence (KeywordExt *ptr);
-  static void           set_determined (KeywordExt *ptr);
-  static bool           already_determined (KeywordExt *ptr);
+  int                   get_occurrence (KeywordExt *ptr);
+  void                  set_determined (KeywordExt *ptr);
+  bool                  already_determined (KeywordExt *ptr);
   void                  reorder ();
   int                   keyword_list_length ();
   int                   max_key_length ();
   int                   get_max_keysig_size ();
-  static int            hash (KeywordExt *key_node);
+  int                   hash (KeywordExt *key_node);
   static int            compute_disjoint_union (const char *set_1, int size_1, const char *set_2, int size_2, char *set_3);
-  static void           sort_set (char *union_set, int len);
+  void                  sort_set (char *union_set, int len);
   bool                  affects_prev (char c, KeywordExt *curr);
   void                  change (KeywordExt *prior, KeywordExt *curr);
   void                  sort ();
@@ -59,11 +58,17 @@ public:
   int                   _total_duplicates;                     /* Total number of duplicate hash values. */
   int                   _max_key_len;                          /* Maximum length of the longest keyword. */
   int                   _min_key_len;                          /* Minimum length of the shortest keyword. */
+  /* Size of alphabet. */
+  int const             _alpha_size;
+  /* Counts occurrences of each key set character. */
+  int * const           _occurrences;
+  /* Value associated with each character. */
+  int * const           _asso_values;
 private:
   int                   _list_len;                             /* Length of head's Key_List, not counting duplicates. */
   bool                  _occurrence_sort;                      /* True if sorting by occurrence. */
   bool                  _hash_sort;                            /* True if sorting by hash value. */
-  static bool           _determined[MAX_ALPHA_SIZE];           /* Used in function reorder, below. */
+  bool * const          _determined;                           /* Used in function reorder, below. */
   int                   _num_done;          /* Number of keywords processed without a collision. */
   int                   _fewest_collisions; /* Records fewest # of collisions for asso value. */
   int                   _max_hash_value;    /* Maximum possible hash value. */

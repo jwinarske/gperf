@@ -62,7 +62,7 @@ SHELL = /bin/sh
 VPATH = $(srcdir)
 
 OBJECTS  = options.o main.o \
-           hash-table.o bool-array.o read-line.o vectors.o version.o \
+           hash-table.o bool-array.o read-line.o version.o \
            keyword.o keyword-list.o output.o input.o search.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
@@ -86,7 +86,6 @@ $(TARGETPROG): $(OBJECTS)
 # Dependencies.
 CONFIG_H = config.h
 VERSION_H = version.h
-VECTORS_H = vectors.h
 READ_LINE_H = read-line.h read-line.icc
 OPTIONS_H = options.h options.icc
 HASH_TABLE_H = hash-table.h
@@ -102,8 +101,6 @@ options.o : options.cc $(OPTIONS_H) $(VECTORS_H) $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/options.cc
 read-line.o : read-line.cc $(READ_LINE_H) $(OPTIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/read-line.cc
-vectors.o : vectors.cc $(VECTORS_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/vectors.cc
 version.o : version.cc $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
 keyword.o : keyword.cc keyword.h

@@ -70,12 +70,14 @@ Output::Output (KeywordExt_List *head, const char *array_type,
                 const char *return_type, const char *struct_tag,
                 bool additional_code, const char *include_src,
                 int total_keys, int total_duplicates, int max_key_len,
-                int min_key_len, Vectors *v)
+                int min_key_len, int alpha_size, const int *occurrences,
+                const int *asso_values)
   : _head (head), _array_type (array_type), _return_type (return_type),
     _struct_tag (struct_tag), _additional_code (additional_code),
     _include_src (include_src), _total_keys (total_keys),
     _total_duplicates (total_duplicates), _max_key_len (max_key_len),
-    _min_key_len (min_key_len), _v (v)
+    _min_key_len (min_key_len), _alpha_size (alpha_size),
+    _occurrences (occurrences), _asso_values (asso_values)
 {
 }
 
@@ -453,14 +455,14 @@ Output::output_hash_function ()
           const_readonly_array,
           smallest_integral_type (_max_hash_value + 1));
 
-  for (int count = 0; count < _v->ALPHA_SIZE; count++)
+  for (int count = 0; count < _alpha_size; count++)
     {
       if (count > 0)
         printf (",");
       if (!(count % max_column))
         printf ("\n     ");
       printf ("%*d", field_width,
-              _v->_occurrences[count] ? _v->_asso_values[count] : _max_hash_value + 1);
+              _occurrences[count] ? _asso_values[count] : _max_hash_value + 1);
     }
 
   printf ("\n"
