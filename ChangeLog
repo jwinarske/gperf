@@ -1,5 +1,13 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword-list.h (KeywordExt_List): Don't inherit from KeywordExt.
+	(KeywordExt_List::KeywordExt_List): Take a KeywordExt* as argument.
+	(KeywordExt_List::_car): New field.
+	(KeywordExt_List::first): Use it.
+	* src/keyword-list.cc (KeywordExt_List::KeywordExt_List): Take a
+	KeywordExt* as argument.
+	* src/input.cc (parse_line): Create the KeywordExt separately.
+
 	Start using bool.
 	* src/bool-array.h (Bool_Array::set_bit): Change return type to bool.
 	* src/bool-array.icc (Bool_Array::set_bit): Likewise.

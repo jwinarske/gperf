@@ -299,7 +299,7 @@ parse_line (const char *line, const char *delimiters)
             }
           lp++;
         }
-      return new KeywordExt_List (key, kp - key, option[TYPE] ? lp : "");
+      return new KeywordExt_List (new KeywordExt (key, kp - key, option[TYPE] ? lp : ""));
     }
   else
     {
@@ -312,7 +312,7 @@ parse_line (const char *line, const char *delimiters)
       else
         /* Skip the first delimiter. */
         rest = &line[len + 1];
-      return new KeywordExt_List (line, len, option[TYPE] ? rest : "");
+      return new KeywordExt_List (new KeywordExt (line, len, option[TYPE] ? rest : ""));
     }
 }
 

@@ -26,19 +26,20 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 #include "keyword.h"
 
-/* List node of a linear list.  */
-class KeywordExt_List : private KeywordExt {
+/* List node of a linear list of Keyword.  */
+class KeywordExt_List {
 public:
   /* Constructor.  */
-                        KeywordExt_List (const char *allchars, int allchars_length, const char *rest);
+                        KeywordExt_List (KeywordExt *car);
 
   /* Access to first element of list.  */
-  KeywordExt *          first () { return this; }
+  KeywordExt *          first () { return _car; }
   /* Access to next element of list.  */
   KeywordExt_List *&    rest () { return _cdr; }
 
 private:
   KeywordExt_List *     _cdr;
+  KeywordExt * const    _car;
 };
 
 #endif
