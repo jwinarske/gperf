@@ -3,6 +3,10 @@
         * src/version.cc: Bump version number to 2.7.2.
         * doc/gperf.texi: Likewise.
 
+        * doc/texinfo.tex: Update to post-texinfo-4.0 version. @code in the
+          title page now chooses a larger font. The overall layout of the
+          text is denser.
+
         * AUTHORS: New file.
 
         Allow the use of embedded NULs in keys.
