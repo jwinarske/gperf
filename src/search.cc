@@ -41,6 +41,8 @@ Search::Search (KeywordExt_List *list)
     _asso_values (new int[_alpha_size]),
     _determined (new bool[_alpha_size])
 {
+  memset (_asso_values, 0, _alpha_size * sizeof (_asso_values[0]));
+  memset (_determined, 0, _alpha_size * sizeof (_determined[0]));
 }
 
 void
@@ -48,42 +50,67 @@ Search::prepare ()
 {
   KeywordExt_List *temp;
 
+  /* Compute the total number of keywords.  */
   _total_keys = 0;
   for (temp = _head; temp; temp = temp->rest())
+    _total_keys++;
+
+  /* Initialize each keyword's _selchars array.  */
+  for (temp = _head; temp; temp = temp->rest())
+    temp->first()->init_selchars();
+
+  /* Compute the minimum and maximum keyword length.  */
+  _max_key_len = INT_MIN;
+  _min_key_len = INT_MAX;
+  for (temp = _head; temp; temp = temp->rest())
     {
-      temp->first()->init_selchars(_occurrences);
-      _total_keys++;
+      KeywordExt *keyword = temp->first();
+
+      if (_max_key_len < keyword->_allchars_length)
+        _max_key_len = keyword->_allchars_length;
+      if (_min_key_len > keyword->_allchars_length)
+        _min_key_len = keyword->_allchars_length;
     }
 
-  _list_len = _total_keys;
+  /* Exit program if an empty string is used as key, since the comparison
+     expressions don't work correctly for looking up an empty string.  */
+  if (_min_key_len == 0)
+    {
+      fprintf (stderr, "Empty input key is not allowed.\n"
+                       "To recognize an empty input key, your code should check for\n"
+                       "len == 0 before calling the gperf generated lookup function.\n");
+      exit (1);
+    }
 
+  /* Check for duplicates, i.e. keywords with the same _selchars array
+     (and - if !option[NOLENGTH] - also the same length).
+     We deal with these by building an equivalence class, so that only
+     1 keyword is representative of the entire collection.  Only this
+     representative remains in the keyword list; the others are accessible
+     through the _duplicate_link chain, starting at the representative.
+     This *greatly* simplifies processing during later stages of the program.
+     Set _total_duplicates and _list_len = _total_keys - _total_duplicates.  */
   {
-    /* Make hash table for efficiency. */
-    Hash_Table found_link (_list_len, option[NOLENGTH]);
-
-    /* Test whether there are any links and also set the maximum length of
-       an identifier in the keyword list. */
+    _list_len = _total_keys;
     _total_duplicates = 0;
-    _max_key_len = INT_MIN;
-    _min_key_len = INT_MAX;
-    KeywordExt_List *trail = NULL;
+    /* Make hash table for efficiency.  */
+    Hash_Table representatives (_list_len, option[NOLENGTH]);
+
+    KeywordExt_List *prev = NULL; /* list node before temp */
     for (temp = _head; temp; temp = temp->rest())
       {
         KeywordExt *keyword = temp->first();
-        KeywordExt *other_keyword = found_link.insert (keyword);
-
-        /* Check for links.  We deal with these by building an equivalence class
-           of all duplicate values (i.e., links) so that only 1 keyword is
-           representative of the entire collection.  This *greatly* simplifies
-           processing during later stages of the program. */
+        KeywordExt *other_keyword = representatives.insert (keyword);
 
         if (other_keyword)
           {
             _total_duplicates++;
             _list_len--;
-            trail->rest() = temp->rest();
-            temp->first()->_duplicate_link = other_keyword->_duplicate_link;
-            other_keyword->_duplicate_link = temp->first();
+            /* Remove keyword from the main list.  */
+            prev->rest() = temp->rest();
+            /* And insert it on other_keyword's duplicate list.  */
+            keyword->_duplicate_link = other_keyword->_duplicate_link;
+            other_keyword->_duplicate_link = keyword;
 
             /* Complain if user hasn't enabled the duplicate option. */
             if (!option[DUP] || option[DEBUG])
@@ -94,19 +121,16 @@ Search::prepare ()
           }
         else
           {
-            temp->first()->_duplicate_link = NULL;
-            trail = temp;
+            keyword->_duplicate_link = NULL;
+            prev = temp;
           }
-
-        /* Update minimum and maximum keyword length, if needed. */
-        if (_max_key_len < keyword->_allchars_length)
-          _max_key_len = keyword->_allchars_length;
-        if (_min_key_len > keyword->_allchars_length)
-          _min_key_len = keyword->_allchars_length;
       }
   }
 
-  /* Exit program if links exists and option[DUP] not set, since we can't continue */
+  /* Exit program if duplicates exists and option[DUP] not set, since we
+     don't want to continue in this case.  (We don't want to turn on
+     option[DUP] implicitly, because the generated code is usually much
+     slower.  */
   if (_total_duplicates)
     {
       if (option[DUP])
@@ -119,20 +143,23 @@ Search::prepare ()
           exit (1);
         }
     }
-  /* Exit program if an empty string is used as key, since the comparison
-     expressions don't work correctly for looking up an empty string. */
-  if (_min_key_len == 0)
+
+  /* Compute the occurrences of each character in the alphabet.  */
+  memset (_occurrences, 0, _alpha_size * sizeof (_occurrences[0]));
+  for (temp = _head; temp; temp = temp->rest())
     {
-      fprintf (stderr, "Empty input key is not allowed.\nTo recognize an empty input key, your code should check for\nlen == 0 before calling the gperf generated lookup function.\n");
-      exit (1);
+      KeywordExt *keyword = temp->first();
+      const unsigned char *ptr = keyword->_selchars;
+      for (int count = keyword->_selchars_length; count > 0; ptr++, count--)
+        _occurrences[*ptr]++;
     }
 }
 
-/* Recursively merges two sorted lists together to form one sorted list. The
-   ordering criteria is by frequency of occurrence of elements in the key set
-   or by the hash value.  This is a kludge, but permits nice sharing of
-   almost identical code without incurring the overhead of a function
-   call comparison. */
+/* Merges two sorted lists together to form one sorted list.
+   The sorting criterion depends on which of _occurrence_sort and _hash_sort
+   is set to true.  This is a kludge, but permits nice sharing of almost
+   identical code without incurring the overhead of a function call for
+   every comparison.  */
 
 KeywordExt_List *
 Search::merge (KeywordExt_List *list1, KeywordExt_List *list2)
@@ -151,8 +178,10 @@ Search::merge (KeywordExt_List *list1, KeywordExt_List *list2)
           *resultp = list1;
           break;
         }
-      if (_occurrence_sort && list1->first()->_occurrence < list2->first()->_occurrence
-          || _hash_sort && list1->first()->_hash_value > list2->first()->_hash_value)
+      if ((_occurrence_sort
+           && list1->first()->_occurrence < list2->first()->_occurrence)
+          || (_hash_sort
+              && list1->first()->_hash_value > list2->first()->_hash_value))
         {
           *resultp = list2;
           resultp = &list2->rest(); list2 = list1; list1 = *resultp;
@@ -166,37 +195,46 @@ Search::merge (KeywordExt_List *list1, KeywordExt_List *list2)
   return result;
 }
 
-/* Applies the merge sort algorithm to recursively sort the key list by
-   frequency of occurrence of elements in the key set. */
+/* Sorts a list using the recursive merge sort algorithm.
+   The sorting criterion depends on which of _occurrence_sort and _hash_sort
+   is set to true.  */
 
 KeywordExt_List *
 Search::merge_sort (KeywordExt_List *head)
 {
   if (!head || !head->rest())
+    /* List of length 0 or 1.  Nothing to do.  */
     return head;
   else
     {
+      /* Determine a list node in the middle.  */
       KeywordExt_List *middle = head;
-      KeywordExt_List *temp   = head->rest()->rest();
-
-      while (temp)
+      for (KeywordExt_List *temp = head->rest();;)
         {
-          temp   = temp->rest();
+          temp = temp->rest();
+          if (temp == NULL)
+            break;
+          temp = temp->rest();
           middle = middle->rest();
-          if (temp)
-            temp = temp->rest();
+          if (temp == NULL)
+            break;
         }
 
-      temp         = middle->rest();
-      middle->rest() = 0;
-      return merge (merge_sort (head), merge_sort (temp));
+      /* Cut the list into two halves.
+         If the list has n elements, the left half has ceiling(n/2) elements
+         and the right half has floor(n/2) elements.  */
+      KeywordExt_List *right_half = middle->rest();
+      middle->rest() = NULL;
+
+      /* Sort the two halves, then merge them.  */
+      return merge (merge_sort (head), merge_sort (right_half));
     }
 }
 
 /* Returns the frequency of occurrence of elements in the key set. */
 
 inline int
-Search::get_occurrence (KeywordExt *ptr)
+Search::compute_occurrence (KeywordExt *ptr)
 {
   int value = 0;
 
@@ -249,7 +287,7 @@ Search::reorder ()
     {
       KeywordExt *keyword = ptr->first();
 
-      keyword->_occurrence = get_occurrence (keyword);
+      keyword->_occurrence = compute_occurrence (keyword);
     }
 
   _hash_sort = false;

@@ -47,7 +47,7 @@ static inline void sort_char_set (unsigned char *base, int len)
     }
 }
 
-/* Initialize selchars and selchars_length, and update occurrences.
+/* Initialize selchars and selchars_length.
    The hash function will be computed as
    asso_values[allchars[key_pos[0]]] + asso_values[allchars[key_pos[1]]] + ...
    We compute selchars as the multiset
@@ -57,7 +57,7 @@ static inline void sort_char_set (unsigned char *base, int len)
    Furthermore we sort the selchars array, to ease detection of duplicates
    later.
  */
-void KeywordExt::init_selchars (int *occurrences)
+void KeywordExt::init_selchars ()
 {
   const char *k = _allchars;
   unsigned char *key_set =
@@ -69,14 +69,13 @@ void KeywordExt::init_selchars (int *occurrences)
     for (int i = _allchars_length; i > 0; k++, i--)
       {
         *ptr = static_cast<unsigned char>(*k);
-        occurrences[*ptr]++;
         ptr++;
       }
   else
     /* Only use those character positions specified by the user.  */
     {
-      /* Iterate through the list of key_positions, initializing occurrences
-         table and selchars (via ptr).  */
+      /* Iterate through the list of key_positions, initializing selchars
+         (via ptr).  */
       PositionIterator iter (option.get_key_positions ());
 
       for (int i; (i = iter.next ()) != PositionIterator::EOS; )
@@ -90,7 +89,6 @@ void KeywordExt::init_selchars (int *occurrences)
           else
             /* Out of range of KEY length, so we'll just skip it.  */
             continue;
-          occurrences[*ptr]++;
           ptr++;
         }
 

@@ -56,12 +56,14 @@ struct KeywordExt : public Keyword
      multiset.  */
   const unsigned char * _selchars;
   int                   _selchars_length;
-  /* Chained list of keywords having the same selchars.  */
+  /* Chained list of keywords having the same _selchars and
+     - if !option[NOLENGTH] - also the same _allchars_length.
+     Note that these duplicates are not members of the main keyword list.  */
   KeywordExt *          _duplicate_link;
 
   /* Methods depending on the keyposition list.  */
-  /* Initialize selchars and selchars_length, and update occurrences.  */
-  void                  init_selchars (int *occurrences);
+  /* Initialize selchars and selchars_length.  */
+  void                  init_selchars ();
 
   /* Data members used by the algorithm.  */
   int                   _occurrence; /* Frequency of key set occurrences.  */

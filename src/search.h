@@ -37,9 +37,13 @@ public:
   void                  optimize ();
 private:
   void                  prepare ();
+
+  /* Merges two sorted lists together to form one sorted list.  */
   KeywordExt_List *     merge (KeywordExt_List *list1, KeywordExt_List *list2);
+  /* Sorts a list using the recursive merge sort algorithm.  */
   KeywordExt_List *     merge_sort (KeywordExt_List *head);
-  int                   get_occurrence (KeywordExt *ptr);
+
+  int                   compute_occurrence (KeywordExt *ptr);
   void                  set_determined (KeywordExt *ptr);
   bool                  already_determined (KeywordExt *ptr);
   void                  reorder ();
@@ -53,21 +57,44 @@ private:
   void                  change (KeywordExt *prior, KeywordExt *curr);
   void                  sort ();
 public:
-  KeywordExt_List *     _head;                            /* Points to the head of the linked list. */
-  int                   _total_keys;                           /* Total number of keys, counting duplicates. */
-  int                   _total_duplicates;                     /* Total number of duplicate hash values. */
-  int                   _max_key_len;                          /* Maximum length of the longest keyword. */
-  int                   _min_key_len;                          /* Minimum length of the shortest keyword. */
-  /* Size of alphabet. */
+
+  /* Linked list of keywords.  */
+  KeywordExt_List *     _head;
+
+  /* Total number of keywords, counting duplicates.  */
+  int                   _total_keys;
+
+  /* Total number of duplicates that have been moved to _duplicate_link lists
+     (not counting their representatives which stay on the main list).  */
+  int                   _total_duplicates;
+
+  /* Maximum length of the longest keyword.  */
+  int                   _max_key_len;
+
+  /* Minimum length of the shortest keyword.  */
+  int                   _min_key_len;
+
+  /* Size of alphabet.  */
   int const             _alpha_size;
-  /* Counts occurrences of each key set character. */
+
+  /* Counts occurrences of each key set character.
+     _occurrences[c] is the number of times that c occurs among the _selchars
+     of a keyword.  */
   int * const           _occurrences;
   /* Value associated with each character. */
   int * const           _asso_values;
+
 private:
-  int                   _list_len;                             /* Length of head's Key_List, not counting duplicates. */
-  bool                  _occurrence_sort;                      /* True if sorting by occurrence. */
-  bool                  _hash_sort;                            /* True if sorting by hash value. */
+
+  /* Length of _head list.  Number of keywords, not counting duplicates.  */
+  int                   _list_len;
+
+  /* Choice of sorting criterion during Search::merge_sort.  */
+  /* True if sorting by occurrence.  */
+  bool                  _occurrence_sort;
+  /* True if sorting by hash value.  */
+  bool                  _hash_sort;
+
   bool * const          _determined;                           /* Used in function reorder, below. */
   int                   _num_done;          /* Number of keywords processed without a collision. */
   int                   _fewest_collisions; /* Records fewest # of collisions for asso value. */

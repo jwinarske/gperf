@@ -1,5 +1,17 @@
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
+	Compute the occurrences after removal of duplicates, not before.
+	* src/keyword.h (KeywordExt::init_selchars): Remove occurrences
+	argument.
+	* src/keyword.cc (KeywordExt::init_selchars): Likewise.
+	* src/search.cc (Search::prepare): Reorder the code. Compute the
+	occurrences after removal of duplicates.
+	(Search::merge_sort): Optimize the loop.
+	(Search::compute_occurrence): Renamed from Search::get_occurrence.
+	* src/search.h (Search::compute_occurrence): Renamed from
+	Search::get_occurrence.
+	* tests/chill.exp: Regenerated.
+
 	Bug fix: The hash table could fail to detect duplicates, between
 	keywords of different length, when option -n (option[NOLENGTH]) was
 	given.
