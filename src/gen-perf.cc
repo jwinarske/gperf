@@ -24,6 +24,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <time.h> /* declares time() */
 #include "options.h"
 #include "gen-perf.h"
+#include "output.h"
 
 /* Efficiently returns the least power of two greater than or equal to X! */
 #define POW(X) ((!X)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
@@ -331,7 +332,10 @@ Gen_Perf::doit_all (void)
      processing turned out O.K. */
 
   sort ();
-  output ();
+  Output outputter (head, array_type, return_type, struct_tag, additional_code,
+                    include_src, total_keys, total_duplicates, max_key_len,
+                    min_key_len, this);
+  outputter.output ();
   return 0;
 }
 

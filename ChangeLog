@@ -1,3 +1,14 @@
+2002-10-04  Bruno Haible  <bruno@clisp.org>
+
+	* src/output.h: New file, extracted from key-list.h.
+	* src/output.cc: New file, extracted from key-list.cc.
+	* src/key-list.h (Key_List): Make some fields protected. Move output
+	routines to src/output.h.
+	* src/key-list.cc: Move output routines to src/output.cc.
+	* src/gen-perf.cc (Gen_Perf::doit_all): Use class Output.
+	* src/Makefile.in (OBJECTS): Add output.o.
+	(output.o): New rule.
+
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
 	* src/iterator.h: Remove file.
