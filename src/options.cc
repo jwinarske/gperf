@@ -255,7 +255,7 @@ Options::long_usage (FILE * stream)
            "                         output to the standard error).\n");
   fprintf (stream, "\n");
   fprintf (stream,
-           "Report bugs to <bug-gnu-utils@gnu.org>.\n");
+           "Report bugs to <bug-gnu-gperf@gnu.org>.\n");
 }
 
 /* Prints the given options.  */

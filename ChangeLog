@@ -1,5 +1,9 @@
 2003-01-07  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.cc (Options::long_usage): Change bug report address to
+	<bug-gnu-gperf@gnu.org>.
+	* tests/test-6.exp: Update.
+
 	* src/output.cc (USE_DOWNCASE_TABLE): New macro.
 	(output_upperlower_table): New function.
 	(output_upperlower_strcmp, output_upperlower_strncmp,
