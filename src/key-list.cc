@@ -19,13 +19,12 @@ along with GNU GPERF; see the file COPYING.  If not, write to the Free
 Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 #include <stdio.h>
-#include <string.h> /* declares strncpy(), strchr() */
-#include <stdlib.h> /* declares malloc(), free(), abs(), exit(), abort() */
-#include <limits.h> /* defines UCHAR_MAX etc. */
+#include <stdlib.h> /* declares exit() */
+#include <limits.h> /* defines INT_MIN, INT_MAX */
 #include "options.h"
-#include "read-line.h"
-#include "hash-table.h"
 #include "key-list.h"
+#include "input.h"
+#include "hash-table.h"
 
 /* Make the hash table 8 times larger than the number of keyword entries. */
 static const int TABLE_MULTIPLE     = 10;
@@ -49,406 +48,98 @@ Key_List::~Key_List ()
     }
 }
 
-/* Gathers the input stream into a buffer until one of two things occur:
-
-   1. We read a '%' followed by a '%'
-   2. We read a '%' followed by a '}'
-
-   The first symbolizes the beginning of the keyword list proper,
-   The second symbolizes the end of the C source code to be generated
-   verbatim in the output file.
-
-   I assume that the keys are separated from the optional preceding struct
-   declaration by a consecutive % followed by either % or } starting in
-   the first column. The code below uses an expandible buffer to scan off
-   and return a pointer to all the code (if any) appearing before the delimiter. */
-
-const char *
-Key_List::get_special_input (char delimiter)
-{
-  int size  = 80;
-  char *buf = new char[size];
-  int c, i;
-
-  for (i = 0; (c = getchar ()) != EOF; i++)
-    {
-      if (c == '%')
-        {
-          if ((c = getchar ()) == delimiter)
-            {
-
-              while ((c = getchar ()) != '\n')
-                ; /* discard newline */
-
-              if (i == 0)
-                return "";
-              else
-                {
-                  buf[delimiter == '%' && buf[i - 2] == ';' ? i - 2 : i - 1] = '\0';
-                  return buf;
-                }
-            }
-          else
-            buf[i++] = '%';
-        }
-      else if (i >= size) /* Yikes, time to grow the buffer! */
-        {
-          char *temp = new char[size *= 2];
-          int j;
-
-          for (j = 0; j < i; j++)
-            temp[j] = buf[j];
-
-          buf = temp;
-        }
-      buf[i] = c;
-    }
-
-  return 0;        /* Problem here. */
-}
-
-/* Stores any C text that must be included verbatim into the
-   generated code output. */
-
-const char *
-Key_List::save_include_src ()
-{
-  int c;
-
-  if ((c = getchar ()) != '%')
-    ungetc (c, stdin);
-  else if ((c = getchar ()) != '{')
-    {
-      fprintf (stderr, "internal error, %c != '{' on line %d in file %s", c, __LINE__, __FILE__);
-      exit (1);
-    }
-  else
-    return get_special_input ('}');
-  return "";
-}
-
-/* Determines from the input file whether the user wants to build a table
-   from a user-defined struct, or whether the user is content to simply
-   use the default array of keys. */
-
-const char *
-Key_List::get_array_type ()
-{
-  return get_special_input ('%');
-}
-
-/* strcspn - find length of initial segment of S consisting entirely
-   of characters not from REJECT (borrowed from Henry Spencer's
-   ANSI string package, when GNU libc comes out I'll replace this...). */
-
-#ifndef strcspn
-inline int
-Key_List::strcspn (const char *s, const char *reject)
-{
-  const char *scan;
-  const char *rej_scan;
-  int   count = 0;
-
-  for (scan = s; *scan; scan++)
-    {
-
-      for (rej_scan = reject; *rej_scan; rej_scan++)
-        if (*scan == *rej_scan)
-          return count;
-
-      count++;
-    }
-
-  return count;
-}
-#endif
-
-/* Sets up the Return_Type, the Struct_Tag type and the Array_Type
-   based upon various user Options. */
-
-void
-Key_List::set_output_types ()
-{
-  if (option[TYPE])
-    {
-      _array_type = get_array_type ();
-      if (!_array_type)
-        /* Something's wrong, but we'll catch it later on, in read_keys()... */
-        return;
-      /* Yow, we've got a user-defined type... */
-      int i = strcspn (_array_type, "{\n\0");
-      /* Remove trailing whitespace. */
-      while (i > 0 && strchr (" \t", _array_type[i-1]))
-        i--;
-      int struct_tag_length = i;
-
-      /* Set `struct_tag' to a naked "struct something". */
-      char *structtag = new char[struct_tag_length + 1];
-      strncpy (structtag, _array_type, struct_tag_length);
-      structtag[struct_tag_length] = '\0';
-      _struct_tag = structtag;
-
-      /* The return type of the lookup function is "struct something *".
-         No "const" here, because if !option[CONST], some user code might want
-         to modify the structure. */
-      char *rettype = new char[struct_tag_length + 3];
-      strncpy (rettype, _array_type, struct_tag_length);
-      rettype[struct_tag_length] = ' ';
-      rettype[struct_tag_length + 1] = '*';
-      rettype[struct_tag_length + 2] = '\0';
-      _return_type = rettype;
-    }
-}
-
-/* Extracts a key from an input line and creates a new KeywordExt_List for
-   it. */
-
-static KeywordExt_List *
-parse_line (const char *line, const char *delimiters)
-{
-  if (*line == '"')
-    {
-      /* Parse a string in ANSI C syntax. */
-      char *key = new char[strlen(line)];
-      char *kp = key;
-      const char *lp = line + 1;
-
-      for (; *lp;)
-        {
-          char c = *lp;
-
-          if (c == '\0')
-            {
-              fprintf (stderr, "unterminated string: %s\n", line);
-              exit (1);
-            }
-          else if (c == '\\')
-            {
-              c = *++lp;
-              switch (c)
-                {
-                case '0': case '1': case '2': case '3':
-                case '4': case '5': case '6': case '7':
-                  {
-                    int code = 0;
-                    int count = 0;
-                    while (count < 3 && *lp >= '0' && *lp <= '7')
-                      {
-                        code = (code << 3) + (*lp - '0');
-                        lp++;
-                        count++;
-                      }
-                    if (code > UCHAR_MAX)
-                      fprintf (stderr, "octal escape out of range: %s\n", line);
-                    *kp = (char) code;
-                    break;
-                  }
-                case 'x':
-                  {
-                    int code = 0;
-                    int count = 0;
-                    lp++;
-                    while ((*lp >= '0' && *lp <= '9')
-                           || (*lp >= 'A' && *lp <= 'F')
-                           || (*lp >= 'a' && *lp <= 'f'))
-                      {
-                        code = (code << 4)
-                               + (*lp >= 'A' && *lp <= 'F' ? *lp - 'A' + 10 :
-                                  *lp >= 'a' && *lp <= 'f' ? *lp - 'a' + 10 :
-                                  *lp - '0');
-                        lp++;
-                        count++;
-                      }
-                    if (count == 0)
-                      fprintf (stderr, "hexadecimal escape without any hex digits: %s\n", line);
-                    if (code > UCHAR_MAX)
-                      fprintf (stderr, "hexadecimal escape out of range: %s\n", line);
-                    *kp = (char) code;
-                    break;
-                  }
-                case '\\': case '\'': case '"':
-                  *kp = c;
-                  lp++;
-                  break;
-                case 'n':
-                  *kp = '\n';
-                  lp++;
-                  break;
-                case 't':
-                  *kp = '\t';
-                  lp++;
-                  break;
-                case 'r':
-                  *kp = '\r';
-                  lp++;
-                  break;
-                case 'f':
-                  *kp = '\f';
-                  lp++;
-                  break;
-                case 'b':
-                  *kp = '\b';
-                  lp++;
-                  break;
-                case 'a':
-                  *kp = '\a';
-                  lp++;
-                  break;
-                case 'v':
-                  *kp = '\v';
-                  lp++;
-                  break;
-                default:
-                  fprintf (stderr, "invalid escape sequence in string: %s\n", line);
-                  exit (1);
-                }
-            }
-          else if (c == '"')
-            break;
-          else
-            {
-              *kp = c;
-              lp++;
-            }
-          kp++;
-        }
-      lp++;
-      if (*lp != '\0')
-        {
-          if (strchr (delimiters, *lp) == NULL)
-            {
-              fprintf (stderr, "string not followed by delimiter: %s\n", line);
-              exit (1);
-            }
-          lp++;
-        }
-      return new KeywordExt_List (key, kp - key, option[TYPE] ? lp : "");
-    }
-  else
-    {
-      /* Not a string. Look for the delimiter. */
-      int len = strcspn (line, delimiters);
-      const char *rest;
-
-      if (line[len] == '\0')
-        rest = "";
-      else
-        /* Skip the first delimiter. */
-        rest = &line[len + 1];
-      return new KeywordExt_List (line, len, option[TYPE] ? rest : "");
-    }
-}
-
 /* Reads in all keys from standard input and creates a linked list pointed
-   to by Head.  This list is then quickly checked for ``links,'' i.e.,
+   to by _head.  This list is then quickly checked for "links", i.e.,
    unhashable elements possessing identical key sets and lengths. */
 
 void
 Key_List::read_keys ()
 {
-  char *ptr;
+  Input inputter;
+  inputter.read_keys ();
+  _array_type      = inputter._array_type;
+  _return_type     = inputter._return_type;
+  _struct_tag      = inputter._struct_tag;
+  _include_src     = inputter._include_src;
+  _additional_code = inputter._additional_code;
+  _head            = inputter._head;
 
-  _include_src = save_include_src ();
-  set_output_types ();
+  KeywordExt_List *temp;
+  KeywordExt_List *trail = NULL;
 
-  /* Oops, problem with the input file. */
-  if (! (ptr = Read_Line::read_next_line ()))
+  for (temp = _head; temp; temp = temp->rest())
     {
-      fprintf (stderr, "No words in input file, did you forget to prepend %s or use -t accidentally?\n", "%%");
-      exit (1);
+      temp->first()->init_selchars(this);
+      _total_keys++;
+    }
+       
+  /* Hash table this number of times larger than keyword number. */
+  int table_size = (_list_len = _total_keys) * TABLE_MULTIPLE;
+  /* Table must be a power of 2 for the hash function scheme to work. */
+  KeywordExt **table = new KeywordExt*[POW (table_size)];
+
+  /* Make large hash table for efficiency. */
+  Hash_Table found_link (table, table_size, option[NOLENGTH]);
+
+  /* Test whether there are any links and also set the maximum length of
+     an identifier in the keyword list. */
+
+  for (temp = _head; temp; temp = temp->rest())
+    {
+      KeywordExt *keyword = temp->first();
+      KeywordExt *other_keyword = found_link.insert (keyword);
+
+      /* Check for links.  We deal with these by building an equivalence class
+         of all duplicate values (i.e., links) so that only 1 keyword is
+         representative of the entire collection.  This *greatly* simplifies
+         processing during later stages of the program. */
+
+      if (other_keyword)
+        {
+          _total_duplicates++;
+          _list_len--;
+          trail->rest() = temp->rest();
+          temp->first()->_duplicate_link = other_keyword->_duplicate_link;
+          other_keyword->_duplicate_link = temp->first();
+
+          /* Complain if user hasn't enabled the duplicate option. */
+          if (!option[DUP] || option[DEBUG])
+            fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"%.*s\".\n",
+                             keyword->_allchars_length, keyword->_allchars,
+                             other_keyword->_allchars_length, other_keyword->_allchars,
+                             keyword->_selchars_length, keyword->_selchars);
+        }
+      else
+        trail = temp;
+
+      /* Update minimum and maximum keyword length, if needed. */
+      if (_max_key_len < keyword->_allchars_length)
+        _max_key_len = keyword->_allchars_length;
+      if (_min_key_len > keyword->_allchars_length)
+        _min_key_len = keyword->_allchars_length;
     }
 
-  /* Read in all the keywords from the input file. */
-  else
+  delete[] table;
+
+  /* Exit program if links exists and option[DUP] not set, since we can't continue */
+  if (_total_duplicates)
     {
-      const char *delimiter = option.get_delimiter ();
-      KeywordExt_List *temp;
-      KeywordExt_List *trail = NULL;
-
-      _head = parse_line (ptr, delimiter);
-      _head->first()->init_selchars(this);
-
-      for (temp = _head;
-           (ptr = Read_Line::read_next_line ()) && strcmp (ptr, "%%");
-           temp = temp->rest())
+      if (option[DUP])
+        fprintf (stderr, "%d input keys have identical hash values, examine output carefully...\n",
+                         _total_duplicates);
+      else
         {
-          temp->rest() = parse_line (ptr, delimiter);
-          temp->rest()->first()->init_selchars(this);
-          _total_keys++;
-        }
-
-      /* See if any additional C code is included at end of this file. */
-      if (ptr)
-        _additional_code = 1;
-
-      /* Hash table this number of times larger than keyword number. */
-      int table_size = (_list_len = _total_keys) * TABLE_MULTIPLE;
-      /* Table must be a power of 2 for the hash function scheme to work. */
-      KeywordExt **table = new KeywordExt*[POW (table_size)];
-
-      /* Make large hash table for efficiency. */
-      Hash_Table found_link (table, table_size, option[NOLENGTH]);
-
-      /* Test whether there are any links and also set the maximum length of
-        an identifier in the keyword list. */
-
-      for (temp = _head; temp; temp = temp->rest())
-        {
-          KeywordExt *keyword = temp->first();
-          KeywordExt *other_keyword = found_link.insert (keyword);
-
-          /* Check for links.  We deal with these by building an equivalence class
-             of all duplicate values (i.e., links) so that only 1 keyword is
-             representative of the entire collection.  This *greatly* simplifies
-             processing during later stages of the program. */
-
-          if (other_keyword)
-            {
-              _total_duplicates++;
-              _list_len--;
-              trail->rest() = temp->rest();
-              temp->first()->_duplicate_link = other_keyword->_duplicate_link;
-              other_keyword->_duplicate_link = temp->first();
-
-              /* Complain if user hasn't enabled the duplicate option. */
-              if (!option[DUP] || option[DEBUG])
-                fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"%.*s\".\n",
-                                 keyword->_allchars_length, keyword->_allchars,
-                                 other_keyword->_allchars_length, other_keyword->_allchars,
-                                 keyword->_selchars_length, keyword->_selchars);
-            }
-          else
-            trail = temp;
-
-          /* Update minimum and maximum keyword length, if needed. */
-          if (_max_key_len < keyword->_allchars_length)
-            _max_key_len = keyword->_allchars_length;
-          if (_min_key_len > keyword->_allchars_length)
-            _min_key_len = keyword->_allchars_length;
-        }
-
-      delete[] table;
-
-      /* Exit program if links exists and option[DUP] not set, since we can't continue */
-      if (_total_duplicates)
-        {
-          if (option[DUP])
-            fprintf (stderr, "%d input keys have identical hash values, examine output carefully...\n",
-                             _total_duplicates);
-          else
-            {
-              fprintf (stderr, "%d input keys have identical hash values,\ntry different key positions or use option -D.\n",
-                               _total_duplicates);
-              exit (1);
-            }
-        }
-      /* Exit program if an empty string is used as key, since the comparison
-         expressions don't work correctly for looking up an empty string. */
-      if (_min_key_len == 0)
-        {
-          fprintf (stderr, "Empty input key is not allowed.\nTo recognize an empty input key, your code should check for\nlen == 0 before calling the gperf generated lookup function.\n");
+          fprintf (stderr, "%d input keys have identical hash values,\ntry different key positions or use option -D.\n",
+                           _total_duplicates);
           exit (1);
         }
+    }
+  /* Exit program if an empty string is used as key, since the comparison
+     expressions don't work correctly for looking up an empty string. */
+  if (_min_key_len == 0)
+    {
+      fprintf (stderr, "Empty input key is not allowed.\nTo recognize an empty input key, your code should check for\nlen == 0 before calling the gperf generated lookup function.\n");
+      exit (1);
     }
 }
 
@@ -638,7 +329,7 @@ Key_List::dump ()
 
 Key_List::Key_List ()
 {
-  _total_keys       = 1;
+  _total_keys       = 0;
   _max_key_len      = INT_MIN;
   _min_key_len      = INT_MAX;
   _array_type       = 0;

@@ -41,7 +41,7 @@ Gen_Perf::Gen_Perf ()
   int non_linked_length;
 
   Vectors::ALPHA_SIZE = (option[SEVENBIT] ? 128 : 256);
-  Key_List::read_keys ();
+  read_keys ();
   if (option[ORDER])
     reorder ();
   _num_done          = 1;

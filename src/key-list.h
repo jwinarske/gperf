@@ -33,7 +33,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "vectors.h"
 #include "read-line.h"
 
-class Key_List : private Read_Line, public Vectors
+class Key_List : public Vectors
 {
 protected:
   const char *_array_type;                           /* Pointer to the type for word list. */
@@ -55,16 +55,9 @@ protected:
 private:
   static int  _determined[MAX_ALPHA_SIZE];           /* Used in function reorder, below. */
   static int  get_occurrence (KeywordExt *ptr);
-#ifndef strcspn
-  static int  strcspn (const char *s, const char *reject);
-#endif
   static int  already_determined (KeywordExt *ptr);
   static void set_determined (KeywordExt *ptr);
-  void        set_output_types ();
   void        dump ();
-  const char *get_array_type ();
-  const char *save_include_src ();
-  const char *get_special_input (char delimiter);
   KeywordExt_List *merge (KeywordExt_List *list1, KeywordExt_List *list2);
   KeywordExt_List *merge_sort (KeywordExt_List *head);
 

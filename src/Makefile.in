@@ -61,7 +61,7 @@ VPATH = $(srcdir)
 
 OBJECTS  = options.o main.o gen-perf.o key-list.o \
            hash-table.o bool-array.o read-line.o vectors.o version.o \
-           keyword.o keyword-list.o output.o
+           keyword.o keyword-list.o output.o input.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
 
@@ -116,6 +116,8 @@ keyword-list.o : keyword-list.cc keyword-list.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword-list.cc
 output.o : output.cc output.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/output.cc
+input.o : input.cc input.h
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/input.cc
 
 install : all force
 	$(MKINSTALLDIRS) $(DESTDIR)$(bindir)

@@ -1,3 +1,21 @@
+2002-10-15  Bruno Haible  <bruno@clisp.org>
+
+	* src/input.h: New file.
+	* src/input.cc: New file, extracted from key-list.cc.
+	* src/key-list.h (Key_List): Don't inherit from Read_Line.
+	(Key_List::get_special_input,
+	Key_List::save_include_src, Key_List::get_array_type,
+	Key_List::strcspn, Key_List::set_output_types): Remove methods.
+	* src/key-list.cc (Key_List::get_special_input,
+	Key_List::save_include_src, Key_List::get_array_type,
+	Key_List::strcspn, Key_List::set_output_types, parse_line): Move to
+	src/input.cc.
+	(Key_List::read_keys): Use Input::read_keys.
+	(Key_List::Key_List): Update.
+	* src/gen-perf.cc: Update.
+	* src/Makefile.in (OBJECTS): Add input.o.
+	(input.o): New rule.
+
 2002-10-14  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.cc: Don't include "vector.h".
