@@ -272,7 +272,7 @@ Gen_Perf::change (List_Node *prior, List_Node *curr)
    exponential in the number of keys. */
 
 int
-Gen_Perf::operator() (void)
+Gen_Perf::doit_all (void)
 {
 #if LARGE_STACK_ARRAYS
   unsigned int buffer[max_hash_value + 1];

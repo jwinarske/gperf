@@ -44,7 +44,7 @@ private:
 public:
               Gen_Perf (void);
              ~Gen_Perf (void);
-  int         operator () (void);
+  int         doit_all (void);
 };
 
 #endif

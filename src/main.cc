@@ -62,7 +62,7 @@ main (int argc, char *argv[])
   Gen_Perf generate_table;
 
   /* Generates and prints the Gen_Perf hash table. */
-  int status = generate_table ();
+  int status = generate_table.doit_all ();
 
   /* Check for write error on stdout. */
   if (fflush (stdout) || ferror (stdout))

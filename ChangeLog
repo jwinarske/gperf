@@ -1,5 +1,11 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/gen-perf.h (Gen_Perf::doit_all): Renamed from
+	Gen_Perf::operator ().
+	* src/gen-perf.cc (Gen_Perf::doit_all): Renamed from
+	Gen_Perf::operator ().
+	* src/main.cc: Update.
+
 	* src/read-line.h (Read_Line::read_next_line): Renamed from
 	Read_Line::get_line.
 	* src/read-line.icc: Likewise.
