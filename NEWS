@@ -10,6 +10,7 @@ New in 2.97:
 * The following options can now be specified inside the input file:
     %delimiters=DELIMITER-LIST
     %struct-type
+    %ignore-case
     %language=LANGUAGE-NAME
     %define slot-name NAME
     %define hash-function-name NAME
@@ -42,6 +43,7 @@ New in 2.97:
 * The options -f/--fast and -o/--occurrence-sort have no effect any more.
 * Added option -P/--pic that optimizes the generated code for use in shared
   libraries.
+* Added option --ignore-case that produces a case independent lookup function.
 * Bug fixes.
 
 New in 2.7.2:

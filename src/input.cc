@@ -472,6 +472,10 @@ Input::read_input ()
                   option.set (TYPE);
                 else
 
+                if (is_declaration (line, line_end, lineno, "ignore-case"))
+                  option.set (UPPERLOWER);
+                else
+
                 if (is_declaration_with_arg (line, line_end, lineno,
                                              "language", &arg))
                   option.set_language (arg);

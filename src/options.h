@@ -98,7 +98,10 @@ enum Option_Type
   SEVENBIT     = 1 << 19,
 
   /* Optimize for position-independent code.  */
-  SHAREDLIB    = 1 << 20
+  SHAREDLIB    = 1 << 20,
+
+  /* Ignore case of ASCII characters.  */
+  UPPERLOWER   = 1 << 21
 };
 
 /* Class manager for gperf program Options. */

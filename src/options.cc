@@ -106,6 +106,10 @@ Options::long_usage (FILE * stream) const
            "                         is considered part of the type declaration. Key\n"
            "                         words and additional fields may follow this, one\n"
            "                         group of fields per line.\n");
+  fprintf (stream,
+           "      --ignore-case      Consider upper and lower case ASCII characters as\n"
+           "                         equivalent. Note that locale dependent case mappings\n"
+           "                         are ignored.\n");
   fprintf (stream, "\n");
   fprintf (stream,
            "Language for the output code:\n");
@@ -463,6 +467,7 @@ Options::~Options ()
                "\nENUM is........: %s"
                "\nINCLUDE is.....: %s"
                "\nSEVENBIT is....: %s"
+               "\nUPPERLOWER is..: %s"
                "\nlookup function name = %s"
                "\nhash function name = %s"
                "\nword list name = %s"
@@ -492,6 +497,7 @@ Options::~Options ()
                _option_word & ENUM ? "enabled" : "disabled",
                _option_word & INCLUDE ? "enabled" : "disabled",
                _option_word & SEVENBIT ? "enabled" : "disabled",
+               _option_word & UPPERLOWER ? "enabled" : "disabled",
                _function_name, _hash_name, _wordlist_name, _slot_name,
                _initializer_suffix, _asso_iterations, _jump, _size_multiple,
                _initial_asso_value, _delimiters, _total_switches);
@@ -605,6 +611,7 @@ Options::set_delimiters (const char *delimiters)
 static const struct option long_options[] =
 {
   { "output-file", required_argument, NULL, CHAR_MAX + 1 },
+  { "ignore-case", no_argument, NULL, CHAR_MAX + 2 },
   { "delimiters", required_argument, NULL, 'e' },
   { "struct-type", no_argument, NULL, 't' },
   { "language", required_argument, NULL, 'L' },
@@ -947,6 +954,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
         case CHAR_MAX + 1:      /* Set the output file name. */
           {
             _output_file_name = /*getopt*/optarg;
+            break;
+          }
+        case CHAR_MAX + 2:      /* Case insignificant.  */
+          {
+            _option_word |= UPPERLOWER;
             break;
           }
         default:

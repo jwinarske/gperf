@@ -143,6 +143,8 @@ check-test:
 	diff $(srcdir)/permut2.exp permut2.out
 	$(GPERF) -m5 < $(srcdir)/permut3.gperf > permut3.out
 	diff $(srcdir)/permut3.exp permut3.out
+	$(GPERF) -m5 --ignore-case < $(srcdir)/permutc2.gperf > permutc2.out
+	diff $(srcdir)/permutc2.exp permutc2.out
 	$(GPERF) -C -E -G -I -t < $(srcdir)/charsets.gperf > charsets.out
 	diff $(srcdir)/charsets.exp charsets.out
 	$(GPERF) -C -E -G -I -t < $(srcdir)/languages.gperf > languages.out

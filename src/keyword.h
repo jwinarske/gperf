@@ -68,9 +68,9 @@ struct KeywordExt : public Keyword
 
   /* Methods depending on the keyposition list.  */
   /* Initializes selchars and selchars_length, without reordering.  */
-  void                  init_selchars_tuple (bool use_all_chars, const Positions& positions);
+  void                  init_selchars_tuple (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify);
   /* Initializes selchars and selchars_length, with reordering.  */
-  void                  init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc);
+  void                  init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc);
   /* Deletes selchars.  */
   void                  delete_selchars ();
 
@@ -81,7 +81,7 @@ struct KeywordExt : public Keyword
   int                   _final_index;
 
 private:
-  unsigned int *        init_selchars_low (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc);
+  unsigned int *        init_selchars_low (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc);
 };
 
 /* An abstract factory for creating Keyword instances.

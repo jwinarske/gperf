@@ -59,7 +59,7 @@ static inline void sort_char_set (unsigned int *base, int len)
  */
 
 unsigned int *
-KeywordExt::init_selchars_low (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc)
+KeywordExt::init_selchars_low (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc)
 {
   const char *k = _allchars;
   unsigned int *key_set =
@@ -73,6 +73,8 @@ KeywordExt::init_selchars_low (bool use_all_chars, const Positions& positions, c
         unsigned int c = static_cast<unsigned char>(*k);
         if (alpha_inc)
           c += alpha_inc[k-_allchars];
+        if (alpha_unify)
+          c = alpha_unify[c];
         *ptr = c;
         ptr++;
       }
@@ -99,6 +101,8 @@ KeywordExt::init_selchars_low (bool use_all_chars, const Positions& positions, c
           else
             /* Out of range of KEY length, so we'll just skip it.  */
             continue;
+          if (alpha_unify)
+            c = alpha_unify[c];
           *ptr = c;
           ptr++;
         }
@@ -111,16 +115,16 @@ KeywordExt::init_selchars_low (bool use_all_chars, const Positions& positions, c
 }
 
 void
-KeywordExt::init_selchars_tuple (bool use_all_chars, const Positions& positions)
+KeywordExt::init_selchars_tuple (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify)
 {
-  init_selchars_low (use_all_chars, positions, NULL);
+  init_selchars_low (use_all_chars, positions, alpha_unify, NULL);
 }
 
 void
-KeywordExt::init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc)
+KeywordExt::init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc)
 {
   unsigned int *selchars =
-    init_selchars_low (use_all_chars, positions, alpha_inc);
+    init_selchars_low (use_all_chars, positions, alpha_unify, alpha_inc);
 
   /* Sort the selchars elements alphabetically.  */
   sort_char_set (selchars, _selchars_length);

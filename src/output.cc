@@ -232,6 +232,131 @@ Output::output_constants (struct Output_Constants& style) const
 
 /* ------------------------------------------------------------------------- */
 
+/* Output gperf's ASCII-case insensitive strcmp replacement.  */
+
+static void
+output_upperlower_strcmp ()
+{
+  printf ("#ifndef GPERF_CASE_STRCMP\n"
+          "#define GPERF_CASE_STRCMP 1\n"
+          "static int\n"
+          "gperf_case_strcmp ");
+  printf (option[KRC] ?
+               "(s1, s2)\n"
+          "     register char *s1;\n"
+          "     register char *s2;\n" :
+          option[C] ?
+               "(s1, s2)\n"
+          "     register const char *s1;\n"
+          "     register const char *s2;\n" :
+          option[ANSIC] | option[CPLUSPLUS] ?
+               "(register const char *s1, register const char *s2)\n" :
+          "");
+  printf ("{\n"
+          "  for (;;)\n"
+          "    {\n"
+          "      unsigned char c1 = *s1++;\n"
+          "      unsigned char c2 = *s2++;\n"
+          "      if (c1 >= 'A' && c1 <= 'Z')\n"
+          "        c1 += 'a' - 'A';\n"
+          "      if (c2 >= 'A' && c2 <= 'Z')\n"
+          "        c2 += 'a' - 'A';\n"
+          "      if (c1 != 0 && c1 == c2)\n"
+          "        continue;\n"
+          "      return (int)c1 - (int)c2;\n"
+          "    }\n"
+          "}\n"
+          "#endif\n\n");
+}
+
+/* Output gperf's ASCII-case insensitive strncmp replacement.  */
+
+static void
+output_upperlower_strncmp ()
+{
+  printf ("#ifndef GPERF_CASE_STRNCMP\n"
+          "#define GPERF_CASE_STRNCMP 1\n"
+          "static int\n"
+          "gperf_case_strncmp ");
+  printf (option[KRC] ?
+               "(s1, s2, n)\n"
+          "     register char *s1;\n"
+          "     register char *s2;\n"
+          "     register unsigned int n;\n" :
+          option[C] ?
+               "(s1, s2, n)\n"
+          "     register const char *s1;\n"
+          "     register const char *s2;\n"
+          "     register unsigned int n;\n" :
+          option[ANSIC] | option[CPLUSPLUS] ?
+               "(register const char *s1, register const char *s2, register unsigned int n)\n" :
+          "");
+  printf ("{\n"
+          "  for (; n > 0;)\n"
+          "    {\n"
+          "      unsigned char c1 = *s1++;\n"
+          "      unsigned char c2 = *s2++;\n"
+          "      if (c1 >= 'A' && c1 <= 'Z')\n"
+          "        c1 += 'a' - 'A';\n"
+          "      if (c2 >= 'A' && c2 <= 'Z')\n"
+          "        c2 += 'a' - 'A';\n"
+          "      if (c1 != 0 && c1 == c2)\n"
+          "        {\n"
+          "          n--;\n"
+          "          continue;\n"
+          "        }\n"
+          "      return (int)c1 - (int)c2;\n"
+          "    }\n"
+          "  return 0;\n"
+          "}\n"
+          "#endif\n\n");
+}
+
+/* Output gperf's ASCII-case insensitive memcmp replacement.  */
+
+static void
+output_upperlower_memcmp ()
+{
+  printf ("#ifndef GPERF_CASE_MEMCMP\n"
+          "#define GPERF_CASE_MEMCMP 1\n"
+          "static int\n"
+          "gperf_case_memcmp ");
+  printf (option[KRC] ?
+               "(s1, s2, n)\n"
+          "     register char *s1;\n"
+          "     register char *s2;\n"
+          "     register unsigned int n;\n" :
+          option[C] ?
+               "(s1, s2, n)\n"
+          "     register const char *s1;\n"
+          "     register const char *s2;\n"
+          "     register unsigned int n;\n" :
+          option[ANSIC] | option[CPLUSPLUS] ?
+               "(register const char *s1, register const char *s2, register unsigned int n)\n" :
+          "");
+  printf ("{\n"
+          "  for (; n > 0;)\n"
+          "    {\n"
+          "      unsigned char c1 = *s1++;\n"
+          "      unsigned char c2 = *s2++;\n"
+          "      if (c1 >= 'A' && c1 <= 'Z')\n"
+          "        c1 += 'a' - 'A';\n"
+          "      if (c2 >= 'A' && c2 <= 'Z')\n"
+          "        c2 += 'a' - 'A';\n"
+          "      if (c1 == c2)\n"
+          "        {\n"
+          "          n--;\n"
+          "          continue;\n"
+          "        }\n"
+          "      return (int)c1 - (int)c2;\n"
+          "    }\n"
+          "  return 0;\n"
+          "}\n"
+          "#endif\n\n");
+}
+
+/* ------------------------------------------------------------------------- */
+
 /* Outputs a keyword, as a string: enclosed in double quotes, escaping
    backslashes, double quote and unprintable characters.  */
 
@@ -363,7 +488,10 @@ void Output_Compare_Strcmp::output_comparison (const Output_Expr& expr1,
   expr1.output_expr ();
   printf (" == *");
   expr2.output_expr ();
-  printf (" && !strcmp (");
+  printf (" && !");
+  if (option[UPPERLOWER])
+    printf ("gperf_case_");
+  printf ("strcmp (");
   expr1.output_expr ();
   printf (" + 1, ");
   expr2.output_expr ();
@@ -389,7 +517,10 @@ void Output_Compare_Strncmp::output_comparison (const Output_Expr& expr1,
   expr1.output_expr ();
   printf (" == *");
   expr2.output_expr ();
-  printf (" && !strncmp (");
+  printf (" && !");
+  if (option[UPPERLOWER])
+    printf ("gperf_case_");
+  printf ("strncmp (");
   expr1.output_expr ();
   printf (" + 1, ");
   expr2.output_expr ();
@@ -418,7 +549,10 @@ void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
   expr1.output_expr ();
   printf (" == *");
   expr2.output_expr ();
-  printf (" && !memcmp (");
+  printf (" && !");
+  if (option[UPPERLOWER])
+    printf ("gperf_case_");
+  printf ("memcmp (");
   expr1.output_expr ();
   printf (" + 1, ");
   expr2.output_expr ();
@@ -1521,6 +1655,19 @@ Output::output ()
 
   printf ("/* maximum key range = %d, duplicates = %d */\n\n",
           _max_hash_value - _min_hash_value + 1, _total_duplicates);
+
+  if (option[UPPERLOWER])
+    {
+      if (option[LENTABLE])
+        output_upperlower_memcmp ();
+      else
+        {
+          if (option[COMP])
+            output_upperlower_strncmp ();
+          else
+            output_upperlower_strcmp ();
+        }
+    }
 
   if (option[CPLUSPLUS])
     printf ("class %s\n"

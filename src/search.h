@@ -41,6 +41,14 @@ public:
 private:
   void                  preprepare ();
 
+  /* Computes the upper bound on the indices passed to asso_values[],
+     assuming no alpha_increments.  */
+  unsigned int          compute_alpha_size () const;
+
+  /* Computes the unification rules between different asso_values[c],
+     assuming no alpha_increments.  */
+  unsigned int *        compute_alpha_unify () const;
+
   /* Initializes each keyword's _selchars array.  */
   void                  init_selchars_tuple (bool use_all_chars, const Positions& positions) const;
   /* Deletes each keyword's _selchars array.  */
@@ -52,8 +60,14 @@ private:
   /* Find good key positions.  */
   void                  find_positions ();
 
+  /* Computes the upper bound on the indices passed to asso_values[].  */
+  unsigned int          compute_alpha_size (const unsigned int *alpha_inc) const;
+
+  /* Computes the unification rules between different asso_values[c].  */
+  unsigned int *        compute_alpha_unify (const Positions& positions, const unsigned int *alpha_inc) const;
+
   /* Initializes each keyword's _selchars array.  */
-  void                  init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc) const;
+  void                  init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc) const;
 
   /* Count the duplicate keywords that occur with the given set of positions
      and a given alpha_inc[] array.  */
@@ -115,12 +129,16 @@ public:
   /* Adjustments to add to bytes add specific key positions.  */
   unsigned int *        _alpha_inc;
 
+  /* Size of alphabet.  */
+  unsigned int          _alpha_size;
+
+  /* Alphabet character unification, either the identity or a mapping from
+     upper case characters to lower case characters (and maybe more).  */
+  unsigned int *        _alpha_unify;
+
   /* Total number of duplicates that have been moved to _duplicate_link lists
      (not counting their representatives which stay on the main list).  */
   int                   _total_duplicates;
-
-  /* Size of alphabet.  */
-  unsigned int          _alpha_size;
 
   /* Counts occurrences of each key set character.
      _occurrences[c] is the number of times that c occurs among the _selchars

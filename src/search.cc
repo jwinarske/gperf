@@ -146,12 +146,39 @@ Search::preprepare ()
 
 /* ====================== Finding good byte positions ====================== */
 
+/* Computes the upper bound on the indices passed to asso_values[],
+   assuming no alpha_increments.  */
+unsigned int
+Search::compute_alpha_size () const
+{
+  return (option[SEVENBIT] ? 128 : 256);
+}
+
+/* Computes the unification rules between different asso_values[c],
+   assuming no alpha_increments.  */
+unsigned int *
+Search::compute_alpha_unify () const
+{
+  if (option[UPPERLOWER])
+    {
+      unsigned int alpha_size = compute_alpha_size();
+      unsigned int *alpha_unify = new unsigned int[alpha_size];
+      for (unsigned int c = 0; c < alpha_size; c++)
+        alpha_unify[c] = c;
+      for (unsigned int c = 'A'; c <= 'Z'; c++)
+        alpha_unify[c] = c + ('a'-'A');
+      return alpha_unify;
+    }
+  else
+    return NULL;
+}
+
 /* Initializes each keyword's _selchars array.  */
 void
 Search::init_selchars_tuple (bool use_all_chars, const Positions& positions) const
 {
   for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-    temp->first()->init_selchars_tuple(use_all_chars, positions);
+    temp->first()->init_selchars_tuple(use_all_chars, positions, _alpha_unify);
 }
 
 /* Deletes each keyword's _selchars array.  */
@@ -202,6 +229,9 @@ Search::find_positions ()
       return;
     }
 
+  /* Compute preliminary value for _alpha_unify.  */
+  _alpha_unify = compute_alpha_unify ();
+
   /* 1. Find positions that must occur in order to distinguish duplicates.  */
   Positions mandatory;
 
@@ -222,17 +252,42 @@ Search::find_positions ()
                   int n = keyword1->_allchars_length;
                   int i;
                   for (i = 1; i < n; i++)
-                    if (keyword1->_allchars[i-1] != keyword2->_allchars[i-1])
-                      break;
-                  if (i < n
-                      && memcmp (&keyword1->_allchars[i],
-                                 &keyword2->_allchars[i],
-                                 n - i)
-                         == 0)
                     {
-                      /* Position i is mandatory.  */
-                      if (!mandatory.contains (i))
-                        mandatory.add (i);
+                      unsigned char c1 = keyword1->_allchars[i-1];
+                      unsigned char c2 = keyword2->_allchars[i-1];
+                      if (option[UPPERLOWER])
+                        {
+                          if (c1 >= 'A' && c1 <= 'Z')
+                            c1 += 'a' - 'A';
+                          if (c2 >= 'A' && c2 <= 'Z')
+                            c2 += 'a' - 'A';
+                        }
+                      if (c1 != c2)
+                        break;
+                    }
+                  if (i < n)
+                    {
+                      int j;
+                      for (j = i + 1; j <= n; j++)
+                        {
+                          unsigned char c1 = keyword1->_allchars[j-1];
+                          unsigned char c2 = keyword2->_allchars[j-1];
+                          if (option[UPPERLOWER])
+                            {
+                              if (c1 >= 'A' && c1 <= 'Z')
+                                c1 += 'a' - 'A';
+                              if (c2 >= 'A' && c2 <= 'Z')
+                                c2 += 'a' - 'A';
+                            }
+                          if (c1 != c2)
+                            break;
+                        }
+                      if (j > n)
+                        {
+                          /* Position i is mandatory.  */
+                          if (!mandatory.contains (i))
+                            mandatory.add (i);
+                        }
                     }
                 }
             }
@@ -379,16 +434,113 @@ Search::find_positions ()
         }
       fprintf (stderr, "\n");
     }
+
+  /* Free preliminary value for _alpha_unify.  */
+  delete[] _alpha_unify;
 }
 
 /* ===================== Finding good alpha increments ===================== */
 
+/* Computes the upper bound on the indices passed to asso_values[].  */
+unsigned int
+Search::compute_alpha_size (const unsigned int *alpha_inc) const
+{
+  unsigned int max_alpha_inc = 0;
+  for (int i = 0; i < _max_key_len; i++)
+    if (max_alpha_inc < alpha_inc[i])
+      max_alpha_inc = alpha_inc[i];
+  return (option[SEVENBIT] ? 128 : 256) + max_alpha_inc;
+}
+
+/* Computes the unification rules between different asso_values[c].  */
+unsigned int *
+Search::compute_alpha_unify (const Positions& positions, const unsigned int *alpha_inc) const
+{
+  if (option[UPPERLOWER])
+    {
+      /* Without alpha increments, we would simply unify
+           'A' -> 'a', ..., 'Z' -> 'z'.
+         But when a keyword contains at position i a character c,
+         we have the constraint
+            asso_values[tolower(c) + alpha_inc[i]] ==
+            asso_values[toupper(c) + alpha_inc[i]].
+         This introduces a unification
+           toupper(c) + alpha_inc[i] -> tolower(c) + alpha_inc[i].
+         Note that this unification can extend outside the range of
+         ASCII letters!  But still every unified character pair is at
+         a distance of 'a'-'A' = 32, or (after chained unification)
+         at a multiple of 32.  So in the end the alpha_unify vector has
+         the form    c -> c + 32 * f(c)   where f(c) is a nonnegative
+         integer.  */
+      unsigned int alpha_size = compute_alpha_size (alpha_inc);
+
+      unsigned int *alpha_unify = new unsigned int[alpha_size];
+      for (unsigned int c = 0; c < alpha_size; c++)
+        alpha_unify[c] = c;
+
+      for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+        {
+          KeywordExt *keyword = temp->first();
+
+          if (option[ALLCHARS])
+            /* Iterate through all character positions.  */
+            for (int i = 0; i < keyword->_allchars_length; i++)
+              {
+                unsigned int c = static_cast<unsigned char>(keyword->_allchars[i]);
+                if (c >= 'A' && c <= 'Z')
+                  c += 'a' - 'A';
+                if (c >= 'a' && c <= 'z')
+                  {
+                    c += alpha_inc[i];
+                    /* Unify c with c - ('a'-'A').  */
+                    unsigned int d = alpha_unify[c];
+                    unsigned int b = c - ('a'-'A');
+                    for (int a = b; a >= 0 && alpha_unify[a] == b; a -= ('a'-'A'))
+                      alpha_unify[a] = d;
+                  }
+              }
+          else
+            {
+              /* Iterate through the selected character positions.  */
+              PositionIterator iter (positions);
+
+              for (int i; (i = iter.next ()) != PositionIterator::EOS; )
+                {
+                  unsigned int c;
+                  if (i == Positions::LASTCHAR)
+                    c = static_cast<unsigned char>(keyword->_allchars[keyword->_allchars_length - 1]);
+                  else if (i <= keyword->_allchars_length)
+                    c = static_cast<unsigned char>(keyword->_allchars[i - 1]);
+                  else
+                    continue;
+                  if (c >= 'A' && c <= 'Z')
+                    c += 'a' - 'A';
+                  if (c >= 'a' && c <= 'z')
+                    {
+                      if (i != Positions::LASTCHAR)
+                        c += alpha_inc[i - 1];
+                      /* Unify c with c - ('a'-'A').  */
+                      unsigned int d = alpha_unify[c];
+                      unsigned int b = c - ('a'-'A');
+                      for (int a = b; a >= 0 && alpha_unify[a] == b; a -= ('a'-'A'))
+                        alpha_unify[a] = d;
+                    }
+                }
+            }
+        }
+      return alpha_unify;
+    }
+  else
+    /* Identity mapping.  */
+    return NULL;
+}
+
 /* Initializes each keyword's _selchars array.  */
 void
-Search::init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc) const
+Search::init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_unify, const unsigned int *alpha_inc) const
 {
   for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-    temp->first()->init_selchars_multiset(use_all_chars, positions, alpha_inc);
+    temp->first()->init_selchars_multiset(use_all_chars, positions, alpha_unify, alpha_inc);
 }
 
 /* Count the duplicate keywords that occur with the given set of positions
@@ -402,7 +554,9 @@ Search::count_duplicates_multiset (const unsigned int *alpha_inc) const
   /* Run through the keyword list and count the duplicates incrementally.
      The result does not depend on the order of the keyword list, thanks to
      the formula above.  */
-  init_selchars_multiset (option[ALLCHARS], _key_positions, alpha_inc);
+  init_selchars_multiset (option[ALLCHARS], _key_positions,
+                          compute_alpha_unify (_key_positions, alpha_inc),
+                          alpha_inc);
 
   unsigned int count = 0;
   {
@@ -428,7 +582,9 @@ Search::find_alpha_inc ()
   /* The goal is to choose _alpha_inc[] such that it doesn't introduce
      artificial duplicates.
      In other words, the goal is  # proj2 (proj1 (K)) = # proj1 (K).  */
+  _alpha_unify = compute_alpha_unify ();
   unsigned int duplicates_goal = count_duplicates_tuple (_key_positions);
+  delete[] _alpha_unify;
 
   /* Start with zero increments.  This is sufficient in most cases.  */
   unsigned int *current = new unsigned int [_max_key_len];
@@ -545,6 +701,8 @@ Search::find_alpha_inc ()
     }
 
   _alpha_inc = current;
+  _alpha_size = compute_alpha_size (_alpha_inc);
+  _alpha_unify = compute_alpha_unify (_key_positions, _alpha_inc);
 }
 
 /* ======================= Finding good asso_values ======================== */
@@ -555,7 +713,8 @@ Search::prepare ()
   KeywordExt_List *temp;
 
   /* Initialize each keyword's _selchars array.  */
-  init_selchars_multiset(option[ALLCHARS], _key_positions, _alpha_inc);
+  init_selchars_multiset(option[ALLCHARS], _key_positions,
+                         _alpha_unify, _alpha_inc);
 
   /* Check for duplicates, i.e. keywords with the same _selchars array
      (and - if !option[NOLENGTH] - also the same length).
@@ -633,14 +792,6 @@ Search::prepare ()
           exit (1);
         }
     }
-
-  /* Compute _alpha_size, the upper bound on the indices passed to
-     asso_values[].  */
-  unsigned int max_alpha_inc = 0;
-  for (int i = 0; i < _max_key_len; i++)
-    if (max_alpha_inc < _alpha_inc[i])
-      max_alpha_inc = _alpha_inc[i];
-  _alpha_size = (option[SEVENBIT] ? 128 : 256) + max_alpha_inc;
 
   /* Compute the occurrences of each character in the alphabet.  */
   _occurrences = new int[_alpha_size];
@@ -1492,6 +1643,12 @@ Search::optimize ()
   for (unsigned int c = 0; c < _alpha_size; c++)
     if (_occurrences[c] == 0)
       _asso_values[c] = max_hash_value + 1;
+
+  /* Propagate unified asso_values.  */
+  if (_alpha_unify)
+    for (unsigned int c = 0; c < _alpha_size; c++)
+      if (_alpha_unify[c] != c)
+        _asso_values[c] = _asso_values[_alpha_unify[c]];
 }
 
 /* Prints out some diagnostics upon completion.  */
@@ -1533,5 +1690,6 @@ Search::~Search ()
     }
   delete[] _asso_values;
   delete[] _occurrences;
+  delete[] _alpha_unify;
   delete[] _alpha_inc;
 }

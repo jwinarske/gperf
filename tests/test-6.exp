@@ -20,6 +20,9 @@ Input file interpretation:
                          is considered part of the type declaration. Key
                          words and additional fields may follow this, one
                          group of fields per line.
+      --ignore-case      Consider upper and lower case ASCII characters as
+                         equivalent. Note that locale dependent case mappings
+                         are ignored.
 
 Language for the output code:
   -L, --language=LANGUAGE-NAME

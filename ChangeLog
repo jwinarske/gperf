@@ -1,5 +1,49 @@
 2002-12-10  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h (UPPERLOWER): New enum value.
+	* src/options.cc (Options::long_usage): Document option --ignore-case.
+	(Options::~Options): Update.
+	(long_options): Add option --ignore-case.
+	(Options::parse_options): Handle option --ignore-case.
+	* src/input.cc (Input::read_input): Recognize option %ignore-case.
+	* src/keyword.h (KeywordExt::init_selchars_tuple,
+	KeywordExt::init_selchars_multiset, KeywordExt::init_selchars_low):
+	Add alpha_unify argument.
+	* src/keyword.cc (KeywordExt::init_selchars_low): Add alpha_unify
+	argument.
+	(KeywordExt::init_selchars_tuple): Add alpha_unify argument.
+	(KeywordExt::init_selchars_multiset): Add alpha_unify argument.
+	* src/search.h (Search::compute_alpha_size,
+	Search::compute_alpha_unify): New declarations.
+	(Search::init_selchars_multiset): Add alpha_unify argument.
+	(Search::_alpha_unify): New field.
+	* src/search.cc (Search::compute_alpha_size,
+	Search::compute_alpha_unify): New functions.
+	(Search::init_selchars_tuple): Update.
+	(Search::find_positions): Temporarily set _alpha_unify. Perform a
+	case insensitive comparison if needed.
+	(Search::init_selchars_multiset): Add alpha_unify argument.
+	(Search::count_duplicates_multiset): Call compute_alpha_unify.
+	(Search::find_alpha_inc): Temporarily set _alpha_unify. At the end,
+	set _alpha_size and _alpha_unify.
+	(Search::prepare): Update. Don't compute _alpga_size here.
+	(Search::optimize): Propagate unified asso_values.
+	(Search::~Search) Delete _alpha_unify.
+	* src/output.cc (output_upperlower_strcmp, output_upperlower_strncmp,
+	output_upperlower_memcmp): New functions.
+	(Output_Compare_Strcmp::output_comparison,
+	Output_Compare_Strncmp::output_comparison,
+	Output_Compare_Memcmp::output_comparison): Use the case-insensitive
+	comparison function if --ignore-case was given.
+	(Output::output): Emit the auxiliary case-insensitive comparison
+	function if needed.
+	* tests/permutc2.gperf, tests/permutc2.exp: New files.
+	* tests/Makefile.in (check-test): Also check permutc2.gperf.
+	* tests/test-6.exp: Update.
+	* doc/gperf.texi (Gperf Declarations): Document %ignore-case.
+	(Input Details): Document option --ignore-case.
+	* NEWS: Update.
+
 	* src/search.cc (Search::optimize): Fill unused asso_values[] entries
 	with a large value.
 	* src/output.h (Output::Output): Remove occurrences argument.

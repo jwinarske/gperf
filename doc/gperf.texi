@@ -436,6 +436,12 @@ commas or newlines.
 Allows you to include a @code{struct} type declaration for generated
 code; see above for an example.
 
+@item %ignore-case
+@cindex @samp{%ignore-case}
+Consider upper and lower case ASCII characters as equivalent.  The string
+comparison will use a case insignificant character comparison.  Note that
+locale dependent case mappings are ignored.
+
 @item %language=@var{language-name}
 @cindex @samp{%language}
 Instructs @code{gperf} to generate code in the language specified by the
@@ -790,6 +796,17 @@ part of the type declaration.  Keywords and additional fields may follow
 this, one group of fields per line.  A set of examples for generating
 perfect hash tables and functions for Ada, C, C++, Pascal, Modula 2,
 Modula 3 and JavaScript reserved words are distributed with this release.
+
+@item --ignore-case
+Consider upper and lower case ASCII characters as equivalent.  The string
+comparison will use a case insignificant character comparison.  Note that
+locale dependent case mappings are ignored.  This option is therefore not
+suitable if a properly internationalized or locale aware case mapping
+should be used.  (For example, in a Turkish locale, the upper case equivalent
+of the lowercase ASCII letter @samp{i} is the non-ASCII character
+@samp{capital i with dot above}.)  For this case, it is better to apply
+an uppercase or lowercase conversion on the string before passing it to
+the @code{gperf} generated function.
 @end table
 
 @node Output Language, Output Details, Input Details, Options
