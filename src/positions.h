@@ -33,11 +33,11 @@ class Positions
   friend class PositionIterator;
 public:
   /* Denotes the last char of a keyword, depending on the keyword's length.  */
-  static const int      LASTCHAR = 0;
+  enum {                LASTCHAR = 0 };
 
   /* Maximum key position specifiable by the user.
      Note that this must fit into the element type of _positions[], below.  */
-  static const int      MAX_KEY_POS = 255;
+  enum {                MAX_KEY_POS = 255 };
 
   /* Constructors.  */
                         Positions ();
@@ -89,7 +89,7 @@ public:
                         PositionIterator (Positions const& positions);
 
   /* End of iteration marker.  */
-  static const int      EOS = -1;
+  enum {                EOS = -1 };
 
   /* Retrieves the next position, or EOS past the end.  */
   int                   next ();

@@ -35,7 +35,7 @@ Bool_Array::~Bool_Array ()
     fprintf (stderr, "\ndumping boolean array information\n"
              "size = %d\niteration number = %d\nend of array dump\n",
              _size, _iteration_number);
-  delete[] _storage_array;
+  delete[] const_cast<unsigned int *>(_storage_array);
 }
 
 #ifndef __OPTIMIZE__

@@ -134,12 +134,12 @@ main (int argc, char *argv[])
         do
           {
             KeywordExt *next_keyword = keyword->_duplicate_link;
-            delete[] keyword->_selchars;
+            delete[] const_cast<unsigned int *>(keyword->_selchars);
             if (keyword->_rest != empty_string)
-              delete[] keyword->_rest;
+              delete[] const_cast<char*>(keyword->_rest);
             if (!(keyword->_allchars >= inputter._input
                   && keyword->_allchars < inputter._input_end))
-              delete[] keyword->_allchars;
+              delete[] const_cast<char*>(keyword->_allchars);
             delete keyword;
             keyword = next_keyword;
           }

@@ -1,3 +1,19 @@
+2002-12-04  Bruno Haible  <bruno@clisp.org>
+
+	Portability fixes.
+	* src/positions.h (Positions::LASTCHAR, Positions::MAX_KEY_POS,
+	PositionIterator::EOS): Define as compile-time constants using enum.
+	* src/bool-array.cc (Bool_Array::~Bool_Array): Remove const qualifier
+	of pointer to be deleted.
+	* src/input.cc (Input::~Input): Likewise.
+	* src/keyword.cc (KeywordExt::delete_selchars): Likewise.
+	* src/main.cc (main): Likewise.
+	* src/hash-table.cc (Hash_Table::~Hash_Table): Limit scope of 'for'
+	variables.
+	* src/search.cc (Search::prepare_asso_values): Use a static_cast to
+	convert from time_t to long. This is possible because ISO C 99 says
+	time_t is a numeric type.
+
 2002-11-20  Bruno Haible  <bruno@clisp.org>
 
 	* src/search.cc (Search::find_asso_values): Avoid gcc warnings about

@@ -915,8 +915,8 @@ Input::read_input ()
 Input::~Input ()
 {
   /* Free allocated memory.  */
-  delete[] _return_type;
-  delete[] _struct_tag;
-  delete[] _struct_decl;
+  delete[] const_cast<char*>(_return_type);
+  delete[] const_cast<char*>(_struct_tag);
+  delete[] const_cast<char*>(_struct_decl);
   delete[] _input;
 }

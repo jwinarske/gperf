@@ -90,10 +90,12 @@ Hash_Table::~Hash_Table ()
       int field_width;
 
       field_width = 0;
-      for (int i = _size - 1; i >= 0; i--)
-        if (_table[i])
-          if (field_width < _table[i]->_selchars_length)
-            field_width = _table[i]->_selchars_length;
+      {
+        for (int i = _size - 1; i >= 0; i--)
+          if (_table[i])
+            if (field_width < _table[i]->_selchars_length)
+              field_width = _table[i]->_selchars_length;
+      }
 
       fprintf (stderr,
                "\ndumping the hash table\n"

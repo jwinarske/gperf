@@ -778,7 +778,7 @@ Search::prepare_asso_values ()
 
   if (option[RANDOM] || option.get_jump () == 0)
     /* We will use rand(), so initialize the random number generator.  */
-    srand (reinterpret_cast<long>(time (0)));
+    srand (static_cast<long>(time (0)));
 
   _initial_asso_value = (option[RANDOM] ? -1 : option.get_initial_asso_value ());
   _jump = option.get_jump ();

@@ -130,7 +130,7 @@ KeywordExt::init_selchars_multiset (bool use_all_chars, const Positions& positio
 void
 KeywordExt::delete_selchars ()
 {
-  delete[] _selchars;
+  delete[] const_cast<unsigned int *>(_selchars);
 }
 
 
