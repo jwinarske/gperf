@@ -184,6 +184,9 @@ public:
   /* Returns the input file name.  */
   const char *          get_input_file_name () const;
 
+  /* Returns the output file name.  */
+  const char *          get_output_file_name () const;
+
   /* Returns the iterations value.  */
   int                   get_iterations () const;
 
@@ -249,6 +252,9 @@ private:
 
   /* Name of input file.  */
   char *                _input_file_name;
+
+  /* Name of output file.  */
+  char *                _output_file_name;
 
   /* Amount to iterate when a collision occurs.  */
   int                   _iterations;

@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "options.h"
 #include "input.h"
 #include "search.h"
@@ -77,6 +78,16 @@ main (int argc, char *argv[])
       Search searcher (list);
       searcher.optimize ();
       list = searcher._head;
+
+      /* Open the output file.  */
+      if (option.get_output_file_name ())
+        if (strcmp (option.get_output_file_name (), "-") != 0)
+          if (!freopen (option.get_output_file_name (), "w", stdout))
+            {
+              fprintf (stderr, "Cannot open output file '%s'\n",
+                       option.get_output_file_name ());
+              exit (1);
+            }
 
       {
         /* Output the hash function code.  */

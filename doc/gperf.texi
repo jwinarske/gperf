@@ -7,7 +7,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 9 November 2002
+@set UPDATED 12 November 2002
 @set EDITION 2.7.2
 @set VERSION 2.7.2
 @c ---------------------
@@ -550,6 +550,7 @@ help is readily available via the @samp{--help} option.  Here is the
 complete list of options.
 
 @menu
+* Output File::                 Specifying the Location of the Output File
 * Input Details::               Options that affect Interpretation of the Input File
 * Output Language::             Specifying the Language for the Output Code
 * Output Details::              Fine tuning Details in the Output Code
@@ -557,7 +558,18 @@ complete list of options.
 * Verbosity::                   Informative Output
 @end menu
 
-@node Input Details, Output Language, Options, Options
+@node Output File, Input Details, Options, Options
+@section Specifying the Location of the Output File
+
+@table @samp
+@item --output-file=@var{file}
+Allows you to specify the name of the file to which the output is written to.
+@end table
+
+The results are written to standard output if no output file is specified
+or if it is @samp{-}.
+
+@node Input Details, Output Language, Output File, Options
 @section Options that affect Interpretation of the Input File
 
 @table @samp

@@ -5,6 +5,11 @@ Usage: ../src/gperf [OPTION]... [INPUT-FILE]
 If a long option shows an argument as mandatory, then it is mandatory
 for the equivalent short option also.
 
+Output file location:
+      --output-file=FILE Write output to specified file.
+The results are written to standard output if no output file is specified
+or if it is -.
+
 Input file interpretation:
   -e, --delimiters=DELIMITER-LIST
                          Allow user to provide a string containing delimiters

@@ -1,3 +1,16 @@
+2002-11-12  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.h (Output::get_output_file_name): New method.
+	(Output::_output_file_name): New field.
+	* src/options.icc (Options::get_output_file_name): New method.
+	* src/options.cc (Options::long_usage): Document option --output-file.
+	(Options::Options): Initialize _output_file_name.
+	(long_options): Add --output-file.
+	(Options::parse_options): Handle it.
+	* src/main.cc (main): Open the output file if given by name.
+	* doc/gperf.texi (Output File): New section.
+	* tests/test-6.exp: Update.
+
 2002-11-10  Bruno Haible  <bruno@clisp.org>
 
 	* src/input.cc (pretty_input_file_name): New function.

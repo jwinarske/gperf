@@ -27,6 +27,7 @@
 #include <stdlib.h> /* declares atoi(), abs(), exit() */
 #include <string.h> /* declares strcmp() */
 #include <ctype.h>  /* declares isdigit() */
+#include <limits.h> /* defines CHAR_MAX */
 #include "getopt.h"
 #include "version.h"
 
@@ -83,6 +84,14 @@ Options::long_usage (FILE * stream) const
   fprintf (stream,
            "If a long option shows an argument as mandatory, then it is mandatory\n"
            "for the equivalent short option also.\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
+           "Output file location:\n");
+  fprintf (stream,
+           "      --output-file=FILE Write output to specified file.\n");
+  fprintf (stream,
+           "The results are written to standard output if no output file is specified\n"
+           "or if it is -.\n");
   fprintf (stream, "\n");
   fprintf (stream,
            "Input file interpretation:\n");
@@ -417,6 +426,7 @@ PositionStringParser::nextPosition ()
 Options::Options ()
   : _option_word (C),
     _input_file_name (NULL),
+    _output_file_name (NULL),
     _iterations (0),
     _jump (DEFAULT_JUMP_VALUE),
     _initial_asso_value (0),
@@ -521,6 +531,7 @@ Options::~Options ()
 
 static const struct option long_options[] =
 {
+  { "output-file", required_argument, NULL, CHAR_MAX + 1 },
   { "delimiters", required_argument, NULL, 'e' },
   { "struct-type", no_argument, NULL, 't' },
   { "language", required_argument, NULL, 'L' },
@@ -824,6 +835,11 @@ Options::parse_options (int argc, char *argv[])
         case '7':               /* Assume 7-bit characters. */
           {
             _option_word |= SEVENBIT;
+            break;
+          }
+        case CHAR_MAX + 1:      /* Set the output file name. */
+          {
+            _output_file_name = /*getopt*/optarg;
             break;
           }
         default:
