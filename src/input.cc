@@ -620,15 +620,57 @@ Input::read_input ()
       {
         if (struct_decl)
           {
-            /* Drop leading whitespace.  */
+            /* Drop leading whitespace and comments.  */
             {
               char *p = struct_decl;
               unsigned int *l = struct_decl_linenos;
-              while (p[0] == '\n' || p[0] == ' ' || p[0] == '\t')
+              for (;;)
                 {
+                  if (p[0] == ' ' || p[0] == '\t')
+                    {
+                      p++;
+                      continue;
+                    }
                   if (p[0] == '\n')
-                    l++;
-                  p++;
+                    {
+                      l++;
+                      p++;
+                      continue;
+                    }
+                  if (p[0] == '/')
+                    {
+                      if (p[1] == '*')
+                        {
+                          /* Skip over ANSI C style comment.  */
+                          p += 2;
+                          while (p[0] != '\0')
+                            {
+                              if (p[0] == '*' && p[1] == '/')
+                                {
+                                  p += 2;
+                                  break;
+                                }
+                              if (p[0] == '\n')
+                                l++;
+                              p++;
+                            }
+                          continue;
+                        }
+                      if (p[1] == '/')
+                        {
+                          /* Skip over ISO C99 or C++ style comment.  */
+                          p += 2;
+                          while (p[0] != '\0' && p[0] != '\n')
+                            p++;
+                          if (p[0] == '\n')
+                            {
+                              l++;
+                              p++;
+                            }
+                          continue;
+                        }
+                    }
+                  break;
                 }
               if (p != struct_decl)
                 {

@@ -1,5 +1,12 @@
 2003-03-19  Bruno Haible  <bruno@clisp.org>
 
+	* src/input.cc (Input::read_input): Ignore comments at the beginning
+	of the declarations section.
+	* doc/gperf.texi (Controls for GNU indent): New section.
+	Reported by Bruce Lilly <blilly@erols.com>.
+
+2003-03-19  Bruno Haible  <bruno@clisp.org>
+
 	* src/output.cc (Output::output_hash_function): Avoid lint warning if
 	not all arguments of the hash function are used. Avoid lint warning
 	for fallthrough in switch.

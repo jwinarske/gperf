@@ -122,6 +122,7 @@ Input Format to @code{gperf}
 * Declarations::                Declarations.
 * Keywords::                    Format for Keyword Entries.
 * Functions::                   Including Additional C Functions.
+* Controls for GNU indent::     Where to place directives for GNU @code{indent}.
 
 Declarations
 
@@ -330,6 +331,7 @@ input format for each section.
 * Declarations::                Declarations.
 * Keywords::                    Format for Keyword Entries.
 * Functions::                   Including Additional C Functions.
+* Controls for GNU indent::     Where to place directives for GNU @code{indent}.
 @end menu
 
 It is possible to omit the declaration section entirely, if the @samp{-t}
@@ -685,7 +687,7 @@ declaration section.  If the @samp{-t} option (or, equivalently, the
 these fields are simply ignored.  All previous examples except the last
 one contain keyword attributes.
 
-@node Functions,  , Keywords, Input Format
+@node Functions, Controls for GNU indent, Keywords, Input Format
 @subsection Including Additional C Functions
 
 The optional third section also corresponds closely with conventions
@@ -694,6 +696,52 @@ starting at the final @samp{%%} and extending to the end of the input
 file, is included verbatim into the generated output file.  Naturally,
 it is your responsibility to ensure that the code contained in this
 section is valid C.
+
+@node Controls for GNU indent,  , Functions, Input Format
+@subsection Where to place directives for GNU @code{indent}.
+
+If you want to invoke GNU @code{indent} on a @code{gperf} input file,
+you will see that GNU @code{indent} doesn't understand the @samp{%%},
+@samp{%@{} and @samp{%@}} directives that control @code{gperf}'s
+interpretation of the input file.  Therefore you have to insert some
+directives for GNU @code{indent}.  More precisely, assuming the most
+general input file structure
+
+@example
+@group
+declarations part 1
+%@{
+verbatim code
+%@}
+declarations part 2
+%%
+keywords
+%%
+functions
+@end group
+@end example
+
+@noindent
+you would insert @samp{*INDENT-OFF*} and @samp{*INDENT-ON*} comments
+as follows:
+
+@example
+@group
+/* *INDENT-OFF* */
+declarations part 1
+%@{
+/* *INDENT-ON* */
+verbatim code
+/* *INDENT-OFF* */
+%@}
+declarations part 2
+%%
+keywords
+%%
+/* *INDENT-ON* */
+functions
+@end group
+@end example
 
 @node Output Format, Binary Strings, Input Format, Description
 @section Output Format for Generated C Code with @code{gperf}
