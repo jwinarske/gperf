@@ -49,6 +49,8 @@ KeywordExt_Factory::create_keyword (const char *allchars, int allchars_length, c
 int
 main (int argc, char *argv[])
 {
+  int exitcode;
+
   /* Set the Options.  Open the input file and assign stdin to it.  */
   option.parse_options (argc, argv);
 
@@ -61,46 +63,79 @@ main (int argc, char *argv[])
         exit (1);
       }
 
-  /* Initialize the keyword list.  */
-  KeywordExt_Factory factory;
-  Input inputter (stdin, &factory);
-  inputter.read_input ();
-  /* We can cast the keyword list to KeywordExt_List* because its list
-     elements were created by KeywordExt_Factory.  */
-  KeywordExt_List* list = static_cast<KeywordExt_List*>(inputter._head);
+  {
+    /* Initialize the keyword list.  */
+    KeywordExt_Factory factory;
+    Input inputter (stdin, &factory);
+    inputter.read_input ();
+    /* We can cast the keyword list to KeywordExt_List* because its list
+       elements were created by KeywordExt_Factory.  */
+    KeywordExt_List* list = static_cast<KeywordExt_List*>(inputter._head);
 
-  /* Search for a good hash function.  */
-  Search searcher (list);
-  searcher.optimize ();
-
-  /* Output the hash function code.  */
-  Output outputter (searcher._head,
-                    inputter._struct_decl,
-                    inputter._return_type,
-                    inputter._struct_tag,
-                    inputter._verbatim_declarations,
-                    inputter._verbatim_declarations_end,
-                    inputter._verbatim_declarations_lineno,
-                    inputter._verbatim_code,
-                    inputter._verbatim_code_end,
-                    inputter._verbatim_code_lineno,
-                    searcher._total_keys,
-                    searcher._total_duplicates,
-                    searcher._max_key_len,
-                    searcher._min_key_len,
-                    searcher._alpha_size,
-                    searcher._occurrences,
-                    searcher._asso_values);
-  outputter.output ();
-
-  /* Check for write error on stdout.  */
-  int status = 0;
-  if (fflush (stdout) || ferror (stdout))
     {
-      fprintf (stderr, "error while writing output file\n");
-      status = 1;
+      /* Search for a good hash function.  */
+      Search searcher (list);
+      searcher.optimize ();
+      list = searcher._head;
+
+      {
+        /* Output the hash function code.  */
+        Output outputter (searcher._head,
+                          inputter._struct_decl,
+                          inputter._return_type,
+                          inputter._struct_tag,
+                          inputter._verbatim_declarations,
+                          inputter._verbatim_declarations_end,
+                          inputter._verbatim_declarations_lineno,
+                          inputter._verbatim_code,
+                          inputter._verbatim_code_end,
+                          inputter._verbatim_code_lineno,
+                          searcher._total_keys,
+                          searcher._total_duplicates,
+                          searcher._max_key_len,
+                          searcher._min_key_len,
+                          searcher._alpha_size,
+                          searcher._occurrences,
+                          searcher._asso_values);
+        outputter.output ();
+
+        /* Check for write error on stdout.  */
+        exitcode = 0;
+        if (fflush (stdout) || ferror (stdout))
+          {
+            fprintf (stderr, "error while writing output file\n");
+            exitcode = 1;
+          }
+
+        /* Here we run the Output destructor.  */
+      }
+      /* Here we run the Search destructor.  */
     }
 
+    /* Also delete the list that was allocated inside Input and reordered
+       inside Search.  */
+    for (KeywordExt_List *ptr = list; ptr; ptr = ptr->rest())
+      {
+        KeywordExt *keyword = ptr->first();
+        do
+          {
+            KeywordExt *next_keyword = keyword->_duplicate_link;
+            delete[] keyword->_selchars;
+            if (keyword->_rest != empty_string)
+              delete[] keyword->_rest;
+            if (!(keyword->_allchars >= inputter._input
+                  && keyword->_allchars < inputter._input_end))
+              delete[] keyword->_allchars;
+            delete keyword;
+            keyword = next_keyword;
+          }
+        while (keyword != NULL);
+      }
+    delete_list (list);
+
+    /* Here we run the Input destructor.  */
+  }
+
   /* Don't use exit() here, it skips the destructors.  */
-  return status;
+  return exitcode;
 }

@@ -121,6 +121,11 @@ Keyword_Factory::~Keyword_Factory ()
 }
 
 
+/* ------------------------------------------------------------------------- */
+
+char empty_string[1] = "";
+
+
 #ifndef __OPTIMIZE__
 
 #define INLINE /* not inline */

@@ -299,9 +299,19 @@ Input::read_input ()
         if (struct_decl)
           {
             /* Drop leading whitespace.  */
-            while (struct_decl[0] == '\n' || struct_decl[0] == ' '
-                   || struct_decl[0] == '\t')
-              struct_decl++;
+            {
+              char *p = struct_decl;
+              while (p[0] == '\n' || p[0] == ' ' || p[0] == '\t')
+                p++;
+              if (p != struct_decl)
+                {
+                  size_t len = strlen (p);
+                  char *new_struct_decl = new char[len + 1];
+                  memcpy (new_struct_decl, p, len + 1);
+                  delete[] struct_decl;
+                  struct_decl = new_struct_decl;
+                }
+            }
             /* Drop trailing whitespace.  */
             for (char *p = struct_decl + strlen (struct_decl); p > struct_decl;)
               if (p[-1] == '\n' || p[-1] == ' ' || p[-1] == '\t')
@@ -315,20 +325,19 @@ Input::read_input ()
                      " for option --struct-type\n");
             exit (1);
           }
-        if (struct_decl)
-          {
-            /* Ensure trailing semicolon.  */
-            size_t old_len = strlen (struct_decl);
-            if (struct_decl[old_len - 1] != ';')
-              {
-                char *new_struct_decl = new char[old_len + 2];
-                memcpy (new_struct_decl, struct_decl, old_len);
-                new_struct_decl[old_len] = ';';
-                new_struct_decl[old_len + 1] = '\0';
-                delete[] struct_decl;
-                struct_decl = new_struct_decl;
-              }
-          }
+        {
+          /* Ensure trailing semicolon.  */
+          size_t old_len = strlen (struct_decl);
+          if (struct_decl[old_len - 1] != ';')
+            {
+              char *new_struct_decl = new char[old_len + 2];
+              memcpy (new_struct_decl, struct_decl, old_len);
+              new_struct_decl[old_len] = ';';
+              new_struct_decl[old_len + 1] = '\0';
+              delete[] struct_decl;
+              struct_decl = new_struct_decl;
+            }
+        }
         /* Set _struct_decl to the entire declaration.  */
         _struct_decl = struct_decl;
         /* Set _struct_tag to the naked "struct something".  */
@@ -529,7 +538,7 @@ Input::read_input ()
                     rest = line_rest;
                   }
                 else
-                  rest = "";
+                  rest = empty_string;
               }
             else
               {
@@ -541,7 +550,7 @@ Input::read_input ()
                       {
                         keyword = line;
                         keyword_length = lp - line;
-                        rest = "";
+                        rest = empty_string;
                         break;
                       }
                     if (strchr (delimiters, *lp) != NULL)
@@ -560,7 +569,7 @@ Input::read_input ()
                             rest = line_rest;
                           }
                         else
-                          rest = "";
+                          rest = empty_string;
                         break;
                       }
                     lp++;
@@ -588,9 +597,14 @@ Input::read_input ()
 
   /* To be freed in the destructor.  */
   _input = input;
+  _input_end = input_end;
 }
 
 Input::~Input ()
 {
+  /* Free allocated memory.  */
+  delete[] _return_type;
+  delete[] _struct_tag;
+  delete[] _struct_decl;
   delete[] _input;
 }

@@ -1,5 +1,20 @@
 2002-11-10  Bruno Haible  <bruno@clisp.org>
 
+	Fix memory leaks.
+	* src/keyword.h (empty_string): New declaration.
+	* src/keyword.cc (empty_string): New variable.
+	* src/input.h (Input::_input): Make public.
+	(Input::_input_end): New field.
+	* src/input.cc (read_input): When removing leading whitespace from
+	struct_decl, reallocate it. For rest, use empty_string instead of "".
+	Set _input_end.
+	(Input::~Input): Delete _struct_decl, _struct_tag, _return_type.
+	* src/search.cc (Search::prepare): When removing an element from
+	the keyword list, delete the list node.
+	(Search::~Search): Delete _occurrences, _asso_values.
+	* src/main.cc (main): Between Search::~Search and Input::~Input,
+	destroy the keyword list.
+
 	Rewrite the input routines.
 	* src/input.h: Don't include read-line.h.
 	(Input): Don't inherit from class Read_Line.

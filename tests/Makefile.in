@@ -48,6 +48,7 @@ SHELL = /bin/sh
 VPATH = $(srcdir)
 
 GPERF = ../src/gperf
+#GPERF = valgrind --num-callers=20 --leak-check=yes --leak-resolution=high --show-reachable=yes ../src/gperf
 
 all :
 

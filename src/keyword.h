@@ -86,10 +86,13 @@ public:
   virtual               ~Keyword_Factory ();
 
   /* Creates a new Keyword.  */
-  virtual /*abstract */ Keyword *
+  virtual /*abstract*/ Keyword *
                         create_keyword (const char *allchars, int allchars_length,
                                         const char *rest) = 0;
 };
+
+/* A statically allocated empty string.  */
+extern char empty_string[1];
 
 #ifdef __OPTIMIZE__
 

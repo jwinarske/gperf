@@ -94,10 +94,11 @@ Search::prepare ()
     Hash_Table representatives (_list_len, option[NOLENGTH]);
 
     KeywordExt_List *prev = NULL; /* list node before temp */
-    for (temp = _head; temp; temp = temp->rest())
+    for (temp = _head; temp; )
       {
         KeywordExt *keyword = temp->first();
         KeywordExt *other_keyword = representatives.insert (keyword);
+        KeywordExt_List *garbage = NULL;
 
         if (other_keyword)
           {
@@ -105,6 +106,7 @@ Search::prepare ()
             _list_len--;
             /* Remove keyword from the main list.  */
             prev->rest() = temp->rest();
+            garbage = temp;
             /* And insert it on other_keyword's duplicate list.  */
             keyword->_duplicate_link = other_keyword->_duplicate_link;
             other_keyword->_duplicate_link = keyword;
@@ -121,6 +123,9 @@ Search::prepare ()
             keyword->_duplicate_link = NULL;
             prev = temp;
           }
+        temp = temp->rest();
+        if (garbage)
+          delete garbage;
       }
   }
 
@@ -798,4 +803,6 @@ Search::~Search ()
 
       fprintf (stderr, "End dumping list.\n\n");
     }
+  delete[] _asso_values;
+  delete[] _occurrences;
 }

@@ -40,9 +40,10 @@ private:
   FILE *                _stream;
   /* Creates the keywords.  */
   Keyword_Factory * const _factory;
+public:
   /* Memory block containing the entire input.  */
   char *                _input;
-public:
+  char *                _input_end;
   /* The C code from the declarations section.  */
   const char *          _verbatim_declarations;
   const char *          _verbatim_declarations_end;
