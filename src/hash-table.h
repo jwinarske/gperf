@@ -44,6 +44,8 @@ public:
   /* Attempts to insert ITEM in the table.  If there is already an equal
      entry in it, returns it.  Otherwise inserts ITEM and returns NULL.  */
   KeywordExt *          insert (KeywordExt *item);
+  /* Print the table's contents.  */
+  void                  dump () const;
 
 private:
   /* Vector of entries.  */

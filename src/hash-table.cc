@@ -85,40 +85,43 @@ Hash_Table::Hash_Table (unsigned int size, bool ignore_length)
 /* Destructor.  */
 Hash_Table::~Hash_Table ()
 {
-  if (option[DEBUG])
-    {
-      int field_width;
+  delete[] _table;
+}
 
-      field_width = 0;
+/* Print the table's contents.  */
+void
+Hash_Table::dump () const
+{
+  int field_width;
+
+  field_width = 0;
+  {
+    for (int i = _size - 1; i >= 0; i--)
+      if (_table[i])
+        if (field_width < _table[i]->_selchars_length)
+          field_width = _table[i]->_selchars_length;
+  }
+
+  fprintf (stderr,
+           "\ndumping the hash table\n"
+           "total available table slots = %d, total bytes = %d, total collisions = %d\n"
+           "location, %*s, keyword\n",
+           _size, _size * static_cast<unsigned int>(sizeof (*_table)),
+           _collisions, field_width, "keysig");
+
+  for (int i = _size - 1; i >= 0; i--)
+    if (_table[i])
       {
-        for (int i = _size - 1; i >= 0; i--)
-          if (_table[i])
-            if (field_width < _table[i]->_selchars_length)
-              field_width = _table[i]->_selchars_length;
+        fprintf (stderr, "%8d, ", i);
+        if (field_width > _table[i]->_selchars_length)
+          fprintf (stderr, "%*s", field_width - _table[i]->_selchars_length, "");
+        for (int j = 0; j < _table[i]->_selchars_length; j++)
+          putc (_table[i]->_selchars[j], stderr);
+        fprintf (stderr, ", %.*s\n",
+                 _table[i]->_allchars_length, _table[i]->_allchars);
       }
 
-      fprintf (stderr,
-               "\ndumping the hash table\n"
-               "total available table slots = %d, total bytes = %d, total collisions = %d\n"
-               "location, %*s, keyword\n",
-               _size, _size * static_cast<unsigned int>(sizeof (*_table)),
-               _collisions, field_width, "keysig");
-
-      for (int i = _size - 1; i >= 0; i--)
-        if (_table[i])
-          {
-            fprintf (stderr, "%8d, ", i);
-            if (field_width > _table[i]->_selchars_length)
-              fprintf (stderr, "%*s", field_width - _table[i]->_selchars_length, "");
-            for (int j = 0; j < _table[i]->_selchars_length; j++)
-              putc (_table[i]->_selchars[j], stderr);
-            fprintf (stderr, ", %.*s\n",
-                     _table[i]->_allchars_length, _table[i]->_allchars);
-          }
-
-      fprintf (stderr, "\nend dumping hash table\n\n");
-    }
-  delete[] _table;
+  fprintf (stderr, "\nend dumping hash table\n\n");
 }
 
 /* Compares two items.  */

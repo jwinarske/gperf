@@ -329,6 +329,34 @@ Search::find_positions ()
 
   /* That's it.  Hope it's good enough.  */
   _key_positions = current;
+
+  if (option[DEBUG])
+    {
+      /* Print the result.  */
+      fprintf (stderr, "\nComputed positions: ");
+      PositionReverseIterator iter (_key_positions);
+      bool seen_lastchar = false;
+      bool first = true;
+      for (int i; (i = iter.next ()) != PositionReverseIterator::EOS; )
+        {
+          if (!first)
+            fprintf (stderr, ", ");
+          if (i == Positions::LASTCHAR)
+            seen_lastchar = true;
+          else
+            {
+              fprintf (stderr, "%d", i);
+              first = false;
+            }
+        }
+      if (seen_lastchar)
+        {
+          if (!first)
+            fprintf (stderr, ", ");
+          fprintf (stderr, "$");
+        }
+      fprintf (stderr, "\n");
+    }
 }
 
 /* ===================== Finding good alpha increments ===================== */
@@ -459,6 +487,39 @@ Search::find_alpha_inc ()
             }
         }
       while (current_duplicates_count > duplicates_goal);
+
+      if (option[DEBUG])
+        {
+          /* Print the result.  */
+          fprintf (stderr, "\nComputed alpha increments: ");
+          if (option[ALLCHARS])
+            {
+              bool first = true;
+              for (unsigned int j = 0; j < nindices; j++)
+                if (current[indices[j]] != 0)
+                  {
+                    if (!first)
+                      fprintf (stderr, ", ");
+                    fprintf (stderr, "%u:+%u",
+                             indices[j] + 1, current[indices[j]]);
+                    first = false;
+                  }
+            }
+          else
+            {
+              bool first = true;
+              for (unsigned int j = nindices; j-- > 0; )
+                if (current[indices[j]] != 0)
+                  {
+                    if (!first)
+                      fprintf (stderr, ", ");
+                    fprintf (stderr, "%u:+%u",
+                             indices[j] + 1, current[indices[j]]);
+                    first = false;
+                  }
+            }
+          fprintf (stderr, "\n");
+        }
     }
 
   _alpha_inc = current;
@@ -526,6 +587,8 @@ Search::prepare ()
         if (garbage)
           delete garbage;
       }
+    if (option[DEBUG])
+      representatives.dump();
   }
 
   /* Exit program if duplicates exists and option[DUP] not set, since we

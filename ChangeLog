@@ -1,5 +1,18 @@
 2002-12-04  Bruno Haible  <bruno@clisp.org>
 
+	Improve debugging output.
+	* src/hash-table.h (Hash_Table::dump): New method.
+	* src/hash-table.cc (Hash_Table::dump): New method, extracted from
+	destructor.
+	(Hash_Table::~Hash_Table): No longer print the contents.
+	* src/positions.h (PositionReverseIterator): New class.
+	* src/positions.icc (PositionReverseIterator::PositionReverseIterator,
+	PositionReverseIterator::next): New methods.
+	* src/search.cc (Search::find_positions): If debugging, print the
+	result.
+	(Search::find_alpha_inc): If debugging, print the result.
+	(Search::prepare): Explicitly dump the hash table's contents here.
+
 	Portability fixes.
 	* src/positions.h (Positions::LASTCHAR, Positions::MAX_KEY_POS,
 	PositionIterator::EOS): Define as compile-time constants using enum.

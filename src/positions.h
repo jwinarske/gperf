@@ -31,6 +31,7 @@
 class Positions
 {
   friend class PositionIterator;
+  friend class PositionReverseIterator;
 public:
   /* Denotes the last char of a keyword, depending on the keyword's length.  */
   enum {                LASTCHAR = 0 };
@@ -87,6 +88,26 @@ class PositionIterator
 public:
   /* Initializes an iterator through POSITIONS.  */
                         PositionIterator (Positions const& positions);
+
+  /* End of iteration marker.  */
+  enum {                EOS = -1 };
+
+  /* Retrieves the next position, or EOS past the end.  */
+  int                   next ();
+
+private:
+  const Positions&      _set;
+  unsigned int          _index;
+};
+
+/* This class denotes an iterator in reverse direction through a set of
+   byte positions.  */
+
+class PositionReverseIterator
+{
+public:
+  /* Initializes an iterator through POSITIONS.  */
+                        PositionReverseIterator (Positions const& positions);
 
   /* End of iteration marker.  */
   enum {                EOS = -1 };

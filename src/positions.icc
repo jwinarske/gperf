@@ -137,3 +137,20 @@ PositionIterator::next ()
 {
   return (_index < _set._size ? _set._positions[_index++] : EOS);
 }
+
+/* --------------------- Class PositionReverseIterator --------------------- */
+
+/* Initializes an iterator through POSITIONS.  */
+INLINE
+PositionReverseIterator::PositionReverseIterator (Positions const& positions)
+  : _set (positions),
+    _index (_set._size)
+{
+}
+
+/* Retrieves the next position, or EOS past the end.  */
+INLINE int
+PositionReverseIterator::next ()
+{
+  return (_index > 0 ? _set._positions[--_index] : EOS);
+}
