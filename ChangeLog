@@ -1,5 +1,7 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* *, */*: Update copyright notice to GPL version 2.
+
 	* src/keyword-list.h (Keyword_List): New class.
 	(KeywordExt_List): Inherit from it.
 	* src/keyword-list.cc (Keyword_List::Keyword_List): New constructor.
