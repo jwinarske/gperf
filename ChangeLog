@@ -1,3 +1,25 @@
+2002-11-20  Bruno Haible  <bruno@clisp.org>
+
+	Implement backtracking.
+	* src/search.h (Search::has_collisions): Renamed from
+	Search::less_collisions. Return a boolean.
+	* src/search.cc (Search::has_collisions): Renamed from
+	Search::less_collisions. Return a boolean.
+	(StackEntry): Remove field _collisions_so_far.
+	(Search::find_asso_values): Backtrack when encountering an unresolved
+	collision. Assume collisions_so_far is always zero.
+	(Search::optimize): Exit if there are accidental duplicates at the end.
+	* src/output.cc (Output::num_hash_values): Simply return the list
+	length.
+	(Output::output_keylength_table): Remove handling of accidental
+	duplicates.
+	(Output::output_keyword_table, Output::output_lookup_array): Likewise.
+	(output_switch_case, output_switches): Likewise.
+	* doc/gperf.texi (Algorithmic Details): Adjust description of options
+	-D, -f, -o, -r.
+	(Bugs): Remove note about missing backtracking.
+	(Projects): Likewise.
+
 2002-11-19  Bruno Haible  <bruno@clisp.org>
 
 	Prepare for backtracking.

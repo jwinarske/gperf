@@ -891,16 +891,12 @@ Search::sort_by_occurrence (unsigned int *set, int len) const
     }
 }
 
-/* If the recomputed hash values for the keywords from _head->first() to
-   curr - inclusive - give fewer than collision_bound collisions, this
-   collision count is returned.  Otherwise some value >= collision_bound
-   is returned.
+/* Returns true if the recomputed hash values for the keywords from
+   _head->first() to curr - inclusive - give at least one collision.
    This is called very frequently, and needs to be fast!  */
-unsigned int
-Search::less_collisions (KeywordExt *curr, unsigned int collision_bound)
+bool
+Search::has_collisions (KeywordExt *curr)
 {
-  unsigned int collisions = 0;
-
   /* Iteration Number array is a win, O(1) initialization time!  */
   _collision_detector->clear ();
 
@@ -911,12 +907,11 @@ Search::less_collisions (KeywordExt *curr, unsigned int collision_bound)
       /* Compute new hash code for the keyword, and see whether it
          collides with another keyword's hash code.  If we have too
          many collisions, we can safely abort the fruitless loop.  */
-      if (_collision_detector->set_bit (compute_hash (keyword))
-          && ++collisions >= collision_bound)
-        return collision_bound; /* >= collision_bound */
+      if (_collision_detector->set_bit (compute_hash (keyword)))
+        return true;
 
       if (keyword == curr)
-        return collisions; /* < collision_bound */
+        return false;
     }
 }
 
@@ -945,9 +940,6 @@ Search::collision_prior_to (KeywordExt *curr)
    we perform the processing without recursion, and simulate the stack.  */
 struct StackEntry
 {
-  /* The number of collisions so far.  */
-  unsigned int          _collisions_so_far;
-
   /* The current keyword.  */
   KeywordExt *          _curr;
 
@@ -1006,8 +998,6 @@ Search::find_asso_values ()
     StackEntry *sp = &stack[0];
 
     /* Local variables corresponding to *sp.  */
-    /* The number of collisions so far.  */
-    unsigned int collisions_so_far;
     /* The current keyword.  */
     KeywordExt *curr;
     /* The prior keyword, with which curr collides.  */
@@ -1024,8 +1014,6 @@ Search::find_asso_values ()
     /* Remaining number of iterations.  */
     int iter;
 
-    collisions_so_far = 0;
-
    STARTOUTERLOOP:
 
     /* Next keyword from the list.  */
@@ -1039,8 +1027,6 @@ Search::find_asso_values ()
 
     if (prior != NULL)
       {
-        collisions_so_far++;
-
         /* Handle collision: Attempt to change an _asso_value[], in order to
            resolve a hash value collision between the two given keywords.  */
 
@@ -1075,11 +1061,10 @@ Search::find_asso_values ()
 
             /* Try various other values for _asso_values[c].  A value is
                successful if, with it, the recomputed hash values for the
-               keywords from _head->first() to curr - inclusive - give fewer
-               than collisions_so_far collisions.  Up to the given number of
-               iterations are performed.  If successful, _asso_values[c] is
-               changed, collisions_so_far is decreased, and the recursion
-               continued. If all iterations are unsuccessful, _asso_values[c]
+               keywords from _head->first() to curr - inclusive - give no
+               collisions.  Up to the given number of iterations are performed.
+               If successful, _asso_values[c] is changed, and the recursion
+               continues. If all iterations are unsuccessful, _asso_values[c]
                is restored and we backtrack, trying the next union_index.  */
 
             original_asso_value = _asso_values[c];
@@ -1092,11 +1077,8 @@ Search::find_asso_values ()
                   (_asso_values[c] + (_jump != 0 ? _jump : rand ()))
                   & (_asso_value_max - 1);
 
-                unsigned int collisions =
-                  less_collisions (curr, collisions_so_far);
-                if (collisions < collisions_so_far)
+                if (!has_collisions (curr))
                   {
-                    collisions_so_far = collisions;
                     /* Good, this _asso_values[] modification reduces the
                        number of collisions so far.
                        All keyword->_hash_value up to curr - inclusive -
@@ -1110,6 +1092,16 @@ Search::find_asso_values ()
                         fflush (stderr);
                       }
                     goto RECURSE;
+                   BACKTRACK_COLLISION: ;
+                    if (option[DEBUG])
+                      {
+                        fprintf (stderr, "back to collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
+                                 sp - stack + 1,
+                                 prior->_allchars_length, prior->_allchars,
+                                 curr->_allchars_length, curr->_allchars,
+                                 curr->_hash_value);
+                        fflush (stderr);
+                      }
                   }
               }
 
@@ -1119,24 +1111,52 @@ Search::find_asso_values ()
 
         /* Failed to resolve a collision.  */
 
-        /* Recompute all keyword->_hash_value up to curr - inclusive -.  */
+        /* Recompute all keyword->_hash_value up to curr - exclusive -.  */
         for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
           {
             KeywordExt* keyword = ptr->first();
-            compute_hash (keyword);
             if (keyword == curr)
               break;
+            compute_hash (keyword);
           }
 
         if (option[DEBUG])
           {
-            fprintf (stderr, "** collision not resolved after %d iterations, %d duplicates remain, continuing...\n",
-                     iterations, collisions_so_far + _total_duplicates);
+            fprintf (stderr, "** collision not resolved after %d iterations, backtracking...\n",
+                     iterations);
             fflush (stderr);
           }
+
+       BACKTRACK_NO_COLLISION:
+        if (sp != stack)
+          {
+            sp--;
+            curr = sp->_curr;
+            prior = sp->_prior;
+            union_set = sp->_union_set;
+            union_set_length = sp->_union_set_length;
+            union_index = sp->_union_index;
+            c = sp->_c;
+            original_asso_value = sp->_original_asso_value;
+            iter = sp->_iter;
+            if (prior != NULL)
+              goto BACKTRACK_COLLISION;
+            else
+              goto BACKTRACK_NO_COLLISION;
+          }
+
+        /* No solution found after an exhaustive search!
+           We should ideally turn off option[FAST] and, if that doesn't help,
+           multiply _asso_value_max by 2.  */
+        fprintf (stderr,
+                 "\nBig failure, always got duplicate hash code values.\n");
+        if (option[POSITIONS])
+          fprintf (stderr, "try options -m or -r, or use new key positions.\n\n");
+        else
+          fprintf (stderr, "try options -m or -r.\n\n");
+        exit (1);
       }
    RECURSE:
-    sp->_collisions_so_far = collisions_so_far;
     /*sp->_curr = curr;*/ // redundant
     sp->_prior = prior;
     /*sp->_union_set = union_set;*/ // redundant
@@ -1147,10 +1167,7 @@ Search::find_asso_values ()
     sp->_iter = iter;
     sp++;
     if (sp - stack < _list_len)
-      {
-        /*collisions_so_far = sp[-1]._collisions_so_far;*/ // redundant
-        goto STARTOUTERLOOP;
-      }
+      goto STARTOUTERLOOP;
   }
 
   /* Deallocate stack.  */
@@ -1285,19 +1302,15 @@ Search::optimize ()
       unsigned int hashcode = compute_hash (curr);
       if (_collision_detector->set_bit (hashcode))
         {
-          if (option[DUP]) /* Keep track of this number... */
-            _total_duplicates++;
-          else /* Yow, big problems.  we're outta here! */
-            {
-              fprintf (stderr,
-                       "\nInternal error, duplicate hash code value %d:\n",
-                       hashcode);
-              if (option[POSITIONS])
-                fprintf (stderr, "try options -m or -D or -r, or use new key positions.\n\n");
-              else
-                fprintf (stderr, "try options -m or -D or -r.\n\n");
-              exit (1);
-            }
+          /* This shouldn't happen.  proj1, proj2, proj3 must have been
+             computed to be injective on the given keyword set.  */
+          fprintf (stderr,
+                   "\nInternal error, unexpected duplicate hash code\n");
+          if (option[POSITIONS])
+            fprintf (stderr, "try options -m or -r, or use new key positions.\n\n");
+          else
+            fprintf (stderr, "try options -m or -r.\n\n");
+          exit (1);
         }
     }
 

@@ -93,7 +93,7 @@ private:
   /* Sorts the given set in increasing frequency of _occurrences[].  */
   void                  sort_by_occurrence (unsigned int *set, int len) const;
 
-  unsigned int          less_collisions (KeywordExt *curr, unsigned int collision_bound);
+  bool                  has_collisions (KeywordExt *curr);
 
   KeywordExt *          collision_prior_to (KeywordExt *curr);
 

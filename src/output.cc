@@ -75,10 +75,9 @@ static const char *char_to_index;
    - Duplicates, i.e. keywords with the same _selchars set, are chained
      through the _duplicate_link pointer.  Only one representative per
      duplicate equivalence class remains on the linear keyword list.
-   - Still, accidental duplicates, i.e. keywords for which the _asso_values[]
-     search couldn't achieve different hash values, can occur on the linear
-     keyword list.  After Search::sort(), we know that they form blocks of
-     consecutive list elements.
+   - Accidental duplicates, i.e. keywords for which the _asso_values[] search
+     couldn't achieve different hash values, cannot occur on the linear
+     keyword list.  Search::optimize would catch this mistake.
  */
 Output::Output (KeywordExt_List *head, const char *struct_decl,
                 unsigned int struct_decl_lineno, const char *return_type,
@@ -134,20 +133,11 @@ Output::compute_min_max ()
 int
 Output::num_hash_values () const
 {
-  /* Since the list is already sorted by hash value we can count the
-     different hash values in a single pass through the list.  */
-  int count = 1;
-  KeywordExt_List *temp;
-  int value;
-
-  for (temp = _head, value = temp->first()->_hash_value; (temp = temp->rest()) != NULL; )
-    {
-      if (value != temp->first()->_hash_value)
-        {
-          value = temp->first()->_hash_value;
-          count++;
-        }
-    }
+  /* Since the list is already sorted by hash value and doesn't contain
+     duplicates, we can simply count the number of keywords on the list.  */
+  int count = 0;
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+    count++;
   return count;
 }
 
@@ -667,9 +657,7 @@ Output::output_keylength_table () const
       /* If generating a switch statement, and there is no user defined type,
          we generate non-duplicates directly in the code.  Only duplicates go
          into the table.  */
-      if (option[SWITCH] && !option[TYPE]
-          && !(temp->first()->_duplicate_link
-               || (temp->rest() && temp->first()->_hash_value == temp->rest()->first()->_hash_value)))
+      if (option[SWITCH] && !option[TYPE] && !temp->first()->_duplicate_link)
         continue;
 
       if (index < temp->first()->_hash_value && !option[SWITCH] && !option[DUP])
@@ -789,9 +777,7 @@ Output::output_keyword_table () const
 
   for (temp = _head, index = 0; temp; temp = temp->rest())
     {
-      if (option[SWITCH] && !option[TYPE]
-          && !(temp->first()->_duplicate_link
-               || (temp->rest() && temp->first()->_hash_value == temp->rest()->first()->_hash_value)))
+      if (option[SWITCH] && !option[TYPE] && !temp->first()->_duplicate_link)
         continue;
 
       if (index > 0)
@@ -865,34 +851,20 @@ Output::output_lookup_array () const
           if (option[DEBUG])
             fprintf (stderr, "keyword = %.*s, index = %d\n",
                      temp->first()->_allchars_length, temp->first()->_allchars, temp->first()->_final_index);
-          if (temp->first()->_duplicate_link
-              || (temp->rest() && hash_value == temp->rest()->first()->_hash_value))
+          if (temp->first()->_duplicate_link)
             {
               /* Start a duplicate entry.  */
               dup_ptr->hash_value = hash_value;
               dup_ptr->index = temp->first()->_final_index;
               dup_ptr->count = 1;
 
-              for (;;)
+              for (KeywordExt *ptr = temp->first()->_duplicate_link; ptr; ptr = ptr->_duplicate_link)
                 {
-                  for (KeywordExt *ptr = temp->first()->_duplicate_link; ptr; ptr = ptr->_duplicate_link)
-                    {
-                      dup_ptr->count++;
-                      if (option[DEBUG])
-                        fprintf (stderr,
-                                 "static linked keyword = %.*s, index = %d\n",
-                                 ptr->_allchars_length, ptr->_allchars, ptr->_final_index);
-                    }
-
-                  if (!(temp->rest() && hash_value == temp->rest()->first()->_hash_value))
-                    break;
-
-                  temp = temp->rest();
-
                   dup_ptr->count++;
                   if (option[DEBUG])
-                    fprintf (stderr, "dynamic linked keyword = %.*s, index = %d\n",
-                             temp->first()->_allchars_length, temp->first()->_allchars, temp->first()->_final_index);
+                    fprintf (stderr,
+                             "static linked keyword = %.*s, index = %d\n",
+                             ptr->_allchars_length, ptr->_allchars, ptr->_final_index);
                 }
               assert (dup_ptr->count >= 2);
               dup_ptr++;
@@ -1026,9 +998,7 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
     printf ("%*s/* hash value = %4d, keyword = \"%.*s\" */\n",
             indent, "", list->first()->_hash_value, list->first()->_allchars_length, list->first()->_allchars);
 
-  if (option[DUP]
-      && (list->first()->_duplicate_link
-          || (list->rest() && list->first()->_hash_value == list->rest()->first()->_hash_value)))
+  if (option[DUP] && list->first()->_duplicate_link)
     {
       if (option[LENTABLE])
         printf ("%*slengthptr = &lengthtable[%d];\n",
@@ -1037,13 +1007,8 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
               indent, "", option.get_wordlist_name (), list->first()->_final_index);
 
       int count = 0;
-      for (KeywordExt_List *temp = list; ; temp = temp->rest())
-        {
-          for (KeywordExt *links = temp->first(); links; links = links->_duplicate_link)
-            count++;
-          if (!(temp->rest() && temp->first()->_hash_value == temp->rest()->first()->_hash_value))
-            break;
-        }
+      for (KeywordExt *links = list->first(); links; links = links->_duplicate_link)
+        count++;
 
       printf ("%*swordendptr = wordptr + %d;\n"
               "%*sgoto multicompare;\n",
@@ -1080,10 +1045,7 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
         *jumps_away = 1;
     }
 
-  while (list->rest() && list->first()->_hash_value == list->rest()->first()->_hash_value)
-    list = list->rest();
-  list = list->rest();
-  return list;
+  return list->rest();
 }
 
 /* Output a total of size cases, grouped into num_switches switch statements,
@@ -1105,11 +1067,7 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
 
       KeywordExt_List *temp = list;
       for (int count = size1; count > 0; count--)
-        {
-          while (temp->first()->_hash_value == temp->rest()->first()->_hash_value)
-            temp = temp->rest();
-          temp = temp->rest();
-        }
+        temp = temp->rest();
 
       printf ("%*sif (key < %d)\n"
               "%*s  {\n",

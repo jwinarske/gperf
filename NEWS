@@ -34,6 +34,9 @@ New in 2.8:
 * Some keyword sets containing permutations, like { "xy", "yx", "xz", "zx" }
   or { "abc", "acb", "bca", "cab" }, are now handled by gperf without
   requiring the option -D.
+* When the search for a good hash function is not immediately successful,
+  backtracking is now used to continue the search. Earlier versions of gperf
+  bailed out with an "Internal error, duplicate hash code value".
 * Bug fixes.
 
 New in 2.7.2:
