@@ -60,7 +60,8 @@ SHELL = /bin/sh
 VPATH = $(srcdir)
 
 OBJECTS  = options.o iterator.o main.o gen-perf.o key-list.o list-node.o \
-           hash-table.o bool-array.o read-line.o vectors.o version.o
+           hash-table.o bool-array.o read-line.o vectors.o version.o \
+           keyword.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
 
@@ -115,6 +116,8 @@ vectors.o : vectors.cc $(VECTORS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/vectors.cc
 version.o : version.cc $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
+keyword.o : keyword.cc keyword.h
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword.cc
 
 install : all force
 	$(MKINSTALLDIRS) $(DESTDIR)$(bindir)

@@ -58,7 +58,7 @@ Hash_Table::~Hash_Table (void)
           fprintf (stderr, "%8d, %*.*s, %.*s\n",
                    i,
                    field_width, table[i]->char_set_length, table[i]->char_set,
-                   table[i]->key_length, table[i]->key);
+                   table[i]->allchars_length, table[i]->allchars);
 
       fprintf (stderr, "\nend dumping hash table\n\n");
     }
@@ -73,13 +73,13 @@ Hash_Table::insert (List_Node *item)
 {
   unsigned hash_val  = hashpjw (item->char_set, item->char_set_length);
   int      probe     = hash_val & (size - 1);
-  int      increment = ((hash_val ^ item->key_length) | 1) & (size - 1);
+  int      increment = ((hash_val ^ item->allchars_length) | 1) & (size - 1);
 
   while (table[probe])
     {
       if (table[probe]->char_set_length == item->char_set_length
           && memcmp (table[probe]->char_set, item->char_set, item->char_set_length) == 0
-          && (ignore_length || table[probe]->key_length == item->key_length))
+          && (ignore_length || table[probe]->allchars_length == item->allchars_length))
         return table[probe];
 
       collisions++;

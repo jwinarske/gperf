@@ -150,7 +150,7 @@ Gen_Perf::sort_set (char *union_set, int len)
 inline int
 Gen_Perf::hash (List_Node *key_node)
 {
-  int sum = option[NOLENGTH] ? 0 : key_node->key_length;
+  int sum = option[NOLENGTH] ? 0 : key_node->allchars_length;
 
   const char *p = key_node->char_set;
   int i = key_node->char_set_length;
@@ -222,8 +222,8 @@ Gen_Perf::change (List_Node *prior, List_Node *curr)
     {
       fprintf (stderr, "collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
                num_done,
-               prior->key_length, prior->key,
-               curr->key_length, curr->key,
+               prior->allchars_length, prior->allchars,
+               curr->allchars_length, curr->allchars,
                curr->hash_value);
       fflush (stderr);
     }

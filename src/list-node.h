@@ -2,7 +2,7 @@
 
 /* Data and function members for defining values and operations of a list node.
 
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -25,14 +25,12 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #define list_node_h 1
 
 #include "vectors.h"
+#include "keyword.h"
 
-struct List_Node : private Vectors
+struct List_Node : public Keyword, private Vectors
 {
   List_Node  *link;              /* TRUE if key has an identical KEY_SET as another key. */
   List_Node  *next;              /* Points to next element on the list. */
-  const char *key;               /* Each keyword string stored here. */
-  int         key_length;        /* Length of the key. */
-  const char *rest;              /* Additional information for building hash function. */
   const char *char_set;          /* Set of characters to hash, specified by user. */
   int         char_set_length;   /* Length of char_set. */
   int         hash_value;        /* Hash value for the key. */

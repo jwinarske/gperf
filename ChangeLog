@@ -1,5 +1,15 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword.h: New file.
+	* src/keyword.cc: New file.
+	* src/list-node.h (List_Node): Extend Keyword.
+	* src/list-node.cc: Update.
+	* src/gen-perf.cc: Update.
+	* src/hash-table.cc: Update.
+	* src/key-list.cc: Update.
+	* src/Makefile.in (OBJECTS): Add keyword.o.
+	(keyword.o): New rule.
+
 	* src/key-list.cc (Key_List::read_keys): Allocate the memory for the
 	hash table using 'new'.
 	(Key_List::output_lookup_array): Allocate the memory for the duplicates
