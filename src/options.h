@@ -83,8 +83,6 @@ public:
                      ~Options ();
   int                 operator[] (Option_Type option);
   void                operator() (int argc, char *argv[]);
-  void                operator= (enum Option_Type);
-  void                operator!= (enum Option_Type);
   static void         print_options ();
   static void         set_asso_max (int r);
   static int          get_asso_max ();

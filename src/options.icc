@@ -26,20 +26,6 @@ Options::operator[] (Option_Type option)
   return _option_word & option;
 }
 
-/* Enables option OPT. */
-INLINE void
-Options::operator = (enum Option_Type opt)
-{
-  _option_word |= opt;
-}
-
-/* Disables option OPT. */
-INLINE void
-Options::operator != (enum Option_Type opt)
-{
-  _option_word &= ~opt;
-}
-
 /* Initializes the key Iterator. */
 INLINE void
 Options::reset ()

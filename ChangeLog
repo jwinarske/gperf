@@ -1,5 +1,9 @@
 2002-10-13  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h (Options::operator=, Options::operator!=): Remove
+	unused methods.
+	* src/options.icc (Options::operator=, Options::operator!=): Remove.
+
 	* src/*.h: Prefix all field names with _.
 	* src/*.cc, src/*.icc: Update.
 
