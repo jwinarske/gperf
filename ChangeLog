@@ -10,6 +10,10 @@
 
 	* src/configure.in: Fix AC_INIT argument.
 
+	* Makefile.devel (configure, lib/configure, src/configure,
+	tests/configure, doc/configure): Use the newest autoconf.
+	(src/config.h.in): Use the newest autoheader.
+
 2003-05-03  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.texi: Use two spaces as sentence separator, as recommended
