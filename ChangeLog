@@ -1,5 +1,49 @@
 2000-08-20  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        Allow the use of embedded NULs in keys.
+        * lib/hash.h (hashpjw): Add a length argument.
+        * lib/hash.cc (hashpjw): Likewise. Don't stop when encountering a NUL
+          character.
+        * src/hash-table.h (Hash_Table constructor): Add ignore_len argument.
+          (Hash_Table::ignore_length): New field.
+          (Hash_Table::insert): Renamed from Hash_Table::operator(). Remove
+          ignore_length argument.
+        * src/hash-table.cc (NIL): Remove macro.
+          (Hash_Table constructor): Add ignore_len argument. Use it to
+          initialize ignore_length.
+          (Hash_Table destructor): Specify explicit length of char_set and
+          key.
+          (Hash_Table::insert): Renamed from Hash_Table::operator(). Remove
+          ignore_length argument. Pass explicit length to hashpjw. Compare
+          char_set using memcmp, not strcmp.
+        * src/list-node.h (List_Node): Rename field length to key_length.
+          New field char_set_length.
+          (List_Node constructor): Accept key and rest, not the entire line.
+        * src/list-node.cc (List_Node constructor): Accept key and rest, not
+          the entire line. Don't NUL terminate key and char_set. Initialize
+          char_set_length field.
+        * src/key-list.cc: Include <ctype.h>.
+          (parse_line): New function.
+          (Key_List::read_keys): Call parse_line instead of new List_Node.
+          Pass option[NOLENGTH] to Hash_Table constructor, not
+          Hash_Table::insert. Specify explicit length of key and char_set.
+          (Key_List::get_occurrence): Use explicit length of char_set.
+          (Key_List::set_determined): Likewise.
+          (Key_List::already_determined): Likewise.
+          (output_string): Add length argument. Output unprintable characters
+          using octal escape sequence.
+          (output_keyword_entry): Use explicit length of key.
+          (Key_List::output_lookup_array): Specify explicit length of key.
+          (output_switch_case): Likewise.
+          (Key_List::dump): Likewise.
+        * src/gen-perf.h (Gen_Perf::compute_disjoint_union): Add two length
+          arguments.
+        * src/gen-perf.cc (Gen_Perf::compute_disjoint_union): Likewise. Don't
+          stop when encountering NUL characters. Don't NUL terminate the
+          result.
+          (Gen_Perf::hash): Use explicit length of char_set.
+          (Gen_Perf::change): Specify explicit length of key.
+
         * doc/help2man: New file, help2man version 1.022.
         * Makefile.devel (all): Add doc/gperf.1.
           (doc/gperf.1): New target.
