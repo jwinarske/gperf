@@ -1,5 +1,20 @@
 2002-11-19  Bruno Haible  <bruno@clisp.org>
 
+	Prepare for backtracking.
+	* src/search.h (Search::try_asso_value, Search::change_some_asso_value):
+	Remove declarations.
+	(Search::less_collisions, Search::collision_prior_to): New declarations.
+	(Search::_fewest_collisions, Search::_union_set, Search::_num_done):
+	Remove fields.
+	* src/search.cc (Search::prepare_asso_values): Don't initialize
+	_union_set.
+	(Search::try_asso_value, Search::change_some_asso_value): Remove
+	methods.
+	(Search::less_collisions, Search::collision_prior_to): New methods.
+	(StackEntry): New class.
+	(Search::find_asso_values): Reorganized to use pseudo-recursion.
+	(Search::~Search): Don't free _union_set.
+
 	* src/search.h (Search::find_good_asso_values): New declaration.
 	* src/search.cc: Add comments about the basic structure of the
 	algorithm.

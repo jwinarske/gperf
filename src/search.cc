@@ -771,9 +771,6 @@ Search::prepare_asso_values ()
      values.  */
   _collision_detector = new Bool_Array (_max_hash_value + 1);
 
-  /* Allocate scratch set.  */
-  _union_set = new unsigned int [2 * get_max_keysig_size ()];
-
   if (option[DEBUG])
     fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
              "\nmaximum size of generated hash table is %d\n",
@@ -894,91 +891,97 @@ Search::sort_by_occurrence (unsigned int *set, int len) const
     }
 }
 
-/* Tries various other values for _asso_values[c].  A value is successful
-   if, with it, the recomputed hash values for the keywords from
-   _head->first() to curr - inclusive - give fewer than _fewest_collisions
-   collisions.  Up to the given number of iterations are performed.
-   If successful, _asso_values[c] is changed, _fewest_collisions is decreased,
-   and false is returned.
-   If all iterations are unsuccessful, _asso_values[c] is restored and
-   true is returned.
+/* If the recomputed hash values for the keywords from _head->first() to
+   curr - inclusive - give fewer than collision_bound collisions, this
+   collision count is returned.  Otherwise some value >= collision_bound
+   is returned.
    This is called very frequently, and needs to be fast!  */
-
-inline bool
-Search::try_asso_value (unsigned int c, KeywordExt *curr, int iterations)
+unsigned int
+Search::less_collisions (KeywordExt *curr, unsigned int collision_bound)
 {
-  int original_value = _asso_values[c];
+  unsigned int collisions = 0;
 
-  /* Try many valid associated values.  */
-  for (int i = iterations - 1; i >= 0; i--)
+  /* Iteration Number array is a win, O(1) initialization time!  */
+  _collision_detector->clear ();
+
+  for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
     {
-      int collisions = 0;
+      KeywordExt *keyword = ptr->first();
 
-      /* Try next value.  Wrap around mod _asso_value_max.  */
-      _asso_values[c] =
-        (_asso_values[c] + (_jump != 0 ? _jump : rand ()))
-        & (_asso_value_max - 1);
+      /* Compute new hash code for the keyword, and see whether it
+         collides with another keyword's hash code.  If we have too
+         many collisions, we can safely abort the fruitless loop.  */
+      if (_collision_detector->set_bit (compute_hash (keyword))
+          && ++collisions >= collision_bound)
+        return collision_bound; /* >= collision_bound */
 
-      /* Iteration Number array is a win, O(1) intialization time!  */
-      _collision_detector->clear ();
-
-      for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
-        {
-          KeywordExt *keyword = ptr->first();
-
-          /* Compute new hash code for the keyword, and see whether it
-             collides with another keyword's hash code.  If we have too
-             many collisions, we can safely abort the fruitless loop.  */
-          if (_collision_detector->set_bit (compute_hash (keyword))
-              && ++collisions >= _fewest_collisions)
-            break;
-
-          if (keyword == curr)
-            {
-              _fewest_collisions = collisions;
-              if (option[DEBUG])
-                fprintf (stderr, "- resolved after %d iterations",
-                         iterations - i);
-              return false;
-            }
-        }
+      if (keyword == curr)
+        return collisions; /* < collision_bound */
     }
-
-  /* Restore original values, no more tries.  */
-  _asso_values[c] = original_value;
-  return true;
 }
 
-/* Attempts to change an _asso_value[], in order to resolve a hash value
-   collision between the two given keywords.  */
+/* Tests whether the given keyword has the same hash value as another one
+   earlier in the list.  If yes, this earlier keyword is returned (more
+   precisely, the first one of them, but it doesn't really matter which one).
+   If no collision is present, NULL is returned.  */
+KeywordExt *
+Search::collision_prior_to (KeywordExt *curr)
+{
+  for (KeywordExt_List *prior_ptr = _head;
+       prior_ptr->first() != curr;
+       prior_ptr = prior_ptr->rest())
+    {
+      KeywordExt *prior = prior_ptr->first();
+
+      if (prior->_hash_value == curr->_hash_value)
+        return prior;
+    }
+  return NULL;
+}
+
+/* Finding good asso_values is normally straightforwards, but needs
+   backtracking in some cases.  The recurse/backtrack depth can be at most
+   _list_len.  Since we cannot assume that the C stack is large enough,
+   we perform the processing without recursion, and simulate the stack.  */
+struct StackEntry
+{
+  /* The number of collisions so far.  */
+  unsigned int          _collisions_so_far;
+
+  /* The current keyword.  */
+  KeywordExt *          _curr;
+
+  /* The prior keyword, with which curr collides.  */
+  KeywordExt *          _prior;
+
+  /* Scratch set.  */
+  unsigned int *        _union_set;
+  unsigned int          _union_set_length;
+
+  /* Current index into the scratch set.  */
+  unsigned int          _union_index;
+
+  /* Trying a different value for _asso_values[_c].  */
+  unsigned int          _c;
+
+  /* The original value of _asso_values[_c].  */
+  unsigned int          _original_asso_value;
+
+  /* Remaining number of iterations.  */
+  int                   _iter;
+};
+
+/* Finds some _asso_values[] that fit.  */
 
 void
-Search::change_some_asso_value (KeywordExt *prior, KeywordExt *curr)
+Search::find_asso_values ()
 {
-  if (option[DEBUG])
-    {
-      fprintf (stderr, "collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
-               _num_done,
-               prior->_allchars_length, prior->_allchars,
-               curr->_allchars_length, curr->_allchars,
-               curr->_hash_value);
-      fflush (stderr);
-    }
+  /* Add one keyword after the other and see whether its hash value collides
+     with one of the previous hash values.  If so, change some asso_values[]
+     entry until the number of collisions so far is reduced.  Then continue
+     with the next keyword.  */
 
-  /* To achieve that the two hash values become different, we have to
-     change an _asso_values[c] for a character c that contributes to the
-     hash functions of prior and curr with different multiplicity.
-     So we compute the set of such c.  */
-  unsigned int *union_set = _union_set;
-  int union_set_length =
-    compute_disjoint_union (prior->_selchars, prior->_selchars_length,
-                            curr->_selchars, curr->_selchars_length,
-                            union_set);
-
-  /* Sort by decreasing occurrence: Try least-used characters c first.
-     The idea is that this reduces the number of freshly introduced
-     collisions.  */
-  sort_by_occurrence (union_set, union_set_length);
+  init_asso_values ();
 
   int iterations =
     !option[FAST]
@@ -987,79 +990,175 @@ Search::change_some_asso_value (KeywordExt *prior, KeywordExt *curr)
       ? option.get_iterations ()
       : keyword_list_length ();
 
-  const unsigned int *p = union_set;
-  int i = union_set_length;
-  for (; i > 0; p++, i--)
-    if (!try_asso_value (*p, curr, iterations))
+  /* Allocate stack.  */
+  StackEntry *stack = new StackEntry[_list_len];
+  {
+    KeywordExt_List *ptr = _head;
+    for (int i = 0; i < _list_len; i++, ptr = ptr->rest())
       {
-        /* Good, this _asso_values[] modification reduces the number of
-           collisions so far.
-           All keyword->_hash_value up to curr - inclusive - and
-           _fewest_collisions have been updated.  */
+        stack[i]._curr = ptr->first();
+        stack[i]._union_set = new unsigned int [2 * get_max_keysig_size ()];
+      }
+  }
+
+  {
+    /* Current stack pointer.  */
+    StackEntry *sp = &stack[0];
+
+    /* Local variables corresponding to *sp.  */
+    /* The number of collisions so far.  */
+    unsigned int collisions_so_far;
+    /* The current keyword.  */
+    KeywordExt *curr;
+    /* The prior keyword, with which curr collides.  */
+    KeywordExt *prior;
+    /* Scratch set.  */
+    unsigned int *union_set;
+    unsigned int union_set_length;
+    /* Current index into the scratch set.  */
+    unsigned int union_index;
+    /* Trying a different value for _asso_values[c].  */
+    unsigned int c;
+    /* The original value of _asso_values[c].  */
+    unsigned int original_asso_value;
+    /* Remaining number of iterations.  */
+    int iter;
+
+    collisions_so_far = 0;
+
+   STARTOUTERLOOP:
+
+    /* Next keyword from the list.  */
+    curr = sp->_curr;
+
+    /* Compute this keyword's hash value.  */
+    compute_hash (curr);
+
+    /* See if it collides with a prior keyword.  */
+    prior = collision_prior_to (curr);
+
+    if (prior != NULL)
+      {
+        collisions_so_far++;
+
+        /* Handle collision: Attempt to change an _asso_value[], in order to
+           resolve a hash value collision between the two given keywords.  */
+
         if (option[DEBUG])
           {
-            fprintf (stderr, " by changing asso_value['%c'] (char #%d) to %d\n",
-                     *p, p - union_set + 1, _asso_values[*p]);
+            fprintf (stderr, "collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
+                     sp - stack + 1,
+                     prior->_allchars_length, prior->_allchars,
+                     curr->_allchars_length, curr->_allchars,
+                     curr->_hash_value);
             fflush (stderr);
           }
-        return;
-      }
 
-  /* Failed to resolve a collision.  */
+        /* To achieve that the two hash values become different, we have to
+           change an _asso_values[c] for a character c that contributes to the
+           hash functions of prior and curr with different multiplicity.
+           So we compute the set of such c.  */
+        union_set = sp->_union_set;
+        union_set_length =
+          compute_disjoint_union (prior->_selchars, prior->_selchars_length,
+                                  curr->_selchars, curr->_selchars_length,
+                                  union_set);
 
-  /* Recompute all keyword->_hash_value up to curr - inclusive -.  */
-  for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
-    {
-      KeywordExt* keyword = ptr->first();
-      compute_hash (keyword);
-      if (keyword == curr)
-        break;
-    }
+        /* Sort by decreasing occurrence: Try least-used characters c first.
+           The idea is that this reduces the number of freshly introduced
+           collisions.  */
+        sort_by_occurrence (union_set, union_set_length);
 
-  if (option[DEBUG])
-    {
-      fprintf (stderr, "** collision not resolved after %d iterations, %d duplicates remain, continuing...\n",
-               iterations, _fewest_collisions + _total_duplicates);
-      fflush (stderr);
-    }
-}
+        for (union_index = 0; union_index < union_set_length; union_index++)
+          {
+            c = union_set[union_index];
 
-/* Finds some _asso_values[] that fit.  */
+            /* Try various other values for _asso_values[c].  A value is
+               successful if, with it, the recomputed hash values for the
+               keywords from _head->first() to curr - inclusive - give fewer
+               than collisions_so_far collisions.  Up to the given number of
+               iterations are performed.  If successful, _asso_values[c] is
+               changed, collisions_so_far is decreased, and the recursion
+               continued. If all iterations are unsuccessful, _asso_values[c]
+               is restored and we backtrack, trying the next union_index.  */
 
-void
-Search::find_asso_values ()
-{
-  _fewest_collisions = 0;
-  init_asso_values ();
+            original_asso_value = _asso_values[c];
 
-  /* Add one keyword after the other and see whether its hash value collides
-     with one of the previous hash values.  */
-  _num_done = 1;
-  for (KeywordExt_List *curr_ptr = _head;
-       curr_ptr != NULL;
-       curr_ptr = curr_ptr->rest(), _num_done++)
-    {
-      KeywordExt *curr = curr_ptr->first();
+            /* Try many valid associated values.  */
+            for (iter = iterations; iter > 0; iter--)
+              {
+                /* Try next value.  Wrap around mod _asso_value_max.  */
+                _asso_values[c] =
+                  (_asso_values[c] + (_jump != 0 ? _jump : rand ()))
+                  & (_asso_value_max - 1);
 
-      /* Compute this keyword's hash value.  */
-      compute_hash (curr);
+                unsigned int collisions =
+                  less_collisions (curr, collisions_so_far);
+                if (collisions < collisions_so_far)
+                  {
+                    collisions_so_far = collisions;
+                    /* Good, this _asso_values[] modification reduces the
+                       number of collisions so far.
+                       All keyword->_hash_value up to curr - inclusive -
+                       have been updated.  */
+                    if (option[DEBUG])
+                      {
+                        fprintf (stderr, "- resolved after %d iterations by "
+                                 "changing asso_value['%c'] (char #%d) to %d\n",
+                                 iterations - iter + 1, c,
+                                 union_index + 1, _asso_values[c]);
+                        fflush (stderr);
+                      }
+                    goto RECURSE;
+                  }
+              }
 
-      /* See if it collides with a prior keyword.  */
-      for (KeywordExt_List *prior_ptr = _head;
-           prior_ptr != curr_ptr;
-           prior_ptr = prior_ptr->rest())
-        {
-          KeywordExt *prior = prior_ptr->first();
+            /* Restore original values, no more tries.  */
+            _asso_values[c] = original_asso_value;
+          }
 
-          if (prior->_hash_value == curr->_hash_value)
-            {
-              _fewest_collisions++;
-              /* Handle collision.  */
-              change_some_asso_value (prior, curr);
+        /* Failed to resolve a collision.  */
+
+        /* Recompute all keyword->_hash_value up to curr - inclusive -.  */
+        for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
+          {
+            KeywordExt* keyword = ptr->first();
+            compute_hash (keyword);
+            if (keyword == curr)
               break;
-            }
-        }
-    }
+          }
+
+        if (option[DEBUG])
+          {
+            fprintf (stderr, "** collision not resolved after %d iterations, %d duplicates remain, continuing...\n",
+                     iterations, collisions_so_far + _total_duplicates);
+            fflush (stderr);
+          }
+      }
+   RECURSE:
+    sp->_collisions_so_far = collisions_so_far;
+    /*sp->_curr = curr;*/ // redundant
+    sp->_prior = prior;
+    /*sp->_union_set = union_set;*/ // redundant
+    sp->_union_set_length = union_set_length;
+    sp->_union_index = union_index;
+    sp->_c = c;
+    sp->_original_asso_value = original_asso_value;
+    sp->_iter = iter;
+    sp++;
+    if (sp - stack < _list_len)
+      {
+        /*collisions_so_far = sp[-1]._collisions_so_far;*/ // redundant
+        goto STARTOUTERLOOP;
+      }
+  }
+
+  /* Deallocate stack.  */
+  {
+    for (int i = 0; i < _list_len; i++)
+      delete[] stack[i]._union_set;
+  }
+  delete[] stack;
 }
 
 /* Finds good _asso_values[].  */
@@ -1210,7 +1309,6 @@ Search::optimize ()
 
 Search::~Search ()
 {
-  delete[] _union_set;
   delete _collision_detector;
   delete[] _determined;
   if (option[DEBUG])

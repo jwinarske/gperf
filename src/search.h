@@ -93,12 +93,9 @@ private:
   /* Sorts the given set in increasing frequency of _occurrences[].  */
   void                  sort_by_occurrence (unsigned int *set, int len) const;
 
-  /* Tries various other values for _asso_values[c].  */
-  bool                  try_asso_value (unsigned int c, KeywordExt *curr, int iterations);
+  unsigned int          less_collisions (KeywordExt *curr, unsigned int collision_bound);
 
-  /* Attempts to change an _asso_value[], in order to resolve a hash value
-     collision between the two given keywords.  */
-  void                  change_some_asso_value (KeywordExt *prior, KeywordExt *curr);
+  KeywordExt *          collision_prior_to (KeywordExt *curr);
 
   /* Finds some _asso_values[] that fit.  */
   void                  find_asso_values ();
@@ -164,15 +161,6 @@ private:
 
   /* Sparse bit vector for collision detection.  */
   Bool_Array *          _collision_detector;
-
-  /* Minimal number of collisions found so far.  */
-  int                   _fewest_collisions;
-
-  /* Scratch set, used during Search::change_some_asso_value.  */
-  unsigned int *        _union_set;
-
-  /* Number of keyword being handled during Search::find_asso_values.  */
-  int                   _num_done;
 };
 
 #endif
