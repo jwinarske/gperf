@@ -229,7 +229,50 @@ Options::print_options (void)
   printf ("/* Command-line: ");
 
   for (i = 0; i < argument_count; i++)
-    printf ("%s ", argument_vector[i]);
+    {
+      const char *arg = argument_vector[i];
+
+      /* Escape arg if it contains shell metacharacters. */
+      if (*arg == '-')
+        {
+          putchar (*arg);
+          arg++;
+          if (*arg >= 'A' && *arg <= 'Z' || *arg >= 'a' && *arg <= 'z')
+            {
+              putchar (*arg);
+              arg++;
+            }
+        }
+      if (strpbrk (arg, "\t\n !\"#$&'()*;<>?[\\]`{|}~") != NULL)
+        {
+          if (strchr (arg, '\'') != NULL)
+            {
+              putchar ('"');
+              for (; *arg; arg++)
+                {
+                  if (*arg == '\"' || *arg == '\\' || *arg == '$')
+                    putchar ('\\');
+                  putchar (*arg);
+                }
+              putchar ('"');
+            }
+          else
+            {
+              putchar ('\'');
+              for (; *arg; arg++)
+                {
+                  if (*arg == '\\')
+                    putchar ('\\');
+                  putchar (*arg);
+                }
+              putchar ('\'');
+            }
+        }
+      else
+        printf ("%s", arg);
+
+      printf (" ");
+    }
 
   printf (" */");
 }

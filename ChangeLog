@@ -1,5 +1,8 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/options.cc (Options::print_options): Escape the arguments which
+          contain special characters.
+
         * tests/c-parse.gperf: Updated from gcc-2.95.2/gcc/c-parse.gperf.
         * tests/objc.gperf: New file, from gcc-2.95.2/gcc/objc/objc.gperf.
         * tests/chill.gperf: New file, from gcc-2.95.2/gcc/ch/gperf.
