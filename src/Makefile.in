@@ -121,14 +121,14 @@ version.o : version.cc $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
 
 install : all force
-	if [ ! -d $(bindir) ] ; then mkdir $(bindir) ; fi
-	$(INSTALL_PROGRAM) $(TARGETPROG) $(bindir)/$(TARGETPROG)
+	if [ ! -d $(DESTDIR)$(bindir) ] ; then mkdir $(DESTDIR)$(bindir) ; fi
+	$(INSTALL_PROGRAM) $(TARGETPROG) $(DESTDIR)$(bindir)/$(TARGETPROG)
 
 installdirs : force
-	if [ ! -d $(bindir) ] ; then mkdir $(bindir) ; fi
+	if [ ! -d $(DESTDIR)$(bindir) ] ; then mkdir $(DESTDIR)$(bindir) ; fi
 
 uninstall : force
-	$(RM) $(bindir)/$(TARGETPROG)
+	$(RM) $(DESTDIR)$(bindir)/$(TARGETPROG)
 
 check : all
 

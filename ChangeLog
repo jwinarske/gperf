@@ -1,5 +1,9 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/Makefile.in (install, installdirs, uninstall): Respect
+          $(DESTDIR).
+        * doc/Makefile.in (install, installdirs, uninstall): Likewise.
+
         * src/options.cc (Options::print_options): Escape the arguments which
           contain special characters.
 
