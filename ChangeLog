@@ -1,3 +1,10 @@
+2003-04-12  Bruno Haible  <bruno@clisp.org>
+
+	* README.vms: New file.
+	* Makefile.vms: New file.
+	* Makefile.devel (src/config.h_vms): New rule.
+	(all): Depend on it.
+
 2003-03-19  Bruno Haible  <bruno@clisp.org>
 
 	* src/input.cc (Input::read_input): Ignore comments at the beginning
