@@ -48,7 +48,10 @@ public:
                                 int alpha_size,
                                 const int *occurrences,
                                 const int *asso_values);
+
+  /* Generates the hash function and the key word recognizer function.  */
   void                  output ();
+
 private:
 
   /* Computes the minimum and maximum hash values, and stores them
@@ -69,10 +72,20 @@ private:
      comparison code in generated function 'in_word_set'.  */
   void                  output_keylength_table ();
 
+  /* Prints out the array containing the keywords for the hash function.  */
   void                  output_keyword_table ();
+
+  /* Generates the large, sparse table that maps hash values into
+     the smaller, contiguous range of the keyword table.  */
   void                  output_lookup_array ();
+
+  /* Generate all the tables needed for the lookup function.  */
   void                  output_lookup_tables ();
+
+  /* Generates C code to perform the keyword lookup.  */
   void                  output_lookup_function_body (const struct Output_Compare&);
+
+  /* Generates C code for the lookup function.  */
   void                  output_lookup_function ();
 
   /* Linked list of keywords.  */

@@ -73,18 +73,12 @@ static const char *char_to_index;
    - The list is ordered by increasing _hash_value.  This has been achieved
      by Search::sort().
    - Duplicates, i.e. keywords with the same _selchars set, are chained
-     through the _duplicate_link pointer.  This chain goes in the same
-     direction as the list order, i.e. from earlier list positions to
-     later list positions.  This property has been achieved by
-     Search::prepare() and has been preserved through Search::reorder()
-     and Search::sort() (because the sorting criteria cannot distinguish
-     keywords with the same _selchars, and Search::merge_sort() is a stable
-     sorting algorithm).
-   - Therefore, since duplicates have the same _hash_value, duplicates
-     have been sorted together by Search::sort(), and form blocks of
-     consecutive list elements.  The _duplicate_link of every element
-     of a duplicate block (except the last element) points to the next
-     element in this block.
+     through the _duplicate_link pointer.  Only one representative per
+     duplicate equivalence class remains on the linear keyword list.
+   - Still, accidental duplicates, i.e. keywords for which the _asso_values[]
+     search couldn't achieve different hash values, can occur on the linear
+     keyword list.  After Search::sort(), we know that they form blocks of
+     consecutive list elements.
  */
 Output::Output (KeywordExt_List *head, const char *array_type,
                 const char *return_type, const char *struct_tag,
@@ -99,20 +93,6 @@ Output::Output (KeywordExt_List *head, const char *array_type,
     _min_key_len (min_key_len), _alpha_size (alpha_size),
     _occurrences (occurrences), _asso_values (asso_values)
 {
-}
-
-/* ------------------------------------------------------------------------- */
-
-/* Recognizing duplicates.  */
-
-/* Returns true for a duplicate keyword, excluding the first element of a
-   duplicate block.  */
-inline bool
-is_redundant_duplicate (KeywordExt_List *elem)
-{
-  /* Compare the hash values of this element and the next one.  */
-  return (elem->rest() != NULL
-          && elem->first()->_hash_value == elem->rest()->first()->_hash_value);
 }
 
 /* ------------------------------------------------------------------------- */

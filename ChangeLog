@@ -1,5 +1,9 @@
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/output.cc (Output_Enum): Prepend an underscore to field names.
+	(Output_Expr1): Likewise.
+	(Output::output_hash_function): Simplify the special case for "-k 1,$".
+
 	* src/search.h (Search::init_asso_values, Search::find_asso_values):
 	New declarations.
 	(Search::try_asso_value): Renamed from Search::affects_prev.
