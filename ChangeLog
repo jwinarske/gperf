@@ -1,5 +1,22 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword-list.h: New file.
+	* src/keyword-list.cc: New file.
+	* src/list-node.h: Remove file.
+	* src/list-node.cc: Remove file.
+	* src/keyword.h (KeywordExt::init_selchars): New declaration.
+	* src/keyword.cc (sort_char_set, KeywordExt::init_selchars): New, from
+	old list-node.cc.
+	* src/gen-perf.cc: Replace List_Node by KeywordExt or KeywordExt_List,
+	as appropriate.
+	* src/hash-table.h: Likewise.
+	* src/key-list.h: Likewise.
+	* src/key-list.cc: Likewise.
+	* src/Makefile.in (OBJECTS): Remove list-node.o, add keyword-list.o.
+	(LIST_NODE_H): Remove macro.
+	(list-node.o): Remove rule.
+	(keyword-list.o): New rule.
+
 	* src/keyword.h (KeywordExt): New class.
 	* src/keyword.cc (KeywordExt): New constructor.
 	* src/list-node.h (List_Node): Inherit from KeywordExt.

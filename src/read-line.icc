@@ -38,21 +38,21 @@ Read_Line::read_next_line (void)
         ;
 
       if (c == EOF)
-        return (char *)0;
+        return NULL;
     }
 
   if (c == EOF)
-    return (char *)0;
+    return NULL;
 
   ungetc (c, stdin);
 
-  char *line = (char *)0;
+  char *line = NULL;
   size_t linesize = 0;
   int length = get_line (&line, &linesize, fp);
   if (length < 0)
     {
       delete[] line;
-      return (char *)0;
+      return NULL;
     }
   if (length > 0 && line[length - 1] == '\n')
     line[length - 1] = '\0';

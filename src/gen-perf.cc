@@ -148,7 +148,7 @@ Gen_Perf::sort_set (char *union_set, int len)
 /* Generate a key set's hash value. */
 
 inline int
-Gen_Perf::hash (List_Node *key_node)
+Gen_Perf::hash (KeywordExt *key_node)
 {
   int sum = option[NOLENGTH] ? 0 : key_node->allchars_length;
 
@@ -167,7 +167,7 @@ Gen_Perf::hash (List_Node *key_node)
    Option.Get_Jump was forced to be an odd value! */
 
 inline int
-Gen_Perf::affects_prev (char c, List_Node *curr)
+Gen_Perf::affects_prev (char c, KeywordExt *curr)
 {
   int original_char = asso_values[(unsigned char)c];
   int total_iterations = !option[FAST]
@@ -189,16 +189,20 @@ Gen_Perf::affects_prev (char c, List_Node *curr)
       /* See how this asso_value change affects previous keywords.  If
          it does better than before we'll take it! */
 
-      for (List_Node *ptr = head;
-           !collision_detector->set_bit (hash (ptr)) || ++collisions < fewest_collisions;
-           ptr = ptr->next)
-        if (ptr == curr)
-          {
-            fewest_collisions = collisions;
-            if (option[DEBUG])
-              fprintf (stderr, "- resolved after %d iterations", total_iterations - i);
-            return 0;
-          }
+      for (KeywordExt_List *ptr = head; ; ptr = ptr->rest())
+        {
+          KeywordExt *keyword = ptr->first();
+          if (collision_detector->set_bit (hash (keyword))
+              && ++collisions >= fewest_collisions)
+            break;
+          if (keyword == curr)
+            {
+              fewest_collisions = collisions;
+              if (option[DEBUG])
+                fprintf (stderr, "- resolved after %d iterations", total_iterations - i);
+              return 0;
+            }
+        }
     }
 
   /* Restore original values, no more tries. */
@@ -210,7 +214,7 @@ Gen_Perf::affects_prev (char c, List_Node *curr)
 /* Change a character value, try least-used characters first. */
 
 void
-Gen_Perf::change (List_Node *prior, List_Node *curr)
+Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
 {
   static char *union_set;
   int union_set_length;
@@ -247,8 +251,13 @@ Gen_Perf::change (List_Node *prior, List_Node *curr)
         return; /* Good, doesn't affect previous hash values, we'll take it. */
       }
 
-  for (List_Node *ptr = head; ptr != curr; ptr = ptr->next)
-    hash (ptr);
+  for (KeywordExt_List *ptr = head; ; ptr = ptr->rest())
+    {
+      KeywordExt* keyword = ptr->first();
+      if (keyword == curr)
+        break;
+      hash (keyword);
+    }
 
   hash (curr);
 
@@ -275,17 +284,23 @@ Gen_Perf::change (List_Node *prior, List_Node *curr)
 int
 Gen_Perf::doit_all (void)
 {
-  List_Node *curr;
-  for (curr = head; curr; curr = curr->next)
+  KeywordExt_List *curr;
+  for (curr = head; curr != NULL; curr = curr->rest())
     {
-      hash (curr);
+      KeywordExt *currkw = curr->first();
 
-      for (List_Node *ptr = head; ptr != curr; ptr = ptr->next)
-        if (ptr->hash_value == curr->hash_value)
-          {
-            change (ptr, curr);
-            break;
-          }
+      hash (currkw);
+
+      for (KeywordExt_List *ptr = head; ptr != curr; ptr = ptr->rest())
+        {
+          KeywordExt *ptrkw = ptr->first();
+
+          if (ptrkw->hash_value == currkw->hash_value)
+            {
+              change (ptrkw, currkw);
+              break;
+            }
+        }
       num_done++;
     }
 
@@ -293,16 +308,23 @@ Gen_Perf::doit_all (void)
 
   collision_detector->clear ();
 
-  for (curr = head; curr; curr = curr->next)
-    if (collision_detector->set_bit (hash (curr)))
-      if (option[DUP]) /* Keep track of this number... */
-        total_duplicates++;
-      else /* Yow, big problems.  we're outta here! */
+  for (curr = head; curr; curr = curr->rest())
+    {
+      unsigned int hashcode = hash (curr->first());
+      if (collision_detector->set_bit (hashcode))
         {
-          fprintf (stderr, "\nInternal error, duplicate value %d:\n"
-                           "try options -D or -r, or use new key positions.\n\n", hash (curr));
-          return 1;
+          if (option[DUP]) /* Keep track of this number... */
+            total_duplicates++;
+          else /* Yow, big problems.  we're outta here! */
+            {
+              fprintf (stderr,
+                       "\nInternal error, duplicate value %d:\n"
+                       "try options -D or -r, or use new key positions.\n\n",
+                       hashcode);
+              return 1;
+            }
         }
+    }
 
   /* Sorts the key word list by hash value, and then outputs the list.
      The generated hash table code is only output if the early stage of

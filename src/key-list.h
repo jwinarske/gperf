@@ -29,7 +29,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #ifndef key_list_h
 #define key_list_h 1
 
-#include "list-node.h"
+#include "keyword-list.h"
 #include "vectors.h"
 #include "read-line.h"
 
@@ -54,12 +54,12 @@ private:
   int         list_len;                              /* Length of head's Key_List, not counting duplicates. */
   int         total_keys;                            /* Total number of keys, counting duplicates. */
   static int  determined[MAX_ALPHA_SIZE];            /* Used in function reorder, below. */
-  static int  get_occurrence (List_Node *ptr);
+  static int  get_occurrence (KeywordExt *ptr);
 #ifndef strcspn
   static int  strcspn (const char *s, const char *reject);
 #endif
-  static int  already_determined (List_Node *ptr);
-  static void set_determined (List_Node *ptr);
+  static int  already_determined (KeywordExt *ptr);
+  static void set_determined (KeywordExt *ptr);
   void        compute_min_max (void);
   int         num_hash_values (void);
   void        output_constants (struct Output_Constants&);
@@ -75,11 +75,11 @@ private:
   const char *get_array_type (void);
   const char *save_include_src (void);
   const char *get_special_input (char delimiter);
-  List_Node  *merge (List_Node *list1, List_Node *list2);
-  List_Node  *merge_sort (List_Node *head);
+  KeywordExt_List *merge (KeywordExt_List *list1, KeywordExt_List *list2);
+  KeywordExt_List *merge_sort (KeywordExt_List *head);
 
 protected:
-  List_Node  *head;                                  /* Points to the head of the linked list. */
+  KeywordExt_List *head;                             /* Points to the head of the linked list. */
   int         total_duplicates;                      /* Total number of duplicate hash values. */
 
 public:

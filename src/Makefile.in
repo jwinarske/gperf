@@ -59,9 +59,9 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-OBJECTS  = options.o iterator.o main.o gen-perf.o key-list.o list-node.o \
+OBJECTS  = options.o iterator.o main.o gen-perf.o key-list.o \
            hash-table.o bool-array.o read-line.o vectors.o version.o \
-           keyword.o
+           keyword.o keyword-list.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
 
@@ -87,10 +87,9 @@ VERSION_H = version.h
 VECTORS_H = vectors.h
 READ_LINE_H = read-line.h read-line.icc
 OPTIONS_H = options.h options.icc
-LIST_NODE_H = list-node.h $(VECTORS_H)
-KEY_LIST_H = key-list.h $(LIST_NODE_H) $(VECTORS_H) $(READ_LINE_H)
+KEY_LIST_H = key-list.h $(VECTORS_H) $(READ_LINE_H)
 ITERATOR_H = iterator.h
-HASH_TABLE_H = hash-table.h $(LIST_NODE_H)
+HASH_TABLE_H = hash-table.h
 BOOL_ARRAY_H = bool-array.h bool-array.icc $(OPTIONS_H)
 GEN_PERF_H = gen-perf.h $(KEY_LIST_H) $(BOOL_ARRAY_H)
 
@@ -104,8 +103,6 @@ iterator.o : iterator.cc $(ITERATOR_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/iterator.cc
 key-list.o : key-list.cc $(KEY_LIST_H) $(OPTIONS_H) $(READ_LINE_H) $(HASH_TABLE_H) $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/key-list.cc
-list-node.o : list-node.cc $(LIST_NODE_H) $(OPTIONS_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/list-node.cc
 main.o : main.cc $(OPTIONS_H) $(GEN_PERF_H) $(CONFIG_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/main.cc
 options.o : options.cc $(OPTIONS_H) $(ITERATOR_H) $(VECTORS_H) $(VERSION_H)
@@ -118,6 +115,8 @@ version.o : version.cc $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
 keyword.o : keyword.cc keyword.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword.cc
+keyword-list.o : keyword-list.cc keyword-list.h
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword-list.cc
 
 install : all force
 	$(MKINSTALLDIRS) $(DESTDIR)$(bindir)

@@ -1,9 +1,7 @@
-/* This may look like C code, but it is really -*- C++ -*- */
-
-/* Hash table used to check for duplicate keyword entries.
+/* Keyword list.
 
    Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
-   written by Douglas C. Schmidt (schmidt@ics.uci.edu)
+   Written by Bruno Haible <bruno@clisp.org>.
 
 This file is part of GNU GPERF.
 
@@ -21,23 +19,11 @@ You should have received a copy of the GNU General Public License
 along with GNU GPERF; see the file COPYING.  If not, write to the Free
 Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
-#ifndef hash_table_h
-#define hash_table_h 1
+#include <stddef.h>
+#include "keyword-list.h"
 
-#include "keyword.h"
-
-class Hash_Table
+/* Constructor.  */
+KeywordExt_List::KeywordExt_List (const char *s, int s_len, const char *r)
+  : KeywordExt (s, s_len, r), cdr (NULL)
 {
-private:
-  KeywordExt    **table;      /* Vector of pointers to linked lists of keywords. */
-  int             size;       /* Size of the vector. */
-  int             collisions; /* Find out how well our double hashing is working! */
-  int             ignore_length;
-
-public:
-                  Hash_Table (KeywordExt **t, int s, int ignore_len);
-                 ~Hash_Table (void);
-  KeywordExt     *insert (KeywordExt *item);
-};
-
-#endif
+}

@@ -34,7 +34,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
    This compromises information hiding somewhat, but greatly reduces
    memory fragmentation, since we can now use alloca! */
 
-Hash_Table::Hash_Table (List_Node **table_ptr, int s, int ignore_len):
+Hash_Table::Hash_Table (KeywordExt **table_ptr, int s, int ignore_len):
      table (table_ptr), size (s), collisions (0), ignore_length (ignore_len)
 {
   memset ((char *) table, 0, size * sizeof (*table));
@@ -68,8 +68,8 @@ Hash_Table::~Hash_Table (void)
    in the table.  Otherwise inserts the ITEM, and returns FALSE.
    Uses double hashing. */
 
-List_Node *
-Hash_Table::insert (List_Node *item)
+KeywordExt *
+Hash_Table::insert (KeywordExt *item)
 {
   unsigned hash_val  = hashpjw (item->selchars, item->selchars_length);
   int      probe     = hash_val & (size - 1);
@@ -87,5 +87,5 @@ Hash_Table::insert (List_Node *item)
     }
 
   table[probe] = item;
-  return (List_Node *) 0;
+  return NULL;
 }

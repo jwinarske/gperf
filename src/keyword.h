@@ -24,6 +24,8 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #ifndef keyword_h
 #define keyword_h 1
 
+#include "vectors.h"
+
 /* An instance of this class is a keyword, as specified in the input file.  */
 struct Keyword
 {
@@ -51,6 +53,10 @@ struct KeywordExt : public Keyword
   int selchars_length;
   /* Chained list of keywords having the same selchars.  */
   KeywordExt * duplicate_link;
+
+  /* Methods depending on the keyposition list.  */
+  /* Initialize selchars and selchars_length, and update v->occurrences.  */
+  void init_selchars (Vectors *v);
 
   /* Data members used by the algorithm.  */
   int occurrence; /* A metric for frequency of key set occurrences. */

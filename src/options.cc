@@ -450,7 +450,7 @@ Options::operator() (int argc, char *argv[])
   while ((option_char =
             getopt_long (argument_count, argument_vector,
                          "adcCDe:Ef:F:gGhH:i:Ij:k:K:lL:nN:oprs:S:tTvW:Z:7",
-                         long_options, (int *)0))
+                         long_options, NULL))
          != -1)
     {
       switch (option_char)
