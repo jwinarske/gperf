@@ -1464,7 +1464,7 @@ Output::output ()
       _struct_tag = (const_always[0] ? "const char *" : "char *");
     }
 
-  char_to_index = (option[SEVENBIT] ? "" : "(unsigned char)");
+  char_to_index = "(unsigned char)";
 
   printf ("/* ");
   if (option[KRC])

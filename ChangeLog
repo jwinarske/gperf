@@ -1,5 +1,8 @@
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/output.cc (Output::output): Set char_to_index to a cast in all
+	cases. Avoids gcc warnings on the generated code.
+
 	* src/output.cc (Output_Enum): Prepend an underscore to field names.
 	(Output_Expr1): Likewise.
 	(Output::output_hash_function): Simplify the special case for "-k 1,$".
