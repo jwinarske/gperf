@@ -31,9 +31,6 @@
 #include "options.h"
 #include "hash-table.h"
 
-/* Make the hash table 8 times larger than the number of keyword entries. */
-static const int TABLE_MULTIPLE     = 10;
-
 /* Efficiently returns the least power of two greater than or equal to X! */
 #define POW(X) ((!X)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
 
@@ -50,7 +47,6 @@ void
 Search::prepare ()
 {
   KeywordExt_List *temp;
-  KeywordExt_List *trail = NULL;
 
   _total_keys = 0;
   for (temp = _head; temp; temp = temp->rest())
@@ -58,59 +54,57 @@ Search::prepare ()
       temp->first()->init_selchars(_occurrences);
       _total_keys++;
     }
-       
-  /* Hash table this number of times larger than keyword number. */
-  int table_size = (_list_len = _total_keys) * TABLE_MULTIPLE;
-  /* Table must be a power of 2 for the hash function scheme to work. */
-  KeywordExt **table = new KeywordExt*[POW (table_size)];
 
-  /* Make large hash table for efficiency. */
-  Hash_Table found_link (table, table_size, option[NOLENGTH]);
+  _list_len = _total_keys;
 
-  /* Test whether there are any links and also set the maximum length of
-     an identifier in the keyword list. */
-  _total_duplicates = 0;
-  _max_key_len = INT_MIN;
-  _min_key_len = INT_MAX;
-  for (temp = _head; temp; temp = temp->rest())
-    {
-      KeywordExt *keyword = temp->first();
-      KeywordExt *other_keyword = found_link.insert (keyword);
+  {
+    /* Make hash table for efficiency. */
+    Hash_Table found_link (_list_len, option[NOLENGTH]);
 
-      /* Check for links.  We deal with these by building an equivalence class
-         of all duplicate values (i.e., links) so that only 1 keyword is
-         representative of the entire collection.  This *greatly* simplifies
-         processing during later stages of the program. */
+    /* Test whether there are any links and also set the maximum length of
+       an identifier in the keyword list. */
+    _total_duplicates = 0;
+    _max_key_len = INT_MIN;
+    _min_key_len = INT_MAX;
+    KeywordExt_List *trail = NULL;
+    for (temp = _head; temp; temp = temp->rest())
+      {
+        KeywordExt *keyword = temp->first();
+        KeywordExt *other_keyword = found_link.insert (keyword);
 
-      if (other_keyword)
-        {
-          _total_duplicates++;
-          _list_len--;
-          trail->rest() = temp->rest();
-          temp->first()->_duplicate_link = other_keyword->_duplicate_link;
-          other_keyword->_duplicate_link = temp->first();
+        /* Check for links.  We deal with these by building an equivalence class
+           of all duplicate values (i.e., links) so that only 1 keyword is
+           representative of the entire collection.  This *greatly* simplifies
+           processing during later stages of the program. */
 
-          /* Complain if user hasn't enabled the duplicate option. */
-          if (!option[DUP] || option[DEBUG])
-            fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"%.*s\".\n",
-                             keyword->_allchars_length, keyword->_allchars,
-                             other_keyword->_allchars_length, other_keyword->_allchars,
-                             keyword->_selchars_length, keyword->_selchars);
-        }
-      else
-        {
-          temp->first()->_duplicate_link = NULL;
-          trail = temp;
-        }
+        if (other_keyword)
+          {
+            _total_duplicates++;
+            _list_len--;
+            trail->rest() = temp->rest();
+            temp->first()->_duplicate_link = other_keyword->_duplicate_link;
+            other_keyword->_duplicate_link = temp->first();
 
-      /* Update minimum and maximum keyword length, if needed. */
-      if (_max_key_len < keyword->_allchars_length)
-        _max_key_len = keyword->_allchars_length;
-      if (_min_key_len > keyword->_allchars_length)
-        _min_key_len = keyword->_allchars_length;
-    }
+            /* Complain if user hasn't enabled the duplicate option. */
+            if (!option[DUP] || option[DEBUG])
+              fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"%.*s\".\n",
+                               keyword->_allchars_length, keyword->_allchars,
+                               other_keyword->_allchars_length, other_keyword->_allchars,
+                               keyword->_selchars_length, keyword->_selchars);
+          }
+        else
+          {
+            temp->first()->_duplicate_link = NULL;
+            trail = temp;
+          }
 
-  delete[] table;
+        /* Update minimum and maximum keyword length, if needed. */
+        if (_max_key_len < keyword->_allchars_length)
+          _max_key_len = keyword->_allchars_length;
+        if (_min_key_len > keyword->_allchars_length)
+          _min_key_len = keyword->_allchars_length;
+      }
+  }
 
   /* Exit program if links exists and option[DUP] not set, since we can't continue */
   if (_total_duplicates)

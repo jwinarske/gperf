@@ -1,3 +1,22 @@
+2002-11-03  Bruno Haible  <bruno@clisp.org>
+
+	Bug fix: The hash table could fail to detect duplicates, between
+	keywords of different length, when option -n (option[NOLENGTH]) was
+	given.
+	* src/hash-table.h (Hash_Table::Hash_Table): Pass table size, not
+	vector and vector size as arguments.
+	(Hash_Table::_log_size): New field.
+	(Hash_Table::equal): New declaration.
+	* src/hash-table.cc (size_factor): New variable.
+	(Hash_Table::Hash_Table): Pass table size, not vector and vector size
+	as arguments. Allocate the vector here.
+	(Hash_Table::~Hash_Table): Deallocate the vector here.
+	(Hash_Table::equal): New function.
+	(Hash_Table::insert): Use it. Don't use item->_allchars_length for the
+	increment if _ignore_length is true.
+	* src/search.cc (TABLE_MULTIPLE): Remove variable.
+	(Search::prepare): Update.
+
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
 	Provide documentation also in PDF format.

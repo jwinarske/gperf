@@ -28,18 +28,37 @@
 
 #include "keyword.h"
 
+/* Hash table of KeywordExt* entries.
+   Two entries are considered equal if their _selchars are the same and
+   - if !ignore_length - if their _allchars_length are the same.  */
+
 class Hash_Table
 {
-private:
-  KeywordExt **         _table;      /* Vector of pointers to linked lists of keywords. */
-  int                   _size;       /* Size of the vector. */
-  int                   _collisions; /* Find out how well our double hashing is working! */
-  bool                  _ignore_length;
-
 public:
-                        Hash_Table (KeywordExt **t, int s, bool ignore_len);
+  /* Constructor.
+     size is the maximum number of entries.
+     ignore_length determines a detail in the comparison function.  */
+                        Hash_Table (unsigned int size, bool ignore_length);
+  /* Destructor.  */
                         ~Hash_Table ();
+  /* Attempts to insert ITEM in the table.  If there is already an equal
+     entry in it, returns it.  Otherwise inserts ITEM and returns NULL.  */
   KeywordExt *          insert (KeywordExt *item);
+
+private:
+  /* Vector of entries.  */
+  KeywordExt **         _table;
+  /* Size of the vector.  */
+  unsigned int          _size;
+  /* log2(_size).  */
+  unsigned int          _log_size;
+  /* A detail of the comparison function.  */
+  bool                  _ignore_length;
+  /* Statistics: Number of collisions so far.  */
+  unsigned int          _collisions;
+
+  /* Compares two items.  */
+  bool                  equal (KeywordExt *item1, KeywordExt *item2);
 };
 
 #endif

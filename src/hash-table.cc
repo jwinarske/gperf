@@ -28,21 +28,61 @@
 #include <hash.h>
 #include "options.h"
 
-/* The size of the hash table is always the smallest power of 2 >= the size
-   indicated by the user.  This allows several optimizations, including
-   the use of double hashing and elimination of the mod instruction.
-   Note that the size had better be larger than the number of items
-   in the hash table, else there's trouble!!!  Note that the memory
-   for the hash table is allocated *outside* the intialization routine.
-   This compromises information hiding somewhat, but greatly reduces
-   memory fragmentation, since we can now use alloca! */
+/* We use a hash table with double hashing.  This is the simplest kind of
+   hash table, given that we always only insert and never remove entries
+   from the hash table.  */
 
-Hash_Table::Hash_Table (KeywordExt **table_ptr, int s, bool ignore_len):
-     _table (table_ptr), _size (s), _collisions (0), _ignore_length (ignore_len)
+/* To make double hashing efficient, there need to be enough spare entries.  */
+static const int size_factor = 10;
+
+/* We make the size of the hash table a power of 2.  This allows for two
+   optimizations: It eliminates the modulo instruction, and allows for an
+   easy secondary hashing function.  */
+
+/* Constructor.  */
+Hash_Table::Hash_Table (unsigned int size, bool ignore_length)
+  : _ignore_length (ignore_length),
+    _collisions (0)
 {
+  /* There need to be enough spare entries.  */
+  size = size * size_factor;
+
+  /* Find smallest power of 2 that is >= size.  */
+  unsigned int shift = 0;
+  if ((size >> 16) > 0)
+    {
+      size = size >> 16;
+      shift += 16;
+    }
+  if ((size >> 8) > 0)
+    {
+      size = size >> 8;
+      shift += 8;
+    }
+  if ((size >> 4) > 0)
+    {
+      size = size >> 4;
+      shift += 4;
+    }
+  if ((size >> 2) > 0)
+    {
+      size = size >> 2;
+      shift += 2;
+    }
+  if ((size >> 1) > 0)
+    {
+      size = size >> 1;
+      shift += 1;
+    }
+  _log_size = shift;
+  _size = 1 << shift;
+
+  /* Allocate table.  */
+  _table = new KeywordExt*[_size];
   memset (_table, 0, _size * sizeof (*_table));
 }
 
+/* Destructor.  */
 Hash_Table::~Hash_Table ()
 {
   if (option[DEBUG])
@@ -76,24 +116,38 @@ Hash_Table::~Hash_Table ()
 
       fprintf (stderr, "\nend dumping hash table\n\n");
     }
+  delete[] _table;
 }
 
-/* If the ITEM is already in the hash table return the item found
-   in the table.  Otherwise inserts the ITEM, and returns FALSE.
-   Uses double hashing. */
+/* Compares two items.  */
+inline bool
+Hash_Table::equal (KeywordExt *item1, KeywordExt *item2)
+{
+  return item1->_selchars_length == item2->_selchars_length
+         && memcmp (item1->_selchars, item2->_selchars, item2->_selchars_length)
+            == 0
+         && (_ignore_length
+             || item1->_allchars_length == item2->_allchars_length);
+}
 
+/* Attempts to insert ITEM in the table.  If there is already an equal
+   entry in it, returns it.  Otherwise inserts ITEM and returns NULL.  */
 KeywordExt *
 Hash_Table::insert (KeywordExt *item)
 {
-  unsigned hash_val  = hashpjw (item->_selchars, item->_selchars_length);
-  int      probe     = hash_val & (_size - 1);
-  int      increment = ((hash_val ^ item->_allchars_length) | 1) & (_size - 1);
+  unsigned hash_val = hashpjw (item->_selchars, item->_selchars_length);
+  unsigned int probe = hash_val & (_size - 1);
+  unsigned int increment =
+    (((hash_val >> _log_size)
+      ^ (_ignore_length ? 0 : item->_allchars_length))
+     << 1) + 1;
+  /* Note that because _size is a power of 2 and increment is odd,
+     we have gcd(increment,_size) = 1, which guarantees that we'll find
+     an empty entry during the loop.  */
 
-  while (_table[probe])
+  while (_table[probe] != NULL)
     {
-      if (_table[probe]->_selchars_length == item->_selchars_length
-          && memcmp (_table[probe]->_selchars, item->_selchars, item->_selchars_length) == 0
-          && (_ignore_length || _table[probe]->_allchars_length == item->_allchars_length))
+      if (equal (_table[probe], item))
         return _table[probe];
 
       _collisions++;
