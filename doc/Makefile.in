@@ -60,13 +60,13 @@ all : info dvi ps html
 
 info : $(srcdir)/gperf.info
 
-$(srcdir)/gperf.info : $(srcdir)/gperf.texi
+$(srcdir)/gperf.info : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 	cd $(srcdir) && $(MAKEINFO) --no-split gperf.texi
 
 
 dvi : $(srcdir)/gperf.dvi
 
-$(srcdir)/gperf.dvi : $(srcdir)/gperf.texi
+$(srcdir)/gperf.dvi : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log
 	cd $(srcdir) && $(TEXI2DVI) gperf.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log
@@ -80,10 +80,10 @@ $(srcdir)/gperf.ps : $(srcdir)/gperf.dvi
 
 html : gperf.html gperf_toc.html
 
-gperf.html : $(srcdir)/gperf.texi
+gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 	cd $(srcdir) && $(TEXI2HTML) -expandinfo -number -monolithic gperf.texi
 
-gperf_toc.html : $(srcdir)/gperf.texi
+gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 	cd $(srcdir) && $(RM) gperf_*.html
 	cd $(srcdir) && $(TEXI2HTML) -expandinfo -number -split_chapter gperf.texi
 

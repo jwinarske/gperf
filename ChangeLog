@@ -1,5 +1,13 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * COPYING: Replace with GPL version 2 (with new FSF address and Y2K safe
+          year format).
+
+        * doc/gpl.texinfo: New file.
+        * doc/gperf.texi: Document it.
+        * doc/Makefile.in (gperf.info, gperf.dvi, gperf.html, gperf_toc.html):
+          Update dependencies.
+
         * doc/Makefile.in (MAKEINFO): Unset LANG while running makeinfo.
 
 Sat May  2 13:20:54 1998  Bruno Haible  <bruno@linuix.mathematik.uni-karlsruhe.de>
