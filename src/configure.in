@@ -1,6 +1,6 @@
 dnl autoconf configuration for gperf/src
 
-dnl Copyright (C) 1998, 2000 Free Software Foundation, Inc.
+dnl Copyright (C) 1998, 2000, 2002 Free Software Foundation, Inc.
 dnl written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 dnl
 dnl This file is part of GNU GPERF.
@@ -42,16 +42,6 @@ dnl
 dnl
 dnl           checks for functions and declarations
 dnl
-AC_CHECK_HEADERS(unistd.h sys/time.h sys/resource.h)
-                      dnl DEFs HAVE_UNISTD_H, HAVE_SYS_TIME_H, HAVE_SYS_RESOURCE_H
-if test $ac_cv_header_sys_resource_h = yes; then
-AC_CHECK_FUNCS(getrlimit)
-                      dnl DEFS HAVE_GETRLIMIT
-if test $ac_cv_func_getrlimit = yes; then
-AC_CHECK_FUNCS(setrlimit)
-                      dnl DEFS HAVE_SETRLIMIT
-fi
-fi
 dnl
 dnl           checks for libraries
 dnl

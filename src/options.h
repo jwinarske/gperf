@@ -131,17 +131,6 @@ private:
 /* Global option coordinator for the entire program. */
 extern Options option;
 
-/* Set to 1 if your want to stack-allocate some large arrays.
-   This requires compiler support for variable-size arrays on the stack
-   (not ANSI). */
-#ifndef LARGE_STACK_ARRAYS
-#if defined(__GNUG__) && !defined(__STRICT_ANSI__)
-#define LARGE_STACK_ARRAYS 1
-#else
-#define LARGE_STACK_ARRAYS 0
-#endif
-#endif
-
 #ifdef __OPTIMIZE__
 
 #define INLINE inline

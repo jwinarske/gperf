@@ -21,20 +21,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 /* Simple driver program for the Gen_Perf.hash function generator.
    Most of the hard work is done in class Gen_Perf and its class methods. */
 
-#include "config.h"
-#include <sys/types.h>
-#if LARGE_STACK_ARRAYS && defined(HAVE_GETRLIMIT) && defined(HAVE_SETRLIMIT)
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
-#ifdef HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#endif
-
 #include <stdio.h>
 #include "options.h"
 #include "gen-perf.h"
@@ -42,19 +28,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 int
 main (int argc, char *argv[])
 {
-#if LARGE_STACK_ARRAYS && defined(HAVE_GETRLIMIT) && defined(HAVE_SETRLIMIT) && defined(RLIMIT_STACK)
-  /* Get rid of any avoidable limit on stack size.  */
-  {
-    struct rlimit rlim;
-    if (getrlimit (RLIMIT_STACK, &rlim) == 0)
-      if (rlim.rlim_cur < rlim.rlim_max)
-        {
-          rlim.rlim_cur = rlim.rlim_max;
-          setrlimit (RLIMIT_STACK, &rlim);
-        }
-  }
-#endif /* RLIMIT_STACK */
-
   /* Sets the Options. */
   option (argc, argv);
 

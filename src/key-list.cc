@@ -382,19 +382,8 @@ Key_List::read_keys (void)
 
       /* Hash table this number of times larger than keyword number. */
       int table_size = (list_len = total_keys) * TABLE_MULTIPLE;
-
-#if LARGE_STACK_ARRAYS
-      /* By allocating the memory here we save on dynamic allocation overhead.
-         Table must be a power of 2 for the hash function scheme to work. */
-      List_Node *table[POW (table_size)];
-#else
-      // Note: we don't use new, because that invokes a custom operator new.
-      int malloc_size = POW (table_size) * sizeof(List_Node*);
-      if (malloc_size == 0) malloc_size = 1;
-      List_Node **table = (List_Node**)malloc(malloc_size);
-      if (table == NULL)
-        abort ();
-#endif
+      /* Table must be a power of 2 for the hash function scheme to work. */
+      List_Node **table = new List_Node*[POW (table_size)];
 
       /* Make large hash table for efficiency. */
       Hash_Table found_link (table, table_size, option[NOLENGTH]);
@@ -436,9 +425,7 @@ Key_List::read_keys (void)
             min_key_len = temp->key_length;
         }
 
-#if !LARGE_STACK_ARRAYS
-      free ((char *) table);
-#endif
+      delete[] table;
 
       /* Exit program if links exists and option[DUP] not set, since we can't continue */
       if (total_duplicates)
@@ -1338,18 +1325,8 @@ Key_List::output_lookup_array (void)
           int count;       /* Number of consecutive duplicates at this index. */
         };
 
-#if LARGE_STACK_ARRAYS
-      duplicate_entry duplicates[total_duplicates];
-      int lookup_array[max_hash_value + 1 + 2*total_duplicates];
-#else
-      // Note: we don't use new, because that invokes a custom operator new.
-      duplicate_entry *duplicates = (duplicate_entry *)
-        malloc (total_duplicates * sizeof(duplicate_entry) + 1);
-      int *lookup_array = (int *)
-        malloc ((max_hash_value + 1 + 2*total_duplicates) * sizeof(int));
-      if (duplicates == NULL || lookup_array == NULL)
-        abort();
-#endif
+      duplicate_entry *duplicates = new duplicate_entry[total_duplicates];
+      int *lookup_array = new int[max_hash_value + 1 + 2*total_duplicates];
       int lookup_array_size = max_hash_value + 1;
       duplicate_entry *dup_ptr = &duplicates[0];
       int *lookup_ptr = &lookup_array[max_hash_value + 1 + 2*total_duplicates];
@@ -1486,10 +1463,8 @@ Key_List::output_lookup_array (void)
         }
       printf ("\n%s  };\n\n", indent);
 
-#if !LARGE_STACK_ARRAYS
-      free ((char *) duplicates);
-      free ((char *) lookup_array);
-#endif
+      delete[] duplicates;
+      delete[] lookup_array;
     }
 }
 

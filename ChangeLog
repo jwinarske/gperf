@@ -1,5 +1,14 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/key-list.cc (Key_List::read_keys): Allocate the memory for the
+	hash table using 'new'.
+	(Key_List::output_lookup_array): Allocate the memory for the duplicates
+	array using 'new'.
+	* src/options.h (LARGE_STACK_ARRAYS): Remove definition.
+	* src/main.cc (main): Remove setrlimit call.
+	* src/configure.in: Don't test for unistd.h, sys/time.h,
+	sys/resource.h, getrlimit, setrlimit.
+
 	* src/bool-array.h (Bool_Array): Make all members non-static.
 	Add an argument to the constructor. Remove init(), rename reset() to
 	clear(), rename find() to set_bit().
