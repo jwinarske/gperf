@@ -1,5 +1,50 @@
 2002-12-08  Bruno Haible  <bruno@clisp.org>
 
+	Completely new asso_values search algorithm.
+	* src/search.h (Search::compute_occurrence, Search::clear_determined,
+	Search::set_determined, Search::already_determined, Search::reorder):
+	Remove functions.
+	(Search::init_asso_values, Search::sort_by_occurrence,
+	Search::compute_occurrence, Search::sort_by_occurrence,
+	Search::has_collisions, Search::collision_prior_to): Remove functions.
+	(Search::compute_partition, Search::count_possible_collisions,
+	Search::unchanged_partition): New method declarations.
+	(Search::_determined): Remove field.
+	* src/search.cc (Search::prepare): Don't initialize _determined.
+	(Search::compute_occurrence, greater_by_occurrence,
+	Search::clear_determined, Search::set_determined,
+	Search::already_determined, Search::reorder): Remove functions.
+	(Search::init_asso_values, compute_disjoint_union,
+	Search::sort_by_occurrence, Search::compute_occurrence,
+	Search::sort_by_occurrence, Search::has_collisions,
+	Search::collision_prior_to): Remove functions.
+	(StackEntry): Remove class.
+	(EquivalenceClass, Step): New classes.
+	(equals, Search::compute_partition, delete_partition,
+	Search::count_possible_collisions, Search::unchanged_partition): New
+	functions.
+	(Search::find_asso_values): Completely rewritten.
+	(Search::find_good_asso_values): Don't call reorder().
+	(Search::~Search): Don't free _determined.
+	* src/keyword.h (KeywordExt::_occurrence): Remove field.
+	* src/options.h (ORDER, FAST, OPT_CHOICE): Remove enum values.
+	(Options::_iterations): Remove field.
+	* src/options.icc (Options::get_iterations): Remove method.
+	* src/options.cc (Options::long_usage): Remove mention of -f and -o.
+	(Options::Options): Don't initialize _iterations.
+	(Options::~Options): Update.
+	(Options::parse_options): Do nothing for options -f, -o, -O.
+	* doc/gperf.texi: (Contributors): Update.
+	(Algorithmic Details): Remove options -f and -o. Update description
+	of option -s.
+	* tests/c-parse.exp, tests/chill.exp, tests/cplusplus.exp,
+	tests/gpc.exp, tests/java.exp, tests/modula2.exp, tests/objc.exp,
+	tests/test-4.exp): Regenerated, smaller than before.
+	* tests/test-6.exp: Update.
+	* NEWS: Update.
+
+2002-12-08  Bruno Haible  <bruno@clisp.org>
+
 	* src/search.h (Search::_alpha_size): Change type to 'unsigned int'.
 	(Search::_asso_value_max): Likewise.
 	* src/search.cc (Search::prepare_asso_values): Update.

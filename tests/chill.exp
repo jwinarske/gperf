@@ -7,7 +7,7 @@ struct resword {
   enum toktype { RESERVED, DIRECTIVE, PREDEF } flags;
 };
 extern tree ridpointers [];
-/* maximum key range = 2275, duplicates = 0 */
+/* maximum key range = 1046, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -23,32 +23,32 @@ hash (str, len)
 {
   static unsigned short asso_values[] =
     {
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291,  300,    9,   14,   11,    1,
-        16,  321,    2,   33,  199,    9,    7,   99,   64,   56,
-        93,    7,    7,  123,    1,  122,   10,    8,   71,   45,
-        26, 2291, 2291, 2291, 2291,    1, 2291,  126,   89,   22,
-       204,    1,  230,  158,    1,    7,   71,    2,  125,   17,
-         6,   25,   13,    7,    4,   71,    1,  157,   14,  122,
-         4,  132,   66, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291, 2291,
-      2291, 2291, 2291, 2291, 2291, 2291, 2291
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050,   40,   45,   59,   88,   61,
+        11,  128,    5,    2,  199,    8,  102,  101,    8,   11,
+        24,   33,   11,   13,    4,   34,   10,  105,   83,   75,
+       155, 1050, 1050, 1050, 1050,    5, 1050,   10,   33,   19,
+        43,   14,    4,   52,    1,    1,  232,  116,   28,   78,
+         7,    2,    1,   63,    5,    3,    1,   10,  143,  186,
+       244,   75,  139, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050, 1050,
+      1050, 1050, 1050, 1050, 1050, 1050, 1050
     };
   register int hval = len;
 
@@ -133,312 +133,312 @@ in_word_set (str, len)
       TOTAL_KEYWORDS = 300,
       MIN_WORD_LENGTH = 2,
       MAX_WORD_LENGTH = 30,
-      MIN_HASH_VALUE = 16,
-      MAX_HASH_VALUE = 2290
+      MIN_HASH_VALUE = 4,
+      MAX_HASH_VALUE = 1049
     };
 
   static struct resword wordlist[] =
     {
       {"to",			TO,			NORID,	RESERVED},
-      {"then",			THEN,			NORID,	RESERVED},
-      {"EVER",			EVER,			NORID,	RESERVED},
-      {"not",			NOT,			NORID,	RESERVED},
-      {"xor",			XOR,			NORID,	RESERVED},
-      {"od",			OD,			NORID,	RESERVED},
-      {"DCL",			DCL,			NORID,	RESERVED},
       {"in",			IN,			RID_IN,	RESERVED},
-      {"FAR",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"BY",			BY,			NORID,	RESERVED},
-      {"CALL",			CALL,			NORID,	RESERVED},
-      {"REF",			REF,			NORID,	RESERVED},
-      {"out",			PARAMATTR,		RID_OUT,	RESERVED},
-      {"init",			INIT,			NORID,	RESERVED},
       {"on",			ON,			NORID,	RESERVED},
-      {"context",		CONTEXT,		NORID,	RESERVED},
-      {"OD",			OD,			NORID,	RESERVED},
-      {"BUFFER",			BUFFER,			NORID,	RESERVED},
-      {"CYCLE",			CYCLE,			NORID,	RESERVED},
-      {"OUT",			PARAMATTR,		RID_OUT,	RESERVED},
-      {"END",			END,			NORID,	RESERVED},
-      {"EVEN",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"EVENT",			EVENT,			NORID,	RESERVED},
-      {"EXIT",			EXIT,			NORID,	RESERVED},
-      {"WHILE",			WHILE,			NORID,	RESERVED},
-      {"RECEIVE",		RECEIVE,		NORID,	RESERVED},
-      {"this",			THIS,			NORID,	RESERVED},
-      {"IN",			IN,			RID_IN,	RESERVED},
-      {"TEXT",			TEXT,			NORID,	RESERVED},
-      {"else",			ELSE,			NORID,	RESERVED},
-      {"TO",			TO,			NORID,	RESERVED},
       {"or",			OR,			NORID,	RESERVED},
       {"pos",			POS,			NORID,	RESERVED},
-      {"THEN",			THEN,			NORID,	RESERVED},
-      {"spec",			SPEC,			NORID,	RESERVED},
-      {"DO",			DO,			NORID,	RESERVED},
-      {"ROW",			ROW,			NORID,	RESERVED},
-      {"ON",			ON,			NORID,	RESERVED},
-      {"LOC",			LOC,			NORID,	RESERVED},
-      {"FOR",			FOR,			NORID,	RESERVED},
-      {"REM",			REM,			NORID,	RESERVED},
-      {"INIT",			INIT,			NORID,	RESERVED},
-      {"PACK",			PACK,			NORID,	RESERVED},
-      {"pack",			PACK,			NORID,	RESERVED},
-      {"UP",			UP,			NORID,	RESERVED},
-      {"ever",			EVER,			NORID,	RESERVED},
-      {"even",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"proc",			PROC,			NORID,	RESERVED},
-      {"event",			EVENT,			NORID,	RESERVED},
-      {"optimize",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"row",			ROW,			NORID,	RESERVED},
-      {"SET",			SET,			NORID,	RESERVED},
-      {"exit",			EXIT,			NORID,	RESERVED},
-      {"syn",			SYN,			NORID,	RESERVED},
-      {"asm",			ASM_KEYWORD,		NORID,	RESERVED},
-      {"SPEC",			SPEC,			NORID,	RESERVED},
-      {"CASE",			CASE,			NORID,	RESERVED},
-      {"BUFFER_CODE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"esac",			ESAC,			NORID,	RESERVED},
-      {"by",			BY,			NORID,	RESERVED},
-      {"BASED",			BASED,			NORID,	RESERVED},
-      {"NOT",			NOT,			NORID,	RESERVED},
-      {"BODY",			BODY,			NORID,	RESERVED},
-      {"loc",			LOC,			NORID,	RESERVED},
-      {"bit",			BOOLS,			RID_BOOLS,	PREDEF},
-      {"up",			UP,			NORID,	RESERVED},
-      {"if",			IF,			NORID,	RESERVED},
-      {"EVENT_CODE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"bin",			BIN,			NORID,	RESERVED},
-      {"XOR",			XOR,			NORID,	RESERVED},
-      {"FORBID",			FORBID,			NORID,	RESERVED},
-      {"inline",			INLINE,			RID_INLINE,	RESERVED},
-      {"DOWN",			DOWN,			NORID,	RESERVED},
-      {"OR",			OR,			NORID,	RESERVED},
-      {"of",			OF,			NORID,	RESERVED},
-      {"REMOTE",			REMOTE,			NORID,	RESERVED},
-      {"case",			CASE,			NORID,	RESERVED},
-      {"nopack",			NOPACK,			NORID,	RESERVED},
-      {"empty_on",		EMPTY_ON,		NORID,	DIRECTIVE},
-      {"THIS",			THIS,			NORID,	RESERVED},
-      {"with",			WITH,			NORID,	RESERVED},
-      {"INLINE",			INLINE,			RID_INLINE,	RESERVED},
-      {"goto",			GOTO,			NORID,	RESERVED},
-      {"SEIZE",			SEIZE,			NORID,	RESERVED},
-      {"MOD",			MOD,			NORID,	RESERVED},
-      {"assert",			ASSERT,			NORID,	RESERVED},
-      {"BIT",			BOOLS,			RID_BOOLS,	PREDEF},
-      {"WITH",			WITH,			NORID,	RESERVED},
-      {"SYN",			SYN,			NORID,	RESERVED},
-      {"FI",			FI,			NORID,	RESERVED},
-      {"SEND",			SEND,			NORID,	RESERVED},
-      {"do",			DO,			NORID,	RESERVED},
-      {"inout",			PARAMATTR,		RID_INOUT,	RESERVED},
-      {"continue",		CONTINUE,		NORID,	RESERVED},
-      {"RETURN",			RETURN,			NORID,	RESERVED},
-      {"ELSE",			ELSE,			NORID,	RESERVED},
-      {"nolist",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"ORIF",			ORIF,			NORID,	RESERVED},
-      {"end",			END,			NORID,	RESERVED},
-      {"powerset",		POWERSET,		NORID,	RESERVED},
-      {"chars",			CHARS,			NORID,	RESERVED},
-      {"mod",			MOD,			NORID,	RESERVED},
-      {"text",			TEXT,			NORID,	RESERVED},
-      {"cycle",			CYCLE,			NORID,	RESERVED},
-      {"step",			STEP,			NORID,	RESERVED},
-      {"CCITT_OS",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"for",			FOR,			NORID,	RESERVED},
-      {"NONREF",			NONREF,			NORID,	RESERVED},
-      {"CONTEXT",		CONTEXT,		NORID,	RESERVED},
-      {"rem",			REM,			NORID,	RESERVED},
-      {"NEWMODE",		NEWMODE,		NORID,	RESERVED},
-      {"range",			RANGE,			NORID,	RESERVED},
-      {"OPTIMIZE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"page",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"nonref",			NONREF,			NORID,	RESERVED},
-      {"while",			WHILE,			NORID,	RESERVED},
-      {"priority",		PRIORITY,		NORID,	RESERVED},
-      {"stop",			STOP,			NORID,	RESERVED},
-      {"all",			ALL,			NORID,	RESERVED},
-      {"list",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"INOUT",			PARAMATTR,		RID_INOUT,	RESERVED},
-      {"CAUSE",			CAUSE,			NORID,	RESERVED},
-      {"BIN",			BIN,			NORID,	RESERVED},
-      {"ELSIF",			ELSIF,			NORID,	RESERVED},
-      {"timeout",		TIMEOUT,		NORID,	RESERVED},
-      {"process",		PROCESS,		NORID,	RESERVED},
-      {"RESULT",			RESULT,			NORID,	RESERVED},
-      {"remote",			REMOTE,			NORID,	RESERVED},
-      {"at",			AT,			NORID,	RESERVED},
-      {"receive",		RECEIVE,		NORID,	RESERVED},
-      {"exceptions",		EXCEPTIONS,		NORID,	RESERVED},
-      {"PROC",			PROC,			NORID,	RESERVED},
-      {"BOOLS",			BOOLS,			RID_BOOLS,	RESERVED},
-      {"after",			AFTER,			NORID,	RESERVED},
-      {"range_on",		RANGE_ON,		NORID,	DIRECTIVE},
-      {"EMPTY_OFF",		EMPTY_OFF,		NORID,	DIRECTIVE},
-      {"fi",			FI,			NORID,	RESERVED},
-      {"simple",			SIMPLE,			NORID,	RESERVED},
+      {"init",			INIT,			NORID,	RESERVED},
+      {"this",			THIS,			NORID,	RESERVED},
       {"set",			SET,			NORID,	RESERVED},
-      {"POS",			POS,			NORID,	RESERVED},
-      {"ESAC",			ESAC,			NORID,	RESERVED},
-      {"far",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"NOLIST",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"bools",			BOOLS,			RID_BOOLS,	RESERVED},
-      {"elsif",			ELSIF,			NORID,	RESERVED},
-      {"EMPTY_ON",		EMPTY_ON,		NORID,	DIRECTIVE},
-      {"LIST",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"POWERSET",		POWERSET,		NORID,	RESERVED},
+      {"not",			NOT,			NORID,	RESERVED},
+      {"for",			FOR,			NORID,	RESERVED},
       {"orif",			ORIF,			NORID,	RESERVED},
-      {"READ",			READ,			RID_READ,	RESERVED},
-      {"MODULE",			MODULE,			NORID,	RESERVED},
-      {"ccitt_os",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"optimize_runtime",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"RECURSIVE",		RECURSIVE,		NORID,	RESERVED},
-      {"STEP",			STEP,			NORID,	RESERVED},
-      {"cause",			CAUSE,			NORID,	RESERVED},
-      {"RETURNS",		RETURNS,		NORID,	RESERVED},
-      {"down",			DOWN,			NORID,	RESERVED},
-      {"LARGE",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"IF",			IF,			NORID,	RESERVED},
-      {"PREFIXED",		PREFIXED,		NORID,	RESERVED},
-      {"and",			AND,			NORID,	RESERVED},
-      {"start",			START,			NORID,	RESERVED},
-      {"call",			CALL,			NORID,	RESERVED},
-      {"grant",			GRANT,			NORID,	RESERVED},
-      {"AND",			AND,			NORID,	RESERVED},
-      {"OF",			OF,			NORID,	RESERVED},
-      {"seize",			SEIZE,			NORID,	RESERVED},
-      {"USE_SEIZE_FILE",		USE_SEIZE_FILE,		NORID,	DIRECTIVE},
-      {"large",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"DELAY",			DELAY,			NORID,	RESERVED},
-      {"MEDIUM",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"SYNMODE",		SYNMODE,		NORID,	RESERVED},
-      {"reentrant",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"print_o_code",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"static",			STATIC,			NORID,	RESERVED},
-      {"no_overlap_check",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"event_code",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"STRUCT",			STRUCT,			NORID,	RESERVED},
-      {"synmode",		SYNMODE,		NORID,	RESERVED},
-      {"STOP",			STOP,			NORID,	RESERVED},
-      {"PRIORITY",		PRIORITY,		NORID,	RESERVED},
-      {"CONTINUE",		CONTINUE,		NORID,	RESERVED},
-      {"ASM",			ASM_KEYWORD,		NORID,	RESERVED},
-      {"RANGE",			RANGE,			NORID,	RESERVED},
-      {"return",			RETURN,			NORID,	RESERVED},
-      {"ALL",			ALL,			NORID,	RESERVED},
-      {"varying",		VARYING,		NORID,	RESERVED},
-      {"struct",			STRUCT,			NORID,	RESERVED},
-      {"ANDIF",			ANDIF,			NORID,	RESERVED},
-      {"AT",			AT,			NORID,	RESERVED},
-      {"PAGE",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"process_type",		PROCESS_TYPE_TOKEN,	NORID,	DIRECTIVE},
-      {"region",			REGION,			NORID,	RESERVED},
-      {"ASSERT",			ASSERT,			NORID,	RESERVED},
-      {"EXCEPTIONS",		EXCEPTIONS,		NORID,	RESERVED},
-      {"body",			BODY,			NORID,	RESERVED},
-      {"BEGIN",			BEGINTOKEN,		NORID,	RESERVED},
-      {"dynamic",		DYNAMIC,		RID_DYNAMIC,	RESERVED},
-      {"small",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"based",			BASED,			NORID,	RESERVED},
-      {"array",			ARRAY,			NORID,	RESERVED},
-      {"PRINT_O_CODE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"IN",			IN,			RID_IN,	RESERVED},
       {"ref",			REF,			NORID,	RESERVED},
-      {"REENTRANT",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"GOTO",			GOTO,			NORID,	RESERVED},
+      {"od",			OD,			NORID,	RESERVED},
+      {"stop",			STOP,			NORID,	RESERVED},
+      {"inout",			PARAMATTR,		RID_INOUT,	RESERVED},
+      {"at",			AT,			NORID,	RESERVED},
+      {"INIT",			INIT,			NORID,	RESERVED},
+      {"ON",			ON,			NORID,	RESERVED},
+      {"THIS",			THIS,			NORID,	RESERVED},
+      {"OR",			OR,			NORID,	RESERVED},
+      {"then",			THEN,			NORID,	RESERVED},
+      {"OUT",			PARAMATTR,		RID_OUT,	RESERVED},
+      {"proc",			PROC,			NORID,	RESERVED},
+      {"TO",			TO,			NORID,	RESERVED},
+      {"SET",			SET,			NORID,	RESERVED},
+      {"step",			STEP,			NORID,	RESERVED},
+      {"start",			START,			NORID,	RESERVED},
+      {"REF",			REF,			NORID,	RESERVED},
+      {"return",			RETURN,			NORID,	RESERVED},
+      {"NOT",			NOT,			NORID,	RESERVED},
+      {"assert",			ASSERT,			NORID,	RESERVED},
+      {"ORIF",			ORIF,			NORID,	RESERVED},
       {"returns",		RETURNS,		NORID,	RESERVED},
-      {"CHARS",			CHARS,			NORID,	RESERVED},
-      {"TIMEOUT",		TIMEOUT,		NORID,	RESERVED},
-      {"begin",			BEGINTOKEN,		NORID,	RESERVED},
-      {"VARYING",		VARYING,		NORID,	RESERVED},
-      {"RANGE_OFF",		RANGE_OFF,		NORID,	DIRECTIVE},
-      {"access",			ACCESS,			NORID,	RESERVED},
-      {"REGION",			REGION,			NORID,	RESERVED},
-      {"SMALL",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"send",			SEND,			NORID,	RESERVED},
-      {"recursive",		RECURSIVE,		NORID,	RESERVED},
-      {"module",			MODULE,			NORID,	RESERVED},
-      {"SIMPLE",			SIMPLE,			NORID,	RESERVED},
-      {"RANGE_ON",		RANGE_ON,		NORID,	DIRECTIVE},
-      {"dcl",			DCL,			NORID,	RESERVED},
-      {"prefixed",		PREFIXED,		NORID,	RESERVED},
-      {"PROCESS",		PROCESS,		NORID,	RESERVED},
-      {"all_static_on",		ALL_STATIC_ON,		NORID,	DIRECTIVE},
-      {"forbid",			FORBID,			NORID,	RESERVED},
-      {"DYNAMIC",		DYNAMIC,		RID_DYNAMIC,	RESERVED},
-      {"START",			START,			NORID,	RESERVED},
-      {"signal",			SIGNAL,			NORID,	RESERVED},
-      {"read",			READ,			RID_READ,	RESERVED},
-      {"state_routine",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"buffer",			BUFFER,			NORID,	RESERVED},
-      {"ACCESS",			ACCESS,			NORID,	RESERVED},
-      {"NOPACK",			NOPACK,			NORID,	RESERVED},
-      {"USE_SEIZE_FILE_RESTRICTED",	USE_SEIZE_FILE_RESTRICTED,	NORID,	DIRECTIVE},
+      {"chars",			CHARS,			NORID,	RESERVED},
+      {"nonref",			NONREF,			NORID,	RESERVED},
+      {"far",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"do",			DO,			NORID,	RESERVED},
+      {"nolist",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"esac",			ESAC,			NORID,	RESERVED},
+      {"FOR",			FOR,			NORID,	RESERVED},
+      {"static",			STATIC,			NORID,	RESERVED},
+      {"loc",			LOC,			NORID,	RESERVED},
+      {"process",		PROCESS,		NORID,	RESERVED},
+      {"struct",			STRUCT,			NORID,	RESERVED},
+      {"if",			IF,			NORID,	RESERVED},
+      {"of",			OF,			NORID,	RESERVED},
       {"result",			RESULT,			NORID,	RESERVED},
+      {"and",			AND,			NORID,	RESERVED},
+      {"inline",			INLINE,			RID_INLINE,	RESERVED},
+      {"goto",			GOTO,			NORID,	RESERVED},
+      {"send",			SEND,			NORID,	RESERVED},
+      {"end",			END,			NORID,	RESERVED},
+      {"reentrant",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"POS",			POS,			NORID,	RESERVED},
       {"andif",			ANDIF,			NORID,	RESERVED},
-      {"STATIC",			STATIC,			NORID,	RESERVED},
-      {"OPTIMIZE_RUNTIME",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"newmode",		NEWMODE,		NORID,	RESERVED},
-      {"short_pred_succ",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"SHORT_PRED_SUCC",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"AFTER",			AFTER,			NORID,	RESERVED},
-      {"extra_const_seg",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"medium",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"read",			READ,			RID_READ,	RESERVED},
+      {"INOUT",			PARAMATTR,		RID_INOUT,	RESERVED},
+      {"continue",		CONTINUE,		NORID,	RESERVED},
+      {"UP",			UP,			NORID,	RESERVED},
+      {"FAR",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"bools",			BOOLS,			RID_BOOLS,	RESERVED},
+      {"case",			CASE,			NORID,	RESERVED},
+      {"OD",			OD,			NORID,	RESERVED},
+      {"up",			UP,			NORID,	RESERVED},
+      {"AT",			AT,			NORID,	RESERVED},
+      {"region",			REGION,			NORID,	RESERVED},
+      {"grant",			GRANT,			NORID,	RESERVED},
+      {"THEN",			THEN,			NORID,	RESERVED},
+      {"small",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"ccitt_os",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"cause",			CAUSE,			NORID,	RESERVED},
+      {"RETURN",			RETURN,			NORID,	RESERVED},
+      {"STOP",			STOP,			NORID,	RESERVED},
+      {"after",			AFTER,			NORID,	RESERVED},
+      {"rem",			REM,			NORID,	RESERVED},
+      {"asm",			ASM_KEYWORD,		NORID,	RESERVED},
+      {"forbid",			FORBID,			NORID,	RESERVED},
+      {"exit",			EXIT,			NORID,	RESERVED},
+      {"state_routine",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"priority",		PRIORITY,		NORID,	RESERVED},
+      {"access",			ACCESS,			NORID,	RESERVED},
+      {"RETURNS",		RETURNS,		NORID,	RESERVED},
+      {"begin",			BEGINTOKEN,		NORID,	RESERVED},
+      {"spec",			SPEC,			NORID,	RESERVED},
+      {"page",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"elsif",			ELSIF,			NORID,	RESERVED},
+      {"TEXT",			TEXT,			NORID,	RESERVED},
+      {"START",			START,			NORID,	RESERVED},
+      {"array",			ARRAY,			NORID,	RESERVED},
+      {"remote",			REMOTE,			NORID,	RESERVED},
+      {"PROC",			PROC,			NORID,	RESERVED},
+      {"call",			CALL,			NORID,	RESERVED},
+      {"else",			ELSE,			NORID,	RESERVED},
+      {"DO",			DO,			NORID,	RESERVED},
+      {"print_o_code",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"range",			RANGE,			NORID,	RESERVED},
+      {"dcl",			DCL,			NORID,	RESERVED},
+      {"all",			ALL,			NORID,	RESERVED},
+      {"empty_on",		EMPTY_ON,		NORID,	DIRECTIVE},
+      {"XOR",			XOR,			NORID,	RESERVED},
       {"empty_off",		EMPTY_OFF,		NORID,	DIRECTIVE},
+      {"SEND",			SEND,			NORID,	RESERVED},
+      {"mod",			MOD,			NORID,	RESERVED},
+      {"REM",			REM,			NORID,	RESERVED},
       {"general",		GENERAL,		NORID,	RESERVED},
-      {"use_seize_file",		USE_SEIZE_FILE,		NORID,	DIRECTIVE},
-      {"PROCESS_TYPE",		PROCESS_TYPE_TOKEN,	NORID,	DIRECTIVE},
-      {"NO_OVERLAP_CHECK",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"DEBUG_LINES",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"GENERAL",		GENERAL,		NORID,	RESERVED},
-      {"multiple_const_segs",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"NONREF",			NONREF,			NORID,	RESERVED},
+      {"CHARS",			CHARS,			NORID,	RESERVED},
+      {"based",			BASED,			NORID,	RESERVED},
+      {"IF",			IF,			NORID,	RESERVED},
+      {"range_on",		RANGE_ON,		NORID,	DIRECTIVE},
       {"range_off",		RANGE_OFF,		NORID,	DIRECTIVE},
-      {"DEBUG_TYPES",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"STEP",			STEP,			NORID,	RESERVED},
+      {"large",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
       {"reentrant_all",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"ARRAY",			ARRAY,			NORID,	RESERVED},
-      {"REENTRANT_ALL",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"optimization_window",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"GRANT",			GRANT,			NORID,	RESERVED},
-      {"signal_code",		SIGNAL_CODE,		NORID,	DIRECTIVE},
+      {"ASSERT",			ASSERT,			NORID,	RESERVED},
+      {"PACK",			PACK,			NORID,	RESERVED},
+      {"OF",			OF,			NORID,	RESERVED},
+      {"AND",			AND,			NORID,	RESERVED},
+      {"ROW",			ROW,			NORID,	RESERVED},
+      {"EXIT",			EXIT,			NORID,	RESERVED},
+      {"exceptions",		EXCEPTIONS,		NORID,	RESERVED},
+      {"ASM",			ASM_KEYWORD,		NORID,	RESERVED},
+      {"out",			PARAMATTR,		RID_OUT,	RESERVED},
+      {"PRIORITY",		PRIORITY,		NORID,	RESERVED},
+      {"short_pred_succ",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"syn",			SYN,			NORID,	RESERVED},
+      {"process_type",		PROCESS_TYPE_TOKEN,	NORID,	DIRECTIVE},
+      {"READ",			READ,			RID_READ,	RESERVED},
+      {"BUFFER",			BUFFER,			NORID,	RESERVED},
+      {"body",			BODY,			NORID,	RESERVED},
+      {"ANDIF",			ANDIF,			NORID,	RESERVED},
+      {"STATIC",			STATIC,			NORID,	RESERVED},
+      {"NOLIST",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"nopack",			NOPACK,			NORID,	RESERVED},
+      {"STRUCT",			STRUCT,			NORID,	RESERVED},
+      {"END",			END,			NORID,	RESERVED},
       {"delay",			DELAY,			NORID,	RESERVED},
-      {"buffer_code",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"generate_set_names",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"STATE_ROUTINE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"only_for_target",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"grant_file_size",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"ONLY_FOR_TARGET",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"OPTIMIZATION_WINDOW",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"print_symbol_table",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"DEBUG_SYMBOLS",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"ALL_STATIC_OFF",		ALL_STATIC_OFF,		NORID,  DIRECTIVE},
-      {"PRINT_SYMBOL_TABLE",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"seize",			SEIZE,			NORID,	RESERVED},
+      {"REENTRANT",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"ESAC",			ESAC,			NORID,	RESERVED},
+      {"NOPACK",			NOPACK,			NORID,	RESERVED},
+      {"SPEC",			SPEC,			NORID,	RESERVED},
+      {"GOTO",			GOTO,			NORID,	RESERVED},
+      {"pack",			PACK,			NORID,	RESERVED},
+      {"by",			BY,			NORID,	RESERVED},
+      {"REGION",			REGION,			NORID,	RESERVED},
+      {"SYN",			SYN,			NORID,	RESERVED},
+      {"module",			MODULE,			NORID,	RESERVED},
+      {"RESULT",			RESULT,			NORID,	RESERVED},
+      {"CASE",			CASE,			NORID,	RESERVED},
+      {"all_static_on",		ALL_STATIC_ON,		NORID,	DIRECTIVE},
+      {"ARRAY",			ARRAY,			NORID,	RESERVED},
       {"all_static_off",		ALL_STATIC_OFF,		NORID,  DIRECTIVE},
-      {"use_seize_file_restricted",	USE_SEIZE_FILE_RESTRICTED,	NORID,	DIRECTIVE},
-      {"ALL_STATIC_ON",		ALL_STATIC_ON,		NORID,	DIRECTIVE},
-      {"signal_max_length",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"SIGNAL",			SIGNAL,			NORID,	RESERVED},
+      {"FORBID",			FORBID,			NORID,	RESERVED},
+      {"LOC",			LOC,			NORID,	RESERVED},
+      {"INLINE",			INLINE,			RID_INLINE,	RESERVED},
+      {"ELSIF",			ELSIF,			NORID,	RESERVED},
+      {"CCITT_OS",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"row",			ROW,			NORID,	RESERVED},
+      {"GRANT",			GRANT,			NORID,	RESERVED},
+      {"BEGIN",			BEGINTOKEN,		NORID,	RESERVED},
+      {"BOOLS",			BOOLS,			RID_BOOLS,	RESERVED},
+      {"PROCESS",		PROCESS,		NORID,	RESERVED},
+      {"BY",			BY,			NORID,	RESERVED},
+      {"EMPTY_ON",		EMPTY_ON,		NORID,	DIRECTIVE},
+      {"REMOTE",			REMOTE,			NORID,	RESERVED},
+      {"receive",		RECEIVE,		NORID,	RESERVED},
+      {"CONTINUE",		CONTINUE,		NORID,	RESERVED},
+      {"buffer",			BUFFER,			NORID,	RESERVED},
       {"debug_lines",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"GRANT_FILE_SIZE",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"FI",			FI,			NORID,	RESERVED},
+      {"recursive",		RECURSIVE,		NORID,	RESERVED},
+      {"MOD",			MOD,			NORID,	RESERVED},
+      {"CAUSE",			CAUSE,			NORID,	RESERVED},
+      {"EMPTY_OFF",		EMPTY_OFF,		NORID,	DIRECTIVE},
+      {"medium",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"RECURSIVE",		RECURSIVE,		NORID,	RESERVED},
+      {"RECEIVE",		RECEIVE,		NORID,	RESERVED},
+      {"ever",			EVER,			NORID,	RESERVED},
+      {"cycle",			CYCLE,			NORID,	RESERVED},
+      {"even",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"only_for_target",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"event",			EVENT,			NORID,	RESERVED},
+      {"DOWN",			DOWN,			NORID,	RESERVED},
+      {"extra_const_seg",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"powerset",		POWERSET,		NORID,	RESERVED},
+      {"while",			WHILE,			NORID,	RESERVED},
+      {"BODY",			BODY,			NORID,	RESERVED},
+      {"fi",			FI,			NORID,	RESERVED},
+      {"EVEN",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"ELSE",			ELSE,			NORID,	RESERVED},
+      {"down",			DOWN,			NORID,	RESERVED},
+      {"EVER",			EVER,			NORID,	RESERVED},
+      {"EVENT",			EVENT,			NORID,	RESERVED},
+      {"ALL",			ALL,			NORID,	RESERVED},
+      {"SEIZE",			SEIZE,			NORID,	RESERVED},
+      {"AFTER",			AFTER,			NORID,	RESERVED},
+      {"CONTEXT",		CONTEXT,		NORID,	RESERVED},
+      {"BIT",			BOOLS,			RID_BOOLS,	PREDEF},
       {"debug_types",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"EXTRA_CONST_SEG",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"multiple_data_segs",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"MULTIPLE_CONST_SEGS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"ONLY_FOR_SIMULATION",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"SIGNAL_CODE",		SIGNAL_CODE,		NORID,	DIRECTIVE},
+      {"xor",			XOR,			NORID,	RESERVED},
+      {"text",			TEXT,			NORID,	RESERVED},
+      {"BIN",			BIN,			NORID,	RESERVED},
+      {"BASED",			BASED,			NORID,	RESERVED},
+      {"RANGE",			RANGE,			NORID,	RESERVED},
+      {"PAGE",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"generate_set_names",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"use_seize_file",		USE_SEIZE_FILE,		NORID,	DIRECTIVE},
+      {"list",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"bit",			BOOLS,			RID_BOOLS,	PREDEF},
+      {"SMALL",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"bin",			BIN,			NORID,	RESERVED},
+      {"WHILE",			WHILE,			NORID,	RESERVED},
+      {"ACCESS",			ACCESS,			NORID,	RESERVED},
+      {"DCL",			DCL,			NORID,	RESERVED},
+      {"RANGE_ON",		RANGE_ON,		NORID,	DIRECTIVE},
+      {"VARYING",		VARYING,		NORID,	RESERVED},
       {"only_for_simulation",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"SEND_BUFFER_DEFAULT_PRIORITY",	SEND_BUFFER_DEFAULT_PRIORITY,	NORID,	DIRECTIVE},
-      {"MAKE_PUBLICS_FOR_DISCRETE_SYNS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"synmode",		SYNMODE,		NORID,	RESERVED},
+      {"context",		CONTEXT,		NORID,	RESERVED},
+      {"buffer_code",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"RANGE_OFF",		RANGE_OFF,		NORID,	DIRECTIVE},
+      {"STATE_ROUTINE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"grant_file_size",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"PRINT_O_CODE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"dynamic",		DYNAMIC,		RID_DYNAMIC,	RESERVED},
+      {"optimize",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"POWERSET",		POWERSET,		NORID,	RESERVED},
+      {"CALL",			CALL,			NORID,	RESERVED},
+      {"event_code",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"WITH",			WITH,			NORID,	RESERVED},
+      {"DELAY",			DELAY,			NORID,	RESERVED},
+      {"LIST",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"varying",		VARYING,		NORID,	RESERVED},
+      {"EXCEPTIONS",		EXCEPTIONS,		NORID,	RESERVED},
+      {"prefixed",		PREFIXED,		NORID,	RESERVED},
+      {"signal",			SIGNAL,			NORID,	RESERVED},
       {"generate_all_set_names",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"newmode",		NEWMODE,		NORID,	RESERVED},
+      {"MEDIUM",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"timeout",		TIMEOUT,		NORID,	RESERVED},
+      {"print_symbol_table",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"PREFIXED",		PREFIXED,		NORID,	RESERVED},
+      {"LARGE",			IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"simple",			SIMPLE,			NORID,	RESERVED},
+      {"GENERAL",		GENERAL,		NORID,	RESERVED},
+      {"send_buffer_default_priority",	SEND_BUFFER_DEFAULT_PRIORITY,	NORID,	DIRECTIVE},
+      {"PROCESS_TYPE",		PROCESS_TYPE_TOKEN,	NORID,	DIRECTIVE},
+      {"OPTIMIZE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
       {"debug_symbols",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"support_causing_address",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"GENERATE_SET_NAMES",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"MULTIPLE_DATA_SEGS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"make_publics_for_discrete_syns",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"GENERATE_ALL_SET_NAMES",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"SEND_SIGNAL_DEFAULT_PRIORITY",	SEND_SIGNAL_DEFAULT_PRIORITY,	NORID,	DIRECTIVE},
-      {"SIGNAL_MAX_LENGTH",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
-      {"SUPPORT_CAUSING_ADDRESS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"BUFFER_CODE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"use_seize_file_restricted",	USE_SEIZE_FILE_RESTRICTED,	NORID,	DIRECTIVE},
+      {"NEWMODE",		NEWMODE,		NORID,	RESERVED},
       {"send_signal_default_priority",	SEND_SIGNAL_DEFAULT_PRIORITY,	NORID,	DIRECTIVE},
-      {"send_buffer_default_priority",	SEND_BUFFER_DEFAULT_PRIORITY,	NORID,	DIRECTIVE}
+      {"no_overlap_check",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"ALL_STATIC_ON",		ALL_STATIC_ON,		NORID,	DIRECTIVE},
+      {"support_causing_address",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"SHORT_PRED_SUCC",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"MODULE",			MODULE,			NORID,	RESERVED},
+      {"REENTRANT_ALL",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"TIMEOUT",		TIMEOUT,		NORID,	RESERVED},
+      {"ALL_STATIC_OFF",		ALL_STATIC_OFF,		NORID,  DIRECTIVE},
+      {"with",			WITH,			NORID,	RESERVED},
+      {"signal_code",		SIGNAL_CODE,		NORID,	DIRECTIVE},
+      {"multiple_const_segs",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"optimize_runtime",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"CYCLE",			CYCLE,			NORID,	RESERVED},
+      {"SYNMODE",		SYNMODE,		NORID,	RESERVED},
+      {"multiple_data_segs",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"DYNAMIC",		DYNAMIC,		RID_DYNAMIC,	RESERVED},
+      {"EVENT_CODE",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"SIGNAL",			SIGNAL,			NORID,	RESERVED},
+      {"DEBUG_TYPES",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"ONLY_FOR_TARGET",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"SIMPLE",			SIMPLE,			NORID,	RESERVED},
+      {"DEBUG_LINES",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"NO_OVERLAP_CHECK",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"EXTRA_CONST_SEG",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"ONLY_FOR_SIMULATION",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"make_publics_for_discrete_syns",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"USE_SEIZE_FILE",		USE_SEIZE_FILE,		NORID,	DIRECTIVE},
+      {"OPTIMIZE_RUNTIME",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"GRANT_FILE_SIZE",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"GENERATE_SET_NAMES",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"PRINT_SYMBOL_TABLE",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"DEBUG_SYMBOLS",		IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"OPTIMIZATION_WINDOW",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"SIGNAL_CODE",		SIGNAL_CODE,		NORID,	DIRECTIVE},
+      {"SUPPORT_CAUSING_ADDRESS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"MULTIPLE_CONST_SEGS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"optimization_window",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"signal_max_length",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"SEND_BUFFER_DEFAULT_PRIORITY",	SEND_BUFFER_DEFAULT_PRIORITY,	NORID,	DIRECTIVE},
+      {"MULTIPLE_DATA_SEGS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"GENERATE_ALL_SET_NAMES",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"USE_SEIZE_FILE_RESTRICTED",	USE_SEIZE_FILE_RESTRICTED,	NORID,	DIRECTIVE},
+      {"SEND_SIGNAL_DEFAULT_PRIORITY",	SEND_SIGNAL_DEFAULT_PRIORITY,	NORID,	DIRECTIVE},
+      {"MAKE_PUBLICS_FOR_DISCRETE_SYNS",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE},
+      {"SIGNAL_MAX_LENGTH",	IGNORED_DIRECTIVE,	NORID,	DIRECTIVE}
     };
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
@@ -451,906 +451,906 @@ in_word_set (str, len)
           register struct resword *wordendptr;
           register struct resword *resword;
 
-          switch (key - 16)
+          switch (key - 4)
             {
               case 0:
                 resword = &wordlist[0];
                 goto compare;
-              case 3:
+              case 1:
                 resword = &wordlist[1];
                 goto compare;
-              case 5:
+              case 2:
                 resword = &wordlist[2];
                 goto compare;
-              case 7:
+              case 3:
                 resword = &wordlist[3];
                 goto compare;
-              case 8:
+              case 4:
                 resword = &wordlist[4];
                 goto compare;
-              case 12:
+              case 5:
                 resword = &wordlist[5];
                 goto compare;
-              case 16:
+              case 6:
                 resword = &wordlist[6];
                 goto compare;
-              case 18:
+              case 7:
                 resword = &wordlist[7];
                 goto compare;
-              case 19:
+              case 8:
                 resword = &wordlist[8];
                 goto compare;
-              case 21:
+              case 9:
                 resword = &wordlist[9];
                 goto compare;
-              case 25:
+              case 10:
                 resword = &wordlist[10];
                 goto compare;
-              case 26:
+              case 11:
                 resword = &wordlist[11];
                 goto compare;
-              case 27:
+              case 12:
                 resword = &wordlist[12];
                 goto compare;
-              case 28:
+              case 14:
                 resword = &wordlist[13];
                 goto compare;
-              case 36:
+              case 16:
                 resword = &wordlist[14];
                 goto compare;
-              case 39:
+              case 17:
                 resword = &wordlist[15];
                 goto compare;
-              case 43:
+              case 18:
                 resword = &wordlist[16];
                 goto compare;
-              case 49:
+              case 19:
                 resword = &wordlist[17];
                 goto compare;
-              case 51:
+              case 20:
                 resword = &wordlist[18];
                 goto compare;
-              case 54:
+              case 21:
                 resword = &wordlist[19];
                 goto compare;
-              case 55:
+              case 22:
                 resword = &wordlist[20];
                 goto compare;
-              case 62:
+              case 23:
                 resword = &wordlist[21];
                 goto compare;
-              case 64:
+              case 24:
                 resword = &wordlist[22];
                 goto compare;
-              case 68:
+              case 25:
                 resword = &wordlist[23];
                 goto compare;
-              case 71:
+              case 26:
                 resword = &wordlist[24];
                 goto compare;
-              case 73:
+              case 27:
                 resword = &wordlist[25];
                 goto compare;
-              case 74:
+              case 28:
                 resword = &wordlist[26];
                 goto compare;
-              case 75:
+              case 30:
                 resword = &wordlist[27];
                 goto compare;
-              case 77:
+              case 32:
                 resword = &wordlist[28];
                 goto compare;
-              case 78:
+              case 34:
                 resword = &wordlist[29];
                 goto compare;
-              case 80:
+              case 35:
                 resword = &wordlist[30];
                 goto compare;
-              case 82:
+              case 36:
                 resword = &wordlist[31];
                 goto compare;
-              case 84:
+              case 37:
                 resword = &wordlist[32];
                 goto compare;
-              case 87:
+              case 38:
                 resword = &wordlist[33];
                 goto compare;
-              case 89:
+              case 39:
                 resword = &wordlist[34];
                 goto compare;
-              case 90:
+              case 40:
                 resword = &wordlist[35];
                 goto compare;
-              case 95:
+              case 41:
                 resword = &wordlist[36];
                 goto compare;
-              case 98:
+              case 42:
                 resword = &wordlist[37];
                 goto compare;
-              case 101:
+              case 43:
                 resword = &wordlist[38];
                 goto compare;
-              case 103:
+              case 44:
                 resword = &wordlist[39];
                 goto compare;
-              case 109:
+              case 45:
                 resword = &wordlist[40];
                 goto compare;
-              case 111:
+              case 46:
                 resword = &wordlist[41];
                 goto compare;
-              case 113:
+              case 47:
                 resword = &wordlist[42];
                 goto compare;
-              case 114:
+              case 48:
                 resword = &wordlist[43];
                 goto compare;
-              case 115:
+              case 50:
                 resword = &wordlist[44];
                 goto compare;
-              case 116:
+              case 51:
                 resword = &wordlist[45];
                 goto compare;
-              case 118:
+              case 52:
                 resword = &wordlist[46];
                 goto compare;
-              case 119:
+              case 53:
                 resword = &wordlist[47];
                 goto compare;
-              case 120:
+              case 54:
                 resword = &wordlist[48];
                 goto compare;
-              case 123:
+              case 55:
                 resword = &wordlist[49];
                 goto compare;
-              case 126:
+              case 56:
                 resword = &wordlist[50];
                 goto compare;
-              case 127:
+              case 57:
                 resword = &wordlist[51];
                 goto compare;
-              case 129:
+              case 58:
                 resword = &wordlist[52];
                 goto compare;
-              case 130:
+              case 59:
                 resword = &wordlist[53];
                 goto compare;
-              case 131:
+              case 60:
                 resword = &wordlist[54];
                 goto compare;
-              case 133:
+              case 61:
                 resword = &wordlist[55];
                 goto compare;
-              case 135:
+              case 62:
                 resword = &wordlist[56];
                 goto compare;
-              case 137:
+              case 63:
                 resword = &wordlist[57];
                 goto compare;
-              case 138:
+              case 64:
                 resword = &wordlist[58];
                 goto compare;
-              case 141:
+              case 65:
                 resword = &wordlist[59];
                 goto compare;
-              case 142:
+              case 66:
                 resword = &wordlist[60];
                 goto compare;
-              case 145:
+              case 68:
                 resword = &wordlist[61];
                 goto compare;
-              case 146:
+              case 69:
                 resword = &wordlist[62];
                 goto compare;
-              case 147:
+              case 70:
                 resword = &wordlist[63];
                 goto compare;
-              case 148:
+              case 71:
                 resword = &wordlist[64];
                 goto compare;
-              case 150:
+              case 72:
                 resword = &wordlist[65];
                 goto compare;
-              case 151:
+              case 73:
                 resword = &wordlist[66];
                 goto compare;
-              case 152:
+              case 74:
                 resword = &wordlist[67];
                 goto compare;
-              case 153:
+              case 75:
                 resword = &wordlist[68];
                 goto compare;
-              case 158:
+              case 77:
                 resword = &wordlist[69];
                 goto compare;
-              case 159:
+              case 79:
                 resword = &wordlist[70];
                 goto compare;
-              case 161:
+              case 80:
                 resword = &wordlist[71];
                 goto compare;
-              case 164:
+              case 81:
                 resword = &wordlist[72];
                 goto compare;
-              case 165:
+              case 82:
                 resword = &wordlist[73];
                 goto compare;
-              case 169:
+              case 83:
                 resword = &wordlist[74];
                 goto compare;
-              case 170:
+              case 86:
                 resword = &wordlist[75];
                 goto compare;
-              case 171:
+              case 88:
                 resword = &wordlist[76];
                 goto compare;
-              case 172:
+              case 89:
                 resword = &wordlist[77];
                 goto compare;
-              case 177:
+              case 91:
                 resword = &wordlist[78];
                 goto compare;
-              case 178:
+              case 92:
                 resword = &wordlist[79];
                 goto compare;
-              case 183:
+              case 93:
                 resword = &wordlist[80];
                 goto compare;
-              case 184:
+              case 94:
                 resword = &wordlist[81];
                 goto compare;
-              case 185:
+              case 95:
                 resword = &wordlist[82];
                 goto compare;
-              case 188:
+              case 98:
                 resword = &wordlist[83];
                 goto compare;
-              case 190:
+              case 99:
                 resword = &wordlist[84];
                 goto compare;
-              case 194:
+              case 100:
                 resword = &wordlist[85];
                 goto compare;
-              case 196:
+              case 101:
                 resword = &wordlist[86];
                 goto compare;
-              case 198:
+              case 102:
                 resword = &wordlist[87];
                 goto compare;
-              case 200:
+              case 103:
                 resword = &wordlist[88];
                 goto compare;
-              case 201:
+              case 104:
                 resword = &wordlist[89];
                 goto compare;
-              case 202:
+              case 106:
                 resword = &wordlist[90];
                 goto compare;
-              case 203:
+              case 107:
                 resword = &wordlist[91];
                 goto compare;
-              case 204:
+              case 108:
                 resword = &wordlist[92];
                 goto compare;
-              case 205:
+              case 109:
                 resword = &wordlist[93];
                 goto compare;
-              case 207:
+              case 110:
                 resword = &wordlist[94];
                 goto compare;
-              case 212:
+              case 111:
                 resword = &wordlist[95];
                 goto compare;
-              case 213:
+              case 112:
                 resword = &wordlist[96];
                 goto compare;
-              case 216:
+              case 113:
                 resword = &wordlist[97];
                 goto compare;
-              case 217:
+              case 115:
                 resword = &wordlist[98];
                 goto compare;
-              case 218:
+              case 116:
                 resword = &wordlist[99];
                 goto compare;
-              case 219:
+              case 117:
                 resword = &wordlist[100];
                 goto compare;
-              case 221:
+              case 118:
                 resword = &wordlist[101];
                 goto compare;
-              case 224:
+              case 120:
                 resword = &wordlist[102];
                 goto compare;
-              case 225:
+              case 121:
                 resword = &wordlist[103];
                 goto compare;
-              case 230:
+              case 122:
                 resword = &wordlist[104];
                 goto compare;
-              case 232:
+              case 123:
                 resword = &wordlist[105];
                 goto compare;
-              case 234:
+              case 125:
                 resword = &wordlist[106];
                 goto compare;
-              case 235:
+              case 126:
                 resword = &wordlist[107];
                 goto compare;
-              case 236:
+              case 127:
                 resword = &wordlist[108];
                 goto compare;
-              case 238:
+              case 128:
                 resword = &wordlist[109];
                 goto compare;
-              case 246:
+              case 129:
                 resword = &wordlist[110];
                 goto compare;
-              case 247:
+              case 131:
                 resword = &wordlist[111];
                 goto compare;
-              case 248:
+              case 132:
                 resword = &wordlist[112];
                 goto compare;
-              case 249:
+              case 133:
                 resword = &wordlist[113];
                 goto compare;
-              case 250:
+              case 134:
                 resword = &wordlist[114];
                 goto compare;
-              case 251:
+              case 135:
                 resword = &wordlist[115];
                 goto compare;
-              case 252:
+              case 136:
                 resword = &wordlist[116];
                 goto compare;
-              case 254:
+              case 137:
                 resword = &wordlist[117];
                 goto compare;
-              case 255:
+              case 138:
                 resword = &wordlist[118];
                 goto compare;
-              case 256:
+              case 139:
                 resword = &wordlist[119];
                 goto compare;
-              case 257:
+              case 142:
                 resword = &wordlist[120];
                 goto compare;
-              case 258:
+              case 143:
                 resword = &wordlist[121];
                 goto compare;
-              case 259:
+              case 144:
                 resword = &wordlist[122];
                 goto compare;
-              case 261:
+              case 145:
                 resword = &wordlist[123];
                 goto compare;
-              case 264:
+              case 146:
                 resword = &wordlist[124];
                 goto compare;
-              case 265:
+              case 147:
                 resword = &wordlist[125];
                 goto compare;
-              case 266:
+              case 148:
                 resword = &wordlist[126];
                 goto compare;
-              case 268:
+              case 149:
                 resword = &wordlist[127];
                 goto compare;
-              case 269:
+              case 150:
                 resword = &wordlist[128];
                 goto compare;
-              case 270:
+              case 151:
                 resword = &wordlist[129];
                 goto compare;
-              case 273:
+              case 152:
                 resword = &wordlist[130];
                 goto compare;
-              case 274:
+              case 153:
                 resword = &wordlist[131];
                 goto compare;
-              case 277:
+              case 154:
                 resword = &wordlist[132];
                 goto compare;
-              case 279:
+              case 155:
                 resword = &wordlist[133];
                 goto compare;
-              case 282:
+              case 156:
                 resword = &wordlist[134];
                 goto compare;
-              case 286:
+              case 157:
                 resword = &wordlist[135];
                 goto compare;
-              case 287:
+              case 159:
                 resword = &wordlist[136];
                 goto compare;
-              case 288:
+              case 161:
                 resword = &wordlist[137];
                 goto compare;
-              case 289:
+              case 162:
                 resword = &wordlist[138];
                 goto compare;
-              case 296:
+              case 163:
                 resword = &wordlist[139];
                 goto compare;
-              case 304:
+              case 164:
                 resword = &wordlist[140];
                 goto compare;
-              case 310:
+              case 165:
                 resword = &wordlist[141];
                 goto compare;
-              case 311:
+              case 166:
                 resword = &wordlist[142];
                 goto compare;
-              case 312:
+              case 167:
                 resword = &wordlist[143];
                 goto compare;
-              case 315:
+              case 169:
                 resword = &wordlist[144];
                 goto compare;
-              case 317:
+              case 170:
                 resword = &wordlist[145];
                 goto compare;
-              case 318:
+              case 173:
                 resword = &wordlist[146];
                 goto compare;
-              case 319:
+              case 175:
                 resword = &wordlist[147];
                 goto compare;
-              case 321:
+              case 176:
                 resword = &wordlist[148];
                 goto compare;
-              case 322:
+              case 177:
                 resword = &wordlist[149];
                 goto compare;
-              case 323:
+              case 178:
                 resword = &wordlist[150];
                 goto compare;
-              case 324:
+              case 179:
                 resword = &wordlist[151];
                 goto compare;
-              case 325:
+              case 180:
                 resword = &wordlist[152];
                 goto compare;
-              case 326:
+              case 181:
                 resword = &wordlist[153];
                 goto compare;
-              case 327:
+              case 183:
                 resword = &wordlist[154];
                 goto compare;
-              case 329:
+              case 184:
                 resword = &wordlist[155];
                 goto compare;
-              case 331:
+              case 188:
                 resword = &wordlist[156];
                 goto compare;
-              case 333:
+              case 189:
                 resword = &wordlist[157];
                 goto compare;
-              case 334:
+              case 190:
                 resword = &wordlist[158];
                 goto compare;
-              case 340:
+              case 191:
                 resword = &wordlist[159];
                 goto compare;
-              case 341:
+              case 194:
                 resword = &wordlist[160];
                 goto compare;
-              case 342:
+              case 195:
                 resword = &wordlist[161];
                 goto compare;
-              case 348:
+              case 196:
                 resword = &wordlist[162];
                 goto compare;
-              case 349:
+              case 197:
                 resword = &wordlist[163];
                 goto compare;
-              case 351:
+              case 198:
                 resword = &wordlist[164];
                 goto compare;
-              case 354:
+              case 200:
                 resword = &wordlist[165];
                 goto compare;
-              case 363:
+              case 201:
                 resword = &wordlist[166];
                 goto compare;
-              case 364:
+              case 203:
                 resword = &wordlist[167];
                 goto compare;
-              case 365:
+              case 204:
                 resword = &wordlist[168];
                 goto compare;
-              case 366:
+              case 205:
                 resword = &wordlist[169];
                 goto compare;
-              case 368:
+              case 207:
                 resword = &wordlist[170];
                 goto compare;
-              case 370:
+              case 208:
                 resword = &wordlist[171];
                 goto compare;
-              case 371:
+              case 209:
                 resword = &wordlist[172];
                 goto compare;
-              case 372:
+              case 212:
                 resword = &wordlist[173];
                 goto compare;
-              case 373:
+              case 213:
                 resword = &wordlist[174];
                 goto compare;
-              case 374:
+              case 215:
                 resword = &wordlist[175];
                 goto compare;
-              case 377:
+              case 216:
                 resword = &wordlist[176];
                 goto compare;
-              case 378:
+              case 217:
                 resword = &wordlist[177];
                 goto compare;
-              case 379:
+              case 218:
                 resword = &wordlist[178];
                 goto compare;
-              case 381:
+              case 219:
                 resword = &wordlist[179];
                 goto compare;
-              case 382:
+              case 220:
                 resword = &wordlist[180];
                 goto compare;
-              case 383:
+              case 221:
                 resword = &wordlist[181];
                 goto compare;
-              case 384:
+              case 222:
                 resword = &wordlist[182];
                 goto compare;
-              case 387:
+              case 223:
                 resword = &wordlist[183];
                 goto compare;
-              case 391:
+              case 225:
                 resword = &wordlist[184];
                 goto compare;
-              case 392:
+              case 227:
                 resword = &wordlist[185];
                 goto compare;
-              case 393:
+              case 229:
                 resword = &wordlist[186];
                 goto compare;
-              case 401:
+              case 231:
                 resword = &wordlist[187];
                 goto compare;
-              case 402:
+              case 232:
                 resword = &wordlist[188];
                 goto compare;
-              case 405:
+              case 234:
                 resword = &wordlist[189];
                 goto compare;
-              case 408:
+              case 235:
                 resword = &wordlist[190];
                 goto compare;
-              case 412:
+              case 236:
                 resword = &wordlist[191];
                 goto compare;
-              case 418:
+              case 237:
                 resword = &wordlist[192];
                 goto compare;
-              case 420:
+              case 238:
                 resword = &wordlist[193];
                 goto compare;
-              case 423:
+              case 240:
                 resword = &wordlist[194];
                 goto compare;
-              case 425:
+              case 242:
                 resword = &wordlist[195];
                 goto compare;
-              case 426:
+              case 243:
                 resword = &wordlist[196];
                 goto compare;
-              case 432:
+              case 245:
                 resword = &wordlist[197];
                 goto compare;
-              case 439:
+              case 246:
                 resword = &wordlist[198];
                 goto compare;
-              case 442:
+              case 247:
                 resword = &wordlist[199];
                 goto compare;
-              case 443:
+              case 248:
                 resword = &wordlist[200];
                 goto compare;
-              case 448:
+              case 249:
                 resword = &wordlist[201];
                 goto compare;
-              case 450:
+              case 250:
                 resword = &wordlist[202];
                 goto compare;
-              case 451:
+              case 251:
                 resword = &wordlist[203];
                 goto compare;
-              case 454:
+              case 253:
                 resword = &wordlist[204];
                 goto compare;
-              case 459:
+              case 254:
                 resword = &wordlist[205];
                 goto compare;
-              case 464:
+              case 258:
                 resword = &wordlist[206];
                 goto compare;
-              case 466:
+              case 261:
                 resword = &wordlist[207];
                 goto compare;
-              case 470:
+              case 263:
                 resword = &wordlist[208];
                 goto compare;
-              case 479:
+              case 264:
                 resword = &wordlist[209];
                 goto compare;
-              case 480:
+              case 265:
                 resword = &wordlist[210];
                 goto compare;
-              case 484:
+              case 266:
                 resword = &wordlist[211];
                 goto compare;
-              case 485:
+              case 271:
                 resword = &wordlist[212];
                 goto compare;
-              case 487:
+              case 273:
                 resword = &wordlist[213];
                 goto compare;
-              case 490:
+              case 276:
                 resword = &wordlist[214];
                 goto compare;
-              case 499:
+              case 277:
                 resword = &wordlist[215];
                 goto compare;
-              case 503:
+              case 281:
                 resword = &wordlist[216];
                 goto compare;
-              case 507:
+              case 282:
                 resword = &wordlist[217];
                 goto compare;
-              case 512:
+              case 284:
                 resword = &wordlist[218];
                 goto compare;
-              case 515:
+              case 289:
                 resword = &wordlist[219];
                 goto compare;
-              case 520:
+              case 290:
                 resword = &wordlist[220];
                 goto compare;
-              case 523:
+              case 293:
                 resword = &wordlist[221];
                 goto compare;
-              case 524:
+              case 296:
                 resword = &wordlist[222];
                 goto compare;
-              case 526:
+              case 297:
                 resword = &wordlist[223];
                 goto compare;
-              case 537:
+              case 298:
                 resword = &wordlist[224];
                 goto compare;
-              case 538:
+              case 299:
                 resword = &wordlist[225];
                 goto compare;
-              case 542:
+              case 300:
                 resword = &wordlist[226];
                 goto compare;
-              case 547:
+              case 303:
                 resword = &wordlist[227];
                 goto compare;
-              case 552:
+              case 307:
                 resword = &wordlist[228];
                 goto compare;
-              case 555:
+              case 308:
                 resword = &wordlist[229];
                 goto compare;
-              case 558:
+              case 311:
                 resword = &wordlist[230];
                 goto compare;
-              case 562:
+              case 313:
                 resword = &wordlist[231];
                 goto compare;
-              case 563:
+              case 317:
                 resword = &wordlist[232];
                 goto compare;
-              case 576:
+              case 318:
                 resword = &wordlist[233];
                 goto compare;
-              case 578:
+              case 319:
                 resword = &wordlist[234];
                 goto compare;
-              case 581:
+              case 324:
                 resword = &wordlist[235];
                 goto compare;
-              case 583:
+              case 328:
                 resword = &wordlist[236];
                 goto compare;
-              case 584:
+              case 334:
                 resword = &wordlist[237];
                 goto compare;
-              case 596:
+              case 336:
                 resword = &wordlist[238];
                 goto compare;
-              case 603:
+              case 337:
                 resword = &wordlist[239];
                 goto compare;
-              case 606:
+              case 339:
                 resword = &wordlist[240];
                 goto compare;
-              case 619:
+              case 341:
                 resword = &wordlist[241];
                 goto compare;
-              case 620:
+              case 342:
                 resword = &wordlist[242];
                 goto compare;
-              case 622:
+              case 347:
                 resword = &wordlist[243];
                 goto compare;
-              case 632:
+              case 348:
                 resword = &wordlist[244];
                 goto compare;
-              case 641:
+              case 358:
                 resword = &wordlist[245];
                 goto compare;
-              case 668:
+              case 364:
                 resword = &wordlist[246];
                 goto compare;
-              case 670:
+              case 367:
                 resword = &wordlist[247];
                 goto compare;
-              case 673:
+              case 371:
                 resword = &wordlist[248];
                 goto compare;
-              case 703:
+              case 373:
                 resword = &wordlist[249];
                 goto compare;
-              case 707:
+              case 378:
                 resword = &wordlist[250];
                 goto compare;
-              case 734:
+              case 380:
                 resword = &wordlist[251];
                 goto compare;
-              case 737:
+              case 385:
                 resword = &wordlist[252];
                 goto compare;
-              case 738:
+              case 388:
                 resword = &wordlist[253];
                 goto compare;
-              case 753:
+              case 398:
                 resword = &wordlist[254];
                 goto compare;
-              case 764:
+              case 402:
                 resword = &wordlist[255];
                 goto compare;
-              case 773:
+              case 403:
                 resword = &wordlist[256];
                 goto compare;
-              case 785:
+              case 408:
                 resword = &wordlist[257];
                 goto compare;
-              case 798:
+              case 411:
                 resword = &wordlist[258];
                 goto compare;
-              case 805:
+              case 412:
                 resword = &wordlist[259];
                 goto compare;
-              case 806:
+              case 416:
                 resword = &wordlist[260];
                 goto compare;
-              case 816:
+              case 417:
                 resword = &wordlist[261];
                 goto compare;
-              case 825:
+              case 418:
                 resword = &wordlist[262];
                 goto compare;
-              case 829:
+              case 420:
                 resword = &wordlist[263];
                 goto compare;
-              case 858:
+              case 422:
                 resword = &wordlist[264];
                 goto compare;
-              case 871:
+              case 423:
                 resword = &wordlist[265];
                 goto compare;
-              case 875:
+              case 432:
                 resword = &wordlist[266];
                 goto compare;
-              case 893:
+              case 437:
                 resword = &wordlist[267];
                 goto compare;
-              case 903:
+              case 440:
                 resword = &wordlist[268];
                 goto compare;
-              case 939:
+              case 454:
                 resword = &wordlist[269];
                 goto compare;
-              case 966:
+              case 456:
                 resword = &wordlist[270];
                 goto compare;
-              case 975:
+              case 469:
                 resword = &wordlist[271];
                 goto compare;
-              case 981:
+              case 492:
                 resword = &wordlist[272];
                 goto compare;
-              case 996:
+              case 495:
                 resword = &wordlist[273];
                 goto compare;
-              case 997:
+              case 501:
                 resword = &wordlist[274];
                 goto compare;
-              case 999:
+              case 502:
                 resword = &wordlist[275];
                 goto compare;
-              case 1004:
+              case 504:
                 resword = &wordlist[276];
                 goto compare;
-              case 1044:
+              case 505:
                 resword = &wordlist[277];
                 goto compare;
-              case 1050:
+              case 509:
                 resword = &wordlist[278];
                 goto compare;
-              case 1052:
+              case 574:
                 resword = &wordlist[279];
                 goto compare;
-              case 1058:
+              case 581:
                 resword = &wordlist[280];
                 goto compare;
-              case 1065:
+              case 587:
                 resword = &wordlist[281];
                 goto compare;
-              case 1082:
+              case 607:
                 resword = &wordlist[282];
                 goto compare;
-              case 1086:
+              case 621:
                 resword = &wordlist[283];
                 goto compare;
-              case 1092:
+              case 649:
                 resword = &wordlist[284];
                 goto compare;
-              case 1113:
+              case 674:
                 resword = &wordlist[285];
                 goto compare;
-              case 1133:
+              case 680:
                 resword = &wordlist[286];
                 goto compare;
-              case 1162:
+              case 712:
                 resword = &wordlist[287];
                 goto compare;
-              case 1206:
+              case 721:
                 resword = &wordlist[288];
                 goto compare;
-              case 1366:
+              case 724:
                 resword = &wordlist[289];
                 goto compare;
-              case 1378:
+              case 741:
                 resword = &wordlist[290];
                 goto compare;
-              case 1427:
+              case 751:
                 resword = &wordlist[291];
                 goto compare;
-              case 1435:
+              case 790:
                 resword = &wordlist[292];
                 goto compare;
-              case 1461:
+              case 812:
                 resword = &wordlist[293];
                 goto compare;
-              case 1746:
+              case 817:
                 resword = &wordlist[294];
                 goto compare;
-              case 1810:
+              case 902:
                 resword = &wordlist[295];
                 goto compare;
-              case 1883:
+              case 917:
                 resword = &wordlist[296];
                 goto compare;
-              case 1945:
+              case 932:
                 resword = &wordlist[297];
                 goto compare;
-              case 2056:
+              case 981:
                 resword = &wordlist[298];
                 goto compare;
-              case 2274:
+              case 1045:
                 resword = &wordlist[299];
                 goto compare;
             }

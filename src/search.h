@@ -30,6 +30,8 @@
 #include "positions.h"
 #include "bool-array.h"
 
+struct EquivalenceClass;
+
 class Search
 {
 public:
@@ -62,16 +64,6 @@ private:
 
   void                  prepare ();
 
-  /* Computes the sum of occurrences of the _selchars of a keyword.  */
-  int                   compute_occurrence (KeywordExt *ptr) const;
-
-  /* Auxiliary functions used by Search::reorder().  */
-  void                  clear_determined ();
-  void                  set_determined (KeywordExt *keyword);
-  bool                  already_determined (KeywordExt *keyword) const;
-  /* Reorders the keyword list so as to minimize search times.  */
-  void                  reorder ();
-
   /* Returns the length of keyword list.  */
   int                   keyword_list_length () const;
 
@@ -83,29 +75,19 @@ private:
 
   /* Initializes the asso_values[] related parameters.  */
   void                  prepare_asso_values ();
-  /* Puts a first guess into asso_values[].  */
-  void                  init_asso_values ();
+
+  EquivalenceClass *    compute_partition (bool *undetermined) const;
+
+  unsigned int          count_possible_collisions (EquivalenceClass *partition, unsigned int c) const;
+
+  bool                  unchanged_partition (EquivalenceClass *partition, unsigned int c) const;
+
+  /* Finds some _asso_values[] that fit.  */
+  void                  find_asso_values ();
 
   /* Computes a keyword's hash value, relative to the current _asso_values[],
      and stores it in keyword->_hash_value.  */
   int                   compute_hash (KeywordExt *keyword) const;
-
-  /* Computes the frequency of occurrence of a character among the keywords
-     up to the given keyword.  */
-  unsigned int          compute_occurrence (unsigned int c, KeywordExt *curr) const;
-
-  /* Sorts the given set in increasing frequency of _occurrences[].  */
-  void                  sort_by_occurrence (unsigned int *set, unsigned int len) const;
-  /* Sorts the given set in increasing frequency of occurrences among the
-     keywords up to the given keyword.  */
-  void                  sort_by_occurrence (unsigned int *set, unsigned int len, KeywordExt *curr) const;
-
-  bool                  has_collisions (KeywordExt *curr);
-
-  KeywordExt *          collision_prior_to (KeywordExt *curr);
-
-  /* Finds some _asso_values[] that fit.  */
-  void                  find_asso_values ();
 
   /* Finds good _asso_values[].  */
   void                  find_good_asso_values ();
@@ -151,9 +133,6 @@ private:
 
   /* Length of _head list.  Number of keywords, not counting duplicates.  */
   int                   _list_len;
-
-  /* Vector used during Search::reorder().  */
-  bool *                _determined;
 
   /* Exclusive upper bound for every _asso_values[c].  A power of 2.  */
   unsigned int          _asso_value_max;

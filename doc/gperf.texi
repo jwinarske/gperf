@@ -7,7 +7,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 20 November 2002
+@set UPDATED 8 December 2002
 @set EDITION 2.7.2
 @set VERSION 2.7.2
 @c ---------------------
@@ -169,8 +169,9 @@ In addition, Adam de Boor and Nels Olson provided many tips and insights
 that greatly helped improve the quality and functionality of @code{gperf}.
 
 @item
-A testsuite was added by Bruno Haible. He also rewrote the input routines
-and the output routines for better reliability.
+Bruno Haible enhanced and optimized the search algorithm.  He also rewrote
+the input routines and the output routines for better reliability, and
+added a testsuite.
 @end itemize
 
 @node Motivation, Search Structures, Contributors, Top
@@ -1005,15 +1006,6 @@ Using this option usually means that the generated hash function is no
 longer perfect.  On the other hand, it permits @code{gperf} to work on
 keyword sets that it otherwise could not handle.
 
-@item -f @var{iteration-amount}
-@itemx --fast=@var{iteration-amount}
-Generate the perfect hash function ``fast''.  This decreases
-@code{gperf}'s running time at the cost of minimizing generated
-table-size.  The iteration amount represents the number of times to
-iterate when resolving a collision.  `0' means iterate by the number of
-keywords.  This option is probably most useful when used in conjunction
-with option @samp{-o} for @emph{large} keyword sets.
-
 @item -m @var{iterations}
 @itemx --multiple-iterations=@var{iterations}
 Perform multiple choices of the @samp{-i} and @samp{-j} values, and
@@ -1042,24 +1034,6 @@ jumps by random amounts.
 Instructs the generator not to include the length of a keyword when
 computing its hash value.  This may save a few assembly instructions in
 the generated lookup table.
-
-@item -o
-@itemx --occurrence-sort
-Reorders the keywords by sorting the keywords so that keywords containing
-frequently occuring byte values appear first.  A second reordering
-pass follows so that keywords with ``already determined values'' are placed
-towards the front of the keyword list.  This may decrease the time required
-to generate a perfect hash function for many keyword sets, and also
-produce more minimal perfect hash functions.  The reason for this is
-that the reordering helps prune the search time by handling inevitable
-collisions early in the search process.  On the other hand, in practice,
-a decreased search time also means a less minimal hash function, and a
-higher frequency of backtracking.  Furthermore, if the
-number of keywords is @emph{very} large using @samp{-o} may
-@emph{increase} @code{gperf}'s execution time, since collisions will
-begin earlier and continue throughout the remainder of keyword
-processing.  See Cichelli's paper from the January 1980 Communications
-of the ACM for details.
 
 @item -r
 @itemx --random
@@ -1092,10 +1066,7 @@ The default value is 1, thus the default maximum associated value about
 the same size as the number of keywords (for efficiency, the maximum
 associated value is always rounded up to a power of 2).  The actual
 table size may vary somewhat, since this technique is essentially a
-heuristic.  In particular, setting this value too high slows down
-@code{gperf}'s runtime, since it must search through a much larger range
-of values.  Judicious use of the @samp{-f} option helps alleviate this
-overhead, however.
+heuristic.
 @end table
 
 @node Verbosity,  , Algorithmic Details, Options
@@ -1188,19 +1159,19 @@ C and C++ routines.
 
 [1] Chang, C.C.: @i{A Scheme for Constructing Ordered Minimal Perfect
 Hashing Functions} Information Sciences 39(1986), 187-195.
-       
+
 [2] Cichelli, Richard J. @i{Author's Response to ``On Cichelli's Minimal Perfect Hash
 Functions Method''} Communications of the ACM, 23, 12(December 1980), 729.
-    
+
 [3] Cichelli, Richard J. @i{Minimal Perfect Hash Functions Made Simple}
 Communications of the ACM, 23, 1(January 1980), 17-19.
-           
+
 [4] Cook, C. R. and Oldehoeft, R.R. @i{A Letter Oriented Minimal
 Perfect Hashing Function} SIGPLAN Notices, 17, 9(September 1982), 18-27.
 
 [5] Cormack, G. V. and Horspool, R. N. S. and Kaiserwerth, M.
 @i{Practical Perfect Hashing} Computer Journal, 28, 1(January 1985), 54-58.
-    
+
 [6] Jaeschke, G. @i{Reciprocal Hashing: A Method for Generating Minimal
 Perfect Hashing Functions} Communications of the ACM, 24, 12(December
 1981), 829-833.

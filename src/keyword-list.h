@@ -48,7 +48,7 @@ protected:
 class KeywordExt_List : public Keyword_List
 {
 public:
-  /* Unused constructor.  */
+  /* Constructor.  */
                         KeywordExt_List (KeywordExt *car);
 
   /* Access to first element of list.  */

@@ -35,7 +35,7 @@ Keyword_List::Keyword_List (Keyword *car)
 
 /* ------------------------- KeywordExt_List class ------------------------- */
 
-/* Unused constructor.  */
+/* Constructor.  */
 KeywordExt_List::KeywordExt_List (KeywordExt *car)
   : Keyword_List (car)
 {

@@ -39,72 +39,63 @@ enum Option_Type
   /* Enable debugging (prints diagnostics to stderr).  */
   DEBUG        = 1 << 0,
 
-  /* Apply ordering heuristic to speed-up search time.  */
-  ORDER        = 1 << 1,
-
   /* Use the given key positions.  */
-  POSITIONS    = 1 << 2,
+  POSITIONS    = 1 << 1,
 
   /* Use all characters in hash function.  */
-  ALLCHARS     = 1 << 3,
+  ALLCHARS     = 1 << 2,
 
   /* Handle user-defined type structured keyword input.  */
-  TYPE         = 1 << 4,
+  TYPE         = 1 << 3,
 
   /* Randomly initialize the associated values table.  */
-  RANDOM       = 1 << 5,
+  RANDOM       = 1 << 4,
 
   /* Generate switch output to save space.  */
-  SWITCH       = 1 << 6,
+  SWITCH       = 1 << 5,
 
   /* Don't include keyword length in hash computations.  */
-  NOLENGTH     = 1 << 7,
+  NOLENGTH     = 1 << 6,
 
   /* Generate a length table for string comparison.  */
-  LENTABLE     = 1 << 8,
+  LENTABLE     = 1 << 7,
 
   /* Handle duplicate hash values for keywords.  */
-  DUP          = 1 << 9,
-
-  /* Generate the hash function "fast".  */
-  FAST         = 1 << 10,
+  DUP          = 1 << 8,
 
   /* Don't include user-defined type definition in output -- it's already
      defined elsewhere.  */
-  NOTYPE       = 1 << 11,
+  NOTYPE       = 1 << 9,
 
   /* Generate strncmp rather than strcmp.  */
-  COMP         = 1 << 12,
+  COMP         = 1 << 10,
 
   /* Make the keyword table a global variable.  */
-  GLOBAL       = 1 << 13,
+  GLOBAL       = 1 << 11,
 
   /* Make the generated tables readonly (const).  */
-  CONST        = 1 << 14,
+  CONST        = 1 << 12,
 
   /* Generate K&R C code: no prototypes, no const.  */
-  KRC          = 1 << 15,
+  KRC          = 1 << 13,
 
   /* Generate C code: no prototypes, but const (user can #define it away).  */
-  C            = 1 << 16,
+  C            = 1 << 14,
 
   /* Generate ISO/ANSI C code: prototypes and const, but no class.  */
-  ANSIC        = 1 << 17,
+  ANSIC        = 1 << 15,
 
   /* Generate C++ code: prototypes, const, class, inline, enum.  */
-  CPLUSPLUS    = 1 << 18,
+  CPLUSPLUS    = 1 << 16,
 
   /* Use enum for constants.  */
-  ENUM         = 1 << 19,
+  ENUM         = 1 << 17,
 
   /* Generate #include statements.  */
-  INCLUDE      = 1 << 20,
+  INCLUDE      = 1 << 18,
 
   /* Assume 7-bit, not 8-bit, characters.  */
-  SEVENBIT     = 1 << 21,
-
-  /* Apply optimized collision resolution to speed-up search time.  */
-  OPT_CHOICE   = 1 << 22
+  SEVENBIT     = 1 << 19
 };
 
 /* Class manager for gperf program Options. */
@@ -139,9 +130,6 @@ public:
 
   /* Sets the output language, if not already set.  */
   void                  set_language (const char *language);
-
-  /* Returns the iterations value.  */
-  int                   get_iterations () const;
 
   /* Returns the jump value.  */
   int                   get_jump () const;
@@ -221,9 +209,6 @@ private:
 
   /* The output language.  */
   const char *          _language;
-
-  /* Amount to iterate when a collision occurs.  */
-  int                   _iterations;
 
   /* Jump length when trying alternative values.  */
   int                   _jump;

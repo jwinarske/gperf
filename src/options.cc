@@ -196,13 +196,6 @@ Options::long_usage (FILE * stream) const
            "  -D, --duplicates       Handle keywords that hash to duplicate values. This\n"
            "                         is useful for certain highly redundant keyword sets.\n");
   fprintf (stream,
-           "  -f, --fast=ITERATIONS  Generate the gen-perf.hash function \"fast\". This\n"
-           "                         decreases gperf's running time at the cost of\n"
-           "                         minimizing generated table size. The numeric\n"
-           "                         argument represents the number of times to iterate\n"
-           "                         when resolving a collision. '0' means \"iterate by\n"
-           "                         the number of keywords\".\n");
-  fprintf (stream,
            "  -m, --multiple-iterations=ITERATIONS\n"
            "                         Perform multiple choices of the -i and -j values,\n"
            "                         and choose the best results. This increases the\n"
@@ -220,10 +213,6 @@ Options::long_usage (FILE * stream) const
   fprintf (stream,
            "  -n, --no-strlen        Do not include the length of the keyword when\n"
            "                         computing the hash function.\n");
-  fprintf (stream,
-           "  -o, --occurrence-sort  Reorders input keys by frequency of occurrence of\n"
-           "                         the key sets. This should decrease the search time\n"
-           "                         dramatically.\n");
   fprintf (stream,
            "  -r, --random           Utilizes randomness to initialize the associated\n"
            "                         values table.\n");
@@ -429,7 +418,6 @@ Options::Options ()
     _input_file_name (NULL),
     _output_file_name (NULL),
     _language (NULL),
-    _iterations (0),
     _jump (DEFAULT_JUMP_VALUE),
     _initial_asso_value (0),
     _asso_iterations (0),
@@ -454,14 +442,12 @@ Options::~Options ()
     {
       fprintf (stderr, "\ndumping Options:"
                "\nDEBUG is.......: %s"
-               "\nORDER is.......: %s"
                "\nTYPE is........: %s"
                "\nRANDOM is......: %s"
                "\nSWITCH is......: %s"
                "\nNOLENGTH is....: %s"
                "\nLENTABLE is....: %s"
                "\nDUP is.........: %s"
-               "\nFAST is........: %s"
                "\nCOMP is........: %s"
                "\nNOTYPE is......: %s"
                "\nGLOBAL is......: %s"
@@ -473,8 +459,6 @@ Options::~Options ()
                "\nENUM is........: %s"
                "\nINCLUDE is.....: %s"
                "\nSEVENBIT is....: %s"
-               "\nOPT_CHOICE is..: %s"
-               "\niterations = %d"
                "\nlookup function name = %s"
                "\nhash function name = %s"
                "\nword list name = %s"
@@ -487,14 +471,12 @@ Options::~Options ()
                "\ndelimiters = %s"
                "\nnumber of switch statements = %d\n",
                _option_word & DEBUG ? "enabled" : "disabled",
-               _option_word & ORDER ? "enabled" : "disabled",
                _option_word & TYPE ? "enabled" : "disabled",
                _option_word & RANDOM ? "enabled" : "disabled",
                _option_word & SWITCH ? "enabled" : "disabled",
                _option_word & NOLENGTH ? "enabled" : "disabled",
                _option_word & LENTABLE ? "enabled" : "disabled",
                _option_word & DUP ? "enabled" : "disabled",
-               _option_word & FAST ? "enabled" : "disabled",
                _option_word & COMP ? "enabled" : "disabled",
                _option_word & NOTYPE ? "enabled" : "disabled",
                _option_word & GLOBAL ? "enabled" : "disabled",
@@ -506,8 +488,6 @@ Options::~Options ()
                _option_word & ENUM ? "enabled" : "disabled",
                _option_word & INCLUDE ? "enabled" : "disabled",
                _option_word & SEVENBIT ? "enabled" : "disabled",
-               _option_word & OPT_CHOICE ? "enabled" : "disabled",
-               _iterations,
                _function_name, _hash_name, _wordlist_name, _slot_name,
                _initializer_suffix, _asso_iterations, _jump, _size_multiple,
                _initial_asso_value, _delimiters, _total_switches);
@@ -711,15 +691,7 @@ Options::parse_options (int argc, char *argv[])
             break;
           }
         case 'f':               /* Generate the hash table "fast". */
-          {
-            _option_word |= FAST;
-            if ((_iterations = atoi (/*getopt*/optarg)) < 0)
-              {
-                fprintf (stderr, "iterations value must not be negative, assuming 0\n");
-                _iterations = 0;
-              }
-            break;
-          }
+          break;                /* Not needed any more.  */
         case 'F':
           {
             _initializer_suffix = /*getopt*/optarg;
@@ -861,15 +833,9 @@ Options::parse_options (int argc, char *argv[])
             break;
           }
         case 'o':               /* Order input by frequency of key set occurrence. */
-          {
-            _option_word |= ORDER;
-            break;
-          }
+          break;                /* Not needed any more.  */
         case 'O':               /* Optimized choice during collision resolution.  */
-          {
-            _option_word |= OPT_CHOICE;
-            break;
-          }
+          break;                /* Not needed any more.  */
         case 'p':               /* Generated lookup function a pointer instead of int. */
           break;                /* This is now the default. */
         case 'r':               /* Utilize randomness to initialize the associated values table. */

@@ -1,7 +1,5 @@
-New in 2.8:
+New in 2.96:
 
-* Added option -m/--multiple-iterations that reduces the size of the
-  generated table.
 * Added option --output that allows to specify the output file name.
 * Some options have been renamed:
     --hash-fn-name=NAME     -->   --hash-function-name=NAME
@@ -34,9 +32,14 @@ New in 2.8:
 * Some keyword sets containing permutations, like { "xy", "yx", "xz", "zx" }
   or { "abc", "acb", "bca", "cab" }, are now handled by gperf without
   requiring the option -D.
+* The generated table is usually much smaller than it was with earlier
+  versions of gperf.
+* Added option -m/--multiple-iterations that allows to further reduce the
+  size of the generated table.
 * When the search for a good hash function is not immediately successful,
-  backtracking is now used to continue the search. Earlier versions of gperf
-  bailed out with an "Internal error, duplicate hash code value".
+  the table's size will grow as needed. Earlier versions of gperf bailed
+  out with an "Internal error, duplicate hash code value".
+* The options -f/--fast and -o/--occurrence-sort have no effect any more.
 * Bug fixes.
 
 New in 2.7.2:

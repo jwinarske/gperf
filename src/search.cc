@@ -634,140 +634,6 @@ Search::prepare ()
 
   /* Memory allocation.  */
   _asso_values = new int[_alpha_size];
-  _determined = new bool[_alpha_size];
-}
-
-/* ---------------- Reordering the Keyword list (optional) ----------------- */
-
-/* Computes the sum of occurrences of the _selchars of a keyword.
-   This is a kind of correlation measure: Keywords which have many
-   selected characters in common with other keywords have a high
-   occurrence sum.  Keywords whose selected characters don't occur
-   in other keywords have a low occurrence sum.  */
-
-inline int
-Search::compute_occurrence (KeywordExt *ptr) const
-{
-  int value = 0;
-
-  const unsigned int *p = ptr->_selchars;
-  unsigned int i = ptr->_selchars_length;
-  for (; i > 0; p++, i--)
-    value += _occurrences[*p];
-
-  return value;
-}
-
-/* Comparison function for sorting by decreasing _occurrence valuation.  */
-static bool
-greater_by_occurrence (KeywordExt *keyword1, KeywordExt *keyword2)
-{
-  return keyword1->_occurrence > keyword2->_occurrence;
-}
-
-/* Auxiliary function for reorder():
-   Sets all alphabet characters as undetermined.  */
-
-inline void
-Search::clear_determined ()
-{
-  memset (_determined, 0, _alpha_size * sizeof (_determined[0]));
-}
-
-/* Auxiliary function for reorder():
-   Sets all selected characters of the keyword as determined.  */
-
-inline void
-Search::set_determined (KeywordExt *keyword)
-{
-  const unsigned int *p = keyword->_selchars;
-  unsigned int i = keyword->_selchars_length;
-  for (; i > 0; p++, i--)
-    _determined[*p] = true;
-}
-
-/* Auxiliary function for reorder():
-   Returns true if the keyword's selected characters are all determined.  */
-
-inline bool
-Search::already_determined (KeywordExt *keyword) const
-{
-  const unsigned int *p = keyword->_selchars;
-  unsigned int i = keyword->_selchars_length;
-  for (; i > 0; p++, i--)
-    if (!_determined[*p])
-      return false;
-
-  return true;
-}
-
-/* Reorders the keyword list so as to minimize search times.
-   First the list is reordered so that frequently occuring keys appear first.
-   Then the list is reordered so that keys whose values are already determined
-   will be placed towards the front of the list.  This helps prune the search
-   time by handling inevitable collisions early in the search process.  See
-   Cichelli's paper from Jan 1980 JACM for details.... */
-
-void
-Search::reorder ()
-{
-  KeywordExt_List *ptr;
-
-  /* Compute the _occurrence valuation of every keyword on the list.  */
-  for (ptr = _head; ptr; ptr = ptr->rest())
-    {
-      KeywordExt *keyword = ptr->first();
-
-      keyword->_occurrence = compute_occurrence (keyword);
-    }
-
-  /* Sort the list by decreasing _occurrence valuation.  */
-  _head = mergesort_list (_head, greater_by_occurrence);
-
-  /* Reorder the list to maximize the efficiency of the search.  */
-
-  /* At the beginning, consider that no asso_values[c] is fixed.  */
-  clear_determined ();
-  for (ptr = _head; ptr != NULL && ptr->rest() != NULL; ptr = ptr->rest())
-    {
-      KeywordExt *keyword = ptr->first();
-
-      /* Then we'll fix asso_values[c] for all c occurring in this keyword.  */
-      set_determined (keyword);
-
-      /* Then we wish to test for hash value collisions the remaining keywords
-         whose hash value is completely determined, as quickly as possible.
-         For this purpose, move all the completely determined keywords in the
-         remaining list immediately past this keyword.  */
-      KeywordExt_List *curr_ptr;
-      KeywordExt_List *next_ptr; /* = curr_ptr->rest() */
-      for (curr_ptr = ptr, next_ptr = curr_ptr->rest();
-           next_ptr != NULL;
-           next_ptr = curr_ptr->rest())
-        {
-          KeywordExt *next_keyword = next_ptr->first();
-
-          if (already_determined (next_keyword))
-            {
-              if (curr_ptr == ptr)
-                /* Keep next_ptr where it is.  */
-                curr_ptr = next_ptr;
-              else
-                {
-                  /* Remove next_ptr from its current list position... */
-                  curr_ptr->rest() = next_ptr->rest();
-                  /* ... and insert it right after ptr.  */
-                  next_ptr->rest() = ptr->rest();
-                  ptr->rest() = next_ptr;
-                }
-
-              /* Advance ptr.  */
-              ptr = ptr->rest();
-            }
-          else
-            curr_ptr = next_ptr;
-        }
-    }
 }
 
 /* ------------------------------------------------------------------------- */
@@ -873,29 +739,573 @@ Search::prepare_asso_values ()
   _jump = option.get_jump ();
 }
 
-/* Puts a first guess into asso_values[].  */
+/* Finds some _asso_values[] that fit.  */
+
+/* The idea is to choose the _asso_values[] one by one, in a way that
+   a choice that has been made never needs to be undone later.  This
+   means that we split the work into several steps.  Each step chooses
+   one or more _asso_values[c].  The result of choosing one or more
+   _asso_values[c] is that the partitioning of the keyword set gets
+   broader.
+   Look at this partitioning:  After every step, the _asso_values[] of a
+   certain set C of characters are undetermined.  (At the beginning, C
+   is the set of characters c with _occurrences[c] > 0.  At the end, C
+   is empty.)  To each keyword K, we associate the multiset of _selchars
+   for which the _asso_values[] are undetermined:
+                    K  -->  K->_selchars intersect C.
+   Consider two keywords equivalent if their value under this mapping is
+   the same.  This introduces an equivalence relation on the set of
+   keywords.  The equivalence classes partition the keyword set.  (At the
+   beginning, the partition is the finest possible: each K is an equivalence
+   class by itself, because all K have a different _selchars.  At the end,
+   all K have been merged into a single equivalence class.)
+   The partition before a step is always a refinement of the partition
+   after the step.
+   We choose the steps in such a way that the partition really becomes
+   broader at each step.  (A step that only chooses an _asso_values[c]
+   without changing the partition is better merged with the previous step,
+   to avoid useless backtracking.)  */
+
+struct EquivalenceClass
+{
+  /* The keywords in this equivalence class.  */
+  KeywordExt_List *     _keywords;
+  KeywordExt_List *     _keywords_last;
+  /* The number of keywords in this equivalence class.  */
+  unsigned int          _cardinality;
+  /* The undetermined selected characters for the keywords in this
+     equivalence class, as a canonically reordered multiset.  */
+  unsigned int *        _undetermined_chars;
+  unsigned int          _undetermined_chars_length;
+
+  EquivalenceClass *    _next;
+};
+
+struct Step
+{
+  /* The characters whose values are being determined in this step.  */
+  unsigned int          _changing_count;
+  unsigned int *        _changing;
+  /* Exclusive upper bound for the _asso_values[c] of this step.
+     A power of 2.  */
+  unsigned int          _asso_value_max;
+  /* The characters whose values will be determined after this step.  */
+  bool *                _undetermined;
+  /* The keyword set partition after this step.  */
+  EquivalenceClass *    _partition;
+  /* The expected number of iterations in this step.  */
+  double                _expected_lower;
+  double                _expected_upper;
+
+  Step *                _next;
+};
+
+static inline bool
+equals (const unsigned int *ptr1, const unsigned int *ptr2, unsigned int len)
+{
+  while (len > 0)
+    {
+      if (*ptr1 != *ptr2)
+        return false;
+      ptr1++;
+      ptr2++;
+      len--;
+    }
+  return true;
+}
+
+EquivalenceClass *
+Search::compute_partition (bool *undetermined) const
+{
+  EquivalenceClass *partition = NULL;
+  EquivalenceClass *partition_last = NULL;
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+    {
+      KeywordExt *keyword = temp->first();
+
+      /* Compute the undetermined characters for this keyword.  */
+      unsigned int *undetermined_chars =
+        new unsigned int[keyword->_selchars_length];
+      unsigned int undetermined_chars_length = 0;
+
+      for (int i = 0; i < keyword->_selchars_length; i++)
+        if (undetermined[keyword->_selchars[i]])
+          undetermined_chars[undetermined_chars_length++] = keyword->_selchars[i];
+
+      /* Look up the equivalence class to which this keyword belongs.  */
+      EquivalenceClass *equclass;
+      for (equclass = partition; equclass; equclass = equclass->_next)
+        if (equclass->_undetermined_chars_length == undetermined_chars_length
+            && equals (equclass->_undetermined_chars, undetermined_chars,
+                       undetermined_chars_length))
+          break;
+      if (equclass == NULL)
+        {
+          equclass = new EquivalenceClass();
+          equclass->_keywords = NULL;
+          equclass->_keywords_last = NULL;
+          equclass->_cardinality = 0;
+          equclass->_undetermined_chars = undetermined_chars;
+          equclass->_undetermined_chars_length = undetermined_chars_length;
+          equclass->_next = NULL;
+          if (partition)
+            partition_last->_next = equclass;
+          else
+            partition = equclass;
+          partition_last = equclass;
+        }
+      else
+        delete[] undetermined_chars;
+
+      /* Add the keyword to the equivalence class.  */
+      KeywordExt_List *cons = new KeywordExt_List(keyword);
+      if (equclass->_keywords)
+        equclass->_keywords_last->rest() = cons;
+      else
+        equclass->_keywords = cons;
+      equclass->_keywords_last = cons;
+      equclass->_cardinality++;
+    }
+
+  /* Free some of the allocated memory.  The caller doesn't need it.  */
+  for (EquivalenceClass *cls = partition; cls; cls = cls->_next)
+    delete[] cls->_undetermined_chars;
+
+  return partition;
+}
+
+static void
+delete_partition (EquivalenceClass *partition)
+{
+  while (partition != NULL)
+    {
+      EquivalenceClass *equclass = partition;
+      partition = equclass->_next;
+      delete_list (equclass->_keywords);
+      //delete[] equclass->_undetermined_chars; // already freed above
+      delete equclass;
+    }
+}
+
+/* Compute the possible number of collisions when _asso_values[c] is
+   chosen, leading to the given partition.  */
+unsigned int
+Search::count_possible_collisions (EquivalenceClass *partition, unsigned int c) const
+{
+  /* Every equivalence class p is split according to the frequency of
+     occurrence of c, leading to equivalence classes p1, p2, ...
+     This leads to   (|p|^2 - |p1|^2 - |p2|^2 - ...)/2  possible collisions.
+     Return the sum of this expression over all equivalence classes.  */
+  unsigned int sum = 0;
+  unsigned int m = get_max_keysig_size();
+  unsigned int split_cardinalities[m+1];
+  for (EquivalenceClass *cls = partition; cls; cls = cls->_next)
+    {
+      for (unsigned int i = 0; i <= m; i++)
+        split_cardinalities[i] = 0;
+
+      for (KeywordExt_List *temp = cls->_keywords; temp; temp = temp->rest())
+        {
+          KeywordExt *keyword = temp->first();
+
+          unsigned int count = 0;
+          for (int i = 0; i < keyword->_selchars_length; i++)
+            if (keyword->_selchars[i] == c)
+              count++;
+
+          split_cardinalities[count]++;
+        }
+
+      sum += cls->_cardinality * cls->_cardinality;
+      for (unsigned int i = 0; i <= m; i++)
+        sum -= split_cardinalities[i] * split_cardinalities[i];
+    }
+  return sum;
+}
+
+/* Test whether adding c to the undetermined characters changes the given
+   partition.  */
+bool
+Search::unchanged_partition (EquivalenceClass *partition, unsigned int c) const
+{
+  for (EquivalenceClass *cls = partition; cls; cls = cls->_next)
+    {
+      unsigned int first_count = UINT_MAX;
+
+      for (KeywordExt_List *temp = cls->_keywords; temp; temp = temp->rest())
+        {
+          KeywordExt *keyword = temp->first();
+
+          unsigned int count = 0;
+          for (int i = 0; i < keyword->_selchars_length; i++)
+            if (keyword->_selchars[i] == c)
+              count++;
+
+          if (temp == cls->_keywords)
+            first_count = count;
+          else if (count != first_count)
+            /* c would split this equivalence class.  */
+            return false;
+        }
+    }
+  return true;
+}
 
 void
-Search::init_asso_values ()
+Search::find_asso_values ()
 {
-  if (_initial_asso_value < 0)
-    {
-      for (unsigned int i = 0; i < _alpha_size; i++)
-        _asso_values[i] = rand () & (_asso_value_max - 1);
-    }
-  else
-    {
-      int asso_value = _initial_asso_value;
+  Step *steps;
 
-      asso_value = asso_value & (_asso_value_max - 1);
-      for (unsigned int i = 0; i < _alpha_size; i++)
-        _asso_values[i] = asso_value;
+  /* Determine the steps, starting with the last one.  */
+  {
+    bool *undetermined;
+    bool *determined;
+
+    steps = NULL;
+
+    undetermined = new bool[_alpha_size];
+    for (unsigned int c = 0; c < _alpha_size; c++)
+      undetermined[c] = false;
+
+    determined = new bool[_alpha_size];
+    for (unsigned int c = 0; c < _alpha_size; c++)
+      determined[c] = true;
+
+    for (;;)
+      {
+        /* Compute the partition that needs to be refined.  */
+        EquivalenceClass *partition = compute_partition (undetermined);
+
+        /* Determine the main character to be chosen in this step.
+           Choosing such a character c has the effect of splitting every
+           equivalence class (according the the frequency of occurrence of c).
+           We choose the c with the minimum number of possible collisions,
+           so that characters which lead to a large number of collisions get
+           handled early during the search.  */
+        unsigned int chosen_c;
+        unsigned int chosen_possible_collisions;
+        {
+          unsigned int best_c = 0;
+          unsigned int best_possible_collisions = UINT_MAX;
+          for (unsigned int c = 0; c < _alpha_size; c++)
+            if (_occurrences[c] > 0 && determined[c])
+              {
+                unsigned int possible_collisions =
+                  count_possible_collisions (partition, c);
+                if (possible_collisions < best_possible_collisions)
+                  {
+                    best_c = c;
+                    best_possible_collisions = possible_collisions;
+                  }
+              }
+          if (best_possible_collisions == UINT_MAX)
+            {
+              /* All c with _occurrences[c] > 0 are undetermined.  We are
+                 are the starting situation and don't need any more step.  */
+              delete_partition (partition);
+              break;
+            }
+          chosen_c = best_c;
+          chosen_possible_collisions = best_possible_collisions;
+        }
+
+        /* We need one more step.  */
+        Step *step = new Step();
+
+        step->_undetermined = new bool[_alpha_size];
+        memcpy (step->_undetermined, undetermined, _alpha_size*sizeof(bool));
+
+        step->_partition = partition;
+
+        /* Now determine how the equivalence classes will be before this
+           step.  */
+        undetermined[chosen_c] = true;
+        partition = compute_partition (undetermined);
+
+        /* Now determine which other characters should be determined in this
+           step, because they will not change the equivalence classes at
+           this point.  It is the set of all c which, for all equivalence
+           classes, have the same frequency of occurrence in every keyword
+           of the equivalence class.  */
+        for (unsigned int c = 0; c < _alpha_size; c++)
+          if (_occurrences[c] > 0 && determined[c]
+              && unchanged_partition (partition, c))
+            {
+              undetermined[c] = true;
+              determined[c] = false;
+            }
+
+        /* main_c must be one of these.  */
+        if (determined[chosen_c])
+          abort ();
+
+        /* Now the set of changing characters of this step.  */
+        unsigned int changing_count;
+
+        changing_count = 0;
+        for (unsigned int c = 0; c < _alpha_size; c++)
+          if (undetermined[c] && !step->_undetermined[c])
+            changing_count++;
+
+        unsigned int *changing = new unsigned int[changing_count];
+        changing_count = 0;
+        for (unsigned int c = 0; c < _alpha_size; c++)
+          if (undetermined[c] && !step->_undetermined[c])
+            changing[changing_count++] = c;
+
+        step->_changing = changing;
+        step->_changing_count = changing_count;
+
+        step->_asso_value_max = _asso_value_max;
+
+        step->_expected_lower =
+          exp (static_cast<double>(chosen_possible_collisions)
+               / static_cast<double>(_max_hash_value));
+        step->_expected_upper =
+          exp (static_cast<double>(chosen_possible_collisions)
+               / static_cast<double>(_asso_value_max));
+
+        delete_partition (partition);
+
+        step->_next = steps;
+        steps = step;
+      }
+
+    delete[] determined;
+    delete[] undetermined;
+  }
+
+  if (option[DEBUG])
+    {
+      unsigned int stepno = 0;
+      for (Step *step = steps; step; step = step->_next)
+        {
+          stepno++;
+          fprintf (stderr, "Step %u chooses _asso_values[", stepno);
+          for (unsigned int i = 0; i < step->_changing_count; i++)
+            {
+              if (i > 0)
+                fprintf (stderr, ",");
+              fprintf (stderr, "'%c'", step->_changing[i]);
+            }
+          fprintf (stderr, "], expected number of iterations between %g and %g.\n",
+                   step->_expected_lower, step->_expected_upper);
+          fprintf (stderr, "Keyword equivalence classes:\n");
+          for (EquivalenceClass *cls = step->_partition; cls; cls = cls->_next)
+            {
+              fprintf (stderr, "\n");
+              for (KeywordExt_List *temp = cls->_keywords; temp; temp = temp->rest())
+                {
+                  KeywordExt *keyword = temp->first();
+                  fprintf (stderr, "  %.*s\n",
+                           keyword->_allchars_length, keyword->_allchars);
+                }
+            }
+          fprintf (stderr, "\n");
+        }
+    }
+
+  /* Initialize _asso_values[].  (The value given here matters only
+     for those c which occur in all keywords with equal multiplicity.)  */
+  for (unsigned int c = 0; c < _alpha_size; c++)
+    _asso_values[c] = 0;
+
+  unsigned int stepno = 0;
+  for (Step *step = steps; step; step = step->_next)
+    {
+      stepno++;
+
+      /* Initialize the asso_values[].  */
+      unsigned int k = step->_changing_count;
+      for (unsigned int i = 0; i < k; i++)
+        {
+          unsigned int c = step->_changing[i];
+          _asso_values[c] =
+            (_initial_asso_value < 0 ? rand () : _initial_asso_value)
+            & (step->_asso_value_max - 1);
+        }
+
+      unsigned int iterations = 0;
+      unsigned int iter[k];
+      for (unsigned int i = 0; i < k; i++)
+        iter[i] = 0;
+      unsigned int ii = (_jump != 0 ? k - 1 : 0);
+
+      for (;;)
+        {
+          /* Test whether these asso_values[] lead to collisions among
+             the equivalence classes that should be collision-free.  */
+          bool has_collision = false;
+          for (EquivalenceClass *cls = step->_partition; cls; cls = cls->_next)
+            {
+              /* Iteration Number array is a win, O(1) initialization time!  */
+              _collision_detector->clear ();
+
+              for (KeywordExt_List *ptr = cls->_keywords; ptr; ptr = ptr->rest())
+                {
+                  KeywordExt *keyword = ptr->first();
+
+                  /* Compute the new hash code for the keyword, leaving apart
+                     the yet undetermined asso_values[].  */
+                  int hashcode;
+                  {
+                    int sum = option[NOLENGTH] ? 0 : keyword->_allchars_length;
+                    const unsigned int *p = keyword->_selchars;
+                    int i = keyword->_selchars_length;
+                    for (; i > 0; p++, i--)
+                      if (!step->_undetermined[*p])
+                        sum += _asso_values[*p];
+                    hashcode = sum;
+                  }
+
+                  /* See whether it collides with another keyword's hash code,
+                     from the same equivalence class.  */
+                  if (_collision_detector->set_bit (hashcode))
+                    {
+                      has_collision = true;
+                      break;
+                    }
+                }
+
+              /* Don't need to continue looking at the other equivalence
+                 classes if we already have found a collision.  */
+              if (has_collision)
+                break;
+            }
+
+          iterations++;
+          if (!has_collision)
+            break;
+
+          /* Try other asso_values[].  */
+          if (_jump != 0)
+            {
+              /* The way we try various values for
+                   asso_values[step->_changing[0],...step->_changing[k-1]]
+                 is like this:
+                 for (bound = 0,1,...)
+                   for (ii = 0,...,k-1)
+                     iter[ii] := bound
+                     iter[0..ii-1] := values <= bound
+                     iter[ii+1..k-1] := values < bound
+                 and
+                   asso_values[step->_changing[i]] =
+                     _initial_asso_value + iter[i] * _jump.
+                 This makes it more likely to find small asso_values[].
+               */
+              unsigned int bound = iter[ii];
+              unsigned int i = 0;
+              while (i < ii)
+                {
+                  unsigned int c = step->_changing[i];
+                  iter[i]++;
+                  _asso_values[c] =
+                    (_asso_values[c] + _jump) & (step->_asso_value_max - 1);
+                  if (iter[i] <= bound)
+                    goto found_next;
+                  _asso_values[c] =
+                    (_asso_values[c] - iter[i] * _jump)
+                    & (step->_asso_value_max - 1);
+                  iter[i] = 0;
+                  i++;
+                }
+              i = ii + 1;
+              while (i < k)
+                {
+                  unsigned int c = step->_changing[i];
+                  iter[i]++;
+                  _asso_values[c] =
+                    (_asso_values[c] + _jump) & (step->_asso_value_max - 1);
+                  if (iter[i] < bound)
+                    goto found_next;
+                  _asso_values[c] =
+                    (_asso_values[c] - iter[i] * _jump)
+                    & (step->_asso_value_max - 1);
+                  iter[i] = 0;
+                  i++;
+                }
+              /* Switch from one ii to the next.  */
+              {
+                unsigned int c = step->_changing[ii];
+                _asso_values[c] =
+                  (_asso_values[c] - bound * _jump)
+                  & (step->_asso_value_max - 1);
+                iter[ii] = 0;
+              }
+              /* Here all iter[i] == 0.  */
+              ii++;
+              if (ii == k)
+                {
+                  ii = 0;
+                  bound++;
+                  if (bound == step->_asso_value_max)
+                    {
+                      /* Out of search space!  We can either backtrack, or
+                         increase the available search space of this step.
+                         It seems simpler to choose the latter solution.  */
+                      step->_asso_value_max = 2 * step->_asso_value_max;
+                      if (step->_asso_value_max > _asso_value_max)
+                        {
+                          _asso_value_max = step->_asso_value_max;
+                          /* Reinitialize _max_hash_value.  */
+                          _max_hash_value =
+                            (option[NOLENGTH] ? 0 : max_key_length ())
+                            + (_asso_value_max - 1) * get_max_keysig_size ();
+                          /* Reinitialize _collision_detector.  */
+                          delete _collision_detector;
+                          _collision_detector =
+                            new Bool_Array (_max_hash_value + 1);
+                        }
+                    }
+                }
+              {
+                unsigned int c = step->_changing[ii];
+                iter[ii] = bound;
+                _asso_values[c] =
+                  (_asso_values[c] + bound * _jump)
+                  & (step->_asso_value_max - 1);
+              }
+             found_next: ;
+            }
+          else
+            {
+              /* Random.  */
+              unsigned int c = step->_changing[ii];
+              _asso_values[c] =
+                (_asso_values[c] + rand ()) & (step->_asso_value_max - 1);
+              /* Next time, change the next c.  */
+              ii++;
+              if (ii == k)
+                ii = 0;
+            }
+        }
+      if (option[DEBUG])
+        {
+          fprintf (stderr, "Step %u chose _asso_values[", stepno);
+          for (unsigned int i = 0; i < step->_changing_count; i++)
+            {
+              if (i > 0)
+                fprintf (stderr, ",");
+              fprintf (stderr, "'%c'", step->_changing[i]);
+            }
+          fprintf (stderr, "] in %u iterations.\n", iterations);
+        }
+    }
+
+  /* Free allocated memory.  */
+  while (steps != NULL)
+    {
+      Step *step = steps;
+      steps = step->_next;
+      delete[] step->_changing;
+      delete[] step->_undetermined;
+      delete_partition (step->_partition);
+      delete step;
     }
 }
 
 /* Computes a keyword's hash value, relative to the current _asso_values[],
-   and stores it in keyword->_hash_value.
-   This is called very frequently, and needs to be fast!  */
+   and stores it in keyword->_hash_value.  */
 
 inline int
 Search::compute_hash (KeywordExt *keyword) const
@@ -910,488 +1320,12 @@ Search::compute_hash (KeywordExt *keyword) const
   return keyword->_hash_value = sum;
 }
 
-/* Computes the disjoint union of two multisets of characters, i.e.
-   the set of characters that are contained with a different multiplicity
-   in set_1 and set_2.  This includes those characters which are contained
-   in one of the sets but not both.
-   Both sets set_1[0..size_1-1] and set_2[0..size_2-1] are given ordered.
-   The result, an ordered set (not multiset!) is stored in set_3[0...].
-   Returns the size of the resulting set.  */
-
-inline int
-compute_disjoint_union (const unsigned int *set_1, int size_1,
-                        const unsigned int *set_2, int size_2,
-                        unsigned int *set_3)
-{
-  unsigned int *base = set_3;
-
-  while (size_1 > 0 && size_2 > 0)
-    if (*set_1 == *set_2)
-      {
-        set_1++, size_1--;
-        set_2++, size_2--;
-      }
-    else
-      {
-        unsigned int next;
-        if (*set_1 < *set_2)
-          next = *set_1++, size_1--;
-        else
-          next = *set_2++, size_2--;
-        if (set_3 == base || next != set_3[-1])
-          *set_3++ = next;
-      }
-
-  while (size_1 > 0)
-    {
-      unsigned int next;
-      next = *set_1++, size_1--;
-      if (set_3 == base || next != set_3[-1])
-        *set_3++ = next;
-    }
-
-  while (size_2 > 0)
-    {
-      unsigned int next;
-      next = *set_2++, size_2--;
-      if (set_3 == base || next != set_3[-1])
-        *set_3++ = next;
-    }
-  return set_3 - base;
-}
-
-/* Sorts the given set in increasing frequency of _occurrences[].  */
-
-inline void
-Search::sort_by_occurrence (unsigned int *set, unsigned int len) const
-{
-  /* Use bubble sort, since the set is typically short.  */
-  for (unsigned int i = 1; i < len; i++)
-    {
-      unsigned int j;
-      unsigned int tmp;
-
-      for (j = i, tmp = set[j];
-           j > 0 && _occurrences[tmp] < _occurrences[set[j-1]];
-           j--)
-        set[j] = set[j - 1];
-
-      set[j] = tmp;
-    }
-}
-
-/* Computes the frequency of occurrence of a character among the keywords
-   up to the given keyword.  */
-inline unsigned int
-Search::compute_occurrence (unsigned int c, KeywordExt *curr) const
-{
-  unsigned int occurrence = 0;
-
-  for (KeywordExt_List *temp = _head; ; temp = temp->rest())
-    {
-      KeywordExt *keyword = temp->first();
-
-      int m = keyword->_selchars_length;
-      for (int i = 0; i < m; i++)
-        if (keyword->_selchars[i] == c)
-          {
-            occurrence++;
-            break;
-          }
-
-      if (keyword == curr)
-        break;
-    }
-
-  return occurrence;
-}
-
-/* Sorts the given set in increasing frequency of occurrences among the
-   keywords up to the given keyword.  */
-
-inline void
-Search::sort_by_occurrence (unsigned int *set, unsigned int len, KeywordExt *curr) const
-{
-  unsigned int occurrences[len];
-
-  for (unsigned int j = 0; j < len; j++)
-    occurrences[j] = 0;
-  for (KeywordExt_List *temp = _head; ; temp = temp->rest())
-    {
-      KeywordExt *keyword = temp->first();
-
-      int m = keyword->_selchars_length;
-      for (unsigned int j = 0; j < len; j++)
-        {
-          unsigned int c = set[j];
-
-          for (int i = 0; i < m; i++)
-            if (keyword->_selchars[i] == c)
-              {
-                occurrences[j]++;
-                break;
-              }
-        }
-
-      if (keyword == curr)
-        break;
-    }
-
-  /* Use bubble sort, since the set is typically short.  */
-  for (unsigned int i = 1; i < len; i++)
-    {
-      unsigned int j;
-      unsigned int set_tmp, occ_tmp;
-
-      for (j = i, set_tmp = set[j], occ_tmp = occurrences[j];
-           j > 0 && occ_tmp < occurrences[j-1];
-           j--)
-        {
-          set[j] = set[j - 1];
-          occurrences[j] = occurrences[j - 1];
-        }
-
-      set[j] = set_tmp;
-      occurrences[j] = occ_tmp;
-    }
-}
-
-/* Returns true if the recomputed hash values for the keywords from
-   _head->first() to curr - inclusive - give at least one collision.
-   This is called very frequently, and needs to be fast!  */
-bool
-Search::has_collisions (KeywordExt *curr)
-{
-  /* Iteration Number array is a win, O(1) initialization time!  */
-  _collision_detector->clear ();
-
-  for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
-    {
-      KeywordExt *keyword = ptr->first();
-
-      /* Compute new hash code for the keyword, and see whether it
-         collides with another keyword's hash code.  If we have too
-         many collisions, we can safely abort the fruitless loop.  */
-      if (_collision_detector->set_bit (compute_hash (keyword)))
-        return true;
-
-      if (keyword == curr)
-        return false;
-    }
-}
-
-/* Tests whether the given keyword has the same hash value as another one
-   earlier in the list.  If yes, this earlier keyword is returned (more
-   precisely, the first one of them, but it doesn't really matter which one).
-   If no collision is present, NULL is returned.  */
-KeywordExt *
-Search::collision_prior_to (KeywordExt *curr)
-{
-  for (KeywordExt_List *prior_ptr = _head;
-       prior_ptr->first() != curr;
-       prior_ptr = prior_ptr->rest())
-    {
-      KeywordExt *prior = prior_ptr->first();
-
-      if (prior->_hash_value == curr->_hash_value)
-        return prior;
-    }
-  return NULL;
-}
-
-/* Finding good asso_values is normally straightforwards, but needs
-   backtracking in some cases.  The recurse/backtrack depth can be at most
-   _list_len.  Since we cannot assume that the C stack is large enough,
-   we perform the processing without recursion, and simulate the stack.  */
-struct StackEntry
-{
-  /* The current keyword.  */
-  KeywordExt *          _curr;
-
-  /* The prior keyword, with which curr collides.  */
-  KeywordExt *          _prior;
-
-  /* Scratch set.  */
-  unsigned int *        _union_set;
-  unsigned int          _union_set_length;
-
-  /* Current index into the scratch set.  */
-  unsigned int          _union_index;
-
-  /* Trying a different value for _asso_values[_c].  */
-  unsigned int          _c;
-
-  /* The original value of _asso_values[_c].  */
-  unsigned int          _original_asso_value;
-
-  /* Remaining number of iterations.  */
-  int                   _iter;
-};
-
-/* Finds some _asso_values[] that fit.  */
-
-void
-Search::find_asso_values ()
-{
-  /* Add one keyword after the other and see whether its hash value collides
-     with one of the previous hash values.  If so, change some asso_values[]
-     entry until the number of collisions so far is reduced.  Then continue
-     with the next keyword.  */
-
-  init_asso_values ();
-
-  int iterations =
-    !option[FAST]
-    ? _asso_value_max    /* Try all possible values of _asso_values[c].  */
-    : option.get_iterations ()
-      ? option.get_iterations ()
-      : keyword_list_length ();
-
-  /* Allocate stack.  */
-  StackEntry *stack = new StackEntry[_list_len];
-  {
-    KeywordExt_List *ptr = _head;
-    for (int i = 0; i < _list_len; i++, ptr = ptr->rest())
-      {
-        stack[i]._curr = ptr->first();
-        stack[i]._union_set = new unsigned int [2 * get_max_keysig_size ()];
-      }
-  }
-
-  /* Backtracking according to the standard Prolog call pattern:
-
-                          +------------------+
-        -------CALL------>|                  |-------RETURN------>
-                          |                  |
-        <------FAIL-------|                  |<------REDO---------
-                          +------------------+
-
-     A CALL and RETURN increase the stack pointer, FAIL and REDO decrease it.
-   */
-  {
-    /* Current stack pointer.  */
-    StackEntry *sp = &stack[0];
-
-    /* Local variables corresponding to *sp.  */
-    /* The current keyword.  */
-    KeywordExt *curr;
-    /* The prior keyword, with which curr collides.  */
-    KeywordExt *prior;
-    /* Scratch set.  */
-    unsigned int *union_set;
-    unsigned int union_set_length;
-    /* Current index into the scratch set.  */
-    unsigned int union_index;
-    /* Trying a different value for _asso_values[c].  */
-    unsigned int c;
-    /* The original value of _asso_values[c].  */
-    unsigned int original_asso_value;
-    /* Remaining number of iterations.  */
-    int iter;
-
-    /* ==== CALL ==== */
-   CALL:
-
-    /* Next keyword from the list.  */
-    curr = sp->_curr;
-
-    /* Compute this keyword's hash value.  */
-    compute_hash (curr);
-
-    /* See if it collides with a prior keyword.  */
-    prior = collision_prior_to (curr);
-
-    if (prior != NULL)
-      {
-        /* Handle collision: Attempt to change an _asso_value[], in order to
-           resolve a hash value collision between the two given keywords.  */
-
-        if (option[DEBUG])
-          {
-            fprintf (stderr, "collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
-                     sp - stack + 1,
-                     prior->_allchars_length, prior->_allchars,
-                     curr->_allchars_length, curr->_allchars,
-                     curr->_hash_value);
-            fflush (stderr);
-          }
-
-        /* To achieve that the two hash values become different, we have to
-           change an _asso_values[c] for a character c that contributes to the
-           hash functions of prior and curr with different multiplicity.
-           So we compute the set of such c.  */
-        union_set = sp->_union_set;
-        union_set_length =
-          compute_disjoint_union (prior->_selchars, prior->_selchars_length,
-                                  curr->_selchars, curr->_selchars_length,
-                                  union_set);
-
-        /* Sort by decreasing occurrence: Try least-used characters c first.
-           The idea is that this reduces the number of freshly introduced
-           collisions.  */
-        if (option[OPT_CHOICE])
-          sort_by_occurrence (union_set, union_set_length, curr);
-        else
-          sort_by_occurrence (union_set, union_set_length);
-
-        for (union_index = 0; union_index < union_set_length; union_index++)
-          {
-            c = union_set[union_index];
-
-            if (option[DEBUG])
-              {
-                unsigned int n = sp - stack + 1;
-                unsigned int o = compute_occurrence (c, curr);
-                fprintf (stderr, "Expected number of iterations between %g and %g\n",
-                         exp (static_cast<double>((2*n-o)*o)
-                              / static_cast<double>(2*_max_hash_value)),
-                         exp (static_cast<double>((2*n-o)*o)
-                              / static_cast<double>(2*_asso_value_max)));
-              }
-
-            /* Try various other values for _asso_values[c].  A value is
-               successful if, with it, the recomputed hash values for the
-               keywords from _head->first() to curr - inclusive - give no
-               collisions.  Up to the given number of iterations are performed.
-               If successful, _asso_values[c] is changed, and the recursion
-               continues. If all iterations are unsuccessful, _asso_values[c]
-               is restored and we backtrack, trying the next union_index.  */
-
-            original_asso_value = _asso_values[c];
-
-            /* Try many valid associated values.  */
-            for (iter = iterations; iter > 0; iter--)
-              {
-                /* Try next value.  Wrap around mod _asso_value_max.  */
-                _asso_values[c] =
-                  (_asso_values[c] + (_jump != 0 ? _jump : rand ()))
-                  & (_asso_value_max - 1);
-
-                if (!has_collisions (curr))
-                  {
-                    /* Good, this _asso_values[] modification reduces the
-                       number of collisions so far.
-                       All keyword->_hash_value up to curr - inclusive -
-                       have been updated.  */
-                    if (option[DEBUG])
-                      {
-                        fprintf (stderr, "- resolved after %d iterations by "
-                                 "changing asso_value['%c'] (char #%d) to %d\n",
-                                 iterations - iter + 1, c,
-                                 union_index + 1, _asso_values[c]);
-                        fflush (stderr);
-                      }
-                    goto RECURSE_COLLISION;
-                   BACKTRACK_COLLISION:
-                    if (option[DEBUG])
-                      {
-                        fprintf (stderr, "back to collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
-                                 sp - stack + 1,
-                                 prior->_allchars_length, prior->_allchars,
-                                 curr->_allchars_length, curr->_allchars,
-                                 curr->_hash_value);
-                        fflush (stderr);
-                      }
-                  }
-              }
-
-            /* Restore original values, no more tries.  */
-            _asso_values[c] = original_asso_value;
-          }
-
-        /* Failed to resolve a collision.  */
-
-        /* Recompute all keyword->_hash_value up to curr - exclusive -.  */
-        for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
-          {
-            KeywordExt* keyword = ptr->first();
-            if (keyword == curr)
-              break;
-            compute_hash (keyword);
-          }
-
-        if (option[DEBUG])
-          {
-            fprintf (stderr, "** collision not resolved after %d iterations of asso_value[",
-                     iterations);
-            for (union_index = 0; union_index < union_set_length; union_index++)
-              {
-                if (union_index > 0)
-                  fprintf (stderr, ",");
-                fprintf(stderr, "'%c'", union_set[union_index]);
-              }
-            fprintf (stderr, "], backtracking...\n");
-            fflush (stderr);
-          }
-      }
-    else
-      {
-        /* Nothing to do, just recurse.  */
-        goto RECURSE_NO_COLLISION;
-       BACKTRACK_NO_COLLISION: ;
-      }
-
-    /* ==== FAIL ==== */
-    if (sp != stack)
-      {
-        sp--;
-        /* ==== REDO ==== */
-        curr = sp->_curr;
-        prior = sp->_prior;
-        if (prior == NULL)
-          goto BACKTRACK_NO_COLLISION;
-        union_set = sp->_union_set;
-        union_set_length = sp->_union_set_length;
-        union_index = sp->_union_index;
-        c = sp->_c;
-        original_asso_value = sp->_original_asso_value;
-        iter = sp->_iter;
-        goto BACKTRACK_COLLISION;
-      }
-
-    /* No solution found after an exhaustive search!
-       We should ideally turn off option[FAST] and, if that doesn't help,
-       multiply _asso_value_max by 2.  */
-    fprintf (stderr,
-             "\nBig failure, always got duplicate hash code values.\n");
-    if (option[POSITIONS])
-      fprintf (stderr, "try options -m or -r, or use new key positions.\n\n");
-    else
-      fprintf (stderr, "try options -m or -r.\n\n");
-    exit (1);
-
-   RECURSE_COLLISION:
-    /*sp->_union_set = union_set;*/ // redundant
-    sp->_union_set_length = union_set_length;
-    sp->_union_index = union_index;
-    sp->_c = c;
-    sp->_original_asso_value = original_asso_value;
-    sp->_iter = iter;
-   RECURSE_NO_COLLISION:
-    /*sp->_curr = curr;*/ // redundant
-    sp->_prior = prior;
-    /* ==== RETURN ==== */
-    sp++;
-    if (sp - stack < _list_len)
-      goto CALL;
-  }
-
-  /* Deallocate stack.  */
-  {
-    for (int i = 0; i < _list_len; i++)
-      delete[] stack[i]._union_set;
-  }
-  delete[] stack;
-}
-
 /* Finds good _asso_values[].  */
 
 void
 Search::find_good_asso_values ()
 {
   prepare ();
-  if (option[ORDER])
-    reorder ();
   prepare_asso_values ();
 
   /* Search for good _asso_values[].  */
@@ -1529,7 +1463,6 @@ Search::optimize ()
 Search::~Search ()
 {
   delete _collision_detector;
-  delete[] _determined;
   if (option[DEBUG])
     {
       fprintf (stderr, "\ndumping occurrence and associated values tables\n");

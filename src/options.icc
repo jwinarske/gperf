@@ -51,13 +51,6 @@ Options::get_output_file_name () const
   return _output_file_name;
 }
 
-/* Returns the iterations value.  */
-INLINE int
-Options::get_iterations () const
-{
-  return _iterations;
-}
-
 /* Returns the jump value.  */
 INLINE int
 Options::get_jump () const

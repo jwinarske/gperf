@@ -75,7 +75,6 @@ struct KeywordExt : public Keyword
   void                  delete_selchars ();
 
   /* Data members used by the algorithm.  */
-  int                   _occurrence; /* Frequency of key set occurrences.  */
   int                   _hash_value; /* Hash value for the keyword.  */
 
   /* Data members used by the output routines.  */
