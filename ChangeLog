@@ -1,3 +1,8 @@
+2003-05-03  Bruno Haible  <bruno@clisp.org>
+
+	* doc/gperf.texi: Use two spaces as sentence separator, as recommended
+	by the texinfo manual.
+
 2003-04-12  Bruno Haible  <bruno@clisp.org>
 
 	* doc/configure.in (mandir): Change default value.

@@ -454,20 +454,20 @@ option's argument.  Languages handled are currently:
 
 @table @samp
 @item KR-C
-Old-style K&R C. This language is understood by old-style C compilers and
+Old-style K&R C.  This language is understood by old-style C compilers and
 ANSI C compilers, but ANSI C compilers may flag warnings (or even errors)
 because of lacking @samp{const}.
 
 @item C
-Common C. This language is understood by ANSI C compilers, and also by
+Common C.  This language is understood by ANSI C compilers, and also by
 old-style C compilers, provided that you @code{#define const} to empty
 for compilers which don't know about this keyword.
 
 @item ANSI-C
-ANSI C. This language is understood by ANSI C compilers and C++ compilers.
+ANSI C.  This language is understood by ANSI C compilers and C++ compilers.
 
 @item C++
-C++. This language is understood by C++ compilers.
+C++.  This language is understood by C++ compilers.
 @end table
 
 The default is C.
@@ -515,7 +515,7 @@ This option specifies that all strings that will be passed as arguments
 to the generated hash function and the generated lookup function will
 solely consist of 7-bit ASCII characters (bytes in the range 0..127).
 (Note that the ANSI C functions @code{isalnum} and @code{isgraph} do
-@emph{not} guarantee that a byte is in this range. Only an explicit
+@emph{not} guarantee that a byte is in this range.  Only an explicit
 test like @samp{c >= 'A' && c <= 'Z'} guarantees this.)
 
 @item %compare-lengths
@@ -574,7 +574,7 @@ name can be changed through the @samp{%define string-pool-name} declaration.
 @cindex @samp{%define string-pool-name}
 Allows you to specify the name of the generated string pool created by
 the declaration @samp{%pic} (or, equivalently, the option @samp{-P}).
-The default name is @samp{stringpool}. This declaration permits the use of
+The default name is @samp{stringpool}.  This declaration permits the use of
 two hash tables in the same file, with @samp{%pic} and even when the
 @samp{%global-table} declaration (or, equivalently, the option @samp{-G})
 is given.
@@ -598,11 +598,11 @@ use of two hash tables in the same file, even when the option @samp{-G}
 Causes the generated C code to use a @code{switch} statement scheme,
 rather than an array lookup table.  This can lead to a reduction in both
 time and space requirements for some input files.  The argument to this
-option determines how many @code{switch} statements are generated. A
+option determines how many @code{switch} statements are generated.  A
 value of 1 generates 1 @code{switch} containing all the elements, a
 value of 2 generates 2 tables with 1/2 the elements in each
 @code{switch}, etc.  This is useful since many C compilers cannot
-correctly generate code for large @code{switch} statements. This option
+correctly generate code for large @code{switch} statements.  This option
 was inspired in part by Keith Bostic's original C program.
 
 @item %omit-struct-type
@@ -653,7 +653,7 @@ The first field of each non-comment line is always the keyword itself.  It
 can be given in two ways: as a simple name, i.e., without surrounding
 string quotation marks, or as a string enclosed in double-quotes, in
 C syntax, possibly with backslash escapes like @code{\"} or @code{\234}
-or @code{\xa8}. In either case, it must start right at the beginning
+or @code{\xa8}.  In either case, it must start right at the beginning
 of the line, without leading whitespace.
 In this context, a ``field'' is considered to extend up to, but
 not include, the first blank, comma, or newline.  Here is a simple
@@ -760,22 +760,22 @@ created by adding @var{len} to several user-specified @var{str} byte
 positions indexed into an @dfn{associated values} table stored in a
 local static array.  The associated values table is constructed
 internally by @code{gperf} and later output as a static local C array
-called @samp{hash_table}. The relevant selected positions (i.e. indices
+called @samp{hash_table}.  The relevant selected positions (i.e. indices
 into @var{str}) are specified via the @samp{-k} option when running
 @code{gperf}, as detailed in the @emph{Options} section below (@pxref{Options}).
 @end deftypefun
 
 @deftypefun {} in_word_set (const char * @var{str}, unsigned int @var{len})
 If @var{str} is in the keyword set, returns a pointer to that
-keyword. More exactly, if the option @samp{-t} (or, equivalently, the
+keyword.  More exactly, if the option @samp{-t} (or, equivalently, the
 @samp{%struct-type} declaration) was given, it returns
-a pointer to the matching keyword's structure. Otherwise it returns
+a pointer to the matching keyword's structure.  Otherwise it returns
 @code{NULL}.
 @end deftypefun
 
 If the option @samp{-c} (or, equivalently, the @samp{%compare-strncmp}
 declaration) is not used, @var{str} must be a NUL terminated
-string of exactly length @var{len}. If @samp{-c} (or, equivalently, the
+string of exactly length @var{len}.  If @samp{-c} (or, equivalently, the
 @samp{%compare-strncmp} declaration) is used, @var{str} must
 simply be an array of @var{len} bytes and does not need to be NUL
 terminated.
@@ -812,21 +812,21 @@ set characteristics.
 @cindex NUL
 
 By default, the code generated by @code{gperf} operates on zero
-terminated strings, the usual representation of strings in C. This means
+terminated strings, the usual representation of strings in C.  This means
 that the keywords in the input file must not contain NUL bytes,
 and the @var{str} argument passed to @code{hash} or @code{in_word_set}
 must be NUL terminated and have exactly length @var{len}.
 
 If option @samp{-c} (or, equivalently, the @samp{%compare-strncmp}
 declaration) is used, then the @var{str} argument does not need
-to be NUL terminated. The code generated by @code{gperf} will only
+to be NUL terminated.  The code generated by @code{gperf} will only
 access the first @var{len}, not @var{len+1}, bytes starting at @var{str}.
 However, the keywords in the input file still must not contain NUL
 bytes.
 
 If option @samp{-l} (or, equivalently, the @samp{%compare-lengths}
 declaration) is used, then the hash table performs binary
-comparison. The keywords in the input file may contain NUL bytes,
+comparison.  The keywords in the input file may contain NUL bytes,
 written in string syntax as @code{\000} or @code{\x00}, and the code
 generated by @code{gperf} will treat NUL like any other byte.
 Also, in this case the @samp{-c} option (or, equivalently, the
@@ -911,31 +911,31 @@ option's argument.  Languages handled are currently:
 
 @table @samp
 @item KR-C
-Old-style K&R C. This language is understood by old-style C compilers and
+Old-style K&R C.  This language is understood by old-style C compilers and
 ANSI C compilers, but ANSI C compilers may flag warnings (or even errors)
 because of lacking @samp{const}.
 
 @item C
-Common C. This language is understood by ANSI C compilers, and also by
+Common C.  This language is understood by ANSI C compilers, and also by
 old-style C compilers, provided that you @code{#define const} to empty
 for compilers which don't know about this keyword.
 
 @item ANSI-C
-ANSI C. This language is understood by ANSI C compilers and C++ compilers.
+ANSI C.  This language is understood by ANSI C compilers and C++ compilers.
 
 @item C++
-C++. This language is understood by C++ compilers.
+C++.  This language is understood by C++ compilers.
 @end table
 
 The default is C.
 
 @item -a
 This option is supported for compatibility with previous releases of
-@code{gperf}. It does not do anything.
+@code{gperf}.  It does not do anything.
 
 @item -g
 This option is supported for compatibility with previous releases of
-@code{gperf}. It does not do anything.
+@code{gperf}.  It does not do anything.
 @end table
 
 @node Output Details, Algorithmic Details, Output Language, Options
@@ -991,7 +991,7 @@ This option specifies that all strings that will be passed as arguments
 to the generated hash function and the generated lookup function will
 solely consist of 7-bit ASCII characters (bytes in the range 0..127).
 (Note that the ANSI C functions @code{isalnum} and @code{isgraph} do
-@emph{not} guarantee that a byte is in this range. Only an explicit
+@emph{not} guarantee that a byte is in this range.  Only an explicit
 test like @samp{c >= 'A' && c <= 'Z'} guarantees this.) This was the
 default in versions of @code{gperf} earlier than 2.7; now the default is
 to support 8-bit and multibyte characters.
@@ -1051,7 +1051,7 @@ name can be changed through the option @samp{--string-pool-name}.
 @item -Q @var{string-pool-name}
 @itemx --string-pool-name=@var{string-pool-name}
 Allows you to specify the name of the generated string pool created by
-option @samp{-P}.  The default name is @samp{stringpool}. This option
+option @samp{-P}.  The default name is @samp{stringpool}.  This option
 permits the use of two hash tables in the same file, with @samp{-P} and
 even when the option @samp{-G} (or, equivalently, the @samp{%global-table}
 declaration) is given.
@@ -1076,11 +1076,11 @@ use of two hash tables in the same file, even when the option @samp{-G}
 Causes the generated C code to use a @code{switch} statement scheme,
 rather than an array lookup table.  This can lead to a reduction in both
 time and space requirements for some input files.  The argument to this
-option determines how many @code{switch} statements are generated. A
+option determines how many @code{switch} statements are generated.  A
 value of 1 generates 1 @code{switch} containing all the elements, a
 value of 2 generates 2 tables with 1/2 the elements in each
 @code{switch}, etc.  This is useful since many C compilers cannot
-correctly generate code for large @code{switch} statements. This option
+correctly generate code for large @code{switch} statements.  This option
 was inspired in part by Keith Bostic's original C program.
 
 @item -T
@@ -1090,7 +1090,7 @@ this option if the type is already defined elsewhere.
 
 @item -p
 This option is supported for compatibility with previous releases of
-@code{gperf}. It does not do anything.
+@code{gperf}.  It does not do anything.
 @end table
 
 @node Algorithmic Details, Verbosity, Output Details, Options
@@ -1100,7 +1100,7 @@ This option is supported for compatibility with previous releases of
 @item -k @var{selected-byte-positions}
 @itemx --key-positions=@var{selected-byte-positions}
 Allows selection of the byte positions used in the keywords'
-hash function. The allowable choices range between 1-255, inclusive.
+hash function.  The allowable choices range between 1-255, inclusive.
 The positions are separated by commas, e.g., @samp{-k 9,4,13,14};
 ranges may be used, e.g., @samp{-k 2-7}; and positions may occur
 in any order.  Furthermore, the wildcard '*' causes the generated
