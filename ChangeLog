@@ -1,5 +1,19 @@
 2003-01-07  Bruno Haible  <bruno@clisp.org>
 
+	* src/input.h (Input::_charset_dependent): New field.
+	* src/input.cc (Input::read_input): Also set _charset_dependent.
+	* src/main.cc (main): Pass _charset_dependent from Input to Output.
+	* src/output.h (Output::Output): Add charset_dependent argument.
+	(Output::_charset_dependent): New field.
+	* src/output.cc (Output::Output): Add charset_dependent argument.
+	(Output::output): Provoke a compilation error if the execution
+	character set doesn't match the expectations.
+	* tests/c-parse.exp, tests/charsets.exp, tests/chill.exp,
+	tests/cplusplus.exp, tests/gpc.exp, tests/java.exp,
+	tests/languages.exp, tests/modula2.exp, tests/objc.exp,
+	tests/permut2.exp, tests/permut3.exp, tests/permutc2.exp,
+	tests/test-4.exp: Update.
+
 	* src/options.cc (Options::long_usage): Change bug report address to
 	<bug-gnu-gperf@gnu.org>.
 	* tests/test-6.exp: Update.

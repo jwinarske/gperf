@@ -698,6 +698,7 @@ Input::read_input ()
     Keyword_List **list_tail = &_head;
     const char *delimiters = option.get_delimiters ();
     unsigned int lineno = keywords_lineno;
+    bool charset_dependent = false;
     for (const char *line = keywords; line < keywords_end; )
       {
         const char *line_end;
@@ -797,34 +798,42 @@ Input::read_input ()
                           case '\\': case '\'': case '"':
                             *kp = c;
                             lp++;
+                            charset_dependent = true;
                             break;
                           case 'n':
                             *kp = '\n';
                             lp++;
+                            charset_dependent = true;
                             break;
                           case 't':
                             *kp = '\t';
                             lp++;
+                            charset_dependent = true;
                             break;
                           case 'r':
                             *kp = '\r';
                             lp++;
+                            charset_dependent = true;
                             break;
                           case 'f':
                             *kp = '\f';
                             lp++;
+                            charset_dependent = true;
                             break;
                           case 'b':
                             *kp = '\b';
                             lp++;
+                            charset_dependent = true;
                             break;
                           case 'a':
                             *kp = '\a';
                             lp++;
+                            charset_dependent = true;
                             break;
                           case 'v':
                             *kp = '\v';
                             lp++;
+                            charset_dependent = true;
                             break;
                           default:
                             fprintf (stderr, "%s:%u: invalid escape sequence"
@@ -839,6 +848,7 @@ Input::read_input ()
                       {
                         *kp = c;
                         lp++;
+                        charset_dependent = true;
                       }
                     kp++;
                   }
@@ -901,6 +911,8 @@ Input::read_input ()
                       }
                     lp++;
                   }
+                if (keyword_length > 0)
+                  charset_dependent = true;
               }
 
             /* Allocate Keyword and add it to the list.  */
@@ -922,6 +934,8 @@ Input::read_input ()
                  pretty_input_file_name ());
         exit (1);
       }
+
+    _charset_dependent = charset_dependent;
   }
 
   /* To be freed in the destructor.  */

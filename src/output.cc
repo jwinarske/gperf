@@ -82,7 +82,7 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 const char *verbatim_declarations_end,
                 unsigned int verbatim_declarations_lineno,
                 const char *verbatim_code, const char *verbatim_code_end,
-                unsigned int verbatim_code_lineno,
+                unsigned int verbatim_code_lineno, bool charset_dependent,
                 int total_keys, int max_key_len, int min_key_len,
                 const Positions& positions, const unsigned int *alpha_inc,
                 int total_duplicates, unsigned int alpha_size,
@@ -96,6 +96,7 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
     _verbatim_code (verbatim_code),
     _verbatim_code_end (verbatim_code_end),
     _verbatim_code_lineno (verbatim_code_lineno),
+    _charset_dependent (charset_dependent),
     _total_keys (total_keys),
     _max_key_len (max_key_len), _min_key_len (min_key_len),
     _key_positions (positions), _alpha_inc (alpha_inc),
@@ -1948,6 +1949,40 @@ Output::output ()
       printf ("/* Computed positions: -k'");
       _key_positions.print();
       printf ("' */\n");
+    }
+  printf ("\n");
+
+  if (_charset_dependent
+      && (_key_positions.get_size() > 0 || option[UPPERLOWER]))
+    {
+      /* The generated tables assume that the execution character set is
+         based on ISO-646, not EBCDIC.  */
+      printf ("#if !((' ' == 32) && ('!' == 33) && ('\"' == 34) && ('#' == 35) \\\n"
+              "      && ('%%' == 37) && ('&' == 38) && ('\\'' == 39) && ('(' == 40) \\\n"
+              "      && (')' == 41) && ('*' == 42) && ('+' == 43) && (',' == 44) \\\n"
+              "      && ('-' == 45) && ('.' == 46) && ('/' == 47) && ('0' == 48) \\\n"
+              "      && ('1' == 49) && ('2' == 50) && ('3' == 51) && ('4' == 52) \\\n"
+              "      && ('5' == 53) && ('6' == 54) && ('7' == 55) && ('8' == 56) \\\n"
+              "      && ('9' == 57) && (':' == 58) && (';' == 59) && ('<' == 60) \\\n"
+              "      && ('=' == 61) && ('>' == 62) && ('?' == 63) && ('A' == 65) \\\n"
+              "      && ('B' == 66) && ('C' == 67) && ('D' == 68) && ('E' == 69) \\\n"
+              "      && ('F' == 70) && ('G' == 71) && ('H' == 72) && ('I' == 73) \\\n"
+              "      && ('J' == 74) && ('K' == 75) && ('L' == 76) && ('M' == 77) \\\n"
+              "      && ('N' == 78) && ('O' == 79) && ('P' == 80) && ('Q' == 81) \\\n"
+              "      && ('R' == 82) && ('S' == 83) && ('T' == 84) && ('U' == 85) \\\n"
+              "      && ('V' == 86) && ('W' == 87) && ('X' == 88) && ('Y' == 89) \\\n"
+              "      && ('Z' == 90) && ('[' == 91) && ('\\\\' == 92) && (']' == 93) \\\n"
+              "      && ('^' == 94) && ('_' == 95) && ('a' == 97) && ('b' == 98) \\\n"
+              "      && ('c' == 99) && ('d' == 100) && ('e' == 101) && ('f' == 102) \\\n"
+              "      && ('g' == 103) && ('h' == 104) && ('i' == 105) && ('j' == 106) \\\n"
+              "      && ('k' == 107) && ('l' == 108) && ('m' == 109) && ('n' == 110) \\\n"
+              "      && ('o' == 111) && ('p' == 112) && ('q' == 113) && ('r' == 114) \\\n"
+              "      && ('s' == 115) && ('t' == 116) && ('u' == 117) && ('v' == 118) \\\n"
+              "      && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \\\n"
+              "      && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))\n"
+              "/* The character set is not based on ISO-646.  */\n");
+      printf ("%s \"gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>.\"\n", option[KRC] || option[C] ? "error" : "#error");
+      printf ("#endif\n\n");
     }
 
   if (_verbatim_declarations < _verbatim_declarations_end)

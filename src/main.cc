@@ -1,5 +1,5 @@
 /* Driver program for the hash function generator
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -102,6 +102,7 @@ main (int argc, char *argv[])
                           inputter._verbatim_code,
                           inputter._verbatim_code_end,
                           inputter._verbatim_code_lineno,
+                          inputter._charset_dependent,
                           searcher._total_keys,
                           searcher._max_key_len,
                           searcher._min_key_len,

@@ -2,7 +2,7 @@
 
 /* Input routines.
 
-   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002-2003 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -61,6 +61,9 @@ public:
   const char *          _struct_tag;
   /* List of all keywords.  */
   Keyword_List *        _head;
+  /* Whether the keyword chars would have different values in a different
+     character set.  */
+  bool                  _charset_dependent;
 };
 
 #endif

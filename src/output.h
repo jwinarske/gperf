@@ -48,6 +48,7 @@ public:
                                 const char *verbatim_code,
                                 const char *verbatim_code_end,
                                 unsigned int verbatim_code_lineno,
+                                bool charset_dependent,
                                 int total_keys,
                                 int max_key_len, int min_key_len,
                                 const Positions& positions,
@@ -125,6 +126,9 @@ private:
   const char * const    _verbatim_code;
   const char * const    _verbatim_code_end;
   unsigned int const    _verbatim_code_lineno;
+  /* Whether the keyword chars would have different values in a different
+     character set.  */
+  bool                  _charset_dependent;
   /* Total number of keys, counting duplicates. */
   int const             _total_keys;
   /* Maximum length of the longest keyword. */
