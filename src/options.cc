@@ -346,14 +346,14 @@ int PositionStringParser::nextPosition ()
           case '$': _str++; return _end_word_marker;
           case '0': case '1': case '2': case '3': case '4':
           case '5': case '6': case '7': case '8': case '9':
-            for (_curr_value = 0; isdigit ((unsigned char)(*_str)); _str++)
+            for (_curr_value = 0; isdigit (static_cast<unsigned char>(*_str)); _str++)
               _curr_value = _curr_value * 10 + (*_str - '0');
 
             if (*_str == '-')
               {
 
                 for (_size = 1, _upper_bound = 0;
-                     isdigit ((unsigned char)(*++_str));
+                     isdigit (static_cast<unsigned char>(*++_str));
                      _upper_bound = _upper_bound * 10 + (*_str - '0'));
 
                 if (_upper_bound <= _curr_value || _upper_bound > _high_bound)

@@ -37,7 +37,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 Hash_Table::Hash_Table (KeywordExt **table_ptr, int s, bool ignore_len):
      _table (table_ptr), _size (s), _collisions (0), _ignore_length (ignore_len)
 {
-  memset ((char *) _table, 0, _size * sizeof (*_table));
+  memset (_table, 0, _size * sizeof (*_table));
 }
 
 Hash_Table::~Hash_Table ()
@@ -61,8 +61,8 @@ Hash_Table::~Hash_Table ()
                "\ndumping the hash table\n"
                "total available table slots = %d, total bytes = %d, total collisions = %d\n"
                "location, %*s, keyword\n",
-               _size, _size * (int) sizeof (*_table), _collisions,
-               field_width, "keysig");
+               _size, _size * static_cast<unsigned int>(sizeof (*_table)),
+               _collisions, field_width, "keysig");
 
       for (int i = _size - 1; i >= 0; i--)
         if (_table[i])

@@ -1,5 +1,15 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	Avoid g++ -Wold-style-cast warnings.
+	* src/bool-array.icc: Use new-style casts.
+	* src/gen-perf.cc: Likewise.
+	* src/input.cc: Likewise.
+	* src/key-list.cc: Likewise.
+	* src/keyword.cc: Likewise.
+	* src/options.cc: Likewise.
+	* src/output.cc: Likewise.
+	* src/hash-table.cc: Likewise. Remove (char *) cast in memset argument.
+
 	* src/keyword-list.h (KeywordExt_List): Don't inherit from KeywordExt.
 	(KeywordExt_List::KeywordExt_List): Take a KeywordExt* as argument.
 	(KeywordExt_List::_car): New field.

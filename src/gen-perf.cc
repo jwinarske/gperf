@@ -58,7 +58,7 @@ Gen_Perf::Gen_Perf ()
 
   if (option[RANDOM])
     {
-      srand ((long) time (0));
+      srand (reinterpret_cast<long>(time (0)));
 
       for (int i = 0; i < ALPHA_SIZE; i++)
         _asso_values[i] = (rand () & asso_value_max - 1);
@@ -139,7 +139,7 @@ Gen_Perf::sort_set (char *union_set, int len)
       char tmp;
 
       for (curr = i + 1, tmp = union_set[curr];
-           curr > 0 && _occurrences[(unsigned char)tmp] < _occurrences[(unsigned char)(union_set[curr-1])];
+           curr > 0 && _occurrences[static_cast<unsigned char>(tmp)] < _occurrences[static_cast<unsigned char>(union_set[curr-1])];
            curr--)
         union_set[curr] = union_set[curr - 1];
 
@@ -157,7 +157,7 @@ Gen_Perf::hash (KeywordExt *key_node)
   const char *p = key_node->_selchars;
   int i = key_node->_selchars_length;
   for (; i > 0; p++, i--)
-      sum += _asso_values[(unsigned char)(*p)];
+      sum += _asso_values[static_cast<unsigned char>(*p)];
 
   return key_node->_hash_value = sum;
 }
@@ -171,7 +171,7 @@ Gen_Perf::hash (KeywordExt *key_node)
 inline bool
 Gen_Perf::affects_prev (char c, KeywordExt *curr)
 {
-  int original_char = _asso_values[(unsigned char)c];
+  int original_char = _asso_values[static_cast<unsigned char>(c)];
   int total_iterations = !option[FAST]
     ? get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
 
@@ -181,8 +181,8 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
     {
       int collisions = 0;
 
-      _asso_values[(unsigned char)c] =
-        (_asso_values[(unsigned char)c] + (option.get_jump () ? option.get_jump () : rand ()))
+      _asso_values[static_cast<unsigned char>(c)] =
+        (_asso_values[static_cast<unsigned char>(c)] + (option.get_jump () ? option.get_jump () : rand ()))
         & (get_asso_max () - 1);
 
       /* Iteration Number array is a win, O(1) intialization time! */
@@ -208,7 +208,7 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
     }
 
   /* Restore original values, no more tries. */
-  _asso_values[(unsigned char)c] = original_char;
+  _asso_values[static_cast<unsigned char>(c)] = original_char;
   /* If we're this far it's time to try the next character.... */
   return true;
 }
@@ -247,7 +247,7 @@ Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
         if (option[DEBUG])
           {
             fprintf (stderr, " by changing asso_value['%c'] (char #%d) to %d\n",
-                     *p, p - union_set + 1, _asso_values[(unsigned char)(*p)]);
+                     *p, p - union_set + 1, _asso_values[static_cast<unsigned char>(*p)]);
             fflush (stderr);
           }
         return; /* Good, doesn't affect previous hash values, we'll take it. */

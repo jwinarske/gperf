@@ -218,7 +218,7 @@ Key_List::get_occurrence (KeywordExt *ptr)
   const char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
-    value += _occurrences[(unsigned char)(*p)];
+    value += _occurrences[static_cast<unsigned char>(*p)];
 
   return value;
 }
@@ -232,7 +232,7 @@ Key_List::set_determined (KeywordExt *ptr)
   const char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
-    _determined[(unsigned char)(*p)] = true;
+    _determined[static_cast<unsigned char>(*p)] = true;
 }
 
 /* Returns TRUE if PTR's key set is already completely determined. */
@@ -245,7 +245,7 @@ Key_List::already_determined (KeywordExt *ptr)
   const char *p = ptr->_selchars;
   unsigned int i = ptr->_selchars_length;
   for (; is_determined && i > 0; p++, i--)
-    is_determined = _determined[(unsigned char)(*p)];
+    is_determined = _determined[static_cast<unsigned char>(*p)];
 
   return is_determined;
 }

@@ -217,7 +217,7 @@ output_string (const char *key, int len)
   putchar ('"');
   for (; len > 0; len--)
     {
-      unsigned char c = (unsigned char) *key++;
+      unsigned char c = static_cast<unsigned char>(*key++);
       if (isprint (c))
         {
           if (c == '"' || c == '\\')
@@ -1020,7 +1020,7 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
     {
       int part1 = num_switches / 2;
       int part2 = num_switches - part1;
-      int size1 = (int)((double)size / (double)num_switches * (double)part1 + 0.5);
+      int size1 = static_cast<int>(static_cast<double>(size) / static_cast<double>(num_switches) * static_cast<double>(part1) + 0.5);
       int size2 = size - size1;
 
       KeywordExt_List *temp = list;

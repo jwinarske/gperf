@@ -69,7 +69,7 @@ void KeywordExt::init_selchars (Vectors *v)
   if (option[ALLCHARS])
     /* Use all the character positions in the KEY. */
     for (int i = _allchars_length; i > 0; k++, ptr++, i--)
-      v->_occurrences[(unsigned char)(*ptr = *k)]++;
+      v->_occurrences[static_cast<unsigned char>(*ptr = *k)]++;
   else
     /* Only use those character positions specified by the user. */
     {
@@ -88,7 +88,7 @@ void KeywordExt::init_selchars (Vectors *v)
           else
             /* Out of range of KEY length, so we'll just skip it. */
             continue;
-          v->_occurrences[(unsigned char)*ptr]++;
+          v->_occurrences[static_cast<unsigned char>(*ptr)]++;
           ptr++;
         }
 

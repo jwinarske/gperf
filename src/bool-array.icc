@@ -35,7 +35,8 @@ Bool_Array::Bool_Array (unsigned int size)
   memset (_storage_array, 0, size * sizeof (_storage_array[0]));
   if (option[DEBUG])
     fprintf (stderr, "\nbool array size = %d, total bytes = %d\n",
-             _size, (unsigned int) (_size * sizeof (_storage_array[0])));
+             _size,
+             static_cast<unsigned int> (_size * sizeof (_storage_array[0])));
 }
 
 /* Sets the specified bit to true.

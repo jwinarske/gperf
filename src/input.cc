@@ -217,7 +217,7 @@ parse_line (const char *line, const char *delimiters)
                       }
                     if (code > UCHAR_MAX)
                       fprintf (stderr, "octal escape out of range: %s\n", line);
-                    *kp = (char) code;
+                    *kp = static_cast<char>(code);
                     break;
                   }
                 case 'x':
@@ -240,7 +240,7 @@ parse_line (const char *line, const char *delimiters)
                       fprintf (stderr, "hexadecimal escape without any hex digits: %s\n", line);
                     if (code > UCHAR_MAX)
                       fprintf (stderr, "hexadecimal escape out of range: %s\n", line);
-                    *kp = (char) code;
+                    *kp = static_cast<char>(code);
                     break;
                   }
                 case '\\': case '\'': case '"':
