@@ -320,6 +320,13 @@ Key_List::read_keys (void)
               exit (1);
             }
         }
+      /* Exit program if an empty string is used as key, since the comparison
+         expressions don't work correctly for looking up an empty string. */
+      if (min_key_len == 0)
+        {
+          fprintf (stderr, "Empty input key is not allowed.\nTo recognize an empty input key, your code should check for\nlen == 0 before calling the gperf generated lookup function.\n");
+          exit (1);
+        }
       if (option[ALLCHARS])
         option.set_keysig_size (max_key_len);
     }
@@ -1523,14 +1530,8 @@ Key_List::output_lookup_function_body (const Output_Compare& comparison)
 {
   T (Trace t ("Key_List::output_lookup_function_body");)
 
-  /* Since `len' is of type `unsigned int', we can avoid comparing it
-     against zero. */
-  if (min_key_len == 0)
-    printf ("  if (len <= MAX_WORD_LENGTH)\n");
-  else
-    printf ("  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)\n");
-
-  printf ("    {\n"
+  printf ("  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)\n"
+          "    {\n"
           "      register int key = %s (str, len);\n\n",
           option.get_hash_name ());
 

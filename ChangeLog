@@ -1,5 +1,7 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/key-list.cc (Key_List::read_keys): Don't accept an empty key.
+
         * src/Makefile.in (install, installdirs, uninstall): Respect
           $(DESTDIR).
         * doc/Makefile.in (install, installdirs, uninstall): Likewise.
@@ -25,9 +27,6 @@
           David Hunter.
         * tests/Makefile.in (check-lang-syntax): Perform each test with -D
           once without and once with duplicates.
-
-        * src/key-list.cc (Key_List::output_lookup_function_body): Avoid
-          outputting a trivially satisfied test for len.
 
         * src/key-list.cc (output_keyword_entry): Avoid outputting a struct
           initializer of the form {"key",}.
