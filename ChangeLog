@@ -1,5 +1,13 @@
 2002-12-08  Bruno Haible  <bruno@clisp.org>
 
+	* tests/permut2.gperf, tests/permut2.exp: New files.
+	* tests/permut3.gperf, tests/permut3.exp: New files.
+	* tests/charsets.gperf: New file, from Bruce Lilly.
+	* tests/charsets.exp: New file.
+	* tests/languages.gperf: New file, from Bruce Lilly.
+	* tests/languages.exp: New file.
+	* Makefile.in (check-test): Test them all.
+
 	Completely new asso_values search algorithm.
 	* src/search.h (Search::compute_occurrence, Search::clear_determined,
 	Search::set_determined, Search::already_determined, Search::reorder):
