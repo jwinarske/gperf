@@ -1,3 +1,10 @@
+2002-11-07  Bruno Haible  <bruno@clisp.org>
+
+	* src/bool-array.cc (Bool_Array::~Bool_Array): Free _storage_array.
+	* src/search.cc (Search::~Search): Free _union_set, _determined.
+
+	* tests/Makefile.in (check-test): Don't redirect stderr.
+
 2002-11-05  Bruno Haible  <bruno@clisp.org>
 
 	* src/keyword-list.h (mergesort_list): New declarations.

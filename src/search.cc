@@ -769,7 +769,9 @@ Search::optimize ()
 
 Search::~Search ()
 {
+  delete[] _union_set;
   delete _collision_detector;
+  delete[] _determined;
   if (option[DEBUG])
     {
       fprintf (stderr, "\ndumping occurrence and associated values tables\n");
