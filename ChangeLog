@@ -1,5 +1,8 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/iterator.cc: Don't include <stream.h>.
+          From Michael Deutschmann <ldeutsch@mail.netshop.net>.
+
         * tests/Makefile.in (VALIDATE, check-lang-syntax): Use $(srcdir) where
           appropriate.
           Reported by Andreas Schwab <schwab@issan.informatik.uni-dortmund.de>.
