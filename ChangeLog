@@ -1,3 +1,50 @@
+2002-10-14  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.h (Positions): New class.
+	(PositionIterator): New class.
+	(Options::parse_options): Renamed from Options::operator().
+	(Options::get_asso_max, Options::set_asso_max): Move to class Key_List.
+	(Options::reset, Options::get): Remove, replaced by class
+	PositionIterator.
+	(Options::get_initial_asso_value): Renamed from Options::initial_value.
+	(Options::key_sort): Remove, replaced by Positions::sort.
+	(Options): Make all fields and methods non-static.
+	* src/options.icc (Positions::Positions, Positions::operator[],
+	Positions::get_size, Positions::pointer, Positions::set_size,
+	Positions::sort, PositionIterator::PositionIterator,
+	PositionIterator::next): New methods.
+	(Options::get_initial_asso_value): Renamed from Options::initial_value.
+	(Options::get_size_multiple): New method.
+	(Options::get_key_positions): New method.
+	(Options::get_max_keysig_size): Implement using _key_positions.
+	* src/options.cc (Options::long_usage): Split big string into small
+	pieces.
+	(PositionStringParser): Prefix field names with _.
+	(Options::Options): Update.
+	(Options::~Options): Fix explanation of of _size_multiple. Don't print
+	_key_positions if it is effectively ignored.
+	(Options::parse_options): Renamed from Options::operator(). Update.
+	* src/key-list.h (Key_List): New field _size. New methods get_asso_max,
+	set_asso_max, get_max_keysig_size.
+	* src/key-list.cc (Key_List::read_keys): Don't make side effects on
+	options.
+	(Key_List::dump): Use Key_List::get_max_keysig_size() instead of
+	Options::get_max_keysig_size().
+	(Key_List::get_max_keysig_size): New function.
+	* src/hash-table.cc (Hash_Table::~Hash_Table): Compute the field
+	width on the fly if option[ALLCHARS].
+	* src/gen-perf.cc (Gen_Perf::Gen_Perf): Update,
+	Use Options::get_size_multiple() instead of Options::get_asso_max().
+	Use Key_List::get_asso_max() instead of Options::get_asso_max(). Use
+	Key_List::get_max_keysig_size() instead of
+	Options::get_max_keysig_size().
+	(Gen_Perf::affects_prev): Likewise.
+	(Gen_Perf::change): Likewise.
+	* src/keyword.cc: Update.
+	* src/main.cc: Update.
+	* src/output.cc: Update.
+	* tests/test-6.exp: Update.
+
 2002-10-13  Bruno Haible  <bruno@clisp.org>
 
 	* src/bool-array.*: Some polishing.

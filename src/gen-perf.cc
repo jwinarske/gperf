@@ -43,17 +43,17 @@ Gen_Perf::Gen_Perf ()
   Key_List::read_keys ();
   if (option[ORDER])
     reorder ();
-  asso_value_max    = option.get_asso_max ();
-  non_linked_length = Key_List::keyword_list_length ();
   _num_done          = 1;
   _fewest_collisions = 0;
+  asso_value_max    = option.get_size_multiple ();
+  non_linked_length = Key_List::keyword_list_length ();
   if (asso_value_max == 0)
     asso_value_max = non_linked_length;
   else if (asso_value_max > 0)
     asso_value_max *= non_linked_length;
   else /* if (asso_value_max < 0) */
     asso_value_max = non_linked_length / -asso_value_max;
-  option.set_asso_max (POW (asso_value_max));
+  set_asso_max (POW (asso_value_max));
 
   if (option[RANDOM])
     {
@@ -64,14 +64,14 @@ Gen_Perf::Gen_Perf ()
     }
   else
     {
-      int asso_value = option.initial_value ();
+      int asso_value = option.get_initial_asso_value ();
 
       if (asso_value)           /* Initialize array if user requests non-zero default. */
         for (int i = ALPHA_SIZE - 1; i >= 0; i--)
-          _asso_values[i] = asso_value & option.get_asso_max () - 1;
+          _asso_values[i] = asso_value & get_asso_max () - 1;
     }
-  _max_hash_value = Key_List::max_key_length () + option.get_asso_max () *
-    option.get_max_keysig_size ();
+  _max_hash_value = Key_List::max_key_length () + get_asso_max () *
+    get_max_keysig_size ();
   _collision_detector = new Bool_Array (_max_hash_value + 1);
 
   if (option[DEBUG])
@@ -172,7 +172,7 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
 {
   int original_char = _asso_values[(unsigned char)c];
   int total_iterations = !option[FAST]
-    ? option.get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
+    ? get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
 
   /* Try all legal associated values. */
 
@@ -182,7 +182,7 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
 
       _asso_values[(unsigned char)c] =
         (_asso_values[(unsigned char)c] + (option.get_jump () ? option.get_jump () : rand ()))
-        & (option.get_asso_max () - 1);
+        & (get_asso_max () - 1);
 
       /* Iteration Number array is a win, O(1) intialization time! */
       _collision_detector->clear ();
@@ -221,7 +221,7 @@ Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
   int union_set_length;
 
   if (!union_set)
-    union_set = new char [2 * option.get_max_keysig_size ()];
+    union_set = new char [2 * get_max_keysig_size ()];
 
   if (option[DEBUG])
     {
@@ -265,7 +265,7 @@ Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
   if (option[DEBUG])
     {
       fprintf (stderr, "** collision not resolved after %d iterations, %d duplicates remain, continuing...\n",
-               !option[FAST] ? option.get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length (),
+               !option[FAST] ? get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length (),
                _fewest_collisions + _total_duplicates);
       fflush (stderr);
     }

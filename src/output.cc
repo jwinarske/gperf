@@ -470,16 +470,34 @@ Output::output_hash_function ()
     printf ("  return %sasso_values[%sstr[len - 1]] + asso_values[%sstr[0]];\n",
             option[NOLENGTH] ? "" : "len + ",
             char_to_index, char_to_index);
+  else if (option[ALLCHARS])
+    {
+      /* User wants *all* characters considered in hash.  */
+      printf ("  register int hval = %s;\n\n"
+              "  switch (%s)\n"
+              "    {\n"
+              "      default:\n",
+              option[NOLENGTH] ? "0" : "len",
+              option[NOLENGTH] ? "len" : "hval");
+
+      for (int i = _max_key_len; i > 0; i--)
+        printf ("      case %d:\n"
+                "        hval += asso_values[%sstr[%d]];\n",
+                i, char_to_index, i - 1);
+
+      printf ("        break;\n"
+              "    }\n"
+              "  return hval;\n");
+    }
   else
     {
+      PositionIterator iter (option.get_key_positions());
       int key_pos;
 
-      option.reset ();
-
       /* Get first (also highest) key position. */
-      key_pos = option.get ();
+      key_pos = iter.next ();
 
-      if (!option[ALLCHARS] && (key_pos == WORD_END || key_pos <= _min_key_len))
+      if (key_pos == Positions::LASTCHAR || key_pos <= _min_key_len)
         {
           /* We can perform additional optimizations here:
              Write it out as a single expression. Note that the values
@@ -489,16 +507,16 @@ Output::output_hash_function ()
           printf ("  return %s",
                   option[NOLENGTH] ? "" : "len + ");
 
-          for (; key_pos != WORD_END; )
+          for (; key_pos != Positions::LASTCHAR; )
             {
               printf ("asso_values[%sstr[%d]]", char_to_index, key_pos - 1);
-              if ((key_pos = option.get ()) != EOS)
+              if ((key_pos = iter.next ()) != PositionIterator::EOS)
                 printf (" + ");
               else
                 break;
             }
 
-          if (key_pos == WORD_END)
+          if (key_pos == Positions::LASTCHAR)
             printf ("asso_values[%sstr[len - 1]]", char_to_index);
 
           printf (";\n");
@@ -513,50 +531,35 @@ Output::output_hash_function ()
                   option[NOLENGTH] ? "0" : "len",
                   option[NOLENGTH] ? "len" : "hval");
 
-          /* User wants *all* characters considered in hash. */
-          if (option[ALLCHARS])
-            {
-              for (int i = _max_key_len; i > 0; i--)
-                printf ("      case %d:\n"
-                        "        hval += asso_values[%sstr[%d]];\n",
-                        i, char_to_index, i - 1);
+          while (key_pos != Positions::LASTCHAR && key_pos > _max_key_len)
+            if ((key_pos = iter.next ()) == PositionIterator::EOS)
+              break;
 
-              printf ("        break;\n"
-                      "    }\n"
-                      "  return hval;\n");
-            }
-          else                  /* do the hard part... */
+          if (key_pos != PositionIterator::EOS && key_pos != Positions::LASTCHAR)
             {
-              while (key_pos != WORD_END && key_pos > _max_key_len)
-                if ((key_pos = option.get ()) == EOS)
-                  break;
-
-              if (key_pos != EOS && key_pos != WORD_END)
+              int i = key_pos;
+              do
                 {
-                  int i = key_pos;
-                  do
-                    {
-                      for ( ; i >= key_pos; i--)
-                        printf ("      case %d:\n", i);
-
-                      printf ("        hval += asso_values[%sstr[%d]];\n",
-                              char_to_index, key_pos - 1);
-
-                      key_pos = option.get ();
-                    }
-                  while (key_pos != EOS && key_pos != WORD_END);
-
-                  for ( ; i >= _min_key_len; i--)
+                  for ( ; i >= key_pos; i--)
                     printf ("      case %d:\n", i);
-                }
 
-              printf ("        break;\n"
-                      "    }\n"
-                      "  return hval");
-              if (key_pos == WORD_END)
-                printf (" + asso_values[%sstr[len - 1]]", char_to_index);
-              printf (";\n");
+                  printf ("        hval += asso_values[%sstr[%d]];\n",
+                          char_to_index, key_pos - 1);
+
+                  key_pos = iter.next ();
+                }
+              while (key_pos != PositionIterator::EOS && key_pos != Positions::LASTCHAR);
+
+              for ( ; i >= _min_key_len; i--)
+                printf ("      case %d:\n", i);
             }
+
+          printf ("        break;\n"
+                  "    }\n"
+                  "  return hval");
+          if (key_pos == Positions::LASTCHAR)
+            printf (" + asso_values[%sstr[len - 1]]", char_to_index);
+          printf (";\n");
         }
     }
   printf ("}\n\n");
@@ -1432,7 +1435,7 @@ Output::output ()
   else if (option[CPLUSPLUS])
     printf ("C++");
   printf (" code produced by gperf version %s */\n", version_string);
-  Options::print_options ();
+  option.print_options ();
 
   printf ("%s\n", _include_src);
 

@@ -51,6 +51,7 @@ private:
   int         _list_len;                             /* Length of head's Key_List, not counting duplicates. */
 protected:
   int         _total_keys;                           /* Total number of keys, counting duplicates. */
+  int         _size;                                 /* Range of the hash table. */
 private:
   static int  _determined[MAX_ALPHA_SIZE];           /* Used in function reorder, below. */
   static int  get_occurrence (KeywordExt *ptr);
@@ -79,6 +80,9 @@ public:
   void        reorder ();
   void        sort ();
   void        read_keys ();
+  int         get_max_keysig_size ();
+  void        set_asso_max (int r) { _size = r; }
+  int         get_asso_max () { return _size; }
 };
 
 #endif

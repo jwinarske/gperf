@@ -27,122 +27,125 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "vectors.h"
 #include "version.h"
 
-/* Global option coordinator for the entire program. */
+/* Global option coordinator for the entire program.  */
 Options option;
 
-/* Records the program name. */
+/* Records the program name.  */
 const char *program_name;
 
-/* Size to jump on a collision. */
+/* Size to jump on a collision.  */
 static const int DEFAULT_JUMP_VALUE = 5;
 
-/* Default name for generated lookup function. */
+/* Default name for generated lookup function.  */
 static const char *const DEFAULT_NAME = "in_word_set";
 
-/* Default name for the key component. */
+/* Default name for the key component.  */
 static const char *const DEFAULT_KEY = "name";
 
-/* Default struct initializer suffix. */
+/* Default struct initializer suffix.  */
 static const char *const DEFAULT_INITIALIZER_SUFFIX = "";
 
-/* Default name for the generated class. */
+/* Default name for the generated class.  */
 static const char *const DEFAULT_CLASS_NAME = "Perfect_Hash";
 
-/* Default name for generated hash function. */
+/* Default name for generated hash function.  */
 static const char *const DEFAULT_HASH_NAME = "hash";
 
-/* Default name for generated hash table array. */
+/* Default name for generated hash table array.  */
 static const char *const DEFAULT_WORDLIST_NAME = "wordlist";
 
-/* Default delimiters that separate keywords from their attributes. */
+/* Default delimiters that separate keywords from their attributes.  */
 static const char *const DEFAULT_DELIMITERS = ",\n";
-
-int Options::_option_word;
-int Options::_total_switches;
-int Options::_total_keysig_size;
-int Options::_size;
-int Options::_key_pos;
-int Options::_jump;
-int Options::_initial_asso_value;
-int Options::_argument_count;
-int Options::_iterations;
-char **Options::_argument_vector;
-const char *Options::_function_name;
-const char *Options::_key_name;
-const char *Options::_initializer_suffix;
-const char *Options::_class_name;
-const char *Options::_hash_name;
-const char *Options::_wordlist_name;
-const char *Options::_delimiters;
-char Options::_key_positions[MAX_KEY_POS];
 
 /* Prints program usage to given stream. */
 
 void
-Options::short_usage (FILE * strm)
+Options::short_usage (FILE * stream) const
 {
-  fprintf (strm, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ijk<keys>K<keyname>lL<language>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
-                 "Try `%s --help' for more information.\n",
-                 program_name, program_name);
+  fprintf (stream, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ijk<keys>K<keyname>lL<language>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
+           "Try '%s --help' for more information.\n",
+           program_name, program_name);
 }
 
 void
-Options::long_usage (FILE * strm)
+Options::long_usage (FILE * stream) const
 {
-  fprintf (strm,
-           "GNU `gperf' generates perfect hash functions.\n"
-           "\n"
-           "Usage: %s [OPTION]... [INPUT-FILE]\n"
-           "\n"
+  fprintf (stream,
+           "GNU 'gperf' generates perfect hash functions.\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
+           "Usage: %s [OPTION]... [INPUT-FILE]\n",
+           program_name);
+  fprintf (stream, "\n");
+  fprintf (stream,
            "If a long option shows an argument as mandatory, then it is mandatory\n"
-           "for the equivalent short option also.\n"
-           "\n"
-           "Input file interpretation:\n"
+           "for the equivalent short option also.\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
+           "Input file interpretation:\n");
+  fprintf (stream,
            "  -e, --delimiters=DELIMITER-LIST\n"
            "                         Allow user to provide a string containing delimiters\n"
            "                         used to separate keywords from their attributes.\n"
-           "                         Default is \",\\n\".\n"
+           "                         Default is \",\\n\".\n");
+  fprintf (stream,
            "  -t, --struct-type      Allows the user to include a structured type\n"
            "                         declaration for generated code. Any text before %%%%\n"
            "                         is considered part of the type declaration. Key\n"
            "                         words and additional fields may follow this, one\n"
-           "                         group of fields per line.\n"
-           "\n"
-           "Language for the output code:\n"
+           "                         group of fields per line.\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
+           "Language for the output code:\n");
+  fprintf (stream,
            "  -L, --language=LANGUAGE-NAME\n"
            "                         Generates code in the specified language. Languages\n"
            "                         handled are currently C++, ANSI-C, C, and KR-C. The\n"
-           "                         default is C.\n"
-           "\n"
-           "Details in the output code:\n"
+           "                         default is C.\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
+           "Details in the output code:\n");
+  fprintf (stream,
            "  -K, --slot-name=NAME   Select name of the keyword component in the keyword\n"
-           "                         structure.\n"
+           "                         structure.\n");
+  fprintf (stream,
            "  -F, --initializer-suffix=INITIALIZERS\n"
            "                         Initializers for additional components in the keyword\n"
-           "                         structure.\n"
+           "                         structure.\n");
+  fprintf (stream,
            "  -H, --hash-fn-name=NAME\n"
            "                         Specify name of generated hash function. Default is\n"
-           "                         `hash'.\n"
+           "                         'hash'.\n");
+  fprintf (stream,
            "  -N, --lookup-fn-name=NAME\n"
            "                         Specify name of generated lookup function. Default\n"
-           "                         name is `in_word_set'.\n"
+           "                         name is 'in_word_set'.\n");
+  fprintf (stream,
            "  -Z, --class-name=NAME  Specify name of generated C++ class. Default name is\n"
-           "                         `Perfect_Hash'.\n"
-           "  -7, --seven-bit        Assume 7-bit characters.\n"
+           "                         'Perfect_Hash'.\n");
+  fprintf (stream,
+           "  -7, --seven-bit        Assume 7-bit characters.\n");
+  fprintf (stream,
            "  -c, --compare-strncmp  Generate comparison code using strncmp rather than\n"
-           "                         strcmp.\n"
+           "                         strcmp.\n");
+  fprintf (stream,
            "  -C, --readonly-tables  Make the contents of generated lookup tables\n"
-           "                         constant, i.e., readonly.\n"
+           "                         constant, i.e., readonly.\n");
+  fprintf (stream,
            "  -E, --enum             Define constant values using an enum local to the\n"
-           "                         lookup function rather than with defines.\n"
+           "                         lookup function rather than with defines.\n");
+  fprintf (stream,
            "  -I, --includes         Include the necessary system include file <string.h>\n"
-           "                         at the beginning of the code.\n"
+           "                         at the beginning of the code.\n");
+  fprintf (stream,
            "  -G, --global           Generate the static table of keywords as a static\n"
            "                         global variable, rather than hiding it inside of the\n"
-           "                         lookup function (which is the default behavior).\n"
+           "                         lookup function (which is the default behavior).\n");
+  fprintf (stream,
            "  -W, --word-array-name=NAME\n"
            "                         Specify name of word list array. Default name is\n"
-           "                         `wordlist'.\n"
+           "                         'wordlist'.\n");
+  fprintf (stream,
            "  -S, --switch=COUNT     Causes the generated C code to use a switch\n"
            "                         statement scheme, rather than an array lookup table.\n"
            "                         This can lead to a reduction in both time and space\n"
@@ -152,13 +155,16 @@ Options::long_usage (FILE * strm)
            "                         elements, a value of 2 generates 2 tables with 1/2\n"
            "                         the elements in each table, etc. If COUNT is very\n"
            "                         large, say 1000000, the generated C code does a\n"
-           "                         binary search.\n"
+           "                         binary search.\n");
+  fprintf (stream,
            "  -T, --omit-struct-type\n"
            "                         Prevents the transfer of the type declaration to the\n"
            "                         output file. Use this option if the type is already\n"
-           "                         defined elsewhere.\n"
-           "\n"
-           "Algorithm employed by gperf:\n"
+           "                         defined elsewhere.\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
+           "Algorithm employed by gperf:\n");
+  fprintf (stream,
            "  -k, --key-positions=KEYS\n"
            "                         Select the key positions used in the hash function.\n"
            "                         The allowable choices range between 1-%d, inclusive.\n"
@@ -166,59 +172,71 @@ Options::long_usage (FILE * strm)
            "                         used, and key positions may occur in any order.\n"
            "                         Also, the meta-character '*' causes the generated\n"
            "                         hash function to consider ALL key positions, and $\n"
-           "                         indicates the ``final character'' of a key, e.g.,\n"
-           "                         $,1,2,4,6-10.\n"
+           "                         indicates the \"final character\" of a key, e.g.,\n"
+           "                         $,1,2,4,6-10.\n",
+           Positions::MAX_KEY_POS - 1);
+  fprintf (stream,
            "  -l, --compare-strlen   Compare key lengths before trying a string\n"
            "                         comparison. This helps cut down on the number of\n"
-           "                         string comparisons made during the lookup.\n"
+           "                         string comparisons made during the lookup.\n");
+  fprintf (stream,
            "  -D, --duplicates       Handle keywords that hash to duplicate values. This\n"
-           "                         is useful for certain highly redundant keyword sets.\n"
-           "  -f, --fast=ITERATIONS  Generate the gen-perf.hash function ``fast''. This\n"
+           "                         is useful for certain highly redundant keyword sets.\n");
+  fprintf (stream,
+           "  -f, --fast=ITERATIONS  Generate the gen-perf.hash function \"fast\". This\n"
            "                         decreases gperf's running time at the cost of\n"
            "                         minimizing generated table size. The numeric\n"
            "                         argument represents the number of times to iterate\n"
-           "                         when resolving a collision. `0' means ``iterate by\n"
-           "                         the number of keywords''.\n"
+           "                         when resolving a collision. '0' means \"iterate by\n"
+           "                         the number of keywords\".\n");
+  fprintf (stream,
            "  -i, --initial-asso=N   Provide an initial value for the associate values\n"
            "                         array. Default is 0. Setting this value larger helps\n"
-           "                         inflate the size of the final table.\n"
-           "  -j, --jump=JUMP-VALUE  Affects the ``jump value'', i.e., how far to advance\n"
+           "                         inflate the size of the final table.\n");
+  fprintf (stream,
+           "  -j, --jump=JUMP-VALUE  Affects the \"jump value\", i.e., how far to advance\n"
            "                         the associated character value upon collisions. Must\n"
-           "                         be an odd number, default is %d.\n"
+           "                         be an odd number, default is %d.\n",
+           DEFAULT_JUMP_VALUE);
+  fprintf (stream,
            "  -n, --no-strlen        Do not include the length of the keyword when\n"
-           "                         computing the hash function.\n"
+           "                         computing the hash function.\n");
+  fprintf (stream,
            "  -o, --occurrence-sort  Reorders input keys by frequency of occurrence of\n"
            "                         the key sets. This should decrease the search time\n"
-           "                         dramatically.\n"
+           "                         dramatically.\n");
+  fprintf (stream,
            "  -r, --random           Utilizes randomness to initialize the associated\n"
-           "                         values table.\n"
+           "                         values table.\n");
+  fprintf (stream,
            "  -s, --size-multiple=N  Affects the size of the generated hash table. The\n"
-           "                         numeric argument N indicates ``how many times larger\n"
-           "                         or smaller'' the associated value range should be,\n"
+           "                         numeric argument N indicates \"how many times larger\n"
+           "                         or smaller\" the associated value range should be,\n"
            "                         in relationship to the number of keys, e.g. a value\n"
-           "                         of 3 means ``allow the maximum associated value to\n"
+           "                         of 3 means \"allow the maximum associated value to\n"
            "                         be about 3 times larger than the number of input\n"
-           "                         keys.'' Conversely, a value of -3 means ``make the\n"
+           "                         keys\". Conversely, a value of -3 means \"make the\n"
            "                         maximum associated value about 3 times smaller than\n"
-           "                         the number of input keys. A larger table should\n"
+           "                         the number of input keys\". A larger table should\n"
            "                         decrease the time required for an unsuccessful\n"
            "                         search, at the expense of extra table space. Default\n"
-           "                         value is 1.\n"
-           "\n"
+           "                         value is 1.\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
            "Informative output:\n"
            "  -h, --help             Print this message.\n"
            "  -v, --version          Print the gperf version number.\n"
            "  -d, --debug            Enables the debugging option (produces verbose\n"
-           "                         output to the standard error).\n"
-           "\n"
-           "Report bugs to <bug-gnu-utils@gnu.org>.\n"
-           , program_name, MAX_KEY_POS - 1, DEFAULT_JUMP_VALUE);
+           "                         output to the standard error).\n");
+  fprintf (stream, "\n");
+  fprintf (stream,
+           "Report bugs to <bug-gnu-utils@gnu.org>.\n");
 }
 
-/* Output command-line Options. */
+/* Prints the given options.  */
 
 void
-Options::print_options ()
+Options::print_options () const
 {
   int i;
 
@@ -228,7 +246,7 @@ Options::print_options ()
     {
       const char *arg = _argument_vector[i];
 
-      /* Escape arg if it contains shell metacharacters. */
+      /* Escape arg if it contains shell metacharacters.  */
       if (*arg == '-')
         {
           putchar (*arg);
@@ -278,110 +296,96 @@ Options::print_options ()
 class PositionStringParser
 {
 public:
-  PositionStringParser (const char *s, int lo, int hi, int word_end, int bad_val, int key_end);
+  PositionStringParser (const char *str, int low_bound, int high_bound, int end_word_marker, int error_value, int end_marker);
   int nextPosition ();
 private:
-  const char *str;  /* A pointer to the string provided by the user. */
-  int end;          /* Value returned after last key is processed. */
-  int end_word;     /* A value marking the abstract ``end of word'' ( usually '$'). */
-  int error_value;  /* Error value returned when input is syntactically erroneous. */
-  int hi_bound;     /* Greatest possible value, inclusive. */
-  int lo_bound;     /* Smallest possible value, inclusive. */
-  int size;
-  int curr_value;
-  int upper_bound;
+  /* A pointer to the string provided by the user.  */
+  const char * _str;
+  /* Smallest possible value, inclusive.  */
+  int const _low_bound;
+  /* Greatest possible value, inclusive.  */
+  int const _high_bound;
+  /* A value marking the abstract "end of word" ( usually '$').  */
+  int const _end_word_marker;
+  /* Error value returned when input is syntactically erroneous.  */
+  int const _error_value;
+  /* Value returned after last key is processed.  */
+  int const _end_marker;
+  int _size;
+  int _curr_value;
+  int _upper_bound;
 };
 
-PositionStringParser::PositionStringParser (const char *s, int lo, int hi, int word_end, int bad_val, int key_end)
-  : str (s), end (key_end), end_word (word_end), error_value (bad_val), hi_bound (hi), lo_bound (lo),
-    size (0), curr_value (0), upper_bound (0)
+PositionStringParser::PositionStringParser (const char *str, int low_bound, int high_bound, int end_word_marker, int error_value, int end_marker)
+  : _str (str),
+    _low_bound (low_bound),
+    _high_bound (high_bound),
+    _end_word_marker (end_word_marker),
+    _error_value (error_value),
+    _end_marker (end_marker),
+    _size (0),
+    _curr_value (0),
+    _upper_bound (0)
 {
 }
 
 int PositionStringParser::nextPosition ()
 {
-  if (size)
+  if (_size)
     {
-      if (++curr_value >= upper_bound)
-        size = 0;
-      return curr_value;
+      if (++_curr_value >= _upper_bound)
+        _size = 0;
+      return _curr_value;
     }
   else
     {
-      while (*str)
-        switch (*str)
+      while (*_str)
+        switch (*_str)
           {
-          default: return error_value;
-          case ',': str++; break;
-          case '$': str++; return end_word;
+          default: return _error_value;
+          case ',': _str++; break;
+          case '$': _str++; return _end_word_marker;
           case '0': case '1': case '2': case '3': case '4':
           case '5': case '6': case '7': case '8': case '9':
-            for (curr_value = 0; isdigit ((unsigned char)(*str)); str++)
-              curr_value = curr_value * 10 + (*str - '0');
+            for (_curr_value = 0; isdigit ((unsigned char)(*_str)); _str++)
+              _curr_value = _curr_value * 10 + (*_str - '0');
 
-            if (*str == '-')
+            if (*_str == '-')
               {
 
-                for (size = 1, upper_bound = 0;
-                     isdigit ((unsigned char)(*++str));
-                     upper_bound = upper_bound * 10 + (*str - '0'));
+                for (_size = 1, _upper_bound = 0;
+                     isdigit ((unsigned char)(*++_str));
+                     _upper_bound = _upper_bound * 10 + (*_str - '0'));
 
-                if (upper_bound <= curr_value || upper_bound > hi_bound)
-                  return error_value;
+                if (_upper_bound <= _curr_value || _upper_bound > _high_bound)
+                  return _error_value;
               }
-            return curr_value >= lo_bound && curr_value <= hi_bound
-              ? curr_value : error_value;
+            return _curr_value >= _low_bound && _curr_value <= _high_bound
+              ? _curr_value : _error_value;
           }
 
-      return end;
+      return _end_marker;
     }
-}
-
-/* Sorts the key positions *IN REVERSE ORDER!!*
-   This makes further routines more efficient.  Especially when generating code.
-   Uses a simple Insertion Sort since the set is probably ordered.
-   Returns 1 if there are no duplicates, 0 otherwise. */
-
-inline int
-Options::key_sort (char *base, int len)
-{
-  /* Bubble sort.  */
-  for (int i = 1; i < len; i++)
-    {
-      int j;
-      int tmp;
-
-      for (j = i, tmp = base[j]; j > 0 && tmp >= base[j - 1]; j--)
-        if ((base[j] = base[j - 1]) == tmp) /* oh no, a duplicate!!! */
-          return 0;
-
-      base[j] = tmp;
-    }
-
-  return 1;
 }
 
 /* Sets the default Options. */
 
 Options::Options ()
+  : _option_word (DEFAULTCHARS | C),
+    _iterations (0),
+    _jump (DEFAULT_JUMP_VALUE),
+    _initial_asso_value (0),
+    _total_switches (1),
+    _size_multiple (1),
+    _function_name (DEFAULT_NAME),
+    _key_name (DEFAULT_KEY),
+    _initializer_suffix (DEFAULT_INITIALIZER_SUFFIX),
+    _class_name (DEFAULT_CLASS_NAME),
+    _hash_name (DEFAULT_HASH_NAME),
+    _wordlist_name (DEFAULT_WORDLIST_NAME),
+    _delimiters (DEFAULT_DELIMITERS),
+    _key_positions (1, Positions::LASTCHAR)
 {
-  _key_positions[0]   = WORD_START;
-  _key_positions[1]   = WORD_END;
-  _key_positions[2]   = EOS;
-  _total_keysig_size  = 2;
-  _delimiters         = DEFAULT_DELIMITERS;
-  _jump               = DEFAULT_JUMP_VALUE;
-  _option_word        = DEFAULTCHARS | C;
-  _function_name      = DEFAULT_NAME;
-  _key_name           = DEFAULT_KEY;
-  _initializer_suffix = DEFAULT_INITIALIZER_SUFFIX;
-  _hash_name          = DEFAULT_HASH_NAME;
-  _wordlist_name      = DEFAULT_WORDLIST_NAME;
-  _class_name         = DEFAULT_CLASS_NAME;
-  _size               = 1;
-  _total_switches     = 1;
-  _iterations         = 0;
-  _initial_asso_value = 0;
 }
 
 /* Dumps option status when debug is set. */
@@ -390,8 +394,6 @@ Options::~Options ()
 {
   if (_option_word & DEBUG)
     {
-      char *ptr;
-
       fprintf (stderr, "\ndumping Options:"
                "\nDEBUG is.......: %s"
                "\nORDER is.......: %s"
@@ -421,7 +423,7 @@ Options::~Options ()
                "\nkey name = %s"
                "\ninitializer suffix = %s"
                "\njump value = %d"
-               "\nmax associated value = %d"
+               "\nhash table size multiplier = %d"
                "\ninitial associated value = %d"
                "\ndelimiters = %s"
                "\nnumber of switch statements = %d\n",
@@ -448,19 +450,22 @@ Options::~Options ()
                _option_word & SEVENBIT ? "enabled" : "disabled",
                _iterations,
                _function_name, _hash_name, _wordlist_name, _key_name,
-               _initializer_suffix, _jump, _size - 1, _initial_asso_value,
+               _initializer_suffix, _jump, _size_multiple, _initial_asso_value,
                _delimiters, _total_switches);
       if (_option_word & ALLCHARS)
         fprintf (stderr, "all characters are used in the hash function\n");
+      else
+        {
+          fprintf (stderr, "maximum keysig size = %d\nkey positions are: \n",
+                   _key_positions.get_size());
 
-      fprintf (stderr, "maximum keysig size = %d\nkey positions are: \n",
-               _total_keysig_size);
-
-      for (ptr = _key_positions; *ptr != EOS; ptr++)
-        if (*ptr == WORD_END)
-          fprintf (stderr, "$\n");
-        else
-          fprintf (stderr, "%d\n", *ptr);
+          PositionIterator iter (_key_positions);
+          for (int pos; (pos = iter.next()) != PositionIterator::EOS; )
+            if (pos == Positions::LASTCHAR)
+              fprintf (stderr, "$\n");
+            else
+              fprintf (stderr, "%d\n", pos);
+        }
 
       fprintf (stderr, "finished dumping Options\n");
     }
@@ -505,7 +510,7 @@ static const struct option long_options[] =
 };
 
 void
-Options::operator() (int argc, char *argv[])
+Options::parse_options (int argc, char *argv[])
 {
   int    option_char;
 
@@ -615,43 +620,52 @@ Options::operator() (int argc, char *argv[])
         case 'k':               /* Sets key positions used for hash function. */
           {
             const int BAD_VALUE = -1;
+            const int EOS = PositionIterator::EOS;
             int       value;
-            PositionStringParser sparser (/*getopt*/optarg, 1, MAX_KEY_POS - 1, WORD_END, BAD_VALUE, EOS);
+            PositionStringParser sparser (/*getopt*/optarg, 1, Positions::MAX_KEY_POS - 1, Positions::LASTCHAR, BAD_VALUE, EOS);
 
             if (/*getopt*/optarg [0] == '*') /* Use all the characters for hashing!!!! */
               _option_word = (_option_word & ~DEFAULTCHARS) | ALLCHARS;
             else
               {
-                char *key_pos;
+                unsigned char *key_positions = _key_positions.pointer();
+                unsigned char *key_pos;
 
-                for (key_pos = _key_positions; (value = sparser.nextPosition()) != EOS; key_pos++)
+                for (key_pos = key_positions; (value = sparser.nextPosition()) != EOS; key_pos++)
                   if (value == BAD_VALUE)
                     {
                       fprintf (stderr, "Illegal key value or range, use 1,2,3-%d,'$' or '*'.\n",
-                                       MAX_KEY_POS - 1);
+                                       Positions::MAX_KEY_POS - 1);
                       short_usage (stderr);
                       exit (1);
                     }
                   else
-                    *key_pos = value;;
+                    *key_pos = value;
 
                 *key_pos = EOS;
 
-                if (! (_total_keysig_size = (key_pos - _key_positions)))
+                unsigned int total_keysig_size = key_pos - key_positions;
+                if (total_keysig_size == 0)
                   {
                     fprintf (stderr, "No keys selected.\n");
                     short_usage (stderr);
                     exit (1);
                   }
-                else if (! key_sort (_key_positions, _total_keysig_size))
+                _key_positions.set_size (total_keysig_size);
+
+                /* Sorts the key positions *IN REVERSE ORDER!!*
+                   This makes further routines more efficient.  Especially
+                   when generating code.  */
+                if (! _key_positions.sort())
                   {
                     fprintf (stderr, "Duplicate keys selected\n");
                     short_usage (stderr);
                     exit (1);
                   }
 
-                if (_total_keysig_size != 2
-                    || (_key_positions[0] != 1 || _key_positions[1] != WORD_END))
+                if (!(_key_positions.get_size() == 2
+                      && _key_positions[0] == 1
+                      && _key_positions[1] == Positions::LASTCHAR))
                   _option_word &= ~DEFAULTCHARS;
               }
             break;
@@ -710,8 +724,8 @@ Options::operator() (int argc, char *argv[])
           }
         case 's':               /* Range of associated values, determines size of final table. */
           {
-            if (abs (_size = atoi (/*getopt*/optarg)) > 50)
-              fprintf (stderr, "%d is excessive, did you really mean this?! (try `%s --help' for help)\n", _size, program_name);
+            if (abs (_size_multiple = atoi (/*getopt*/optarg)) > 50)
+              fprintf (stderr, "%d is excessive, did you really mean this?! (try `%s --help' for help)\n", _size_multiple, program_name);
             break;
           }
         case 'S':               /* Generate switch statement output, rather than lookup table. */

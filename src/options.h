@@ -22,56 +22,139 @@ along with GNU GPERF; see the file COPYING.  If not, write to the Free
 Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 /* This module provides a uniform interface to the various options available
-   to a user of the gperf hash function generator.  In addition to the
-   run-time options, found in the Option_Type below, there is also the
-   hash table Size and the Keys to be used in the hashing.
-   The overall design of this module was an experiment in using C++
-   classes as a mechanism to enhance centralization of option and
-   and error handling, which tend to get out of hand in a C program. */
+   to a user of the gperf hash function generator.  */
 
 #ifndef options_h
 #define options_h 1
 
 #include <stdio.h>
 
-/* Enumerate the potential debugging Options. */
+/* Enumeration of the possible boolean options. */
 
 enum Option_Type
 {
-  DEBUG        = 01,            /* Enable debugging (prints diagnostics to stderr). */
-  ORDER        = 02,            /* Apply ordering heuristic to speed-up search time. */
-  ALLCHARS     = 04,            /* Use all characters in hash function. */
-  TYPE         = 010,           /* Handle user-defined type structured keyword input. */
-  RANDOM       = 020,           /* Randomly initialize the associated values table. */
-  DEFAULTCHARS = 040,           /* Make default char positions be 1,$ (end of keyword). */
-  SWITCH       = 0100,          /* Generate switch output to save space. */
-  NOLENGTH     = 0200,          /* Don't include keyword length in hash computations. */
-  LENTABLE     = 0400,          /* Generate a length table for string comparison. */
-  DUP          = 01000,         /* Handle duplicate hash values for keywords. */
-  FAST         = 02000,         /* Generate the hash function ``fast.'' */
-  NOTYPE       = 04000,         /* Don't include user-defined type definition in output -- it's already defined elsewhere. */
-  COMP         = 010000,        /* Generate strncmp rather than strcmp. */
-  GLOBAL       = 020000,        /* Make the keyword table a global variable. */
-  CONST        = 040000,        /* Make the generated tables readonly (const). */
-  KRC          = 0100000,       /* Generate K&R C code: no prototypes, no const. */
-  C            = 0200000,       /* Generate C code: no prototypes, but const (user can #define it away). */
-  ANSIC        = 0400000,       /* Generate ISO/ANSI C code: prototypes and const, but no class. */
-  CPLUSPLUS    = 01000000,      /* Generate C++ code: prototypes, const, class, inline, enum. */
-  ENUM         = 02000000,      /* Use enum for constants. */
-  INCLUDE      = 04000000,      /* Generate #include statements. */
-  SEVENBIT     = 010000000      /* Assume 7-bit, not 8-bit, characters. */
+  /* Enable debugging (prints diagnostics to stderr).  */
+  DEBUG        = 1 << 0,
+
+  /* Apply ordering heuristic to speed-up search time.  */
+  ORDER        = 1 << 1,
+
+  /* Use all characters in hash function.  */
+  ALLCHARS     = 1 << 2,
+
+  /* Handle user-defined type structured keyword input.  */
+  TYPE         = 1 << 3,
+
+  /* Randomly initialize the associated values table.  */
+  RANDOM       = 1 << 4,
+
+  /* Make default char positions be 1,$ (end of keyword).  */
+  DEFAULTCHARS = 1 << 5,
+
+  /* Generate switch output to save space.  */
+  SWITCH       = 1 << 6,
+
+  /* Don't include keyword length in hash computations.  */
+  NOLENGTH     = 1 << 7,
+
+  /* Generate a length table for string comparison.  */
+  LENTABLE     = 1 << 8,
+
+  /* Handle duplicate hash values for keywords.  */
+  DUP          = 1 << 9,
+
+  /* Generate the hash function "fast".  */
+  FAST         = 1 << 10,
+
+  /* Don't include user-defined type definition in output -- it's already
+     defined elsewhere.  */
+  NOTYPE       = 1 << 11,
+
+  /* Generate strncmp rather than strcmp.  */
+  COMP         = 1 << 12,
+
+  /* Make the keyword table a global variable.  */
+  GLOBAL       = 1 << 13,
+
+  /* Make the generated tables readonly (const).  */
+  CONST        = 1 << 14,
+
+  /* Generate K&R C code: no prototypes, no const.  */
+  KRC          = 1 << 15,
+
+  /* Generate C code: no prototypes, but const (user can #define it away).  */
+  C            = 1 << 16,
+
+  /* Generate ISO/ANSI C code: prototypes and const, but no class.  */
+  ANSIC        = 1 << 17,
+
+  /* Generate C++ code: prototypes, const, class, inline, enum.  */
+  CPLUSPLUS    = 1 << 18,
+
+  /* Use enum for constants.  */
+  ENUM         = 1 << 19,
+
+  /* Generate #include statements.  */
+  INCLUDE      = 1 << 20,
+
+  /* Assume 7-bit, not 8-bit, characters.  */
+  SEVENBIT     = 1 << 21
 };
 
-/* Define some useful constants (these don't really belong here, but I'm
-   not sure where else to put them!).  These should be consts, but g++
-   doesn't seem to do the right thing with them at the moment... ;-( */
+/* This class denotes a set of key positions.  */
 
-enum
+class Positions
 {
-  MAX_KEY_POS = 128 - 1,    /* Max size of each word's key set. */
-  WORD_START = 1,           /* Signals the start of a word. */
-  WORD_END = 0,             /* Signals the end of a word. */
-  EOS = MAX_KEY_POS         /* Signals end of the key list. */
+  friend class PositionIterator;
+public:
+  /* Denotes the last char of a keyword, depending on the keyword's length.  */
+  static const int LASTCHAR = 0;
+
+  /* Maximum size of the set.  */
+  static const int MAX_KEY_POS = 127;
+
+  /* Constructors.  */
+  Positions ();
+  Positions (int key1);
+  Positions (int key1, int key2);
+
+  /* Accessors.  */
+  int operator[] (unsigned int index) const;
+  unsigned int get_size () const;
+
+  /* Write access.  */
+  unsigned char * pointer ();
+  void set_size (unsigned int size);
+
+  /* Sorts the array in reverse order.
+     Returns 1 if there are no duplicates, 0 otherwise.  */
+  int sort ();
+
+private:
+  /* Number of positions, excluding the terminating PositionIterator::EOS.  */
+  unsigned int _size;
+  /* Array of positions.  1 for the first char, 2 for the second char etc.,
+     LASTCHAR for the last char.  PositionIterator::EOS past the end.  */
+  unsigned char _positions[MAX_KEY_POS];
+};
+
+/* This class denotes an iterator through a set of key positions.  */
+
+class PositionIterator
+{
+public:
+  /* Initializes an iterator through POSITIONS.  */
+  PositionIterator (Positions const& positions);
+
+  /* End of iteration marker.  */
+  static const int EOS = Positions::MAX_KEY_POS;
+
+  /* Retrieves the next position, or EOS past the end.  */
+  int next ();
+
+private:
+  const Positions& _set;
+  int _index;
 };
 
 /* Class manager for gperf program Options. */
@@ -79,54 +162,122 @@ enum
 class Options
 {
 public:
-                      Options ();
-                     ~Options ();
-  int                 operator[] (Option_Type option);
-  void                operator() (int argc, char *argv[]);
-  static void         print_options ();
-  static void         set_asso_max (int r);
-  static int          get_asso_max ();
-  static void         reset ();
-  static int          get ();
-  static int          get_iterations ();
-  static int          get_max_keysig_size ();
-  static void         set_keysig_size (int);
-  static int          get_jump ();
-  static int          initial_value ();
-  static int          get_total_switches ();
-  static const char  *get_function_name ();
-  static const char  *get_key_name ();
-  static const char  *get_initializer_suffix ();
-  static const char  *get_class_name ();
-  static const char  *get_hash_name ();
-  static const char  *get_wordlist_name ();
-  static const char  *get_delimiter ();
+  /* Constructor.  */
+  Options ();
+
+  /* Destructor.  */
+  ~Options ();
+
+  /* Parses the options given in the command-line arguments.  */
+  void parse_options (int argc, char *argv[]);
+
+  /* Prints the given options.  */
+  void print_options () const;
+
+  /* Accessors.  */
+
+  /* Tests a given boolean option.  Returns 1 if set, 0 otherwise.  */
+  int operator[] (Option_Type option) const;
+
+  /* Returns the iterations value.  */
+  int get_iterations () const;
+
+  /* Returns the jump value.  */
+  int get_jump () const;
+
+  /* Returns the initial associated character value.  */
+  int get_initial_asso_value () const;
+
+  /* Returns the total number of switch statements to generate.  */
+  int get_total_switches () const;
+
+  /* Returns the factor by which to multiply the generated table's size.  */
+  int get_size_multiple () const;
+
+  /* Returns the generated function name.  */
+  const char * get_function_name () const;
+
+  /* Returns the keyword key name.  */
+  const char * get_key_name () const;
+
+  /* Returns the struct initializer suffix.  */
+  const char * get_initializer_suffix () const;
+
+  /* Returns the generated class name.  */
+  const char * get_class_name () const;
+
+  /* Returns the hash function name.  */
+  const char * get_hash_name () const;
+
+  /* Returns the hash table array name.  */
+  const char * get_wordlist_name () const;
+
+  /* Returns the string used to delimit keywords from other attributes.  */
+  const char * get_delimiter () const;
+
+  /* Returns key positions.  */
+  const Positions& get_key_positions () const;
+
+  /* Returns total distinct key positions. */
+  int get_max_keysig_size () const;
 
 private:
-  static int          _option_word;                       /* Holds the user-specified Options. */
-  static int          _total_switches;                    /* Number of switch statements to generate. */
-  static int          _total_keysig_size;                 /* Total number of distinct key_positions. */
-  static int          _size;                              /* Range of the hash table. */
-  static int          _key_pos;                           /* Tracks current key position for Iterator. */
-  static int          _jump;                              /* Jump length when trying alternative values. */
-  static int          _initial_asso_value;                /* Initial value for asso_values table. */
-  static int          _argument_count;                    /* Records count of command-line arguments. */
-  static int          _iterations;                        /* Amount to iterate when a collision occurs. */
-  static char       **_argument_vector;                   /* Stores a pointer to command-line vector. */
-  static const char  *_function_name;                     /* Names used for generated lookup function. */
-  static const char  *_key_name;                          /* Name used for keyword key. */
-  static const char  *_initializer_suffix;                /* Suffix for empty struct initializers. */
-  static const char  *_class_name;                        /* Name used for generated C++ class. */
-  static const char  *_hash_name;                         /* Name used for generated hash function. */
-  static const char  *_wordlist_name;                     /* Name used for hash table array. */
-  static const char  *_delimiters;                        /* Separates keywords from other attributes. */
-  static char         _key_positions[MAX_KEY_POS];        /* Contains user-specified key choices. */
-  static int          key_sort (char *base, int len);     /* Sorts key positions in REVERSE order. */
-  static void         short_usage (FILE * strm);          /* Prints proper program usage. */
-  static void         long_usage (FILE * strm);           /* Prints proper program usage. */
+  /* Prints program usage to given stream. */
+  void short_usage (FILE * stream) const;
+
+  /* Prints program usage to given stream. */
+  void long_usage (FILE * stream) const;
+
+  /* Records count of command-line arguments.  */
+  int _argument_count;
+
+  /* Stores a pointer to command-line argument vector.  */
+  char **_argument_vector;
+
+  /* Holds the boolean options.  */
+  int _option_word;
+
+  /* Amount to iterate when a collision occurs.  */
+  int _iterations;
+
+  /* Jump length when trying alternative values.  */
+  int _jump;
+
+  /* Initial value for asso_values table.  */
+  int _initial_asso_value;
+
+  /* Number of switch statements to generate.  */
+  int _total_switches;
+
+  /* Factor by which to multiply the generated table's size.  */
+  int _size_multiple;
+
+  /* Names used for generated lookup function.  */
+  const char *_function_name;
+
+  /* Name used for keyword key.  */
+  const char *_key_name;
+
+  /* Suffix for empty struct initializers.  */
+  const char *_initializer_suffix;
+
+  /* Name used for generated C++ class.  */
+  const char *_class_name;
+
+  /* Name used for generated hash function.  */
+  const char *_hash_name;
+
+  /* Name used for hash table array.  */
+  const char *_wordlist_name;
+
+  /* Separates keywords from other attributes.  */
+  const char *_delimiters;
+
+  /* Contains user-specified key choices.  */
+  Positions _key_positions;
 };
 
-/* Global option coordinator for the entire program. */
+/* Global option coordinator for the entire program.  */
 extern Options option;
 
 #ifdef __OPTIMIZE__

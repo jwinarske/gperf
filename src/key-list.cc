@@ -449,8 +449,6 @@ Key_List::read_keys ()
           fprintf (stderr, "Empty input key is not allowed.\nTo recognize an empty input key, your code should check for\nlen == 0 before calling the gperf generated lookup function.\n");
           exit (1);
         }
-      if (option[ALLCHARS])
-        option.set_keysig_size (_max_key_len);
     }
 }
 
@@ -624,7 +622,7 @@ Key_List::sort ()
 void
 Key_List::dump ()
 {
-  int field_width = option.get_max_keysig_size ();
+  int field_width = get_max_keysig_size ();
 
   fprintf (stderr, "\nList contents are:\n(hash value, key length, index, %*s, keyword):\n",
            field_width, "selchars");
@@ -667,3 +665,10 @@ Key_List::max_key_length ()
   return _max_key_len;
 }
 
+/* Returns number of key positions.  */
+
+int
+Key_List::get_max_keysig_size ()
+{
+  return option[ALLCHARS] ? _max_key_len : option.get_max_keysig_size ();
+}

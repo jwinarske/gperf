@@ -1,4 +1,4 @@
-GNU `gperf' generates perfect hash functions.
+GNU 'gperf' generates perfect hash functions.
 
 Usage: ../src/gperf [OPTION]... [INPUT-FILE]
 
@@ -30,12 +30,12 @@ Details in the output code:
                          structure.
   -H, --hash-fn-name=NAME
                          Specify name of generated hash function. Default is
-                         `hash'.
+                         'hash'.
   -N, --lookup-fn-name=NAME
                          Specify name of generated lookup function. Default
-                         name is `in_word_set'.
+                         name is 'in_word_set'.
   -Z, --class-name=NAME  Specify name of generated C++ class. Default name is
-                         `Perfect_Hash'.
+                         'Perfect_Hash'.
   -7, --seven-bit        Assume 7-bit characters.
   -c, --compare-strncmp  Generate comparison code using strncmp rather than
                          strcmp.
@@ -50,7 +50,7 @@ Details in the output code:
                          lookup function (which is the default behavior).
   -W, --word-array-name=NAME
                          Specify name of word list array. Default name is
-                         `wordlist'.
+                         'wordlist'.
   -S, --switch=COUNT     Causes the generated C code to use a switch
                          statement scheme, rather than an array lookup table.
                          This can lead to a reduction in both time and space
@@ -74,23 +74,23 @@ Algorithm employed by gperf:
                          used, and key positions may occur in any order.
                          Also, the meta-character '*' causes the generated
                          hash function to consider ALL key positions, and $
-                         indicates the ``final character'' of a key, e.g.,
+                         indicates the "final character" of a key, e.g.,
                          $,1,2,4,6-10.
   -l, --compare-strlen   Compare key lengths before trying a string
                          comparison. This helps cut down on the number of
                          string comparisons made during the lookup.
   -D, --duplicates       Handle keywords that hash to duplicate values. This
                          is useful for certain highly redundant keyword sets.
-  -f, --fast=ITERATIONS  Generate the gen-perf.hash function ``fast''. This
+  -f, --fast=ITERATIONS  Generate the gen-perf.hash function "fast". This
                          decreases gperf's running time at the cost of
                          minimizing generated table size. The numeric
                          argument represents the number of times to iterate
-                         when resolving a collision. `0' means ``iterate by
-                         the number of keywords''.
+                         when resolving a collision. '0' means "iterate by
+                         the number of keywords".
   -i, --initial-asso=N   Provide an initial value for the associate values
                          array. Default is 0. Setting this value larger helps
                          inflate the size of the final table.
-  -j, --jump=JUMP-VALUE  Affects the ``jump value'', i.e., how far to advance
+  -j, --jump=JUMP-VALUE  Affects the "jump value", i.e., how far to advance
                          the associated character value upon collisions. Must
                          be an odd number, default is 5.
   -n, --no-strlen        Do not include the length of the keyword when
@@ -101,14 +101,14 @@ Algorithm employed by gperf:
   -r, --random           Utilizes randomness to initialize the associated
                          values table.
   -s, --size-multiple=N  Affects the size of the generated hash table. The
-                         numeric argument N indicates ``how many times larger
-                         or smaller'' the associated value range should be,
+                         numeric argument N indicates "how many times larger
+                         or smaller" the associated value range should be,
                          in relationship to the number of keys, e.g. a value
-                         of 3 means ``allow the maximum associated value to
+                         of 3 means "allow the maximum associated value to
                          be about 3 times larger than the number of input
-                         keys.'' Conversely, a value of -3 means ``make the
+                         keys". Conversely, a value of -3 means "make the
                          maximum associated value about 3 times smaller than
-                         the number of input keys. A larger table should
+                         the number of input keys". A larger table should
                          decrease the time required for an unsuccessful
                          search, at the expense of extra table space. Default
                          value is 1.

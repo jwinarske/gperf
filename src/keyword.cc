@@ -65,21 +65,21 @@ void KeywordExt::init_selchars (Vectors *v)
   char *key_set =
     new char[(option[ALLCHARS] ? _allchars_length : option.get_max_keysig_size ())];
   char *ptr = key_set;
-  int i;
 
   if (option[ALLCHARS])
     /* Use all the character positions in the KEY. */
-    for (i = _allchars_length; i > 0; k++, ptr++, i--)
+    for (int i = _allchars_length; i > 0; k++, ptr++, i--)
       v->_occurrences[(unsigned char)(*ptr = *k)]++;
   else
     /* Only use those character positions specified by the user. */
     {
       /* Iterate through the list of key_positions, initializing occurrences
          table and selchars (via char * pointer ptr). */
+      PositionIterator iter (option.get_key_positions ());
 
-      for (option.reset (); (i = option.get ()) != EOS; )
+      for (int i; (i = iter.next ()) != PositionIterator::EOS; )
         {
-          if (i == WORD_END)
+          if (i == Positions::LASTCHAR)
             /* Special notation for last KEY position, i.e. '$'. */
             *ptr = _allchars[_allchars_length - 1];
           else if (i <= _allchars_length)

@@ -29,7 +29,7 @@ int
 main (int argc, char *argv[])
 {
   /* Sets the Options. */
-  option (argc, argv);
+  option.parse_options (argc, argv);
 
   /* Initializes the key word list. */
   Gen_Perf generate_table;
