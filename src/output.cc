@@ -230,6 +230,42 @@ Output::output_constants (struct Output_Constants& style) const
 
 /* ------------------------------------------------------------------------- */
 
+/* We use a downcase table because when called repeatedly, the code
+       gperf_downcase[c]
+   is faster than
+       if (c >= 'A' && c <= 'Z')
+         c += 'a' - 'A';
+ */
+#define USE_DOWNCASE_TABLE 1
+
+#if USE_DOWNCASE_TABLE
+
+/* Output gperf's ASCII-downcase table.  */
+
+static void
+output_upperlower_table ()
+{
+  unsigned int c;
+
+  printf ("#ifndef GPERF_DOWNCASE\n"
+          "#define GPERF_DOWNCASE 1\n"
+          "static unsigned char gperf_downcase[256] =\n"
+          "  {");
+  for (c = 0; c < 256; c++)
+    {
+      if ((c % 15) == 0)
+        printf ("\n   ");
+      printf (" %3d", c >= 'A' && c <= 'Z' ? c + 'a' - 'A' : c);
+      if (c < 255)
+        printf (",");
+    }
+  printf ("\n"
+          "  };\n"
+          "#endif\n\n");
+}
+
+#endif
+
 /* Output gperf's ASCII-case insensitive strcmp replacement.  */
 
 static void
@@ -250,6 +286,18 @@ output_upperlower_strcmp ()
           option[ANSIC] | option[CPLUSPLUS] ?
                "(register const char *s1, register const char *s2)\n" :
           "");
+  #if USE_DOWNCASE_TABLE
+  printf ("{\n"
+          "  for (;;)\n"
+          "    {\n"
+          "      unsigned char c1 = gperf_downcase[(unsigned char)*s1++];\n"
+          "      unsigned char c2 = gperf_downcase[(unsigned char)*s2++];\n"
+          "      if (c1 != 0 && c1 == c2)\n"
+          "        continue;\n"
+          "      return (int)c1 - (int)c2;\n"
+          "    }\n"
+          "}\n");
+  #else
   printf ("{\n"
           "  for (;;)\n"
           "    {\n"
@@ -263,8 +311,9 @@ output_upperlower_strcmp ()
           "        continue;\n"
           "      return (int)c1 - (int)c2;\n"
           "    }\n"
-          "}\n"
-          "#endif\n\n");
+          "}\n");
+  #endif
+  printf ("#endif\n\n");
 }
 
 /* Output gperf's ASCII-case insensitive strncmp replacement.  */
@@ -289,6 +338,22 @@ output_upperlower_strncmp ()
           option[ANSIC] | option[CPLUSPLUS] ?
                "(register const char *s1, register const char *s2, register unsigned int n)\n" :
           "");
+  #if USE_DOWNCASE_TABLE
+  printf ("{\n"
+          "  for (; n > 0;)\n"
+          "    {\n"
+          "      unsigned char c1 = gperf_downcase[(unsigned char)*s1++];\n"
+          "      unsigned char c2 = gperf_downcase[(unsigned char)*s2++];\n"
+          "      if (c1 != 0 && c1 == c2)\n"
+          "        {\n"
+          "          n--;\n"
+          "          continue;\n"
+          "        }\n"
+          "      return (int)c1 - (int)c2;\n"
+          "    }\n"
+          "  return 0;\n"
+          "}\n");
+  #else
   printf ("{\n"
           "  for (; n > 0;)\n"
           "    {\n"
@@ -306,8 +371,9 @@ output_upperlower_strncmp ()
           "      return (int)c1 - (int)c2;\n"
           "    }\n"
           "  return 0;\n"
-          "}\n"
-          "#endif\n\n");
+          "}\n");
+  #endif
+  printf ("#endif\n\n");
 }
 
 /* Output gperf's ASCII-case insensitive memcmp replacement.  */
@@ -332,6 +398,22 @@ output_upperlower_memcmp ()
           option[ANSIC] | option[CPLUSPLUS] ?
                "(register const char *s1, register const char *s2, register unsigned int n)\n" :
           "");
+  #if USE_DOWNCASE_TABLE
+  printf ("{\n"
+          "  for (; n > 0;)\n"
+          "    {\n"
+          "      unsigned char c1 = gperf_downcase[(unsigned char)*s1++];\n"
+          "      unsigned char c2 = gperf_downcase[(unsigned char)*s2++];\n"
+          "      if (c1 == c2)\n"
+          "        {\n"
+          "          n--;\n"
+          "          continue;\n"
+          "        }\n"
+          "      return (int)c1 - (int)c2;\n"
+          "    }\n"
+          "  return 0;\n"
+          "}\n");
+  #else
   printf ("{\n"
           "  for (; n > 0;)\n"
           "    {\n"
@@ -349,8 +431,9 @@ output_upperlower_memcmp ()
           "      return (int)c1 - (int)c2;\n"
           "    }\n"
           "  return 0;\n"
-          "}\n"
-          "#endif\n\n");
+          "}\n");
+  #endif
+  printf ("#endif\n\n");
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1903,6 +1986,10 @@ Output::output ()
 
   if (option[UPPERLOWER])
     {
+      #if USE_DOWNCASE_TABLE
+      output_upperlower_table ();
+      #endif
+
       if (option[LENTABLE])
         output_upperlower_memcmp ();
       else

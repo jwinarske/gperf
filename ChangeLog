@@ -1,5 +1,12 @@
 2003-01-07  Bruno Haible  <bruno@clisp.org>
 
+	* src/output.cc (USE_DOWNCASE_TABLE): New macro.
+	(output_upperlower_table): New function.
+	(output_upperlower_strcmp, output_upperlower_strncmp,
+	output_upperlower_memcmp): Emit gperf_downcase array accesses.
+	(Output::output): Call output_upperlower_table.
+	* tests/permutc2.exp: Update.
+
 	* src/keyword-list.icc (KeywordExt_List::rest): Use a portable cast.
 	(Only in GCC a cast of an lvalue is an lvalue.)
 
