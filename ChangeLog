@@ -8,6 +8,8 @@
 	tests/permut2.exp, tests/permut3.exp, tests/permutc2.exp,
 	tests/test-4.exp: Update.
 
+	* src/configure.in: Fix AC_INIT argument.
+
 2003-05-03  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.texi: Use two spaces as sentence separator, as recommended
