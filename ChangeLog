@@ -1,5 +1,20 @@
 2002-12-12  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.h (Search::keyword_list_length, Search::max_key_length,
+	Search::get_max_keysig_size, Search::prepare): Remove declarations.
+	(Search::prepare): Renamed from Search::preprepare.
+	(Search::_max_selchars_length): New field.
+	* src/search.cc (Search::prepare): Renamed from Search::preprepare.
+	(Search::prepare_asso_values): Merged with old Search::prepare.
+	Initialize _max_selchars_length.
+	(Search::keyword_list_length): Remove function. Use _list_len instead.
+	(Search::max_key_length): Remove function. Use _max_key_len instead.
+	(Search::get_max_keysig_size): Remove function. Use
+	_max_selchars_length instead.
+	(Search::count_possible_collisions, Search::find_asso_values): Update.
+	(Search::find_good_asso_values): Call just prepare_asso_values.
+	(Search::~Search): Update.
+
 	* src/output.h (Output::output_asso_values_ref): New declaration.
 	* src/output.cc (char_to_index): Remove variable.
 	(Output::output_asso_values_ref): New function.

@@ -92,7 +92,7 @@ Search::Search (KeywordExt_List *list)
 }
 
 void
-Search::preprepare ()
+Search::prepare ()
 {
   KeywordExt_List *temp;
 
@@ -670,13 +670,18 @@ Search::find_alpha_inc ()
 
 /* ======================= Finding good asso_values ======================== */
 
+/* Initializes the asso_values[] related parameters.  */
+
 void
-Search::prepare ()
+Search::prepare_asso_values ()
 {
   KeywordExt_List *temp;
 
   /* Initialize each keyword's _selchars array.  */
   init_selchars_multiset(_key_positions, _alpha_unify, _alpha_inc);
+
+  /* Compute the maximum _selchars_length over all keywords.  */
+  _max_selchars_length = _key_positions.iterator(_max_key_len).remaining();
 
   /* Check for duplicates, i.e. keywords with the same _selchars array
      (and - if !option[NOLENGTH] - also the same length).
@@ -768,42 +773,8 @@ Search::prepare ()
 
   /* Memory allocation.  */
   _asso_values = new int[_alpha_size];
-}
 
-/* ------------------------------------------------------------------------- */
-
-/* Returns the length of keyword list.  */
-
-int
-Search::keyword_list_length () const
-{
-  return _list_len;
-}
-
-/* Returns the maximum length of keywords.  */
-
-int
-Search::max_key_length () const
-{
-  return _max_key_len;
-}
-
-/* Returns the number of key positions.  */
-
-int
-Search::get_max_keysig_size () const
-{
-  return _key_positions.is_useall() ? _max_key_len : _key_positions.get_size();
-}
-
-/* ---------------------- Finding good asso_values[] ----------------------- */
-
-/* Initializes the asso_values[] related parameters.  */
-
-void
-Search::prepare_asso_values ()
-{
-  int non_linked_length = keyword_list_length ();
+  int non_linked_length = _list_len;
   unsigned int asso_value_max;
 
   asso_value_max =
@@ -824,8 +795,8 @@ Search::prepare_asso_values ()
 
   /* Given the bound for _asso_values[c], we have a bound for the possible
      hash values, as computed in compute_hash().  */
-  _max_hash_value = (option[NOLENGTH] ? 0 : max_key_length ())
-                    + (_asso_value_max - 1) * get_max_keysig_size ();
+  _max_hash_value = (option[NOLENGTH] ? 0 : _max_key_len)
+                    + (_asso_value_max - 1) * _max_selchars_length;
   /* Allocate a sparse bit vector for detection of collisions of hash
      values.  */
   _collision_detector = new Bool_Array (_max_hash_value + 1);
@@ -1031,7 +1002,7 @@ Search::count_possible_collisions (EquivalenceClass *partition, unsigned int c) 
      This leads to   (|p|^2 - |p1|^2 - |p2|^2 - ...)/2  possible collisions.
      Return the sum of this expression over all equivalence classes.  */
   unsigned int sum = 0;
-  unsigned int m = get_max_keysig_size();
+  unsigned int m = _max_selchars_length;
   unsigned int split_cardinalities[m+1];
   for (EquivalenceClass *cls = partition; cls; cls = cls->_next)
     {
@@ -1383,8 +1354,8 @@ Search::find_asso_values ()
                           _asso_value_max = step->_asso_value_max;
                           /* Reinitialize _max_hash_value.  */
                           _max_hash_value =
-                            (option[NOLENGTH] ? 0 : max_key_length ())
-                            + (_asso_value_max - 1) * get_max_keysig_size ();
+                            (option[NOLENGTH] ? 0 : _max_key_len)
+                            + (_asso_value_max - 1) * _max_selchars_length;
                           /* Reinitialize _collision_detector.  */
                           delete _collision_detector;
                           _collision_detector =
@@ -1459,7 +1430,6 @@ Search::compute_hash (KeywordExt *keyword) const
 void
 Search::find_good_asso_values ()
 {
-  prepare ();
   prepare_asso_values ();
 
   /* Search for good _asso_values[].  */
@@ -1557,7 +1527,7 @@ void
 Search::optimize ()
 {
   /* Preparations.  */
-  preprepare ();
+  prepare ();
 
   /* Step 1: Finding good byte positions.  */
   find_positions ();
@@ -1633,7 +1603,7 @@ Search::~Search ()
                "\ntotal keywords = %d\ntotal duplicates = %d\nmaximum key length = %d\n",
                _list_len, _total_keys, _total_duplicates, _max_key_len);
 
-      int field_width = get_max_keysig_size ();
+      int field_width = _max_selchars_length;
       fprintf (stderr, "\nList contents are:\n(hash value, key length, index, %*s, keyword):\n",
                field_width, "selchars");
       for (KeywordExt_List *ptr = _head; ptr; ptr = ptr->rest())

@@ -39,7 +39,7 @@ public:
                         ~Search ();
   void                  optimize ();
 private:
-  void                  preprepare ();
+  void                  prepare ();
 
   /* Computes the upper bound on the indices passed to asso_values[],
      assuming no alpha_increments.  */
@@ -75,17 +75,6 @@ private:
 
   /* Find good _alpha_inc[].  */
   void                  find_alpha_inc ();
-
-  void                  prepare ();
-
-  /* Returns the length of keyword list.  */
-  int                   keyword_list_length () const;
-
-  /* Returns the maximum length of keywords.  */
-  int                   max_key_length () const;
-
-  /* Returns the number of key positions.  */
-  int                   get_max_keysig_size () const;
 
   /* Initializes the asso_values[] related parameters.  */
   void                  prepare_asso_values ();
@@ -135,6 +124,9 @@ public:
   /* Alphabet character unification, either the identity or a mapping from
      upper case characters to lower case characters (and maybe more).  */
   unsigned int *        _alpha_unify;
+
+  /* Maximum _selchars_length over all keywords.  */
+  unsigned int          _max_selchars_length;
 
   /* Total number of duplicates that have been moved to _duplicate_link lists
      (not counting their representatives which stay on the main list).  */
