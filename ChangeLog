@@ -1,5 +1,13 @@
 2002-12-10  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h: Reorder enum values.
+	(Options::short_usage, Options::long_usage): Make static.
+	* src/options.cc (Options::short_usage); No longer print a monster
+	usage line.
+	(Options::print_options): Improve output of options like
+	--key-positions=1,2,$.
+	(Options::~Options): Update.
+
 	* src/options.h (UPPERLOWER): New enum value.
 	* src/options.cc (Options::long_usage): Document option --ignore-case.
 	(Options::~Options): Update.

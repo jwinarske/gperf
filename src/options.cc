@@ -61,18 +61,17 @@ static const char *const DEFAULT_WORDLIST_NAME = "wordlist";
 /* Default delimiters that separate keywords from their attributes.  */
 static const char *const DEFAULT_DELIMITERS = ",";
 
-/* Prints program usage to given stream. */
+/* Prints program usage to given stream.  */
 
 void
-Options::short_usage (FILE * stream) const
+Options::short_usage (FILE * stream)
 {
-  fprintf (stream, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ij<jump>k<keys>K<keyname>lL<language>m<num>nN<function name>oPrs<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
-           "Try '%s --help' for more information.\n",
-           program_name, program_name);
+  fprintf (stream,
+           "Try '%s --help' for more information.\n", program_name);
 }
 
 void
-Options::long_usage (FILE * stream) const
+Options::long_usage (FILE * stream)
 {
   fprintf (stream,
            "GNU 'gperf' generates perfect hash functions.\n");
@@ -254,11 +253,9 @@ Options::long_usage (FILE * stream) const
 void
 Options::print_options () const
 {
-  int i;
-
   printf ("/* Command-line: ");
 
-  for (i = 0; i < _argument_count; i++)
+  for (int i = 0; i < _argument_count; i++)
     {
       const char *arg = _argument_vector[i];
 
@@ -271,6 +268,20 @@ Options::print_options () const
             {
               putchar (*arg);
               arg++;
+            }
+          else if (*arg == '-')
+            {
+              do
+                {
+                  putchar (*arg);
+                  arg++;
+                }
+              while (*arg >= 'A' && *arg <= 'Z' || *arg >= 'a' && *arg <= 'z' || *arg == '-');
+              if (*arg == '=')
+                {
+                  putchar (*arg);
+                  arg++;
+                }
             }
         }
       if (strpbrk (arg, "\t\n !\"#$&'()*;<>?[\\]`{|}~") != NULL)
@@ -419,7 +430,7 @@ PositionStringParser::nextPosition ()
 
 /* ------------------------------------------------------------------------- */
 
-/* Sets the default Options. */
+/* Sets the default Options.  */
 
 Options::Options ()
   : _option_word (C),
@@ -442,32 +453,33 @@ Options::Options ()
 {
 }
 
-/* Dumps option status when debug is set. */
+/* Dumps option status when debugging is enabled.  */
 
 Options::~Options ()
 {
   if (_option_word & DEBUG)
     {
       fprintf (stderr, "\ndumping Options:"
-               "\nDEBUG is.......: %s"
                "\nTYPE is........: %s"
-               "\nRANDOM is......: %s"
-               "\nSWITCH is......: %s"
-               "\nNOLENGTH is....: %s"
-               "\nLENTABLE is....: %s"
-               "\nDUP is.........: %s"
-               "\nCOMP is........: %s"
-               "\nNOTYPE is......: %s"
-               "\nGLOBAL is......: %s"
-               "\nCONST is.......: %s"
+               "\nUPPERLOWER is..: %s"
                "\nKRC is.........: %s"
                "\nC is...........: %s"
                "\nANSIC is.......: %s"
                "\nCPLUSPLUS is...: %s"
+               "\nSEVENBIT is....: %s"
+               "\nLENTABLE is....: %s"
+               "\nCOMP is........: %s"
+               "\nCONST is.......: %s"
                "\nENUM is........: %s"
                "\nINCLUDE is.....: %s"
-               "\nSEVENBIT is....: %s"
-               "\nUPPERLOWER is..: %s"
+               "\nGLOBAL is......: %s"
+               "\nSHAREDLIB is...: %s"
+               "\nSWITCH is......: %s"
+               "\nNOTYPE is......: %s"
+               "\nDUP is.........: %s"
+               "\nNOLENGTH is....: %s"
+               "\nRANDOM is......: %s"
+               "\nDEBUG is.......: %s"
                "\nlookup function name = %s"
                "\nhash function name = %s"
                "\nword list name = %s"
@@ -479,25 +491,26 @@ Options::~Options ()
                "\ninitial associated value = %d"
                "\ndelimiters = %s"
                "\nnumber of switch statements = %d\n",
-               _option_word & DEBUG ? "enabled" : "disabled",
                _option_word & TYPE ? "enabled" : "disabled",
-               _option_word & RANDOM ? "enabled" : "disabled",
-               _option_word & SWITCH ? "enabled" : "disabled",
-               _option_word & NOLENGTH ? "enabled" : "disabled",
-               _option_word & LENTABLE ? "enabled" : "disabled",
-               _option_word & DUP ? "enabled" : "disabled",
-               _option_word & COMP ? "enabled" : "disabled",
-               _option_word & NOTYPE ? "enabled" : "disabled",
-               _option_word & GLOBAL ? "enabled" : "disabled",
-               _option_word & CONST ? "enabled" : "disabled",
+               _option_word & UPPERLOWER ? "enabled" : "disabled",
                _option_word & KRC ? "enabled" : "disabled",
                _option_word & C ? "enabled" : "disabled",
                _option_word & ANSIC ? "enabled" : "disabled",
                _option_word & CPLUSPLUS ? "enabled" : "disabled",
+               _option_word & SEVENBIT ? "enabled" : "disabled",
+               _option_word & LENTABLE ? "enabled" : "disabled",
+               _option_word & COMP ? "enabled" : "disabled",
+               _option_word & CONST ? "enabled" : "disabled",
                _option_word & ENUM ? "enabled" : "disabled",
                _option_word & INCLUDE ? "enabled" : "disabled",
-               _option_word & SEVENBIT ? "enabled" : "disabled",
-               _option_word & UPPERLOWER ? "enabled" : "disabled",
+               _option_word & GLOBAL ? "enabled" : "disabled",
+               _option_word & SHAREDLIB ? "enabled" : "disabled",
+               _option_word & SWITCH ? "enabled" : "disabled",
+               _option_word & NOTYPE ? "enabled" : "disabled",
+               _option_word & DUP ? "enabled" : "disabled",
+               _option_word & NOLENGTH ? "enabled" : "disabled",
+               _option_word & RANDOM ? "enabled" : "disabled",
+               _option_word & DEBUG ? "enabled" : "disabled",
                _function_name, _hash_name, _wordlist_name, _slot_name,
                _initializer_suffix, _asso_iterations, _jump, _size_multiple,
                _initial_asso_value, _delimiters, _total_switches);
@@ -606,7 +619,7 @@ Options::set_delimiters (const char *delimiters)
 }
 
 
-/* Parses the command line Options and sets appropriate flags in option_word. */
+/* Parses the command line Options and sets appropriate flags in option_word.  */
 
 static const struct option long_options[] =
 {
@@ -668,26 +681,26 @@ Options::parse_options (int argc, char *argv[])
     {
       switch (option_char)
         {
-        case 'a':               /* Generated code uses the ANSI prototype format. */
-          break;                /* This is now the default. */
-        case 'c':               /* Generate strncmp rather than strcmp. */
+        case 'a':               /* Generated code uses the ANSI prototype format.  */
+          break;                /* This is now the default.  */
+        case 'c':               /* Generate strncmp rather than strcmp.  */
           {
             _option_word |= COMP;
             break;
           }
-        case 'C':               /* Make the generated tables readonly (const). */
+        case 'C':               /* Make the generated tables readonly (const).  */
           {
             _option_word |= CONST;
             break;
           }
-        case 'd':               /* Enable debugging option. */
+        case 'd':               /* Enable debugging option.  */
           {
             _option_word |= DEBUG;
             fprintf (stderr, "Starting program %s, version %s, with debugging on.\n",
                              program_name, version_string);
             break;
           }
-        case 'D':               /* Enable duplicate option. */
+        case 'D':               /* Enable duplicate option.  */
           {
             _option_word |= DUP;
             break;
@@ -702,31 +715,31 @@ Options::parse_options (int argc, char *argv[])
             _option_word |= ENUM;
             break;
           }
-        case 'f':               /* Generate the hash table "fast". */
+        case 'f':               /* Generate the hash table "fast".  */
           break;                /* Not needed any more.  */
         case 'F':
           {
             _initializer_suffix = /*getopt*/optarg;
             break;
           }
-        case 'g':               /* Use the 'inline' keyword for generated sub-routines, ifdef __GNUC__. */
-          break;                /* This is now the default. */
-        case 'G':               /* Make the keyword table a global variable. */
+        case 'g':               /* Use the 'inline' keyword for generated sub-routines, ifdef __GNUC__.  */
+          break;                /* This is now the default.  */
+        case 'G':               /* Make the keyword table a global variable.  */
           {
             _option_word |= GLOBAL;
             break;
           }
-        case 'h':               /* Displays a list of helpful Options to the user. */
+        case 'h':               /* Displays a list of helpful Options to the user.  */
           {
             long_usage (stdout);
             exit (0);
           }
-        case 'H':               /* Sets the name for the hash function */
+        case 'H':               /* Sets the name for the hash function.  */
           {
             _hash_name = /*getopt*/optarg;
             break;
           }
-        case 'i':               /* Sets the initial value for the associated values array. */
+        case 'i':               /* Sets the initial value for the associated values array.  */
           {
             if ((_initial_asso_value = atoi (/*getopt*/optarg)) < 0)
               fprintf (stderr, "Initial value %d should be non-zero, ignoring and continuing.\n", _initial_asso_value);
@@ -734,12 +747,12 @@ Options::parse_options (int argc, char *argv[])
               fprintf (stderr, "warning, -r option superceeds -i, ignoring -i option and continuing\n");
             break;
           }
-        case 'I':               /* Enable #include statements. */
+        case 'I':               /* Enable #include statements.  */
           {
             _option_word |= INCLUDE;
             break;
           }
-        case 'j':               /* Sets the jump value, must be odd for later algorithms. */
+        case 'j':               /* Sets the jump value, must be odd for later algorithms.  */
           {
             if ((_jump = atoi (/*getopt*/optarg)) < 0)
               {
@@ -751,7 +764,7 @@ Options::parse_options (int argc, char *argv[])
               fprintf (stderr, "Jump value %d should be odd, adding 1 and continuing...\n", _jump++);
             break;
           }
-        case 'k':               /* Sets key positions used for hash function. */
+        case 'k':               /* Sets key positions used for hash function.  */
           {
             _option_word |= POSITIONS;
             const int BAD_VALUE = -2;
@@ -809,17 +822,17 @@ Options::parse_options (int argc, char *argv[])
               }
             break;
           }
-        case 'K':               /* Make this the keyname for the keyword component field. */
+        case 'K':               /* Make this the keyname for the keyword component field.  */
           {
             _slot_name = /*getopt*/optarg;
             break;
           }
-        case 'l':               /* Create length table to avoid extra string compares. */
+        case 'l':               /* Create length table to avoid extra string compares.  */
           {
             _option_word |= LENTABLE;
             break;
           }
-        case 'L':               /* Deal with different generated languages. */
+        case 'L':               /* Deal with different generated languages.  */
           {
             _language = NULL;
             set_language (/*getopt*/optarg);
@@ -834,35 +847,35 @@ Options::parse_options (int argc, char *argv[])
               }
             break;
           }
-        case 'n':               /* Don't include the length when computing hash function. */
+        case 'n':               /* Don't include the length when computing hash function.  */
           {
             _option_word |= NOLENGTH;
             break;
           }
-        case 'N':               /* Make generated lookup function name be optarg */
+        case 'N':               /* Make generated lookup function name be optarg.  */
           {
             _function_name = /*getopt*/optarg;
             break;
           }
-        case 'o':               /* Order input by frequency of key set occurrence. */
+        case 'o':               /* Order input by frequency of key set occurrence.  */
           break;                /* Not needed any more.  */
         case 'O':               /* Optimized choice during collision resolution.  */
           break;                /* Not needed any more.  */
-        case 'p':               /* Generated lookup function a pointer instead of int. */
-          break;                /* This is now the default. */
+        case 'p':               /* Generated lookup function a pointer instead of int.  */
+          break;                /* This is now the default.  */
         case 'P':               /* Optimize for position-independent code.  */
           {
             _option_word |= SHAREDLIB;
             break;
           }
-        case 'r':               /* Utilize randomness to initialize the associated values table. */
+        case 'r':               /* Utilize randomness to initialize the associated values table.  */
           {
             _option_word |= RANDOM;
             if (_initial_asso_value != 0)
-              fprintf (stderr, "warning, -r option superceeds -i, disabling -i option and continuing\n");
+              fprintf (stderr, "warning, -r option supersedes -i, disabling -i option and continuing\n");
             break;
           }
-        case 's':               /* Range of associated values, determines size of final table. */
+        case 's':               /* Range of associated values, determines size of final table.  */
           {
             float numerator;
             float denominator = 1;
@@ -904,7 +917,7 @@ Options::parse_options (int argc, char *argv[])
               fprintf (stderr, "Size multiple %g is extremely small, did you really mean this?! (try '%s --help' for help)\n", _size_multiple, program_name);
             break;
           }
-        case 'S':               /* Generate switch statement output, rather than lookup table. */
+        case 'S':               /* Generate switch statement output, rather than lookup table.  */
           {
             _option_word |= SWITCH;
             _total_switches = atoi (/*getopt*/optarg);
@@ -916,17 +929,17 @@ Options::parse_options (int argc, char *argv[])
               }
             break;
           }
-        case 't':               /* Enable the TYPE mode, allowing arbitrary user structures. */
+        case 't':               /* Enable the TYPE mode, allowing arbitrary user structures.  */
           {
             _option_word |= TYPE;
             break;
           }
-        case 'T':   /* Don't print structure definition. */
+        case 'T':               /* Don't print structure definition.  */
           {
             _option_word |= NOTYPE;
             break;
           }
-        case 'v':               /* Print out the version and quit. */
+        case 'v':               /* Print out the version and quit.  */
           fprintf (stdout, "GNU gperf %s\n", version_string);
           fprintf (stdout, "Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
@@ -936,22 +949,22 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
           fprintf (stdout, "Written by %s and %s.\n",
                    "Douglas C. Schmidt", "Bruno Haible");
           exit (0);
-        case 'W':               /* Sets the name for the hash table array */
+        case 'W':               /* Sets the name for the hash table array.  */
           {
             _wordlist_name = /*getopt*/optarg;
             break;
           }
-        case 'Z':               /* Set the class name. */
+        case 'Z':               /* Set the class name.  */
           {
             _class_name = /*getopt*/optarg;
             break;
           }
-        case '7':               /* Assume 7-bit characters. */
+        case '7':               /* Assume 7-bit characters.  */
           {
             _option_word |= SEVENBIT;
             break;
           }
-        case CHAR_MAX + 1:      /* Set the output file name. */
+        case CHAR_MAX + 1:      /* Set the output file name.  */
           {
             _output_file_name = /*getopt*/optarg;
             break;

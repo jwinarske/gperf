@@ -32,79 +32,89 @@
 #include <stdio.h>
 #include "positions.h"
 
-/* Enumeration of the possible boolean options. */
+/* Enumeration of the possible boolean options.  */
 
 enum Option_Type
 {
-  /* Enable debugging (prints diagnostics to stderr).  */
-  DEBUG        = 1 << 0,
-
-  /* Use the given key positions.  */
-  POSITIONS    = 1 << 1,
-
-  /* Use all characters in hash function.  */
-  ALLCHARS     = 1 << 2,
+  /* --- Input file interpretation --- */
 
   /* Handle user-defined type structured keyword input.  */
-  TYPE         = 1 << 3,
+  TYPE         = 1 << 0,
 
-  /* Randomly initialize the associated values table.  */
-  RANDOM       = 1 << 4,
+  /* Ignore case of ASCII characters.  */
+  UPPERLOWER   = 1 << 1,
 
-  /* Generate switch output to save space.  */
-  SWITCH       = 1 << 5,
+  /* --- Language for the output code --- */
 
-  /* Don't include keyword length in hash computations.  */
-  NOLENGTH     = 1 << 6,
+  /* Generate K&R C code: no prototypes, no const.  */
+  KRC          = 1 << 2,
+
+  /* Generate C code: no prototypes, but const (user can #define it away).  */
+  C            = 1 << 3,
+
+  /* Generate ISO/ANSI C code: prototypes and const, but no class.  */
+  ANSIC        = 1 << 4,
+
+  /* Generate C++ code: prototypes, const, class, inline, enum.  */
+  CPLUSPLUS    = 1 << 5,
+
+  /* --- Details in the output code --- */
+
+  /* Assume 7-bit, not 8-bit, characters.  */
+  SEVENBIT     = 1 << 6,
 
   /* Generate a length table for string comparison.  */
   LENTABLE     = 1 << 7,
 
-  /* Handle duplicate hash values for keywords.  */
-  DUP          = 1 << 8,
+  /* Generate strncmp rather than strcmp.  */
+  COMP         = 1 << 8,
+
+  /* Make the generated tables readonly (const).  */
+  CONST        = 1 << 9,
+
+  /* Use enum for constants.  */
+  ENUM         = 1 << 10,
+
+  /* Generate #include statements.  */
+  INCLUDE      = 1 << 11,
+
+  /* Make the keyword table a global variable.  */
+  GLOBAL       = 1 << 12,
+
+  /* Optimize for position-independent code.  */
+  SHAREDLIB    = 1 << 13,
+
+  /* Generate switch output to save space.  */
+  SWITCH       = 1 << 14,
 
   /* Don't include user-defined type definition in output -- it's already
      defined elsewhere.  */
-  NOTYPE       = 1 << 9,
+  NOTYPE       = 1 << 15,
 
-  /* Generate strncmp rather than strcmp.  */
-  COMP         = 1 << 10,
+  /* --- Algorithm employed by gperf --- */
 
-  /* Make the keyword table a global variable.  */
-  GLOBAL       = 1 << 11,
+  /* Use the given key positions.  */
+  POSITIONS    = 1 << 16,
 
-  /* Make the generated tables readonly (const).  */
-  CONST        = 1 << 12,
+  /* Use all characters in hash function.  */
+  ALLCHARS     = 1 << 17,
 
-  /* Generate K&R C code: no prototypes, no const.  */
-  KRC          = 1 << 13,
+  /* Handle duplicate hash values for keywords.  */
+  DUP          = 1 << 18,
 
-  /* Generate C code: no prototypes, but const (user can #define it away).  */
-  C            = 1 << 14,
+  /* Don't include keyword length in hash computations.  */
+  NOLENGTH     = 1 << 19,
 
-  /* Generate ISO/ANSI C code: prototypes and const, but no class.  */
-  ANSIC        = 1 << 15,
+  /* Randomly initialize the associated values table.  */
+  RANDOM       = 1 << 20,
 
-  /* Generate C++ code: prototypes, const, class, inline, enum.  */
-  CPLUSPLUS    = 1 << 16,
+  /* --- Informative output --- */
 
-  /* Use enum for constants.  */
-  ENUM         = 1 << 17,
-
-  /* Generate #include statements.  */
-  INCLUDE      = 1 << 18,
-
-  /* Assume 7-bit, not 8-bit, characters.  */
-  SEVENBIT     = 1 << 19,
-
-  /* Optimize for position-independent code.  */
-  SHAREDLIB    = 1 << 20,
-
-  /* Ignore case of ASCII characters.  */
-  UPPERLOWER   = 1 << 21
+  /* Enable debugging (prints diagnostics to stderr).  */
+  DEBUG        = 1 << 21
 };
 
-/* Class manager for gperf program Options. */
+/* Class manager for gperf program Options.  */
 
 class Options
 {
@@ -193,10 +203,10 @@ public:
 
 private:
   /* Prints program usage to given stream.  */
-  void                  short_usage (FILE * stream) const;
+  static void           short_usage (FILE * stream);
 
   /* Prints program usage to given stream.  */
-  void                  long_usage (FILE * stream) const;
+  static void           long_usage (FILE * stream);
 
   /* Records count of command-line arguments.  */
   int                   _argument_count;
