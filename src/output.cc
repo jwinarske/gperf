@@ -31,16 +31,17 @@
 #include "options.h"
 #include "version.h"
 
-/* The "const " qualifier. */
+/* The "const " qualifier.  */
 static const char *const_always;
 
-/* The "const " qualifier, for read-only arrays. */
+/* The "const " qualifier, for read-only arrays.  */
 static const char *const_readonly_array;
 
-/* The "const " qualifier, for the array type. */
+/* The "const " qualifier, for the array type.  */
 static const char *const_for_struct;
 
-/* Returns the smallest unsigned C type capable of holding integers up to N. */
+/* Returns the smallest unsigned C type capable of holding integers
+   up to N.  */
 
 static const char *
 smallest_integral_type (int n)
@@ -51,7 +52,7 @@ smallest_integral_type (int n)
 }
 
 /* Returns the smallest signed C type capable of holding integers
-   from MIN to MAX. */
+   from MIN to MAX.  */
 
 static const char *
 smallest_integral_type (int min, int max)
@@ -62,12 +63,29 @@ smallest_integral_type (int min, int max)
   return "int";
 }
 
-/* A cast from `char' to a valid array index. */
+/* A cast from `char' to a valid array index.  */
 static const char *char_to_index;
 
 /* ------------------------------------------------------------------------- */
 
-/* Constructor.  */
+/* Constructor.
+   Note about the keyword list starting at head:
+   - The list is ordered by increasing _hash_value.  This has been achieved
+     by Search::sort().
+   - Duplicates, i.e. keywords with the same _selchars set, are chained
+     through the _duplicate_link pointer.  This chain goes in the same
+     direction as the list order, i.e. from earlier list positions to
+     later list positions.  This property has been achieved by
+     Search::prepare() and has been preserved through Search::reorder()
+     and Search::sort() (because the sorting criteria cannot distinguish
+     keywords with the same _selchars, and Search::merge_sort() is a stable
+     sorting algorithm).
+   - Therefore, since duplicates have the same _hash_value, duplicates
+     have been sorted together by Search::sort(), and form blocks of
+     consecutive list elements.  The _duplicate_link of every element
+     of a duplicate block (except the last element) points to the next
+     element in this block.
+ */
 Output::Output (KeywordExt_List *head, const char *array_type,
                 const char *return_type, const char *struct_tag,
                 bool additional_code, const char *include_src,
@@ -85,28 +103,46 @@ Output::Output (KeywordExt_List *head, const char *array_type,
 
 /* ------------------------------------------------------------------------- */
 
-/* Computes the maximum and minimum hash values.  Since the
-   list is already sorted by hash value all we need to do is
-   find the final item! */
+/* Recognizing duplicates.  */
+
+/* Returns true for a duplicate keyword, excluding the first element of a
+   duplicate block.  */
+inline bool
+is_redundant_duplicate (KeywordExt_List *elem)
+{
+  /* Compare the hash values of this element and the next one.  */
+  return (elem->rest() != NULL
+          && elem->first()->_hash_value == elem->rest()->first()->_hash_value);
+}
+
+/* ------------------------------------------------------------------------- */
+
+/* Computes the minimum and maximum hash values, and stores them
+   in _min_hash_value and _max_hash_value.  */
 
 void
 Output::compute_min_max ()
 {
+  /* Since the list is already sorted by hash value all we need to do is
+     to look at the first and the last element of the list.  */
+
+  _min_hash_value = _head->first()->_hash_value;
+
   KeywordExt_List *temp;
   for (temp = _head; temp->rest(); temp = temp->rest())
     ;
-
-  _min_hash_value = _head->first()->_hash_value;
   _max_hash_value = temp->first()->_hash_value;
 }
 
 /* ------------------------------------------------------------------------- */
 
-/* Returns the number of different hash values. */
+/* Returns the number of different hash values.  */
 
 int
 Output::num_hash_values ()
 {
+  /* Since the list is already sorted by hash value we can count the
+     different hash values in a single pass through the list.  */
   int count = 1;
   KeywordExt_List *temp;
   int value;
@@ -124,7 +160,7 @@ Output::num_hash_values ()
 
 /* -------------------- Output_Constants and subclasses -------------------- */
 
-/* This class outputs an enumeration defining some constants. */
+/* This class outputs an enumeration defining some constants.  */
 
 struct Output_Constants
 {
@@ -135,7 +171,7 @@ struct Output_Constants
   virtual ~Output_Constants () {}
 };
 
-/* This class outputs an enumeration in #define syntax. */
+/* This class outputs an enumeration in #define syntax.  */
 
 struct Output_Defines : public Output_Constants
 {
@@ -160,44 +196,44 @@ void Output_Defines::output_end ()
 {
 }
 
-/* This class outputs an enumeration using `enum'. */
+/* This class outputs an enumeration using 'enum'.  */
 
 struct Output_Enum : public Output_Constants
 {
   virtual void output_start ();
   virtual void output_item (const char *name, int value);
   virtual void output_end ();
-  Output_Enum (const char *indent) : indentation (indent) {}
+  Output_Enum (const char *indent) : _indentation (indent) {}
   virtual ~Output_Enum () {}
 private:
-  const char *indentation;
-  int pending_comma;
+  const char *_indentation;
+  bool _pending_comma;
 };
 
 void Output_Enum::output_start ()
 {
   printf ("%senum\n"
           "%s  {\n",
-          indentation, indentation);
-  pending_comma = 0;
+          _indentation, _indentation);
+  _pending_comma = false;
 }
 
 void Output_Enum::output_item (const char *name, int value)
 {
-  if (pending_comma)
+  if (_pending_comma)
     printf (",\n");
-  printf ("%s    %s = %d", indentation, name, value);
-  pending_comma = 1;
+  printf ("%s    %s = %d", _indentation, name, value);
+  _pending_comma = true;
 }
 
 void Output_Enum::output_end ()
 {
-  if (pending_comma)
+  if (_pending_comma)
     printf ("\n");
-  printf ("%s  };\n\n", indentation);
+  printf ("%s  };\n\n", _indentation);
 }
 
-/* Outputs the maximum and minimum hash values etc. */
+/* Outputs the maximum and minimum hash values etc.  */
 
 void
 Output::output_constants (struct Output_Constants& style)
@@ -214,7 +250,7 @@ Output::output_constants (struct Output_Constants& style)
 /* ------------------------------------------------------------------------- */
 
 /* Outputs a keyword, as a string: enclosed in double quotes, escaping
-   backslashes, double quote and unprintable characters. */
+   backslashes, double quote and unprintable characters.  */
 
 static void
 output_string (const char *key, int len)
@@ -234,7 +270,7 @@ output_string (const char *key, int len)
           /* Use octal escapes, not hexadecimal escapes, because some old
              C compilers didn't understand hexadecimal escapes, and because
              hexadecimal escapes are not limited to 2 digits, thus needing
-             special care if the following character happens to be a digit. */
+             special care if the following character happens to be a digit.  */
           putchar ('\\');
           putchar ('0' + ((c >> 6) & 7));
           putchar ('0' + ((c >> 3) & 7));
@@ -246,21 +282,23 @@ output_string (const char *key, int len)
 
 /* ------------------------------------------------------------------------- */
 
-/* Outputs a type and a const specifier.
-   The output is terminated with a space. */
+/* Outputs a type and a const specifier (i.e. "const " or "").
+   The output is terminated with a space.  */
 
 static void
 output_const_type (const char *const_string, const char *type_string)
 {
   if (type_string[strlen(type_string)-1] == '*')
+    /* For pointer types, put the 'const' after the type.  */
     printf ("%s %s", type_string, const_string);
   else
+    /* For scalar or struct types, put the 'const' before the type.  */
     printf ("%s%s ", const_string, type_string);
 }
 
 /* ----------------------- Output_Expr and subclasses ----------------------- */
 
-/* This class outputs a general expression. */
+/* This class outputs a general expression.  */
 
 struct Output_Expr
 {
@@ -269,58 +307,63 @@ struct Output_Expr
   virtual ~Output_Expr () {}
 };
 
-/* This class outputs an expression formed by a single string. */
+/* This class outputs an expression formed by a single string.  */
 
 struct Output_Expr1 : public Output_Expr
 {
   virtual void output_expr () const;
-  Output_Expr1 (const char *piece1) : p1 (piece1) {}
+  Output_Expr1 (const char *piece1) : _p1 (piece1) {}
   virtual ~Output_Expr1 () {}
 private:
-  const char *p1;
+  const char *_p1;
 };
 
 void Output_Expr1::output_expr () const
 {
-  printf ("%s", p1);
+  printf ("%s", _p1);
 }
 
 #if 0 /* unused */
 
 /* This class outputs an expression formed by the concatenation of two
-   strings. */
+   strings.  */
 
 struct Output_Expr2 : public Output_Expr
 {
   virtual void output_expr () const;
   Output_Expr2 (const char *piece1, const char *piece2)
-    : p1 (piece1), p2 (piece2) {}
+    : _p1 (piece1), _p2 (piece2) {}
   virtual ~Output_Expr2 () {}
 private:
-  const char *p1;
-  const char *p2;
+  const char *_p1;
+  const char *_p2;
 };
 
 void Output_Expr2::output_expr () const
 {
-  printf ("%s%s", p1, p2);
+  printf ("%s%s", _p1, _p2);
 }
 
 #endif
 
 /* --------------------- Output_Compare and subclasses --------------------- */
 
-/* This class outputs a comparison expression. */
+/* This class outputs a comparison expression.  */
 
 struct Output_Compare
 {
+  /* Outputs the comparison expression.
+     expr1 outputs a simple expression of type 'const char *' referring to
+     the string being looked up.  expr2 outputs a simple expression of type
+     'const char *' referring to the constant string stored in the gperf
+     generated hash table.  */
   virtual void output_comparison (const Output_Expr& expr1,
                                   const Output_Expr& expr2) const = 0;
   Output_Compare () {}
   virtual ~Output_Compare () {}
 };
 
-/* This class outputs a comparison using strcmp. */
+/* This class outputs a comparison using strcmp.  */
 
 struct Output_Compare_Strcmp : public Output_Compare
 {
@@ -346,7 +389,7 @@ void Output_Compare_Strcmp::output_comparison (const Output_Expr& expr1,
 
 /* This class outputs a comparison using strncmp.
    Note that the length of expr1 will be available through the local variable
-   `len'. */
+   'len'.  */
 
 struct Output_Compare_Strncmp : public Output_Compare
 {
@@ -373,9 +416,9 @@ void Output_Compare_Strncmp::output_comparison (const Output_Expr& expr1,
 }
 
 /* This class outputs a comparison using memcmp.
-   Note that the length of expr1 (available through the local variable `len')
+   Note that the length of expr1 (available through the local variable 'len')
    must be verified to be equal to the length of expr2 prior to this
-   comparison. */
+   comparison.  */
 
 struct Output_Compare_Memcmp : public Output_Compare
 {
@@ -402,20 +445,14 @@ void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
 /* ------------------------------------------------------------------------- */
 
 /* Generates C code for the hash function that returns the
-   proper encoding for each key word. */
+   proper encoding for each keyword.
+   The hash function has the signature
+     unsigned int <hash> (const char *str, unsigned int len).  */
 
 void
 Output::output_hash_function ()
 {
-  const int max_column  = 10;
-  int field_width;
-
-  /* Calculate maximum number of digits required for MAX_HASH_VALUE. */
-  field_width = 2;
-  for (int trunc = _max_hash_value; (trunc /= 10) > 0;)
-    field_width++;
-
-  /* Output the function's head. */
+  /* Output the function's head.  */
   if (option[CPLUSPLUS])
     printf ("inline ");
   else if (option[KRC] | option[C] | option[ANSIC])
@@ -446,39 +483,40 @@ Output::output_hash_function ()
           "");
 
   /* Note that when the hash function is called, it has already been verified
-     that  min_key_len <= len <= max_key_len. */
+     that  min_key_len <= len <= max_key_len.  */
 
-  /* Output the function's body. */
+  /* Output the function's body.  */
   printf ("{\n");
 
-  /* First the asso_values array. */
-  printf ("  static %s%s asso_values[] =\n"
-          "    {",
-          const_readonly_array,
-          smallest_integral_type (_max_hash_value + 1));
+  /* First the asso_values array.  */
+  {
+    printf ("  static %s%s asso_values[] =\n"
+            "    {",
+            const_readonly_array,
+            smallest_integral_type (_max_hash_value + 1));
 
-  for (int count = 0; count < _alpha_size; count++)
-    {
-      if (count > 0)
-        printf (",");
-      if (!(count % max_column))
-        printf ("\n     ");
-      printf ("%*d", field_width,
-              _occurrences[count] ? _asso_values[count] : _max_hash_value + 1);
-    }
+    const int columns = 10;
 
-  printf ("\n"
-          "    };\n");
+    /* Calculate maximum number of digits required for MAX_HASH_VALUE.  */
+    int field_width = 2;
+    for (int trunc = _max_hash_value; (trunc /= 10) > 0;)
+      field_width++;
 
-  /* Optimize special case of ``-k 1,$'' */
-  if (!option[ALLCHARS]
-      && option.get_key_positions().get_size() == 2
-      && option.get_key_positions()[0] == 1
-      && option.get_key_positions()[1] == Positions::LASTCHAR)
-    printf ("  return %sasso_values[%sstr[len - 1]] + asso_values[%sstr[0]];\n",
-            option[NOLENGTH] ? "" : "len + ",
-            char_to_index, char_to_index);
-  else if (option[ALLCHARS])
+    for (int count = 0; count < _alpha_size; count++)
+      {
+        if (count > 0)
+          printf (",");
+        if ((count % columns) == 0)
+          printf ("\n     ");
+        printf ("%*d", field_width,
+                _occurrences[count] ? _asso_values[count] : _max_hash_value + 1);
+      }
+
+    printf ("\n"
+            "    };\n");
+  }
+
+  if (option[ALLCHARS])
     {
       /* User wants *all* characters considered in hash.  */
       printf ("  register int hval = %s;\n\n"
@@ -499,39 +537,51 @@ Output::output_hash_function ()
     }
   else
     {
+      /* Iterate through the key positions.  Remember that Positions::sort()
+         has sorted them in decreasing order, with Positions::LASTCHAR coming
+         last.  */
       PositionIterator iter (option.get_key_positions());
       int key_pos;
 
-      /* Get first (also highest) key position. */
+      /* Get the highest key position.  */
       key_pos = iter.next ();
 
       if (key_pos == Positions::LASTCHAR || key_pos <= _min_key_len)
         {
           /* We can perform additional optimizations here:
              Write it out as a single expression. Note that the values
-             are added as `int's even though the asso_values array may
-             contain `unsigned char's or `unsigned short's. */
+             are added as 'int's even though the asso_values array may
+             contain 'unsigned char's or 'unsigned short's.  */
 
           printf ("  return %s",
                   option[NOLENGTH] ? "" : "len + ");
 
-          for (; key_pos != Positions::LASTCHAR; )
+          if (option.get_key_positions().get_size() == 2
+              && option.get_key_positions()[0] == 1
+              && option.get_key_positions()[1] == Positions::LASTCHAR)
+            /* Optimize special case of "-k 1,$".  */
+            printf ("asso_values[%sstr[len - 1]] + asso_values[%sstr[0]]",
+                    char_to_index, char_to_index);
+          else
             {
-              printf ("asso_values[%sstr[%d]]", char_to_index, key_pos - 1);
-              if ((key_pos = iter.next ()) != PositionIterator::EOS)
-                printf (" + ");
-              else
-                break;
-            }
+              for (; key_pos != Positions::LASTCHAR; )
+                {
+                  printf ("asso_values[%sstr[%d]]", char_to_index, key_pos - 1);
+                  if ((key_pos = iter.next ()) != PositionIterator::EOS)
+                    printf (" + ");
+                  else
+                    break;
+                }
 
-          if (key_pos == Positions::LASTCHAR)
-            printf ("asso_values[%sstr[len - 1]]", char_to_index);
+              if (key_pos == Positions::LASTCHAR)
+                printf ("asso_values[%sstr[len - 1]]", char_to_index);
+            }
 
           printf (";\n");
         }
       else
         {
-          /* We've got to use the correct, but brute force, technique. */
+          /* We've got to use the correct, but brute force, technique.  */
           printf ("  register int hval = %s;\n\n"
                   "  switch (%s)\n"
                   "    {\n"
@@ -576,27 +626,31 @@ Output::output_hash_function ()
 /* ------------------------------------------------------------------------- */
 
 /* Prints out a table of keyword lengths, for use with the
-   comparison code in generated function ``in_word_set''. */
+   comparison code in generated function 'in_word_set'.
+   Only called if option[LENTABLE].  */
 
 void
 Output::output_keylength_table ()
 {
-  const int  columns = 14;
-  int        index;
-  int        column;
-  const char *indent    = option[GLOBAL] ? "" : "  ";
-  KeywordExt_List *temp;
+  const int columns = 14;
+  const char * const indent = option[GLOBAL] ? "" : "  ";
 
   printf ("%sstatic %s%s lengthtable[] =\n%s  {",
           indent, const_readonly_array,
           smallest_integral_type (_max_key_len),
           indent);
 
-  /* Generate an array of lengths, similar to output_keyword_table. */
+  /* Generate an array of lengths, similar to output_keyword_table.  */
+  int index;
+  int column;
+  KeywordExt_List *temp;
 
   column = 0;
   for (temp = _head, index = 0; temp; temp = temp->rest())
     {
+      /* If generating a switch statement, and there is no user defined type,
+         we generate non-duplicates directly in the code.  Only duplicates go
+         into the table.  */
       if (option[SWITCH] && !option[TYPE]
           && !(temp->first()->_duplicate_link
                || (temp->rest() && temp->first()->_hash_value == temp->rest()->first()->_hash_value)))
@@ -604,7 +658,7 @@ Output::output_keylength_table ()
 
       if (index < temp->first()->_hash_value && !option[SWITCH] && !option[DUP])
         {
-          /* Some blank entries. */
+          /* Some blank entries.  */
           for ( ; index < temp->first()->_hash_value; index++)
             {
               if (index > 0)
@@ -620,19 +674,18 @@ Output::output_keylength_table ()
       if ((column++ % columns) == 0)
         printf("\n%s   ", indent);
       printf ("%3d", temp->first()->_allchars_length);
+      index++;
 
-      /* Deal with links specially. */
+      /* Deal with duplicates specially.  */
       if (temp->first()->_duplicate_link) // implies option[DUP]
         for (KeywordExt *links = temp->first()->_duplicate_link; links; links = links->_duplicate_link)
           {
-            ++index;
             printf (",");
             if ((column++ % columns) == 0)
               printf("\n%s   ", indent);
             printf ("%3d", links->_allchars_length);
+            index++;
           }
-
-      index++;
     }
 
   printf ("\n%s  };\n", indent);
@@ -696,7 +749,7 @@ output_keyword_blank_entries (int count, const char *indent)
     }
 }
 
-/* Prints out the array containing the key words for the hash function. */
+/* Prints out the array containing the keywords for the hash function.  */
 
 void
 Output::output_keyword_table ()
@@ -713,7 +766,7 @@ Output::output_keyword_table ()
           option.get_wordlist_name (),
           indent);
 
-  /* Generate an array of reserved words at appropriate locations. */
+  /* Generate an array of reserved words at appropriate locations.  */
 
   for (temp = _head, index = 0; temp; temp = temp->rest())
     {
@@ -727,7 +780,7 @@ Output::output_keyword_table ()
 
       if (index < temp->first()->_hash_value && !option[SWITCH] && !option[DUP])
         {
-          /* Some blank entries. */
+          /* Some blank entries.  */
           output_keyword_blank_entries (temp->first()->_hash_value - index, indent);
           printf (",\n");
           index = temp->first()->_hash_value;
@@ -737,7 +790,7 @@ Output::output_keyword_table ()
 
       output_keyword_entry (temp->first(), indent);
 
-      /* Deal with links specially. */
+      /* Deal with duplicates specially.  */
       if (temp->first()->_duplicate_link) // implies option[DUP]
         for (KeywordExt *links = temp->first()->_duplicate_link; links; links = links->_duplicate_link)
           {
@@ -757,7 +810,7 @@ Output::output_keyword_table ()
 /* ------------------------------------------------------------------------- */
 
 /* Generates the large, sparse table that maps hash values into
-   the smaller, contiguous range of the keyword table. */
+   the smaller, contiguous range of the keyword table.  */
 
 void
 Output::output_lookup_array ()
@@ -767,12 +820,12 @@ Output::output_lookup_array ()
       const int DEFAULT_VALUE = -1;
 
       /* Because of the way output_keyword_table works, every duplicate set is
-         stored contiguously in the wordlist array. */
+         stored contiguously in the wordlist array.  */
       struct duplicate_entry
         {
-          int hash_value;  /* Hash value for this particular duplicate set. */
-          int index;       /* Index into the main keyword storage array. */
-          int count;       /* Number of consecutive duplicates at this index. */
+          int hash_value; /* Hash value for this particular duplicate set.  */
+          int index;      /* Index into the main keyword storage array.  */
+          int count;      /* Number of consecutive duplicates at this index.  */
         };
 
       duplicate_entry *duplicates = new duplicate_entry[_total_duplicates];
@@ -784,7 +837,7 @@ Output::output_lookup_array ()
       while (lookup_ptr > lookup_array)
         *--lookup_ptr = DEFAULT_VALUE;
 
-      /* Now dup_ptr = &duplicates[0] and lookup_ptr = &lookup_array[0]. */
+      /* Now dup_ptr = &duplicates[0] and lookup_ptr = &lookup_array[0].  */
 
       for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
         {
@@ -796,7 +849,7 @@ Output::output_lookup_array ()
           if (temp->first()->_duplicate_link
               || (temp->rest() && hash_value == temp->rest()->first()->_hash_value))
             {
-              /* Start a duplicate entry. */
+              /* Start a duplicate entry.  */
               dup_ptr->hash_value = hash_value;
               dup_ptr->index = temp->first()->_final_index;
               dup_ptr->count = 1;
@@ -839,30 +892,30 @@ Output::output_lookup_array ()
 
           int i;
           /* Start searching for available space towards the right part
-             of the lookup array. */
+             of the lookup array.  */
           for (i = dup_ptr->hash_value; i < lookup_array_size-1; i++)
             if (lookup_array[i] == DEFAULT_VALUE
                 && lookup_array[i + 1] == DEFAULT_VALUE)
               goto found_i;
-          /* If we didn't find it to the right look to the left instead... */
+          /* If we didn't find it to the right look to the left instead...  */
           for (i = dup_ptr->hash_value-1; i >= 0; i--)
             if (lookup_array[i] == DEFAULT_VALUE
                 && lookup_array[i + 1] == DEFAULT_VALUE)
               goto found_i;
-          /* Append to the end of lookup_array. */
+          /* Append to the end of lookup_array.  */
           i = lookup_array_size;
           lookup_array_size += 2;
         found_i:
           /* Put in an indirection from dup_ptr->_hash_value to i.
-             At i and i+1 store dup_ptr->_final_index and dup_ptr->count. */
+             At i and i+1 store dup_ptr->_final_index and dup_ptr->count.  */
           assert (lookup_array[dup_ptr->hash_value] == dup_ptr->index);
           lookup_array[dup_ptr->hash_value] = - 1 - _total_keys - i;
           lookup_array[i] = - _total_keys + dup_ptr->index;
           lookup_array[i + 1] = - dup_ptr->count;
-          /* All these three values are <= -2, distinct from DEFAULT_VALUE. */
+          /* All these three values are <= -2, distinct from DEFAULT_VALUE.  */
         }
 
-      /* The values of the lookup array are now known. */
+      /* The values of the lookup array are now known.  */
 
       int min = INT_MAX;
       int max = INT_MIN;
@@ -883,7 +936,7 @@ Output::output_lookup_array ()
               indent);
 
       int field_width;
-      /* Calculate maximum number of digits required for MIN..MAX. */
+      /* Calculate maximum number of digits required for MIN..MAX.  */
       {
         field_width = 2;
         for (int trunc = max; (trunc /= 10) > 0;)
@@ -920,14 +973,14 @@ Output::output_lookup_array ()
 
 /* ------------------------------------------------------------------------- */
 
-/* Generate all the tables needed for the lookup function. */
+/* Generate all the tables needed for the lookup function.  */
 
 void
 Output::output_lookup_tables ()
 {
   if (option[SWITCH])
     {
-      /* Use the switch in place of lookup table. */
+      /* Use the switch in place of lookup table.  */
       if (option[LENTABLE] && (option[DUP] && _total_duplicates > 0))
         output_keylength_table ();
       if (option[TYPE] || (option[DUP] && _total_duplicates > 0))
@@ -935,7 +988,7 @@ Output::output_lookup_tables ()
     }
   else
     {
-      /* Use the lookup table, in place of switch. */
+      /* Use the lookup table, in place of switch.  */
       if (option[LENTABLE])
         output_keylength_table ();
       output_keyword_table ();
@@ -945,7 +998,7 @@ Output::output_lookup_tables ()
 
 /* ------------------------------------------------------------------------- */
 
-/* Output a single switch case (including duplicates). Advance list. */
+/* Output a single switch case (including duplicates).  Advance list.  */
 
 static KeywordExt_List *
 output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
@@ -1015,7 +1068,7 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
 }
 
 /* Output a total of size cases, grouped into num_switches switch statements,
-   where 0 < num_switches <= size. */
+   where 0 < num_switches <= size.  */
 
 static void
 output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash_value, int max_hash_value, int indent)
@@ -1058,7 +1111,7 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
     }
   else
     {
-      /* Output a single switch. */
+      /* Output a single switch.  */
       int lowest_case_value = list->first()->_hash_value;
       if (size == 1)
         {
@@ -1102,7 +1155,7 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
     }
 }
 
-/* Generates C code to perform the keyword lookup. */
+/* Generates C code to perform the keyword lookup.  */
 
 void
 Output::output_lookup_function_body (const Output_Compare& comparison)
@@ -1349,12 +1402,12 @@ Output::output_lookup_function_body (const Output_Compare& comparison)
           "  return 0;\n");
 }
 
-/* Generates C code for the lookup function. */
+/* Generates C code for the lookup function.  */
 
 void
 Output::output_lookup_function ()
 {
-  /* Output the function's head. */
+  /* Output the function's head.  */
   if (option[KRC] | option[C] | option[ANSIC])
     printf ("#ifdef __GNUC__\n"
             "__inline\n"
@@ -1377,7 +1430,7 @@ Output::output_lookup_function ()
                  "(register const char *str, register unsigned int len)\n" :
           "");
 
-  /* Output the function's body. */
+  /* Output the function's body.  */
   printf ("{\n");
 
   if (option[ENUM] && !option[GLOBAL])
@@ -1405,7 +1458,7 @@ Output::output_lookup_function ()
 /* ------------------------------------------------------------------------- */
 
 /* Generates the hash function and the key word recognizer function
-   based upon the user's Options. */
+   based upon the user's Options.  */
 
 void
 Output::output ()

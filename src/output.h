@@ -35,14 +35,40 @@ struct Output_Compare;
 class Output
 {
 public:
-                        Output (KeywordExt_List *head, const char *array_type, const char *return_type, const char *struct_tag, bool additional_code, const char *include_src, int total_keys, int total_duplicates, int max_key_len, int min_key_len, int alpha_size, const int *occurrences, const int *asso_values);
+  /* Constructor.  */
+                        Output (KeywordExt_List *head,
+                                const char *array_type,
+                                const char *return_type,
+                                const char *struct_tag,
+                                bool additional_code,
+                                const char *include_src,
+                                int total_keys,
+                                int total_duplicates,
+                                int max_key_len, int min_key_len,
+                                int alpha_size,
+                                const int *occurrences,
+                                const int *asso_values);
   void                  output ();
 private:
+
+  /* Computes the minimum and maximum hash values, and stores them
+     in _min_hash_value and _max_hash_value.  */
   void                  compute_min_max ();
+
+  /* Returns the number of different hash values.  */
   int                   num_hash_values ();
+
+  /* Outputs the maximum and minimum hash values etc.  */
   void                  output_constants (struct Output_Constants&);
+
+  /* Generates C code for the hash function that returns the
+     proper encoding for each keyword.  */
   void                  output_hash_function ();
+
+  /* Prints out a table of keyword lengths, for use with the
+     comparison code in generated function 'in_word_set'.  */
   void                  output_keylength_table ();
+
   void                  output_keyword_table ();
   void                  output_lookup_array ();
   void                  output_lookup_tables ();
