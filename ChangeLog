@@ -1,5 +1,9 @@
 2002-12-07  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.cc (Search::prepare_asso_values) [DEBUG]: Also print
+	the keyword list in order.
+	(Search::find_asso_values) [DEBUG]: Upon failure, print the union_set.
+
 	* src/options.h (Options::get_size_multiple): Change return type to
 	float.
 	(Options::_size_multiple): Change type to float.

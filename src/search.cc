@@ -830,9 +830,39 @@ Search::prepare_asso_values ()
   _collision_detector = new Bool_Array (_max_hash_value + 1);
 
   if (option[DEBUG])
-    fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
-             "\nmaximum size of generated hash table is %d\n",
-             non_linked_length, asso_value_max, _max_hash_value);
+    {
+      fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
+               "\nmaximum size of generated hash table is %d\n",
+               non_linked_length, asso_value_max, _max_hash_value);
+
+      int field_width;
+
+      field_width = 0;
+      {
+        for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+          {
+            KeywordExt *keyword = temp->first();
+            if (field_width < keyword->_selchars_length)
+              field_width = keyword->_selchars_length;
+          }
+      }
+
+      fprintf (stderr, "\ndumping the keyword list without duplicates\n");
+      fprintf (stderr, "keyword #, %*s, keyword\n", field_width, "keysig");
+      int i = 0;
+      for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+        {
+          KeywordExt *keyword = temp->first();
+          fprintf (stderr, "%9d, ", ++i);
+          if (field_width > keyword->_selchars_length)
+            fprintf (stderr, "%*s", field_width - keyword->_selchars_length, "");
+          for (int j = 0; j < keyword->_selchars_length; j++)
+            putc (keyword->_selchars[j], stderr);
+          fprintf (stderr, ", %.*s\n",
+                   keyword->_allchars_length, keyword->_allchars);
+        }
+      fprintf (stderr, "\nend of keyword list\n\n");
+    }
 
   if (option[RANDOM] || option.get_jump () == 0)
     /* We will use rand(), so initialize the random number generator.  */
@@ -1191,8 +1221,15 @@ Search::find_asso_values ()
 
         if (option[DEBUG])
           {
-            fprintf (stderr, "** collision not resolved after %d iterations, backtracking...\n",
+            fprintf (stderr, "** collision not resolved after %d iterations of asso_value[",
                      iterations);
+            for (union_index = 0; union_index < union_set_length; union_index++)
+              {
+                if (union_index > 0)
+                  fprintf (stderr, ",");
+                fprintf(stderr, "'%c'", union_set[union_index]);
+              }
+            fprintf (stderr, "], backtracking...\n");
             fflush (stderr);
           }
       }
