@@ -213,7 +213,7 @@ Key_List::set_output_types (void)
 /* Extracts a key from an input line and creates a new List_Node for it. */
 
 static List_Node *
-parse_line (char *line, const char *delimiters)
+parse_line (const char *line, const char *delimiters)
 {
   if (*line == '"')
     {
@@ -342,12 +342,8 @@ parse_line (char *line, const char *delimiters)
       if (line[len] == '\0')
         rest = "";
       else
-        {
-          /* Quick hack to separate the key from the rest, killing the first
-             delimiter. */
-          line[len] = '\0';
-          rest = &line[len + 1];
-        }
+        /* Skip the first delimiter. */
+        rest = &line[len + 1];
       return new List_Node (line, len, option[TYPE] ? rest : "");
     }
 }
