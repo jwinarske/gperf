@@ -1,3 +1,11 @@
+2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
+
+        * doc/Makefile.in (MAKEINFO): Unset LANG while running makeinfo.
+
+Sat May  2 13:20:54 1998  Bruno Haible  <bruno@linuix.mathematik.uni-karlsruhe.de>
+
+        * gperf-2.7 released.
+
 Sat May  2 12:31:51 1998  Bruno Haible  <bruno@linuix.mathematik.uni-karlsruhe.de>
 
         * src/version.cc (version_string): Remove the "(C++ version)" suffix.
