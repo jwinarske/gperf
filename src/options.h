@@ -181,6 +181,9 @@ public:
   /* Tests a given boolean option.  Returns true if set, false otherwise.  */
   bool                  operator[] (Option_Type option) const;
 
+  /* Returns the input file name.  */
+  const char *          get_input_file_name () const;
+
   /* Returns the iterations value.  */
   int                   get_iterations () const;
 
@@ -243,6 +246,9 @@ private:
 
   /* Holds the boolean options.  */
   int                   _option_word;
+
+  /* Name of input file.  */
+  char *                _input_file_name;
 
   /* Amount to iterate when a collision occurs.  */
   int                   _iterations;

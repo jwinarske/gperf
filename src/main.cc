@@ -21,6 +21,7 @@
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "options.h"
 #include "input.h"
 #include "search.h"
@@ -50,6 +51,15 @@ main (int argc, char *argv[])
 {
   /* Set the Options.  Open the input file and assign stdin to it.  */
   option.parse_options (argc, argv);
+
+  /* Open the input file.  */
+  if (option.get_input_file_name ())
+    if (!freopen (option.get_input_file_name (), "r", stdin))
+      {
+        fprintf (stderr, "Cannot open input file '%s'\n",
+                 option.get_input_file_name ());
+        exit (1);
+      }
 
   /* Initialize the keyword list.  */
   KeywordExt_Factory factory;
@@ -82,7 +92,10 @@ main (int argc, char *argv[])
   /* Check for write error on stdout.  */
   int status = 0;
   if (fflush (stdout) || ferror (stdout))
-    status = 1;
+    {
+      fprintf (stderr, "error while writing output file\n");
+      status = 1;
+    }
 
   /* Don't use exit() here, it skips the destructors.  */
   return status;

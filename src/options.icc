@@ -125,6 +125,13 @@ Options::operator[] (Option_Type option) const
   return _option_word & option;
 }
 
+/* Returns the input file name.  */
+INLINE const char *
+Options::get_input_file_name () const
+{
+  return _input_file_name;
+}
+
 /* Returns the iterations value.  */
 INLINE int
 Options::get_iterations () const

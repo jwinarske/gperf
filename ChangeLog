@@ -1,5 +1,14 @@
 2002-11-10  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h (Options::get_input_file_name): New declaration.
+	(Options::_input_file_name): New field.
+	* src/options.icc (Options::get_input_file_name): New method.
+	* src/options.cc (Options::Options): Initialize _input_file_name.
+	(Options::parse_options): Don't open input file, only store it in
+	_input_file_name.
+	* src/main.cc (main): Open input file here.
+	Print an error message upon write error on the output file.
+
 	Upgrade to autoconf-2.52.
 	* configure.in: Use AC_CONFIG_SUBDIRS instead of AC_OUTPUT_SUBDIRS.
 	* Makefile.devel (configure, lib/configure, src/configure,

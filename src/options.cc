@@ -416,6 +416,7 @@ PositionStringParser::nextPosition ()
 
 Options::Options ()
   : _option_word (C),
+    _input_file_name (NULL),
     _iterations (0),
     _jump (DEFAULT_JUMP_VALUE),
     _initial_asso_value (0),
@@ -832,16 +833,12 @@ Options::parse_options (int argc, char *argv[])
 
     }
 
-  if (/*getopt*/optind + 1 < argc)
+  if (/*getopt*/optind < argc)
+    _input_file_name = argv[/*getopt*/optind++];
+
+  if (/*getopt*/optind < argc)
     {
       fprintf (stderr, "Extra trailing arguments to %s.\n", program_name);
-      short_usage (stderr);
-      exit (1);
-    }
-
-  if (argv[/*getopt*/optind] && ! freopen (argv[/*getopt*/optind], "r", stdin))
-    {
-      fprintf (stderr, "Cannot open keyword file `%s'\n", argv[/*getopt*/optind]);
       short_usage (stderr);
       exit (1);
     }
