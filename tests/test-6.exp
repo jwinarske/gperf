@@ -14,7 +14,7 @@ Input file interpretation:
   -e, --delimiters=DELIMITER-LIST
                          Allow user to provide a string containing delimiters
                          used to separate keywords from their attributes.
-                         Default is ",\n".
+                         Default is ",".
   -t, --struct-type      Allows the user to include a structured type
                          declaration for generated code. Any text before %%
                          is considered part of the type declaration. Key

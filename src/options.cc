@@ -59,7 +59,7 @@ static const char *const DEFAULT_HASH_NAME = "hash";
 static const char *const DEFAULT_WORDLIST_NAME = "wordlist";
 
 /* Default delimiters that separate keywords from their attributes.  */
-static const char *const DEFAULT_DELIMITERS = ",\n";
+static const char *const DEFAULT_DELIMITERS = ",";
 
 /* Prints program usage to given stream. */
 
@@ -99,7 +99,7 @@ Options::long_usage (FILE * stream) const
            "  -e, --delimiters=DELIMITER-LIST\n"
            "                         Allow user to provide a string containing delimiters\n"
            "                         used to separate keywords from their attributes.\n"
-           "                         Default is \",\\n\".\n");
+           "                         Default is \",\".\n");
   fprintf (stream,
            "  -t, --struct-type      Allows the user to include a structured type\n"
            "                         declaration for generated code. Any text before %%%%\n"

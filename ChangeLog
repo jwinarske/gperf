@@ -1,5 +1,10 @@
 2002-11-16  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.cc (DEFAULT_DELIMITERS): Remove newline.
+	* src/options.cc (Options::long_usage): Change default --delimiters.
+	* doc/gperf.texi (Input Details): Likewise.
+	* tests/test-6.exp: Update.
+
 	* doc/gperf.texi: Move description of option -l from section
 	Algorithmic Details to section Output Details.
 	* src/options.cc (Options::long_usage): Likewise.

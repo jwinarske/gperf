@@ -577,7 +577,7 @@ or if it is @samp{-}.
 @itemx --delimiters=@var{keyword-delimiter-list}
 @cindex Delimiters
 Allows the user to provide a string containing delimiters used to
-separate keywords from their attributes.  The default is ",\n".  This
+separate keywords from their attributes.  The default is ",".  This
 option is essential if you want to use keywords that have embedded
 commas or newlines.  One useful trick is to use -e'TAB', where TAB is
 the literal tab character.
