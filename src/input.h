@@ -26,32 +26,39 @@
 #ifndef input_h
 #define input_h 1
 
-#include "read-line.h"
+#include <stdio.h>
 #include "keyword-list.h"
 
-class Input : private Read_Line
+class Input
 {
 public:
                         Input (FILE *stream, Keyword_Factory *keyword_factory);
-  void                  read_keys ();
+                        ~Input ();
+  void                  read_input ();
 private:
-#ifndef strcspn
-  static int            strcspn (const char *s, const char *reject);
-#endif
-  void                  set_output_types ();
-  const char *          get_array_type ();
-  const char *          save_include_src ();
-  const char *          get_special_input (char delimiter);
+  /* Input stream.  */
+  FILE *                _stream;
+  /* Creates the keywords.  */
+  Keyword_Factory * const _factory;
+  /* Memory block containing the entire input.  */
+  char *                _input;
 public:
-  const char *          _array_type;                           /* Pointer to the type for word list. */
-  const char *          _return_type;                          /* Pointer to return type for lookup function. */
-  const char *          _struct_tag;                           /* Shorthand for user-defined struct tag type. */
-  const char *          _include_src;                          /* C source code to be included verbatim. */
-  bool                  _additional_code;                      /* True if any additional C code is included. */
-  Keyword_Factory * const _factory;                            /* Creates the keywords. */
-  Keyword_List *        _head;                            /* Points to the head of the linked list. */
-private:
-  Keyword_List *        parse_line (const char *line, const char *delimiters);
+  /* The C code from the declarations section.  */
+  const char *          _verbatim_declarations;
+  const char *          _verbatim_declarations_end;
+  unsigned int          _verbatim_declarations_lineno;
+  /* The C code from the end of the file.  */
+  const char *          _verbatim_code;
+  const char *          _verbatim_code_end;
+  unsigned int          _verbatim_code_lineno;
+  /* Declaration of struct type for a keyword and its attributes.  */
+  const char *          _struct_decl;
+  /* Return type of the lookup function.  */
+  const char *          _return_type;
+  /* Shorthand for user-defined struct tag type.  */
+  const char *          _struct_tag;
+  /* List of all keywords.  */
+  Keyword_List *        _head;
 };
 
 #endif

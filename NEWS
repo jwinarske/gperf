@@ -2,6 +2,9 @@ New in 2.8:
 
 * Added option -m/--multiple-iterations that reduces the size of the
   generated table.
+* If the input file is given by name, the output file will now contain
+  #line directives referring to the input file.
+* Bug fixes.
 
 New in 2.7.2:
 

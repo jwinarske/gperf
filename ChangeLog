@@ -1,5 +1,39 @@
 2002-11-10  Bruno Haible  <bruno@clisp.org>
 
+	Rewrite the input routines.
+	* src/input.h: Don't include read-line.h.
+	(Input): Don't inherit from class Read_Line.
+	(Input::read_keys, Input::strcspn, Input::set_output_types,
+	Input::get_array_type, Input::save_include_src,
+	Input::get_special_input): Remove declarations.
+	(Input::read_input): New declaration.
+	(Input::_struct_decl): Renamed from Input::_array_type.
+	(Input::_verbatim_declarations): Renamed from Input::_include_src.
+	(Input::_verbatim_code): Replaces Input::_additional_code.
+	* src/input.cc: Completely rewritten.
+	* src/output.h (Output::Output): Update the verbatim_* arguments.
+	(Output::_struct_decl): Renamed from Output::_array_type.
+	(Output::_verbatim_declarations): Renamed from Output::_include_src.
+	(Output::_verbatim_code): Replaces Output::_additional_code.
+	* src/output.cc (Output::Output): Update the verbatim_* arguments.
+	(Output::output): Output the verbatim_* code pieces with #line.
+	* src/main.cc (main): Call Input::read_input instead of
+	Input::read_keys. Update Output::Output arguments.
+	* src/read-line.h: Remove file.
+	* src/read-line.cc, src/read-line.icc: Remove files.
+	* src/Makefile.in (OBJECTS): Remove read-line.o.
+	(READ_LINE_H): Remove variable.
+	(INPUT_H): Update.
+	(read-line.o): Remove rule.
+	* doc/gperf.texi (Declarations): Correct the example.
+	(Keywords): Mention that lines starting with % are forbidden here.
+	* tests/c-parse.exp: Update.
+	* tests/cplusplus.exp: Update.
+	* tests/gpc.exp: Update.
+	* tests/java.exp: Update.
+	* tests/objc.exp: Update.
+	* tests/test-4.exp: Update.
+
 	* src/options.h (Options::get_input_file_name): New declaration.
 	(Options::_input_file_name): New field.
 	* src/options.icc (Options::get_input_file_name): New method.

@@ -61,7 +61,7 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-OBJECTS  = version.o options.o read-line.o keyword.o keyword-list.o \
+OBJECTS  = version.o options.o keyword.o keyword-list.o \
            input.o bool-array.o hash-table.o search.o output.o main.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
@@ -86,10 +86,9 @@ $(TARGETPROG): $(OBJECTS)
 CONFIG_H = config.h
 VERSION_H = version.h
 OPTIONS_H = options.h options.icc
-READ_LINE_H = read-line.h read-line.icc
 KEYWORD_H = keyword.h keyword.icc
 KEYWORD_LIST_H = keyword-list.h keyword-list.icc $(KEYWORD_H)
-INPUT_H = input.h $(READ_LINE_H) $(KEYWORD_LIST_H)
+INPUT_H = input.h $(KEYWORD_LIST_H)
 BOOL_ARRAY_H = bool-array.h bool-array.icc $(OPTIONS_H)
 HASH_TABLE_H = hash-table.h $(KEYWORD_H)
 SEARCH_H = search.h $(KEYWORD_LIST_H) $(BOOL_ARRAY_H)
@@ -99,8 +98,6 @@ version.o : version.cc $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
 options.o : options.cc $(OPTIONS_H) $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/options.cc
-read-line.o : read-line.cc $(READ_LINE_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/read-line.cc
 keyword.o : keyword.cc $(KEYWORD_H) $(OPTIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword.cc
 keyword-list.o : keyword-list.cc $(KEYWORD_LIST_H)

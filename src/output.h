@@ -37,11 +37,15 @@ class Output
 public:
   /* Constructor.  */
                         Output (KeywordExt_List *head,
-                                const char *array_type,
+                                const char *struct_decl,
                                 const char *return_type,
                                 const char *struct_tag,
-                                bool additional_code,
-                                const char *include_src,
+                                const char *verbatim_declarations,
+                                const char *verbatim_declarations_end,
+                                unsigned int verbatim_declarations_lineno,
+                                const char *verbatim_code,
+                                const char *verbatim_code_end,
+                                unsigned int verbatim_code_lineno,
                                 int total_keys,
                                 int total_duplicates,
                                 int max_key_len, int min_key_len,
@@ -91,16 +95,20 @@ private:
   /* Linked list of keywords.  */
   KeywordExt_List *     _head;
 
-  /* Pointer to the type for word list. */
-  const char * const    _array_type;
+  /* Declaration of struct type for a keyword and its attributes.  */
+  const char * const    _struct_decl;
   /* Pointer to return type for lookup function. */
   const char *          _return_type;
   /* Shorthand for user-defined struct tag type. */
   const char *          _struct_tag;
-  /* True if any additional C code is included. */
-  bool const            _additional_code;
-  /* C source code to be included verbatim. */
-  const char * const    _include_src;
+  /* The C code from the declarations section.  */
+  const char * const    _verbatim_declarations;
+  const char * const    _verbatim_declarations_end;
+  unsigned int const    _verbatim_declarations_lineno;
+  /* The C code from the end of the file.  */
+  const char * const    _verbatim_code;
+  const char * const    _verbatim_code_end;
+  unsigned int const    _verbatim_code_lineno;
   /* Total number of keys, counting duplicates. */
   int const             _total_keys;
   /* Total number of duplicate hash values. */

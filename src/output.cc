@@ -80,17 +80,27 @@ static const char *char_to_index;
      keyword list.  After Search::sort(), we know that they form blocks of
      consecutive list elements.
  */
-Output::Output (KeywordExt_List *head, const char *array_type,
+Output::Output (KeywordExt_List *head, const char *struct_decl,
                 const char *return_type, const char *struct_tag,
-                bool additional_code, const char *include_src,
+                const char *verbatim_declarations,
+                const char *verbatim_declarations_end,
+                unsigned int verbatim_declarations_lineno,
+                const char *verbatim_code, const char *verbatim_code_end,
+                unsigned int verbatim_code_lineno,
                 int total_keys, int total_duplicates, int max_key_len,
                 int min_key_len, int alpha_size, const int *occurrences,
                 const int *asso_values)
-  : _head (head), _array_type (array_type), _return_type (return_type),
-    _struct_tag (struct_tag), _additional_code (additional_code),
-    _include_src (include_src), _total_keys (total_keys),
-    _total_duplicates (total_duplicates), _max_key_len (max_key_len),
-    _min_key_len (min_key_len), _alpha_size (alpha_size),
+  : _head (head), _struct_decl (struct_decl), _return_type (return_type),
+    _struct_tag (struct_tag),
+    _verbatim_declarations (verbatim_declarations),
+    _verbatim_declarations_end (verbatim_declarations_end),
+    _verbatim_declarations_lineno (verbatim_declarations_lineno),
+    _verbatim_code (verbatim_code),
+    _verbatim_code_end (verbatim_code_end),
+    _verbatim_code_lineno (verbatim_code_lineno),
+    _total_keys (total_keys), _total_duplicates (total_duplicates),
+    _max_key_len (max_key_len), _min_key_len (min_key_len),
+    _alpha_size (alpha_size),
     _occurrences (occurrences), _asso_values (asso_values)
 {
 }
@@ -1477,11 +1487,19 @@ Output::output ()
     printf ("C++");
   printf (" code produced by gperf version %s */\n", version_string);
   option.print_options ();
+  printf ("\n");
 
-  printf ("%s\n", _include_src);
+  if (_verbatim_declarations < _verbatim_declarations_end)
+    {
+      if (option.get_input_file_name ())
+        printf ("#line %u \"%s\"\n",
+                _verbatim_declarations_lineno, option.get_input_file_name ());
+      fwrite (_verbatim_declarations, 1,
+              _verbatim_declarations_end - _verbatim_declarations, stdout);
+    }
 
   if (option[TYPE] && !option[NOTYPE]) /* Output type declaration now, reference it later on.... */
-    printf ("%s;\n", _array_type);
+    printf ("%s\n", _struct_decl);
 
   if (option[INCLUDE])
     printf ("#include <string.h>\n"); /* Declare strlen(), strcmp(), strncmp(). */
@@ -1519,9 +1537,13 @@ Output::output ()
 
   output_lookup_function ();
 
-  if (_additional_code)
-    for (int c; (c = getchar ()) != EOF; putchar (c))
-      ;
+  if (_verbatim_code < _verbatim_code_end)
+    {
+      if (option.get_input_file_name ())
+        printf ("#line %u \"%s\"\n",
+                _verbatim_code_lineno, option.get_input_file_name ());
+      fwrite (_verbatim_code, 1, _verbatim_code_end - _verbatim_code, stdout);
+    }
 
   fflush (stdout);
 }

@@ -64,7 +64,7 @@ main (int argc, char *argv[])
   /* Initialize the keyword list.  */
   KeywordExt_Factory factory;
   Input inputter (stdin, &factory);
-  inputter.read_keys ();
+  inputter.read_input ();
   /* We can cast the keyword list to KeywordExt_List* because its list
      elements were created by KeywordExt_Factory.  */
   KeywordExt_List* list = static_cast<KeywordExt_List*>(inputter._head);
@@ -75,11 +75,15 @@ main (int argc, char *argv[])
 
   /* Output the hash function code.  */
   Output outputter (searcher._head,
-                    inputter._array_type,
+                    inputter._struct_decl,
                     inputter._return_type,
                     inputter._struct_tag,
-                    inputter._additional_code,
-                    inputter._include_src,
+                    inputter._verbatim_declarations,
+                    inputter._verbatim_declarations_end,
+                    inputter._verbatim_declarations_lineno,
+                    inputter._verbatim_code,
+                    inputter._verbatim_code_end,
+                    inputter._verbatim_code_lineno,
                     searcher._total_keys,
                     searcher._total_duplicates,
                     searcher._max_key_len,

@@ -163,8 +163,8 @@ In addition, Adam de Boor and Nels Olson provided many tips and insights
 that greatly helped improve the quality and functionality of @code{gperf}.
 
 @item
-A testsuite was added by Bruno Haible. He also rewrote the output
-routines for better reliability.
+A testsuite was added by Bruno Haible. He also rewrote the input routines
+and the output routines for better reliability.
 @end itemize
 
 @node Motivation, Search Structures, Contributors, Top
@@ -389,15 +389,16 @@ march,     3, 31, 31
 @end group
 @end example
 
-It is possible to omit the declaration section entirely.  In this case
+It is possible to omit the declaration section entirely, if the @samp{-t}
+option is not given.  In this case
 the input file begins directly with the first keyword line, e.g.:
 
 @example
 @group
-january,   1, 31, 31
-february,  2, 28, 29
-march,     3, 31, 31
-april,     4, 30, 30
+january
+february
+march
+april
 ...
 @end group
 @end example
@@ -408,7 +409,9 @@ april,     4, 30, 30
 The second input file format section contains lines of keywords and any
 associated attributes you might supply.  A line beginning with @samp{#}
 in the first column is considered a comment.  Everything following the
-@samp{#} is ignored, up to and including the following newline.
+@samp{#} is ignored, up to and including the following newline.  A line
+beginning with @samp{%} in the first column is an option declaration and
+must not occur within the keywords section.
 
 The first field of each non-comment line is always the keyword itself.  It
 can be given in two ways: as a simple name, i.e., without surrounding
