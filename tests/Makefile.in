@@ -139,7 +139,7 @@ check-test:
 	$(GPERF) -g -o -j1 -t -p -N is_reserved_word < $(srcdir)/gpc.gperf > gpc.out
 	diff $(srcdir)/gpc.exp gpc.out
 # prints out the help message
-	-$(GPERF) -h > test-6.out 2>&1
+	-$(GPERF) -h > test-6.out
 	diff $(srcdir)/test-6.exp test-6.out
 	@echo "only if, do, for, case, goto, else, while, and return should be found "
 	./aout -v < $(srcdir)/c.gperf > test-7.out
