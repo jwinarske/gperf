@@ -88,7 +88,8 @@ List_Node::List_Node (const char *k, int len, const char *r):
         keylength, so there are essentially no usable hash positions! */
       if (ptr == char_set && option[NOLENGTH])
         {
-          fprintf (stderr, "Can't hash keyword %s with chosen key positions.\n", key);
+          fprintf (stderr, "Can't hash keyword %.*s with chosen key positions.\n",
+                   key_length, key);
           exit (1);
         }
     }

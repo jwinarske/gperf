@@ -36,8 +36,8 @@
           New field char_set_length.
           (List_Node constructor): Accept key and rest, not the entire line.
         * src/list-node.cc (List_Node constructor): Accept key and rest, not
-          the entire line. Don't NUL terminate key and char_set. Initialize
-          char_set_length field.
+          the entire line. Don't NUL terminate key and char_set. Specify
+          explicit length of key. Initialize char_set_length field.
         * src/key-list.cc: Include <ctype.h>.
           (parse_line): New function.
           (Key_List::read_keys): Call parse_line instead of new List_Node.
