@@ -230,6 +230,7 @@ check-lang-syntax : force
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -K key_name
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -H hash_function_name
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -W word_list_name
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -l --length-table-name=length_table_name
 	sed -e 's,in_word_set,lookup_function_name,g' < $(srcdir)/jstest1.gperf > tmp-jstest1.gperf && \
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 tmp-jstest1.gperf -N lookup_function_name
 	sed -e 's,Perfect_Hash,class_name,g' < $(srcdir)/jstest1.gperf > tmp-jstest1.gperf && \

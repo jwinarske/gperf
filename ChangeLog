@@ -1,3 +1,9 @@
+2004-08-22  Bruno Haible  <bruno@clisp.org>
+
+	* tests/Makefile.in (check-lang-syntax): Add test for the
+	--length-table-name option.
+	* tests/test-6.exp: Update.
+
 2004-08-21  Bruce Lilly <blilly@erols.com>
 
 	* src/input.cc (Input::read_input): Accept length-table-name
