@@ -91,6 +91,7 @@
         * src/options.icc (Options::get_initializer_suffix): New function.
         * src/options.cc (DEFAULT_INITIALIZER_SUFFIX): New constant.
           (Options::initializer_suffix): New variable.
+          (Options::short_usage): Document option "-F".
           (Options::long_usage): Document option "-F".
           (Options constructor): Initialize initializer_suffix.
           (Options destructor): Dump initializer_suffix.

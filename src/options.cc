@@ -83,7 +83,7 @@ void
 Options::short_usage (FILE * strm)
 {
   T (Trace t ("Options::short_usage");)
-  fprintf (strm, "Usage: %s [-cCdDef[num]GhH<hashname>i<init>Ijk<keys>K<keyname>lL<language>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
+  fprintf (strm, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ijk<keys>K<keyname>lL<language>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
                  "Try `%s --help' for more information.\n",
                  program_name, program_name);
 }
