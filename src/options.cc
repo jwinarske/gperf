@@ -901,6 +901,13 @@ Options::parse_options (int argc, char *argv[])
           }
         case 'v':               /* Print out the version and quit. */
           fprintf (stdout, "GNU gperf %s\n", version_string);
+          fprintf (stdout, "Copyright (C) %s Free Software Foundation, Inc.\n\
+This is free software; see the source for copying conditions.  There is NO\n\
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
+",
+                   "1989-1998, 2000-2002");
+          fprintf (stdout, "Written by %s and %s.\n",
+                   "Douglas C. Schmidt", "Bruno Haible");
           exit (0);
         case 'W':               /* Sets the name for the hash table array */
           {
