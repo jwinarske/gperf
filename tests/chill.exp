@@ -1,5 +1,5 @@
 /* C code produced by gperf version 2.7.2 */
-/* Command-line: ../src/gperf -L C -F ', 0, 0, 0' -D -E -S1 -p -j1 -i 1 -g -o -t -k'*'  */
+/* Command-line: ../src/gperf -L C -F ', 0, 0, 0' -D -E -S1 -j1 -i 1 -g -o -t -k'*'  */
 struct resword {
   const char  *name;
   short        token;

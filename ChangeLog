@@ -1,5 +1,15 @@
 2003-01-01  Bruno Haible  <bruno@clisp.org>
 
+	* tests/Makefile.in (check-link-c, check-ada, check-pascal,
+	check-test): Omit option -p.
+	* tests/c-parse.exp: Regenerated.
+	* tests/chill.exp: Regenerated.
+	* tests/cplusplus.exp: Regenerated.
+	* tests/gpc.exp: Regenerated.
+	* tests/java.exp: Regenerated.
+	* tests/objc.exp: Regenerated.
+	* tests/test-4.exp: Regenerated.
+
 	* src/output.cc (Output::output_lookup_function_body): Omit the
 	multicompare code section and its variables when it is not used.
 	* tests/chill.exp: Regenerated.
