@@ -24,8 +24,8 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <string.h>
 #include "options.h"
 
-STORAGE_TYPE * Bool_Array::storage_array;
-STORAGE_TYPE Bool_Array::iteration_number;
+unsigned int * Bool_Array::storage_array;
+unsigned int Bool_Array::iteration_number;
 unsigned int Bool_Array::size;
 
 /* Prints out debugging diagnostics. */

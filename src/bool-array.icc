@@ -32,7 +32,7 @@ Bool_Array::Bool_Array (void)
 }
 
 INLINE void
-Bool_Array::init (STORAGE_TYPE *buffer, unsigned int s)
+Bool_Array::init (unsigned int *buffer, unsigned int s)
 {
   size             = s;
   iteration_number = 1;

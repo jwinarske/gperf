@@ -275,11 +275,11 @@ int
 Gen_Perf::operator() (void)
 {
 #if LARGE_STACK_ARRAYS
-  STORAGE_TYPE buffer[max_hash_value + 1];
+  unsigned int buffer[max_hash_value + 1];
 #else
   // Note: we don't use new, because that invokes a custom operator new.
-  STORAGE_TYPE *buffer
-    = (STORAGE_TYPE*) malloc (sizeof(STORAGE_TYPE) * (max_hash_value + 1));
+  unsigned int *buffer
+    = (unsigned int*) malloc (sizeof(unsigned int) * (max_hash_value + 1));
   if (buffer == NULL)
     abort ();
 #endif

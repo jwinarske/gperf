@@ -1,5 +1,11 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/bool-array.h (STORAGE_TYPE): Remove type.
+	Use 'unsigned int' instead of STORAGE_TYPE.
+	* src/bool-array.cc: Likewise.
+	* src/bool-array.icc: Likewise.
+	* src/gen-perf.cc: Likewise.
+
 	* src/new.cc: Remove file.
 	* src/Makefile.in (OBJECTS): Remove new.o.
 	(new.o): Remove rule.

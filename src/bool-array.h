@@ -27,25 +27,17 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 #ifndef bool_array_h
 #define bool_array_h 1
 
-#ifdef LO_CAL
-/* If we are on a memory diet then we'll only make these use a limited
-   amount of storage space. */
-typedef unsigned short STORAGE_TYPE;
-#else
-typedef unsigned int STORAGE_TYPE;
-#endif
-
 class Bool_Array
 {
 private:
-  static STORAGE_TYPE *storage_array;    /* Initialization of the index space. */
-  static STORAGE_TYPE  iteration_number; /* Keep track of the current iteration. */
+  static unsigned int *storage_array;    /* Initialization of the index space. */
+  static unsigned int  iteration_number; /* Keep track of the current iteration. */
   static unsigned int  size;             /* Keep track of array size. */
 
 public:
        Bool_Array (void);
       ~Bool_Array (void);
-  static void init (STORAGE_TYPE *buffer, unsigned int s);
+  static void init (unsigned int *buffer, unsigned int s);
   static int  find (int hash_value);
   static void reset (void);
 };
