@@ -57,6 +57,9 @@ Details in the output code:
   -G, --global-table     Generate the static table of keywords as a static
                          global variable, rather than hiding it inside of the
                          lookup function (which is the default behavior).
+  -P, --pic              Optimize the generated table for inclusion in shared
+                         libraries.  This reduces the startup time of programs
+                         using a shared library containing the generated code.
   -W, --word-array-name=NAME
                          Specify name of word list array. Default name is
                          'wordlist'.

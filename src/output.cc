@@ -726,13 +726,14 @@ output_keyword_blank_entries (int count, const char *indent)
   int columns;
   if (option[TYPE])
     {
-      columns = 58 / (6 + strlen (option.get_initializer_suffix()));
+      columns = 58 / (4 + (option[SHAREDLIB] ? 8 : 2)
+                        + strlen (option.get_initializer_suffix()));
       if (columns == 0)
         columns = 1;
     }
   else
     {
-      columns = 9;
+      columns = (option[SHAREDLIB] ? 4 : 9);
     }
   int column = 0;
   for (int i = 0; i < count; i++)
@@ -749,9 +750,13 @@ output_keyword_blank_entries (int count, const char *indent)
             printf (", ");
         }
       if (option[TYPE])
-        printf ("{\"\"%s}", option.get_initializer_suffix());
+        printf ("{");
+      if (option[SHAREDLIB])
+        printf ("(char*)0");
       else
         printf ("\"\"");
+      if (option[TYPE])
+        printf ("%s}", option.get_initializer_suffix());
       column++;
     }
 }
@@ -1362,6 +1367,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
           printf (";\n\n"
                   "%*s  if (",
                   indent, "");
+          if (option[SHAREDLIB])
+            printf ("s && ");
           comparison.output_comparison (Output_Expr1 ("str"), Output_Expr1 ("s"));
           printf (")\n"
                   "%*s    return ",

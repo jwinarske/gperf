@@ -95,7 +95,10 @@ enum Option_Type
   INCLUDE      = 1 << 18,
 
   /* Assume 7-bit, not 8-bit, characters.  */
-  SEVENBIT     = 1 << 19
+  SEVENBIT     = 1 << 19,
+
+  /* Optimize for position-independent code.  */
+  SHAREDLIB    = 1 << 20
 };
 
 /* Class manager for gperf program Options. */

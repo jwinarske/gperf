@@ -1,3 +1,20 @@
+2002-12-10  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.h (SHAREDLIB): New enum value.
+	* src/options.cc (Options::short_usage): Mention option -P.
+	(Options::long_usage): Document option -P.
+	(long_options): Add option --pic.
+	(Options::parse_options): Handle option -P/--pic.
+	* src/output.cc (output_keyword_blank_entries): When SHAREDLIB is
+	specified, emit NULL pointers instead of "".
+	(Output::output_lookup_function_body): When SHAREDLIB is specified
+	and SWITCH and DUP and not specified, test the table entry against
+	NULL before the string comparison.
+	* tests/test-6.exp: Update.
+	* doc/gperf.texi (Output Details): Document option -P.
+	* NEWS: Update.
+	Suggested by Ulrich Drepper.
+
 2002-12-08  Bruno Haible  <bruno@clisp.org>
 
 	* tests/permut2.gperf, tests/permut2.exp: New files.

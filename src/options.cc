@@ -66,7 +66,7 @@ static const char *const DEFAULT_DELIMITERS = ",";
 void
 Options::short_usage (FILE * stream) const
 {
-  fprintf (stream, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ij<jump>k<keys>K<keyname>lL<language>m<num>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
+  fprintf (stream, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ij<jump>k<keys>K<keyname>lL<language>m<num>nN<function name>oPrs<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
            "Try '%s --help' for more information.\n",
            program_name, program_name);
 }
@@ -158,6 +158,10 @@ Options::long_usage (FILE * stream) const
            "  -G, --global-table     Generate the static table of keywords as a static\n"
            "                         global variable, rather than hiding it inside of the\n"
            "                         lookup function (which is the default behavior).\n");
+  fprintf (stream,
+           "  -P, --pic              Optimize the generated table for inclusion in shared\n"
+           "                         libraries.  This reduces the startup time of programs\n"
+           "                         using a shared library containing the generated code.\n");
   fprintf (stream,
            "  -W, --word-array-name=NAME\n"
            "                         Specify name of word list array. Default name is\n"
@@ -631,6 +635,7 @@ static const struct option long_options[] =
   { "no-strlen", no_argument, NULL, 'n' },
   { "occurrence-sort", no_argument, NULL, 'o' },
   { "optimized-collision-resolution", no_argument, NULL, 'O' },
+  { "pic", no_argument, NULL, 'P' },
   { "random", no_argument, NULL, 'r' },
   { "size-multiple", required_argument, NULL, 's' },
   { "help", no_argument, NULL, 'h' },
@@ -650,7 +655,7 @@ Options::parse_options (int argc, char *argv[])
 
   while ((option_char =
             getopt_long (_argument_count, _argument_vector,
-                         "acCdDe:Ef:F:gGhH:i:Ij:k:K:lL:m:nN:oOprs:S:tTvW:Z:7",
+                         "acCdDe:Ef:F:gGhH:i:Ij:k:K:lL:m:nN:oOpPrs:S:tTvW:Z:7",
                          long_options, NULL))
          != -1)
     {
@@ -838,6 +843,11 @@ Options::parse_options (int argc, char *argv[])
           break;                /* Not needed any more.  */
         case 'p':               /* Generated lookup function a pointer instead of int. */
           break;                /* This is now the default. */
+        case 'P':               /* Optimize for position-independent code.  */
+          {
+            _option_word |= SHAREDLIB;
+            break;
+          }
         case 'r':               /* Utilize randomness to initialize the associated values table. */
           {
             _option_word |= RANDOM;

@@ -931,6 +931,13 @@ Generate the static table of keywords as a static global variable,
 rather than hiding it inside of the lookup function (which is the
 default behavior).
 
+@item -P
+@itemx --pic
+Optimize the generated table for inclusion in shared libraries.  This
+reduces the startup time of programs using a shared library containing
+the generated code, at the expense of one more test-and-branch instruction
+at run time.
+
 @item -W @var{hash-table-array-name}
 @itemx --word-array-name=@var{hash-table-array-name}
 @cindex Array name
