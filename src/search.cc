@@ -20,6 +20,9 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+/* Specification. */
+#include "search.h"
+
 #include <stdio.h>
 #include <stdlib.h> /* declares exit(), rand(), srand() */
 #include <string.h> /* declares memset(), memcmp() */
@@ -27,7 +30,6 @@
 #include <limits.h> /* defines INT_MIN, INT_MAX */
 #include "options.h"
 #include "hash-table.h"
-#include "search.h"
 
 /* Make the hash table 8 times larger than the number of keyword entries. */
 static const int TABLE_MULTIPLE     = 10;

@@ -20,8 +20,10 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#include <stddef.h>
+/* Specification. */
 #include "keyword-list.h"
+
+#include <stddef.h>
 
 /* Constructor.  */
 Keyword_List::Keyword_List (Keyword *car)

@@ -1,5 +1,13 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/version.cc: Include version.h.
+	* src/Makefile.in (OBJECTS): Reorder.
+	(KEYWORD_H, KEYWORD_LIST_H, INPUT_H, SEARCH_H, OUTPUT_H): New
+	variables.
+	(HASH_TABLE_H): Update.
+	(options.o, read-line.o, keyword.o, keyword-list.o, input.o, search.o,
+	output.o, main.o): Update dependencies.
+
 	* src/vectors.h: Remove file.
 	* src/vectors.cc: Remove file.
 	* src/search.h: Don't include vectors.h.

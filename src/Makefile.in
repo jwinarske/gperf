@@ -61,9 +61,8 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-OBJECTS  = options.o main.o \
-           hash-table.o bool-array.o read-line.o version.o \
-           keyword.o keyword-list.o output.o input.o search.o
+OBJECTS  = version.o options.o read-line.o keyword.o keyword-list.o \
+           input.o bool-array.o hash-table.o search.o output.o main.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
 
@@ -86,33 +85,38 @@ $(TARGETPROG): $(OBJECTS)
 # Dependencies.
 CONFIG_H = config.h
 VERSION_H = version.h
-READ_LINE_H = read-line.h read-line.icc
 OPTIONS_H = options.h options.icc
-HASH_TABLE_H = hash-table.h
+READ_LINE_H = read-line.h read-line.icc
+KEYWORD_H = keyword.h
+KEYWORD_LIST_H = keyword-list.h $(KEYWORD_H)
+INPUT_H = input.h $(READ_LINE_H) $(KEYWORD_LIST_H)
 BOOL_ARRAY_H = bool-array.h bool-array.icc $(OPTIONS_H)
+HASH_TABLE_H = hash-table.h $(KEYWORD_H)
+SEARCH_H = search.h $(KEYWORD_LIST_H) $(BOOL_ARRAY_H)
+OUTPUT_H = output.h $(KEYWORD_LIST_H)
 
+version.o : version.cc $(VERSION_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
+options.o : options.cc $(OPTIONS_H) $(VERSION_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/options.cc
+read-line.o : read-line.cc $(READ_LINE_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/read-line.cc
+keyword.o : keyword.cc $(KEYWORD_H) $(OPTIONS_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword.cc
+keyword-list.o : keyword-list.cc $(KEYWORD_LIST_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword-list.cc
+input.o : input.cc $(INPUT_H) $(OPTIONS_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/input.cc
 bool-array.o : bool-array.cc $(BOOL_ARRAY_H) $(OPTIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/bool-array.cc
 hash-table.o : hash-table.cc $(HASH_TABLE_H) $(OPTIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/hash-table.cc
-main.o : main.cc $(OPTIONS_H) $(GEN_PERF_H) $(CONFIG_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/main.cc
-options.o : options.cc $(OPTIONS_H) $(VECTORS_H) $(VERSION_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/options.cc
-read-line.o : read-line.cc $(READ_LINE_H) $(OPTIONS_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/read-line.cc
-version.o : version.cc $(VERSION_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc
-keyword.o : keyword.cc keyword.h
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword.cc
-keyword-list.o : keyword-list.cc keyword-list.h
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/keyword-list.cc
-output.o : output.cc output.h
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/output.cc
-input.o : input.cc input.h
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/input.cc
-search.o : search.cc search.h
+search.o : search.cc $(SEARCH_H) $(OPTIONS_H) $(HASH_TABLE_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/search.cc
+output.o : output.cc $(OUTPUT_H) $(OPTIONS_H) $(VERSION_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/output.cc
+main.o : main.cc $(OPTIONS_H) $(INPUT_H) $(SEARCH_H) $(OUTPUT_H)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/main.cc
 
 install : all force
 	$(MKINSTALLDIRS) $(DESTDIR)$(bindir)

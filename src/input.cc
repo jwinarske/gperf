@@ -20,12 +20,14 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+/* Specification. */
+#include "input.h"
+
 #include <stdio.h>
 #include <stdlib.h> /* declares exit() */
 #include <string.h> /* declares strncpy(), strchr() */
 #include <limits.h> /* defines UCHAR_MAX etc. */
 #include "options.h"
-#include "input.h"
 
 Input::Input (Keyword_Factory *keyword_factory)
   : _factory (keyword_factory)

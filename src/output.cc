@@ -20,12 +20,14 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+/* Specification. */
+#include "output.h"
+
 #include <stdio.h>
 #include <string.h> /* declares strncpy(), strchr() */
 #include <ctype.h>  /* declares isprint() */
 #include <assert.h> /* defines assert() */
 #include <limits.h> /* defines SCHAR_MAX etc. */
-#include "output.h"
 #include "options.h"
 #include "version.h"
 

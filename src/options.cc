@@ -20,12 +20,14 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+/* Specification. */
+#include "options.h"
+
 #include <stdio.h>
 #include <stdlib.h> /* declares atoi(), abs(), exit() */
 #include <string.h> /* declares strcmp() */
 #include <ctype.h>  /* declares isdigit() */
 #include "getopt.h"
-#include "options.h"
 #include "version.h"
 
 /* Global option coordinator for the entire program.  */
