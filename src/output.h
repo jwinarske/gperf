@@ -53,7 +53,7 @@ public:
                                 const Positions& positions,
                                 const unsigned int *alpha_inc,
                                 int total_duplicates,
-                                int alpha_size,
+                                unsigned int alpha_size,
                                 const int *occurrences,
                                 const int *asso_values);
 
@@ -131,7 +131,7 @@ private:
   /* Maximum hash value for all keywords. */
   int                   _max_hash_value;
   /* Size of alphabet. */
-  int const             _alpha_size;
+  unsigned int const    _alpha_size;
   /* Counts occurrences of each key set character. */
   const int * const     _occurrences;
   /* Value associated with each character. */

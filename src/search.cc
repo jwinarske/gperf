@@ -804,10 +804,10 @@ void
 Search::prepare_asso_values ()
 {
   int non_linked_length = keyword_list_length ();
-  int asso_value_max;
+  unsigned int asso_value_max;
 
   asso_value_max =
-    static_cast<int>(non_linked_length * option.get_size_multiple());
+    static_cast<unsigned int>(non_linked_length * option.get_size_multiple());
   /* Round up to the next power of two.  This makes it easy to ensure
      an _asso_value[c] is >= 0 and < asso_value_max.  Also, the jump value
      being odd, it guarantees that Search::try_asso_value() will iterate
@@ -880,7 +880,7 @@ Search::init_asso_values ()
 {
   if (_initial_asso_value < 0)
     {
-      for (int i = 0; i < _alpha_size; i++)
+      for (unsigned int i = 0; i < _alpha_size; i++)
         _asso_values[i] = rand () & (_asso_value_max - 1);
     }
   else
@@ -888,7 +888,7 @@ Search::init_asso_values ()
       int asso_value = _initial_asso_value;
 
       asso_value = asso_value & (_asso_value_max - 1);
-      for (int i = 0; i < _alpha_size; i++)
+      for (unsigned int i = 0; i < _alpha_size; i++)
         _asso_values[i] = asso_value;
     }
 }
@@ -1534,7 +1534,7 @@ Search::~Search ()
     {
       fprintf (stderr, "\ndumping occurrence and associated values tables\n");
 
-      for (int i = 0; i < _alpha_size; i++)
+      for (unsigned int i = 0; i < _alpha_size; i++)
         if (_occurrences[i])
           fprintf (stderr, "asso_values[%c] = %6d, occurrences[%c] = %6d\n",
                    i, _asso_values[i], i, _occurrences[i]);

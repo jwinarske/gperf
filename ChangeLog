@@ -1,3 +1,17 @@
+2002-12-08  Bruno Haible  <bruno@clisp.org>
+
+	* src/search.h (Search::_alpha_size): Change type to 'unsigned int'.
+	(Search::_asso_value_max): Likewise.
+	* src/search.cc (Search::prepare_asso_values): Update.
+	(Search::init_asso_values): Update.
+	(Search::~Search): Update.
+	* src/output.h (Output::Output): Change alpha_size type to
+	'unsigned int'.
+	(Output::_alpha_size): Change type to 'unsigned int'.
+	* src/output.cc (Output::Output): Change alpha_size type to
+	'unsigned int'.
+	(Output::output_hash_function): Update.
+
 2002-12-07  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.h (OPT_CHOICE): New enum value.

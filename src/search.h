@@ -138,7 +138,7 @@ public:
   int                   _total_duplicates;
 
   /* Size of alphabet.  */
-  int                   _alpha_size;
+  unsigned int          _alpha_size;
 
   /* Counts occurrences of each key set character.
      _occurrences[c] is the number of times that c occurs among the _selchars
@@ -156,7 +156,7 @@ private:
   bool *                _determined;
 
   /* Exclusive upper bound for every _asso_values[c].  A power of 2.  */
-  int                   _asso_value_max;
+  unsigned int          _asso_value_max;
 
   /* Initial value for asso_values table.  -1 means random.  */
   int                   _initial_asso_value;

@@ -88,8 +88,8 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 unsigned int verbatim_code_lineno,
                 int total_keys, int max_key_len, int min_key_len,
                 const Positions& positions, const unsigned int *alpha_inc,
-                int total_duplicates, int alpha_size, const int *occurrences,
-                const int *asso_values)
+                int total_duplicates, unsigned int alpha_size,
+                const int *occurrences, const int *asso_values)
   : _head (head), _struct_decl (struct_decl),
     _struct_decl_lineno (struct_decl_lineno), _return_type (return_type),
     _struct_tag (struct_tag),
@@ -486,7 +486,7 @@ Output::output_hash_function () const
       for (int trunc = _max_hash_value; (trunc /= 10) > 0;)
         field_width++;
 
-      for (int count = 0; count < _alpha_size; count++)
+      for (unsigned int count = 0; count < _alpha_size; count++)
         {
           if (count > 0)
             printf (",");
