@@ -37,6 +37,11 @@
 
         * doc/Makefile.in (MAKEINFO): Unset LANG while running makeinfo.
 
+1998-05-08  Andreas Schwab  <schwab@issan.informatik.uni-dortmund.de>
+
+        * aclocal.m4 (CL_PROG_INSTALL): Set cl_cv_path_install, not
+          ac_cv_path_install.
+
 Sat May  2 13:20:54 1998  Bruno Haible  <bruno@linuix.mathematik.uni-karlsruhe.de>
 
         * gperf-2.7 released.
