@@ -1675,60 +1675,64 @@ Key_List::output_lookup_function_body (const Output_Compare& comparison)
               indent -= 4;
               printf ("%*s    }\n", indent, "");
             }
-          printf ("%*s  else if (index < -TOTAL_KEYWORDS)\n"
-                  "%*s    {\n"
-                  "%*s      register int offset = - 1 - TOTAL_KEYWORDS - index;\n",
-                  indent, "", indent, "", indent, "");
-          if (option[LENTABLE])
-            printf ("%*s      register %s%s *lengthptr = &lengthtable[TOTAL_KEYWORDS + lookup[offset]];\n",
-                    indent, "", const_always, smallest_integral_type (max_key_len));
-          printf ("%*s      register ",
-                  indent, "");
-          output_const_type (const_readonly_array, struct_tag);
-          printf ("*wordptr = &%s[TOTAL_KEYWORDS + lookup[offset]];\n",
-                  option.get_wordlist_name ());
-          printf ("%*s      register ",
-                  indent, "");
-          output_const_type (const_readonly_array, struct_tag);
-          printf ("*wordendptr = wordptr + -lookup[offset + 1];\n\n");
-          printf ("%*s      while (wordptr < wordendptr)\n"
-                  "%*s        {\n",
-                  indent, "", indent, "");
-          if (option[LENTABLE])
+          if (total_duplicates > 0)
             {
-              printf ("%*s          if (len == *lengthptr)\n"
-                      "%*s            {\n",
-                      indent, "", indent, "");
-              indent += 4;
-            }
-          printf ("%*s          register %schar *s = ",
-                  indent, "", const_always);
-          if (option[TYPE])
-            printf ("wordptr->%s", option.get_key_name ());
-          else
-            printf ("*wordptr");
-          printf (";\n\n"
-                  "%*s          if (",
-                  indent, "");
-          comparison.output_comparison (Output_Expr1 ("str"), Output_Expr1 ("s"));
-          printf (")\n"
-                  "%*s            return %s;\n",
-                  indent, "",
-                  option[TYPE] ? "wordptr" : "s");
-          if (option[LENTABLE])
-            {
-              indent -= 4;
-              printf ("%*s            }\n",
+              printf ("%*s  else if (index < -TOTAL_KEYWORDS)\n"
+                      "%*s    {\n"
+                      "%*s      register int offset = - 1 - TOTAL_KEYWORDS - index;\n",
+                      indent, "", indent, "", indent, "");
+              if (option[LENTABLE])
+                printf ("%*s      register %s%s *lengthptr = &lengthtable[TOTAL_KEYWORDS + lookup[offset]];\n",
+                        indent, "", const_always, smallest_integral_type (max_key_len));
+              printf ("%*s      register ",
                       indent, "");
+              output_const_type (const_readonly_array, struct_tag);
+              printf ("*wordptr = &%s[TOTAL_KEYWORDS + lookup[offset]];\n",
+                      option.get_wordlist_name ());
+              printf ("%*s      register ",
+                      indent, "");
+              output_const_type (const_readonly_array, struct_tag);
+              printf ("*wordendptr = wordptr + -lookup[offset + 1];\n\n");
+              printf ("%*s      while (wordptr < wordendptr)\n"
+                      "%*s        {\n",
+                      indent, "", indent, "");
+              if (option[LENTABLE])
+                {
+                  printf ("%*s          if (len == *lengthptr)\n"
+                          "%*s            {\n",
+                          indent, "", indent, "");
+                  indent += 4;
+                }
+              printf ("%*s          register %schar *s = ",
+                      indent, "", const_always);
+              if (option[TYPE])
+                printf ("wordptr->%s", option.get_key_name ());
+              else
+                printf ("*wordptr");
+              printf (";\n\n"
+                      "%*s          if (",
+                      indent, "");
+              comparison.output_comparison (Output_Expr1 ("str"), Output_Expr1 ("s"));
+              printf (")\n"
+                      "%*s            return %s;\n",
+                      indent, "",
+                      option[TYPE] ? "wordptr" : "s");
+              if (option[LENTABLE])
+                {
+                  indent -= 4;
+                  printf ("%*s            }\n",
+                          indent, "");
+                }
+              if (option[LENTABLE])
+                printf ("%*s          lengthptr++;\n",
+                        indent, "");
+              printf ("%*s          wordptr++;\n"
+                      "%*s        }\n"
+                      "%*s    }\n",
+                      indent, "", indent, "", indent, "");
             }
-          if (option[LENTABLE])
-            printf ("%*s          lengthptr++;\n",
-                    indent, "");
-          printf ("%*s          wordptr++;\n"
-                  "%*s        }\n"
-                  "%*s    }\n"
-                  "%*s}\n",
-                  indent, "", indent, "", indent, "", indent, "");
+          printf ("%*s}\n",
+                  indent, "");
         }
       else
         {

@@ -1,5 +1,9 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/key-list.cc (Key_List::output_lookup_function_body): Avoid
+          emitting the loop for dealing with duplicates if
+          total_duplicates == 0.
+
         * src/key-list.cc (Key_List::read_keys): Don't accept an empty key.
 
         * src/Makefile.in (install, installdirs, uninstall): Respect
