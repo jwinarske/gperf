@@ -54,7 +54,6 @@ public:
                                 const unsigned int *alpha_inc,
                                 int total_duplicates,
                                 unsigned int alpha_size,
-                                const int *occurrences,
                                 const int *asso_values);
 
   /* Generates the hash function and the key word recognizer function.  */
@@ -132,8 +131,6 @@ private:
   int                   _max_hash_value;
   /* Size of alphabet. */
   unsigned int const    _alpha_size;
-  /* Counts occurrences of each key set character. */
-  const int * const     _occurrences;
   /* Value associated with each character. */
   const int * const     _asso_values;
 };

@@ -89,7 +89,7 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 int total_keys, int max_key_len, int min_key_len,
                 const Positions& positions, const unsigned int *alpha_inc,
                 int total_duplicates, unsigned int alpha_size,
-                const int *occurrences, const int *asso_values)
+                const int *asso_values)
   : _head (head), _struct_decl (struct_decl),
     _struct_decl_lineno (struct_decl_lineno), _return_type (return_type),
     _struct_tag (struct_tag),
@@ -103,7 +103,7 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
     _max_key_len (max_key_len), _min_key_len (min_key_len),
     _key_positions (positions), _alpha_inc (alpha_inc),
     _total_duplicates (total_duplicates), _alpha_size (alpha_size),
-    _occurrences (occurrences), _asso_values (asso_values)
+    _asso_values (asso_values)
 {
 }
 
@@ -492,8 +492,7 @@ Output::output_hash_function () const
             printf (",");
           if ((count % columns) == 0)
             printf ("\n     ");
-          printf ("%*d", field_width,
-                  _occurrences[count] ? _asso_values[count] : _max_hash_value + 1);
+          printf ("%*d", field_width, _asso_values[count]);
         }
 
       printf ("\n"

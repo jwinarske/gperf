@@ -1,5 +1,13 @@
 2002-12-10  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.cc (Search::optimize): Fill unused asso_values[] entries
+	with a large value.
+	* src/output.h (Output::Output): Remove occurrences argument.
+	(Output::_occurrences): Remove field.
+	* src/output.cc (Output::Output): Remove occurrences argument.
+	(Output::output_hash_function): Ignore _occurrences.
+	* src/main.cc (main): Don't pass the _occurrences to Output.
+
 	* src/search.cc (Search::preprepare): Exit if keywords contain
 	out-of-range characters.
 

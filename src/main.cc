@@ -109,7 +109,6 @@ main (int argc, char *argv[])
                           searcher._alpha_inc,
                           searcher._total_duplicates,
                           searcher._alpha_size,
-                          searcher._occurrences,
                           searcher._asso_values);
         outputter.output ();
 

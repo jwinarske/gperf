@@ -1477,6 +1477,21 @@ Search::optimize ()
 
   /* Sorts the keyword list by hash value.  */
   sort ();
+
+  /* Set unused asso_values[c] to max_hash_value + 1.  This is not absolutely
+     necessary, but speeds up the lookup function in many cases of lookup
+     failure: no string comparison is needed once the hash value of a string
+     is larger than the hash value of any keyword.  */
+  int max_hash_value;
+  {
+    KeywordExt_List *temp;
+    for (temp = _head; temp->rest(); temp = temp->rest())
+      ;
+    max_hash_value = temp->first()->_hash_value;
+  }
+  for (unsigned int c = 0; c < _alpha_size; c++)
+    if (_occurrences[c] == 0)
+      _asso_values[c] = max_hash_value + 1;
 }
 
 /* Prints out some diagnostics upon completion.  */
