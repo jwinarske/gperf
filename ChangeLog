@@ -1,5 +1,8 @@
 2002-11-10  Bruno Haible  <bruno@clisp.org>
 
+	* src/input.cc (pretty_input_file_name): New function.
+	(read_input): Use it in all error and warning messages.
+
 	* src/keyword.h (Keyword::_lineno): New field.
 	* src/input.h (Input::_struct_decl_lineno): New field.
 	* src/input.cc (Input::read_input): Set _struct_decl_lineno. Fill

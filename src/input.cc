@@ -35,6 +35,17 @@ Input::Input (FILE *stream, Keyword_Factory *keyword_factory)
 {
 }
 
+/* Returns a pretty representation of the input file name, for error and
+   warning messages.  */
+static const char *
+pretty_input_file_name ()
+{
+  if (option.get_input_file_name ())
+    return option.get_input_file_name ();
+  else
+    return "(standard input)";
+}
+
 /* Reads the entire input file.  */
 void
 Input::read_input ()
@@ -65,9 +76,11 @@ Input::read_input ()
   if (input_length < 0)
     {
       if (ferror (_stream))
-        fprintf (stderr, "error while reading input file\n");
+        fprintf (stderr, "%s: error while reading input file\n",
+                 pretty_input_file_name ());
       else
-        fprintf (stderr, "The input file is empty!\n");
+        fprintf (stderr, "%s: The input file is empty!\n",
+                 pretty_input_file_name ());
       exit (1);
     }
 
@@ -152,8 +165,8 @@ Input::read_input ()
             p++;
           }
         if (nonempty_line)
-          fprintf (stderr, "line %u: warning: junk after %%%% is ignored\n",
-                   separator_lineno[0]);
+          fprintf (stderr, "%s:%u: warning: junk after %%%% is ignored\n",
+                   pretty_input_file_name (), separator_lineno[0]);
         keywords = p;
         keywords_lineno = separator_lineno[0] + 1;
       }
@@ -211,9 +224,11 @@ Input::read_input ()
                 /* Handle %{.  */
                 if (_verbatim_declarations != NULL)
                   {
-                    fprintf (stderr, "lines %u and %u:"
+                    fprintf (stderr, "%s:%u:\n%s:%u:"
                              " only one %%{...%%} section is allowed\n",
-                             _verbatim_declarations_lineno, lineno);
+                             pretty_input_file_name (),
+                             _verbatim_declarations_lineno,
+                             pretty_input_file_name (), lineno);
                     exit (1);
                   }
                 _verbatim_declarations = p + 2;
@@ -224,16 +239,16 @@ Input::read_input ()
                 /* Handle %}.  */
                 if (_verbatim_declarations == NULL)
                   {
-                    fprintf (stderr, "line %u:"
+                    fprintf (stderr, "%s:%u:"
                              " %%} outside of %%{...%%} section\n",
-                             lineno);
+                             pretty_input_file_name (), lineno);
                     exit (1);
                   }
                 if (_verbatim_declarations_end != NULL)
                   {
-                    fprintf (stderr, "line %u:"
+                    fprintf (stderr, "%s:%u:"
                              " %%{...%%} section already closed\n",
-                             lineno);
+                             pretty_input_file_name (), lineno);
                     exit (1);
                   }
                 _verbatim_declarations_end = p;
@@ -251,22 +266,22 @@ Input::read_input ()
                       nonempty_line = true;
                   }
                 if (nonempty_line)
-                  fprintf (stderr, "line %u:"
+                  fprintf (stderr, "%s:%u:"
                            " warning: junk after %%} is ignored\n",
-                           lineno);
+                           pretty_input_file_name (), lineno);
               }
             else if (_verbatim_declarations != NULL
                      && _verbatim_declarations_end == NULL)
               {
-                fprintf (stderr, "line %u:"
+                fprintf (stderr, "%s:%u:"
                          " warning: %% directives are ignored"
                          " inside the %%{...%%} section\n",
-                         lineno);
+                         pretty_input_file_name (), lineno);
               }
             else
               {
-                fprintf (stderr, "line %u: unrecognized %% directive\n",
-                         lineno);
+                fprintf (stderr, "%s:%u: unrecognized %% directive\n",
+                         pretty_input_file_name (), lineno);
                 exit (1);
               }
           }
@@ -303,8 +318,8 @@ Input::read_input ()
       }
     if (_verbatim_declarations != NULL && _verbatim_declarations_end == NULL)
       {
-        fprintf (stderr, "line %u: unterminated %%{ section\n",
-                 _verbatim_declarations_lineno);
+        fprintf (stderr, "%s:%u: unterminated %%{ section\n",
+                 pretty_input_file_name (), _verbatim_declarations_lineno);
         exit (1);
       }
 
@@ -342,8 +357,9 @@ Input::read_input ()
           }
         if (struct_decl == NULL || struct_decl[0] == '\0')
           {
-            fprintf (stderr, "missing struct declaration"
-                     " for option --struct-type\n");
+            fprintf (stderr, "%s: missing struct declaration"
+                     " for option --struct-type\n",
+                     pretty_input_file_name ());
             exit (1);
           }
         {
@@ -408,11 +424,11 @@ Input::read_input ()
           ; /* Comment line.  */
         else if (line[0] == '%')
           {
-            fprintf (stderr, "line %u:"
+            fprintf (stderr, "%s:%u:"
                      " declarations are not allowed in the keywords section.\n"
                      "To declare a keyword starting with %%, enclose it in"
                      " double-quotes.\n",
-                     lineno);
+                     pretty_input_file_name (), lineno);
             exit (1);
           }
         else
@@ -433,8 +449,8 @@ Input::read_input ()
                   {
                     if (lp == line_end)
                       {
-                        fprintf (stderr, "line %u: unterminated string\n",
-                                 lineno);
+                        fprintf (stderr, "%s:%u: unterminated string\n",
+                                 pretty_input_file_name (), lineno);
                         exit (1);
                       }
 
@@ -457,8 +473,8 @@ Input::read_input ()
                                 }
                               if (code > UCHAR_MAX)
                                 fprintf (stderr,
-                                         "line %u: octal escape out of range\n",
-                                         lineno);
+                                         "%s:%u: octal escape out of range\n",
+                                         pretty_input_file_name (), lineno);
                               *kp = static_cast<char>(code);
                               break;
                             }
@@ -481,13 +497,13 @@ Input::read_input ()
                                   count++;
                                 }
                               if (count == 0)
-                                fprintf (stderr, "line %u: hexadecimal escape"
+                                fprintf (stderr, "%s:%u: hexadecimal escape"
                                          " without any hex digits\n",
-                                         lineno);
+                                         pretty_input_file_name (), lineno);
                               if (code > UCHAR_MAX)
-                                fprintf (stderr, "line %u: hexadecimal escape"
+                                fprintf (stderr, "%s:%u: hexadecimal escape"
                                          " out of range\n",
-                                         lineno);
+                                         pretty_input_file_name (), lineno);
                               *kp = static_cast<char>(code);
                               break;
                             }
@@ -524,9 +540,9 @@ Input::read_input ()
                             lp++;
                             break;
                           default:
-                            fprintf (stderr, "line %u: invalid escape sequence"
+                            fprintf (stderr, "%s:%u: invalid escape sequence"
                                      " in string\n",
-                                     lineno);
+                                     pretty_input_file_name (), lineno);
                             exit (1);
                           }
                       }
@@ -544,9 +560,9 @@ Input::read_input ()
                   {
                     if (strchr (delimiters, *lp) == NULL)
                       {
-                        fprintf (stderr, "line %u: string not followed"
+                        fprintf (stderr, "%s:%u: string not followed"
                                  " by delimiter\n",
-                                 lineno);
+                                 pretty_input_file_name (), lineno);
                         exit (1);
                       }
                     lp++;
@@ -615,7 +631,8 @@ Input::read_input ()
 
     if (_head == NULL)
       {
-        fprintf (stderr, "No keywords in input file!\n");
+        fprintf (stderr, "%s: No keywords in input file!\n",
+                 pretty_input_file_name ());
         exit (1);
       }
   }
