@@ -1,5 +1,9 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/key-list.cc (Output_Compare_Memcmp): New class.
+          (Key_List::output_lookup_function): When option -l is given, use
+          memcmp instead of strcmp or strncmp.
+
         * doc/gperf.texi: The bug report address is <bug-gnu-utils@gnu.org>.
           The download address is ftp.gnu.org. Remove mention of -a and -g
           options (now nops). Explain effect of -c option.

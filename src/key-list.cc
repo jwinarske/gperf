@@ -810,6 +810,34 @@ void Output_Compare_Strncmp::output_comparison (const Output_Expr& expr1,
   printf ("[len] == '\\0'");
 }
 
+/* This class outputs a comparison using memcmp.
+   Note that the length of expr1 (available through the local variable `len')
+   must be verified to be equal to the length of expr2 prior to this
+   comparison. */
+
+struct Output_Compare_Memcmp : public Output_Compare
+{
+  virtual void output_comparison (const Output_Expr& expr1,
+                                  const Output_Expr& expr2) const;
+  Output_Compare_Memcmp () {}
+  virtual ~Output_Compare_Memcmp () {}
+};
+
+void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
+                                               const Output_Expr& expr2) const
+{
+  T (Trace t ("Output_Compare_Memcmp::output_comparison");)
+  printf ("*");
+  expr1.output_expr ();
+  printf (" == *");
+  expr2.output_expr ();
+  printf (" && !memcmp (");
+  expr1.output_expr ();
+  printf (" + 1, ");
+  expr2.output_expr ();
+  printf (" + 1, len - 1)");
+}
+
 /* ------------------------------------------------------------------------- */
 
 /* Generates C code for the hash function that returns the
@@ -1820,10 +1848,15 @@ Key_List::output_lookup_function (void)
   if (!option[GLOBAL])
     output_lookup_tables ();
 
-  if (option[COMP])
-    output_lookup_function_body (Output_Compare_Strncmp ());
+  if (option[LENTABLE])
+    output_lookup_function_body (Output_Compare_Memcmp ());
   else
-    output_lookup_function_body (Output_Compare_Strcmp ());
+    {
+      if (option[COMP])
+        output_lookup_function_body (Output_Compare_Strncmp ());
+      else
+        output_lookup_function_body (Output_Compare_Strcmp ());
+    }
 
   printf ("}\n");
 }
