@@ -1,5 +1,11 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/read-line.h (Read_Line::read_next_line): Renamed from
+	Read_Line::get_line.
+	* src/read-line.icc: Likewise.
+	* src/read-line.cc: Update.
+	* src/key-list.cc: Update.
+
 	* lib/getline.h: New file.
 	* lib/getline.cc: New file.
 	* lib/Makefile.in (OBJECTS): Add getline.o.

@@ -354,7 +354,7 @@ Key_List::read_keys (void)
   set_output_types ();
 
   /* Oops, problem with the input file. */
-  if (! (ptr = Read_Line::get_line ()))
+  if (! (ptr = Read_Line::read_next_line ()))
     {
       fprintf (stderr, "No words in input file, did you forget to prepend %s or use -t accidentally?\n", "%%");
       exit (1);
@@ -369,7 +369,7 @@ Key_List::read_keys (void)
       head = parse_line (ptr, delimiter);
 
       for (temp = head;
-           (ptr = Read_Line::get_line ()) && strcmp (ptr, "%%");
+           (ptr = Read_Line::read_next_line ()) && strcmp (ptr, "%%");
            temp = temp->next)
         {
           temp->next = parse_line (ptr, delimiter);

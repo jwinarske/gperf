@@ -22,23 +22,29 @@ You should have received a copy of the GNU General Public License
 along with GNU GPERF; see the file COPYING.  If not, write to the Free
 Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
-/* Returns a pointer to an arbitrary length string.  Returns NULL on error or EOF
-   The storage for the string is dynamically allocated by new. */
-
 #ifndef read_line_h
 #define read_line_h 1
 
 #include <stdio.h>
 #include "getline.h"
 
+/* An instance of this class is used for repeatedly reading lines of text
+   from an input stream.  */
 class Read_Line
 {
+public:
+
+  /* Initializes the instance with a given input stream.  */
+  Read_Line (FILE *stream = stdin) : fp (stream) {}
+
+  /* Reads the next line and returns it, excluding the terminating newline,
+     and ignoring lines starting with '#'.  Returns NULL on error or EOF.
+     The storage for the string is dynamically allocated and must be freed
+     through delete[].  */
+  char *read_next_line (void);
+
 private:
   FILE *fp;                       /* FILE pointer to the input stream. */
-
-public:
-        Read_Line (FILE *stream = stdin) : fp (stream) {}
-  char *get_line (void);
 };
 
 #ifdef __OPTIMIZE__

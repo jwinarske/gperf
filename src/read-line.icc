@@ -23,9 +23,12 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 //#include <stdio.h>
 //#include "getline.h"
 
-/* Returns the "next" line, ignoring comments beginning with '#'.  */
+/* Reads the next line and returns it, excluding the terminating newline,
+   and ignoring lines starting with '#'.  Returns NULL on error or EOF.
+   The storage for the string is dynamically allocated and must be freed
+   through delete[].  */
 INLINE char *
-Read_Line::get_line (void)
+Read_Line::read_next_line (void)
 {
   int c;
 
@@ -45,7 +48,7 @@ Read_Line::get_line (void)
 
   char *line = (char *)0;
   size_t linesize = 0;
-  int length = ::get_line (&line, &linesize, fp);
+  int length = get_line (&line, &linesize, fp);
   if (length < 0)
     {
       delete[] line;
