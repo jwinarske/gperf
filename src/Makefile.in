@@ -59,7 +59,7 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-OBJECTS  = new.o options.o iterator.o main.o gen-perf.o key-list.o list-node.o \
+OBJECTS  = options.o iterator.o main.o gen-perf.o key-list.o list-node.o \
            hash-table.o bool-array.o read-line.o vectors.o version.o
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
@@ -107,8 +107,6 @@ list-node.o : list-node.cc $(LIST_NODE_H) $(OPTIONS_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/list-node.cc
 main.o : main.cc $(OPTIONS_H) $(GEN_PERF_H) $(CONFIG_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/main.cc
-new.o : new.cc $(CONFIG_H)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/new.cc
 options.o : options.cc $(OPTIONS_H) $(ITERATOR_H) $(VECTORS_H) $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/options.cc
 read-line.o : read-line.cc $(READ_LINE_H) $(OPTIONS_H)

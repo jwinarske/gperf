@@ -1,5 +1,11 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/new.cc: Remove file.
+	* src/Makefile.in (OBJECTS): Remove new.o.
+	(new.o): Remove rule.
+	* src/configure.in: Remove test for HAVE_THROW_DECL.
+	* acconfig.h: Remove file.
+
 	* src/trace.h: Remove file.
 	* src/trace.cc: Remove file.
 	* src/Makefile.in (OBJECTS): Remove trace.o.
