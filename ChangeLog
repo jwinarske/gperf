@@ -1,5 +1,10 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * doc/configure.in (PACKAGE): New variable.
+        * doc/Makefile.in (datadir, docdir): New variables.
+          (dvidir, htmldir): Change values.
+          (install, installdirs): Update.
+
         * src/configure.in: Rename cache variable gp_cxx_throw_decl to
           gp_cv_cxx_throw_decl.
 

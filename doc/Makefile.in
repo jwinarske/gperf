@@ -27,11 +27,13 @@ srcdir = @srcdir@
 prefix = @prefix@
 local_prefix = /usr/local
 exec_prefix = @exec_prefix@
+datadir = @datadir@
 infodir = @infodir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
-dvidir = $(mandir)/dvi
-htmldir = $(mandir)/html
+docdir = $(datadir)/doc/@PACKAGE@
+dvidir = $(docdir)
+htmldir = $(docdir)
 
 # Programs used by "make":
 RM = rm -f
@@ -94,6 +96,8 @@ install : all force
 	if [ ! -d $(DESTDIR)$(mandir) ] ; then mkdir $(DESTDIR)$(mandir) ; fi
 	if [ ! -d $(DESTDIR)$(man1dir) ] ; then mkdir $(DESTDIR)$(man1dir) ; fi
 	$(INSTALL_DATA) $(srcdir)/gperf.1 $(DESTDIR)$(man1dir)/gperf.1
+	if [ ! -d $(DESTDIR)$(datadir)/doc ] ; then mkdir $(DESTDIR)$(datadir)/doc ; fi
+	if [ ! -d $(DESTDIR)$(docdir) ] ; then mkdir $(DESTDIR)$(docdir) ; fi
 	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
 	$(INSTALL_DATA) $(srcdir)/gperf.dvi $(DESTDIR)$(dvidir)/gperf.dvi
 	if [ ! -d $(DESTDIR)$(htmldir) ] ; then mkdir $(DESTDIR)$(htmldir) ; fi
@@ -103,6 +107,8 @@ installdirs : force
 	if [ ! -d $(DESTDIR)$(infodir) ] ; then mkdir $(DESTDIR)$(infodir) ; fi
 	if [ ! -d $(DESTDIR)$(mandir) ] ; then mkdir $(DESTDIR)$(mandir) ; fi
 	if [ ! -d $(DESTDIR)$(man1dir) ] ; then mkdir $(DESTDIR)$(man1dir) ; fi
+	if [ ! -d $(DESTDIR)$(datadir)/doc ] ; then mkdir $(DESTDIR)$(datadir)/doc ; fi
+	if [ ! -d $(DESTDIR)$(docdir) ] ; then mkdir $(DESTDIR)$(docdir) ; fi
 	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
 	if [ ! -d $(DESTDIR)$(htmldir) ] ; then mkdir $(DESTDIR)$(htmldir) ; fi
 
