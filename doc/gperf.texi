@@ -380,7 +380,7 @@ input:
 
 @example
 @group
-struct months @{ char *name; int number; int days; int leap_days; @};
+struct month @{ char *name; int number; int days; int leap_days; @};
 %%
 january,   1, 31, 31
 february,  2, 28, 29
@@ -402,6 +402,18 @@ Separating the @code{struct} declaration from the list of keywords and
 other fields are a pair of consecutive percent signs, @samp{%%},
 appearing left justified in the first column, as in the UNIX utility
 @code{lex}.
+
+If the @code{struct} has already been declared in an include file, it can
+be mentioned in an abbreviated form, like this:
+
+@example
+@group
+struct month;
+%%
+january,   1, 31, 31
+...
+@end group
+@end example
 
 @node Gperf Declarations, C Code Inclusion, User-supplied Struct, Declarations
 @subsubsection Gperf Declarations
@@ -628,9 +640,9 @@ feature:
 %@{
 #include <assert.h>
 /* This section of code is inserted directly into the output. */
-int return_month_days (struct months *months, int is_leap_year);
+int return_month_days (struct month *months, int is_leap_year);
 %@}
-struct months @{ char *name; int number; int days; int leap_days; @};
+struct month @{ char *name; int number; int days; int leap_days; @};
 %%
 january,   1, 31, 31
 february,  2, 28, 29

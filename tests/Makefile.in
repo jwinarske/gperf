@@ -162,6 +162,8 @@ check-test:
 	diff $(srcdir)/charsets.exp charsets.out
 	$(GPERF) -C -E -G -I -t < $(srcdir)/languages.gperf > languages.out
 	diff $(srcdir)/languages.exp languages.out
+	$(GPERF) -t < $(srcdir)/incomplete.gperf > incomplete.out
+	diff $(srcdir)/incomplete.exp incomplete.out
 # prints out the help message
 	-$(GPERF) -h > test-6.out
 	diff $(srcdir)/test-6.exp test-6.out

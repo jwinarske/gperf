@@ -1,3 +1,14 @@
+2003-05-31  Bruno Haible  <bruno@clisp.org>
+
+	* doc/gperf.texi (User-supplied Struct): Mention the possibility of an
+	abbreviated struct declaration.
+	* src/input.cc (Input::read_input): Support struct declarations of the
+	form "struct foo;".
+	* tests/incomplete.gperf: New file.
+	* tests/incomplete.exp: New file.
+	* tests/Makefile.in (check-test): Check incomplete.gperf too.
+	Reported by Rob Leslie <rob@mars.org>.
+
 2003-05-20  Bruno Haible  <bruno@clisp.org>
 
 	* doc/Makefile.in (gperf.ps): Don't use $< in a target rule.

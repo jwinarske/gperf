@@ -713,7 +713,7 @@ Input::read_input ()
         _struct_decl = struct_decl;
         /* Set _struct_tag to the naked "struct something".  */
         const char *p;
-        for (p = struct_decl; *p && *p != '{' && *p != '\n'; p++)
+        for (p = struct_decl; *p && *p != '{' && *p != ';' && *p != '\n'; p++)
           ;
         for (; p > struct_decl;)
           if (p[-1] == '\n' || p[-1] == ' ' || p[-1] == '\t')
