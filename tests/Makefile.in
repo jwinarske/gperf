@@ -137,7 +137,9 @@ check-lang-syntax : force
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -G -E
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -D
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -D -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -c
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -C
@@ -145,18 +147,24 @@ check-lang-syntax : force
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -G
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -S 10 -D
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -S 10 -D -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 1000
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -C
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -p -D
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -p -D -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -C
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -p -S 10 -D
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest1.gperf -p -S 10 -D -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 1000
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -K key_name
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -H hash_function_name
@@ -174,7 +182,9 @@ check-lang-syntax : force
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -G -E
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest2.gperf -t -p -D
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest2.gperf -t -p -D -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -c
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -C
@@ -182,7 +192,9 @@ check-lang-syntax : force
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -G
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest2.gperf -t -p -S 10 -D
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k2   $(srcdir)/jstest2.gperf -t -p -S 10 -D -l
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 1000
 	sed -e 's,name,key_name,g' < $(srcdir)/jstest2.gperf > tmp-jstest2.gperf && \
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 tmp-jstest2.gperf -t -p -K key_name
@@ -200,7 +212,9 @@ check-lang-syntax : force
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -G -E
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -l
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -D
+	$(VALIDATE) C,ANSI-C,C++ -k2   $(srcdir)/jstest3.gperf -t -p -D
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -D -l
+	$(VALIDATE) C,ANSI-C,C++ -k2   $(srcdir)/jstest3.gperf -t -p -D -l
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -c
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -C
@@ -208,7 +222,9 @@ check-lang-syntax : force
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -G
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -l
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -D
+	$(VALIDATE) C,ANSI-C,C++ -k2   $(srcdir)/jstest3.gperf -t -p -S 10 -D
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -D -l
+	$(VALIDATE) C,ANSI-C,C++ -k2   $(srcdir)/jstest3.gperf -t -p -S 10 -D -l
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 1000
 	sed -e 's,name,key_name,g' < $(srcdir)/jstest3.gperf > tmp-jstest3.gperf && \
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 tmp-jstest3.gperf -t -p -K key_name

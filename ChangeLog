@@ -1,5 +1,12 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/key-list.cc (output_switch_case): Add trailing semicolon to
+          lengthptr assignment line. Fixes bug with -D and -S.
+          From Reini Urban <rurban@sbox.tu-graz.ac.at>. Also reported by
+          David Hunter.
+        * tests/Makefile.in (check-lang-syntax): Perform each test with -D
+          once without and once with duplicates.
+
         * src/key-list.cc (Key_List::output_lookup_function_body): Avoid
           outputting a trivially satisfied test for len.
 

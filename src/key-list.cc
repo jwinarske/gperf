@@ -1371,7 +1371,7 @@ output_switch_case (List_Node *list, int indent, int *jumps_away)
           || (list->next && list->hash_value == list->next->hash_value)))
     {
       if (option[LENTABLE])
-        printf ("%*slengthptr = &lengthtable[%d]\n",
+        printf ("%*slengthptr = &lengthtable[%d];\n",
                 indent, "", list->index);
       printf ("%*swordptr = &%s[%d];\n",
               indent, "", option.get_wordlist_name (), list->index);
