@@ -1,5 +1,7 @@
 2002-10-13  Bruno Haible  <bruno@clisp.org>
 
+	* src/bool-array.*: Some polishing.
+
 	* src/options.h (Options::operator=, Options::operator!=): Remove
 	unused methods.
 	* src/options.icc (Options::operator=, Options::operator!=): Remove.

@@ -24,15 +24,18 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 //#include <string.h>
 //#include "options.h"
 
-/* Initializes the bit array with room for s bits, numbered from 0 to s-1. */
+/* Initializes the bit array with room for SIZE bits, numbered from
+   0 to SIZE-1. */
 INLINE
-Bool_Array::Bool_Array (unsigned int s)
-  : _size (s), _iteration_number (1), _storage_array (new unsigned int [s])
+Bool_Array::Bool_Array (unsigned int size)
+  : _size (size),
+    _iteration_number (1),
+    _storage_array (new unsigned int [size])
 {
-  memset (_storage_array, 0, s * sizeof (unsigned int));
+  memset (_storage_array, 0, size * sizeof (_storage_array[0]));
   if (option[DEBUG])
     fprintf (stderr, "\nbool array size = %d, total bytes = %d\n",
-             _size, (unsigned int) (_size * sizeof (*_storage_array)));
+             _size, (unsigned int) (_size * sizeof (_storage_array[0])));
 }
 
 /* Sets the specified bit to one.  Returns its previous value (0 or 1).  */
@@ -61,7 +64,7 @@ Bool_Array::clear ()
   if (++_iteration_number == 0)
     {
       _iteration_number = 1;
-      memset (_storage_array, 0, _size * sizeof (unsigned int));
+      memset (_storage_array, 0, _size * sizeof (_storage_array[0]));
       if (option[DEBUG])
         {
           fprintf (stderr, "(re-initialized bool_array)\n");

@@ -32,11 +32,13 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
      - set_bit will be called 300394 times.
    With a conventional bit array implementation, clear would be too slow.
    With a tree/hash based bit array implementation, set_bit would be slower. */
+
 class Bool_Array
 {
 public:
-  /* Initializes the bit array with room for s bits, numbered from 0 to s-1. */
-  Bool_Array (unsigned int s);
+  /* Initializes the bit array with room for SIZE bits, numbered from
+     0 to SIZE-1. */
+  Bool_Array (unsigned int size);
 
   /* Frees this object.  */
   ~Bool_Array ();
@@ -48,11 +50,16 @@ public:
   int set_bit (unsigned int index);
 
 private:
-  unsigned int _size;             /* Size of array.  */
-  unsigned int _iteration_number; /* Number of times clear() was called + 1. */
+  /* Size of array.  */
+  unsigned int const _size;
+
+  /* Current iteration number.  Always nonzero.  Starts out as 1, and is
+     incremented each time clear() is called.  */
+  unsigned int _iteration_number;
+
   /* For each index, we store in storage_array[index] the iteration_number at
      the time set_bit(index) was last called.  */
-  unsigned int *_storage_array;  
+  unsigned int * const _storage_array;  
 };
 
 #ifdef __OPTIMIZE__  /* efficiency hack! */
