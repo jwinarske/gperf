@@ -64,6 +64,16 @@ extern KeywordExt_List * copy_list (KeywordExt_List *list);
 /* Deletes a linear list, keeping the list elements in memory.  */
 extern void delete_list (Keyword_List *list);
 
+/* Sorts a linear list, given a comparison function.
+   Note: This uses a variant of mergesort that is *not* a stable sorting
+   algorithm.  */
+extern Keyword_List * mergesort_list (Keyword_List *list,
+                                      bool (*less) (Keyword *keyword1,
+                                                    Keyword *keyword2));
+extern KeywordExt_List * mergesort_list (KeywordExt_List *list,
+                                         bool (*less) (KeywordExt *keyword1,
+                                                       KeywordExt *keyword2));
+
 #ifdef __OPTIMIZE__
 
 #define INLINE inline

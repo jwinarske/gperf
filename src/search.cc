@@ -152,84 +152,6 @@ Search::prepare ()
     }
 }
 
-/* ----------------------- Sorting the Keyword list ------------------------ */
-
-/* Merges two sorted lists together to form one sorted list.
-   The sorting criterion depends on which of _occurrence_sort and _hash_sort
-   is set to true.  This is a kludge, but permits nice sharing of almost
-   identical code without incurring the overhead of a function call for
-   every comparison.  */
-
-KeywordExt_List *
-Search::merge (KeywordExt_List *list1, KeywordExt_List *list2) const
-{
-  KeywordExt_List *result;
-  KeywordExt_List **resultp = &result;
-  for (;;)
-    {
-      if (!list1)
-        {
-          *resultp = list2;
-          break;
-        }
-      if (!list2)
-        {
-          *resultp = list1;
-          break;
-        }
-      if ((_occurrence_sort
-           && list1->first()->_occurrence < list2->first()->_occurrence)
-          || (_hash_sort
-              && list1->first()->_hash_value > list2->first()->_hash_value))
-        {
-          *resultp = list2;
-          resultp = &list2->rest(); list2 = list1; list1 = *resultp;
-        }
-      else
-        {
-          *resultp = list1;
-          resultp = &list1->rest(); list1 = *resultp;
-        }
-    }
-  return result;
-}
-
-/* Sorts a list using the recursive merge sort algorithm.
-   The sorting criterion depends on which of _occurrence_sort and _hash_sort
-   is set to true.  */
-
-KeywordExt_List *
-Search::merge_sort (KeywordExt_List *head) const
-{
-  if (!head || !head->rest())
-    /* List of length 0 or 1.  Nothing to do.  */
-    return head;
-  else
-    {
-      /* Determine a list node in the middle.  */
-      KeywordExt_List *middle = head;
-      for (KeywordExt_List *temp = head->rest();;)
-        {
-          temp = temp->rest();
-          if (temp == NULL)
-            break;
-          temp = temp->rest();
-          middle = middle->rest();
-          if (temp == NULL)
-            break;
-        }
-
-      /* Cut the list into two halves.
-         If the list has n elements, the left half has ceiling(n/2) elements
-         and the right half has floor(n/2) elements.  */
-      KeywordExt_List *right_half = middle->rest();
-      middle->rest() = NULL;
-
-      /* Sort the two halves, then merge them.  */
-      return merge (merge_sort (head), merge_sort (right_half));
-    }
-}
-
 /* ---------------- Reordering the Keyword list (optional) ----------------- */
 
 /* Computes the sum of occurrences of the _selchars of a keyword.
@@ -249,6 +171,13 @@ Search::compute_occurrence (KeywordExt *ptr) const
     value += _occurrences[*p];
 
   return value;
+}
+
+/* Comparison function for sorting by decreasing _occurrence valuation.  */
+static bool
+greater_by_occurrence (KeywordExt *keyword1, KeywordExt *keyword2)
+{
+  return keyword1->_occurrence > keyword2->_occurrence;
 }
 
 /* Auxiliary function for reorder():
@@ -308,9 +237,7 @@ Search::reorder ()
     }
 
   /* Sort the list by decreasing _occurrence valuation.  */
-  _hash_sort = false;
-  _occurrence_sort = true;
-  _head = merge_sort (_head);
+  _head = mergesort_list (_head, greater_by_occurrence);
 
   /* Reorder the list to maximize the efficiency of the search.  */
 
@@ -716,14 +643,19 @@ Search::find_asso_values ()
 
 /* ------------------------------------------------------------------------- */
 
+/* Comparison function for sorting by increasing _hash_value.  */
+static bool
+less_by_hash_value (KeywordExt *keyword1, KeywordExt *keyword2)
+{
+  return keyword1->_hash_value < keyword2->_hash_value;
+}
+
 /* Sorts the keyword list by hash value.  */
 
 void
 Search::sort ()
 {
-  _hash_sort = true;
-  _occurrence_sort = false;
-  _head = merge_sort (_head);
+  _head = mergesort_list (_head, less_by_hash_value);
 }
 
 void

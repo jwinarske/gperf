@@ -79,6 +79,92 @@ delete_list (Keyword_List *list)
     }
 }
 
+/* Type of a comparison function.  */
+typedef bool (*Keyword_Comparison) (Keyword *keyword1, Keyword *keyword2);
+
+/* Merges two sorted lists together to form one sorted list.  */
+static Keyword_List *
+merge (Keyword_List *list1, Keyword_List *list2, Keyword_Comparison less)
+{
+  Keyword_List *result;
+  Keyword_List **resultp = &result;
+  for (;;)
+    {
+      if (!list1)
+        {
+          *resultp = list2;
+          break;
+        }
+      if (!list2)
+        {
+          *resultp = list1;
+          break;
+        }
+      if (less (list2->first(), list1->first()))
+        {
+          *resultp = list2;
+          resultp = &list2->rest();
+          /* We would have a stable sorting if the next line would read:
+             list2 = *resultp;  */
+          list2 = list1; list1 = *resultp;
+        }
+      else
+        {
+          *resultp = list1;
+          resultp = &list1->rest();
+          list1 = *resultp;
+        }
+    }
+  return result;
+}
+
+/* Sorts a linear list, given a comparison function.
+   Note: This uses a variant of mergesort that is *not* a stable sorting
+   algorithm.  */
+Keyword_List *
+mergesort_list (Keyword_List *list, Keyword_Comparison less)
+{
+  if (list == NULL || list->rest() == NULL)
+    /* List of length 0 or 1.  Nothing to do.  */
+    return list;
+  else
+    {
+      /* Determine a list node in the middle.  */
+      Keyword_List *middle = list;
+      for (Keyword_List *temp = list->rest();;)
+        {
+          temp = temp->rest();
+          if (temp == NULL)
+            break;
+          temp = temp->rest();
+          middle = middle->rest();
+          if (temp == NULL)
+            break;
+        }
+
+      /* Cut the list into two halves.
+         If the list has n elements, the left half has ceiling(n/2) elements
+         and the right half has floor(n/2) elements.  */
+      Keyword_List *right_half = middle->rest();
+      middle->rest() = NULL;
+
+      /* Sort the two halves, then merge them.  */
+      return merge (mergesort_list (list, less),
+                    mergesort_list (right_half, less),
+                    less);
+    }
+}
+
+KeywordExt_List *
+mergesort_list (KeywordExt_List *list,
+                bool (*less) (KeywordExt *keyword1, KeywordExt *keyword2))
+{
+  return
+    static_cast<KeywordExt_List *>
+      (mergesort_list (static_cast<Keyword_List *> (list),
+                       reinterpret_cast<Keyword_Comparison> (less)));
+}
+
 
 #ifndef __OPTIMIZE__
 

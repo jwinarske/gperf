@@ -1,3 +1,14 @@
+2002-11-05  Bruno Haible  <bruno@clisp.org>
+
+	* src/keyword-list.h (mergesort_list): New declarations.
+	* src/keyword-list.cc (Keyword_Comparison): New type.
+	(merge, mergesort_list): New functions, moved here from search.cc.
+	* src/search.h (Search::merge, Search::merge_sort): Remove methods.
+	(Search::_occurrence_sort, Search::_hash_sort): Remove fields.
+	* src/search.cc (Search::merge, Search::merge_sort): Remove methods.
+	(greater_by_occurrence, less_by_hash_value): New functions.
+	(Search::reorder, Search::sort): Use mergesort_list.
+
 2002-11-04  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.h (Options::_asso_iterations): New field.

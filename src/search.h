@@ -38,11 +38,6 @@ public:
 private:
   void                  prepare ();
 
-  /* Merges two sorted lists together to form one sorted list.  */
-  KeywordExt_List *     merge (KeywordExt_List *list1, KeywordExt_List *list2) const;
-  /* Sorts a list using the recursive merge sort algorithm.  */
-  KeywordExt_List *     merge_sort (KeywordExt_List *head) const;
-
   /* Computes the sum of occurrences of the _selchars of a keyword.  */
   int                   compute_occurrence (KeywordExt *ptr) const;
 
@@ -119,12 +114,6 @@ private:
 
   /* Length of _head list.  Number of keywords, not counting duplicates.  */
   int                   _list_len;
-
-  /* Choice of sorting criterion during Search::merge_sort.  */
-  /* True if sorting by occurrence.  */
-  bool                  _occurrence_sort;
-  /* True if sorting by hash value.  */
-  bool                  _hash_sort;
 
   /* Vector used during Search::reorder().  */
   bool * const          _determined;
