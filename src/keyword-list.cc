@@ -25,16 +25,58 @@
 
 #include <stddef.h>
 
+/* -------------------------- Keyword_List class --------------------------- */
+
 /* Constructor.  */
 Keyword_List::Keyword_List (Keyword *car)
   : _cdr (NULL), _car (car)
 {
 }
 
+/* ------------------------- KeywordExt_List class ------------------------- */
+
 /* Unused constructor.  */
 KeywordExt_List::KeywordExt_List (KeywordExt *car)
   : Keyword_List (car)
 {
+}
+
+/* ------------------------ Keyword_List functions ------------------------- */
+
+/* Copies a linear list, sharing the list elements.  */
+Keyword_List *
+copy_list (Keyword_List *list)
+{
+  Keyword_List *result;
+  Keyword_List **lastp = &result;
+  while (list != NULL)
+    {
+      Keyword_List *new_cons = new Keyword_List (list->first());
+      *lastp = new_cons;
+      lastp = &new_cons->rest();
+      list = list->rest();
+    }
+  *lastp = NULL;
+  return result;
+}
+
+/* Copies a linear list, sharing the list elements.  */
+KeywordExt_List *
+copy_list (KeywordExt_List *list)
+{
+  return static_cast<KeywordExt_List *> (copy_list (static_cast<Keyword_List *> (list)));
+}
+
+/* Deletes a linear list, keeping the list elements in memory.  */
+void
+delete_list (Keyword_List *list)
+{
+  while (list != NULL)
+    {
+      Keyword_List *rest = list->rest();
+      delete list;
+      list = rest;
+    }
 }
 
 

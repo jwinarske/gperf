@@ -87,6 +87,11 @@ Algorithm employed by gperf:
                          argument represents the number of times to iterate
                          when resolving a collision. '0' means "iterate by
                          the number of keywords".
+  -m, --multiple-iterations=ITERATIONS
+                         Perform multiple choices of the -i and -j values,
+                         and choose the best results. This increases the
+                         running time by a factor of ITERATIONS but does a
+                         good job minimizing the generated table size.
   -i, --initial-asso=N   Provide an initial value for the associate values
                          array. Default is 0. Setting this value larger helps
                          inflate the size of the final table.

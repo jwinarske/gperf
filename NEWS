@@ -1,3 +1,8 @@
+New in 2.8:
+
+* Added option -m/--multiple-iterations that reduces the size of the
+  generated table.
+
 New in 2.7.2:
 
 * Keywords may now be enclosed in double quotes; this permits the use of

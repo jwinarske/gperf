@@ -65,7 +65,7 @@ static const char *const DEFAULT_DELIMITERS = ",\n";
 void
 Options::short_usage (FILE * stream) const
 {
-  fprintf (stream, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ijk<keys>K<keyname>lL<language>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
+  fprintf (stream, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ij<jump>k<keys>K<keyname>lL<language>m<num>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
            "Try '%s --help' for more information.\n",
            program_name, program_name);
 }
@@ -192,6 +192,12 @@ Options::long_usage (FILE * stream) const
            "                         argument represents the number of times to iterate\n"
            "                         when resolving a collision. '0' means \"iterate by\n"
            "                         the number of keywords\".\n");
+  fprintf (stream,
+           "  -m, --multiple-iterations=ITERATIONS\n"
+           "                         Perform multiple choices of the -i and -j values,\n"
+           "                         and choose the best results. This increases the\n"
+           "                         running time by a factor of ITERATIONS but does a\n"
+           "                         good job minimizing the generated table size.\n");
   fprintf (stream,
            "  -i, --initial-asso=N   Provide an initial value for the associate values\n"
            "                         array. Default is 0. Setting this value larger helps\n"
@@ -413,6 +419,7 @@ Options::Options ()
     _iterations (0),
     _jump (DEFAULT_JUMP_VALUE),
     _initial_asso_value (0),
+    _asso_iterations (0),
     _total_switches (1),
     _size_multiple (1),
     _function_name (DEFAULT_NAME),
@@ -459,6 +466,7 @@ Options::~Options ()
                "\nword list name = %s"
                "\nkey name = %s"
                "\ninitializer suffix = %s"
+               "\nasso_values iterations = %d"
                "\njump value = %d"
                "\nhash table size multiplier = %d"
                "\ninitial associated value = %d"
@@ -486,8 +494,8 @@ Options::~Options ()
                _option_word & SEVENBIT ? "enabled" : "disabled",
                _iterations,
                _function_name, _hash_name, _wordlist_name, _key_name,
-               _initializer_suffix, _jump, _size_multiple, _initial_asso_value,
-               _delimiters, _total_switches);
+               _initializer_suffix, _asso_iterations, _jump, _size_multiple,
+               _initial_asso_value, _delimiters, _total_switches);
       if (_option_word & ALLCHARS)
         fprintf (stderr, "all characters are used in the hash function\n");
       else
@@ -535,6 +543,7 @@ static const struct option long_options[] =
   { "fast", required_argument, NULL, 'f' },
   { "initial-asso", required_argument, NULL, 'i' },
   { "jump", required_argument, NULL, 'j' },
+  { "multiple-iterations", required_argument, NULL, 'm' },
   { "no-strlen", no_argument, NULL, 'n' },
   { "occurrence-sort", no_argument, NULL, 'o' },
   { "random", no_argument, NULL, 'r' },
@@ -556,7 +565,7 @@ Options::parse_options (int argc, char *argv[])
 
   while ((option_char =
             getopt_long (_argument_count, _argument_vector,
-                         "adcCDe:Ef:F:gGhH:i:Ij:k:K:lL:nN:oprs:S:tTvW:Z:7",
+                         "acCdDe:Ef:F:gGhH:i:Ij:k:K:lL:m:nN:oprs:S:tTvW:Z:7",
                          long_options, NULL))
          != -1)
     {
@@ -735,6 +744,15 @@ Options::parse_options (int argc, char *argv[])
               {
                 fprintf (stderr, "unsupported language option %s, defaulting to C\n", /*getopt*/optarg);
                 _option_word |= C;
+              }
+            break;
+          }
+        case 'm':               /* Multiple iterations for finding good asso_values.  */
+          {
+            if ((_asso_iterations = atoi (/*getopt*/optarg)) < 0)
+              {
+                fprintf (stderr, "asso_iterations value must not be negative, assuming 0\n");
+                _asso_iterations = 0;
               }
             break;
           }

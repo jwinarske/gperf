@@ -57,6 +57,13 @@ public:
   KeywordExt_List *&    rest ();
 };
 
+/* Copies a linear list, sharing the list elements.  */
+extern Keyword_List * copy_list (Keyword_List *list);
+extern KeywordExt_List * copy_list (KeywordExt_List *list);
+
+/* Deletes a linear list, keeping the list elements in memory.  */
+extern void delete_list (Keyword_List *list);
+
 #ifdef __OPTIMIZE__
 
 #define INLINE inline

@@ -1,3 +1,26 @@
+2002-11-04  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.h (Options::_asso_iterations): New field.
+	(Options::get_asso_iterations): New method declaration.
+	* src/options.icc (Options::get_asso_iterations): New method.
+	* src/options.cc (Options::short_usage): Mention j<jump> and m<num>.
+	(Options::long_usage): Document option -m.
+	(Options::Options): Initialize _asso_iterations.
+	(Options::~Options): Print _asso_iterations too.
+	(long_options): Add --multiple-iterations.
+	(Options::parse_options): Handle option -m.
+	* src/keyword-list.h (copy_list, delete_list): New declarations.
+	* src/keyword-list.cc (copy_list, delete_list): New functions.
+	* src/search.h (Search::_initial_asso_value, Search::_jump): New fields.
+	* src/search.cc (Search::prepare_asso_values): Initialize
+	_initial_asso_value and _jump here.
+	(Search::init_asso_values): Use _initial_asso_value.
+	(Search::try_asso_value): Use _jump.
+	(Search::optimize): If option -m was given, iterate over different
+	values for _initial_asso_value and _jump.
+	* doc/gperf.texi (Algorithmic Details): Document option -m.
+	* tests/test-6.exp: Update.
+
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
 	Bug fix: When option -j 0 was used without option -r, the output was

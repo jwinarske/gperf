@@ -132,6 +132,11 @@ private:
   /* Exclusive upper bound for every _asso_values[c].  A power of 2.  */
   int                   _asso_value_max;
 
+  /* Initial value for asso_values table.  -1 means random.  */
+  int                   _initial_asso_value;
+  /* Jump length when trying alternative values.  0 means random.  */
+  int                   _jump;
+
   /* Maximal possible hash value.  */
   int                   _max_hash_value;
 

@@ -190,6 +190,9 @@ public:
   /* Returns the initial associated character value.  */
   int                   get_initial_asso_value () const;
 
+  /* Returns the number of iterations for finding good asso_values.  */
+  int                   get_asso_iterations () const;
+
   /* Returns the total number of switch statements to generate.  */
   int                   get_total_switches () const;
 
@@ -249,6 +252,9 @@ private:
 
   /* Initial value for asso_values table.  */
   int                   _initial_asso_value;
+
+  /* Number of attempts at finding good asso_values.  */
+  int                   _asso_iterations;
 
   /* Number of switch statements to generate.  */
   int                   _total_switches;

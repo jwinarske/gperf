@@ -146,6 +146,13 @@ Options::get_initial_asso_value () const
   return _initial_asso_value;
 }
 
+/* Returns the number of iterations for finding finding good asso_values.  */
+INLINE int
+Options::get_asso_iterations () const
+{
+  return _asso_iterations;
+}
+
 /* Returns the total number of switch statements to generate.  */
 INLINE int
 Options::get_total_switches () const

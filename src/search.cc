@@ -434,6 +434,9 @@ Search::prepare_asso_values ()
   if (option[RANDOM] || option.get_jump () == 0)
     /* We will use rand(), so initialize the random number generator.  */
     srand (reinterpret_cast<long>(time (0)));
+
+  _initial_asso_value = (option[RANDOM] ? -1 : option.get_initial_asso_value ());
+  _jump = option.get_jump ();
 }
 
 /* Puts a first guess into asso_values[].  */
@@ -441,14 +444,14 @@ Search::prepare_asso_values ()
 void
 Search::init_asso_values ()
 {
-  if (option[RANDOM])
+  if (_initial_asso_value < 0)
     {
       for (int i = 0; i < _alpha_size; i++)
         _asso_values[i] = rand () & (_asso_value_max - 1);
     }
   else
     {
-      int asso_value = option.get_initial_asso_value ();
+      int asso_value = _initial_asso_value;
 
       asso_value = asso_value & (_asso_value_max - 1);
       for (int i = 0; i < _alpha_size; i++)
@@ -565,7 +568,7 @@ Search::try_asso_value (unsigned char c, KeywordExt *curr, int iterations)
 
       /* Try next value.  Wrap around mod _asso_value_max.  */
       _asso_values[c] =
-        (_asso_values[c] + (option.get_jump () ? option.get_jump () : rand ()))
+        (_asso_values[c] + (_jump != 0 ? _jump : rand ()))
         & (_asso_value_max - 1);
 
       /* Iteration Number array is a win, O(1) intialization time!  */
@@ -733,7 +736,77 @@ Search::optimize ()
   prepare_asso_values ();
 
   /* Search for good _asso_values[].  */
-  find_asso_values ();
+  int asso_iteration;
+  if ((asso_iteration = option.get_asso_iterations ()) == 0)
+    /* Try only the given _initial_asso_value and _jump.  */
+    find_asso_values ();
+  else
+    {
+      /* Try different pairs of _initial_asso_value and _jump, in the
+         following order:
+           (0, 1)
+           (1, 1)
+           (2, 1) (0, 3)
+           (3, 1) (1, 3)
+           (4, 1) (2, 3) (0, 5)
+           (5, 1) (3, 3) (1, 5)
+           ..... */
+      KeywordExt_List *saved_head = _head;
+      int best_initial_asso_value = 0;
+      int best_jump = 1;
+      int *best_asso_values = new int[_alpha_size];
+      int best_collisions = INT_MAX;
+      int best_max_hash_value = INT_MAX;
+
+      _initial_asso_value = 0; _jump = 1;
+      for (;;)
+        {
+          /* Restore the keyword list in its original order.  */
+          _head = copy_list (saved_head);
+          /* Find good _asso_values[].  */
+          find_asso_values ();
+          /* Test whether it is the best solution so far.  */
+          int collisions = 0;
+          int max_hash_value = INT_MIN;
+          _collision_detector->clear ();
+          for (KeywordExt_List *ptr = _head; ptr; ptr = ptr->rest())
+            {
+              KeywordExt *keyword = ptr->first();
+              int hashcode = compute_hash (keyword);
+              if (max_hash_value < hashcode)
+                max_hash_value = hashcode;
+              if (_collision_detector->set_bit (hashcode))
+                collisions++;
+            }
+          if (collisions < best_collisions
+              || (collisions == best_collisions
+                  && max_hash_value < best_max_hash_value))
+            {
+              memcpy (best_asso_values, _asso_values,
+                      _alpha_size * sizeof (_asso_values[0]));
+              best_collisions = collisions;
+              best_max_hash_value = max_hash_value;
+            }
+          /* Delete the copied keyword list.  */
+          delete_list (_head);
+
+          if (--asso_iteration == 0)
+            break;
+          /* Prepare for next iteration.  */
+          if (_initial_asso_value >= 2)
+            _initial_asso_value -= 2, _jump += 2;
+          else
+            _initial_asso_value += _jump, _jump = 1;
+        }
+      _head = saved_head;
+      /* Install the best found asso_values.  */
+      _initial_asso_value = best_initial_asso_value;
+      _jump = best_jump;
+      memcpy (_asso_values, best_asso_values,
+              _alpha_size * sizeof (_asso_values[0]));
+      delete[] best_asso_values;
+      /* The keywords' _hash_value fields are recomputed below.  */
+    }
 
   /* Make one final check, just to make sure nothing weird happened.... */
   _collision_detector->clear ();
@@ -749,7 +822,7 @@ Search::optimize ()
             {
               fprintf (stderr,
                        "\nInternal error, duplicate value %d:\n"
-                       "try options -D or -r, or use new key positions.\n\n",
+                       "try options -D or -m or -r, or use new key positions.\n\n",
                        hashcode);
               exit (1);
             }
