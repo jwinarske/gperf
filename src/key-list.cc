@@ -827,6 +827,10 @@ output_string (const char *key, int len)
         }
       else
         {
+          /* Use octal escapes, not hexadecimal escapes, because some old
+             C compilers didn't understand hexadecimal escapes, and because
+             hexadecimal escapes are not limited to 2 digits, thus needing
+             special care if the following character happens to be a digit. */
           putchar ('\\');
           putchar ('0' + ((c >> 6) & 7));
           putchar ('0' + ((c >> 3) & 7));
