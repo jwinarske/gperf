@@ -23,7 +23,13 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "keyword-list.h"
 
 /* Constructor.  */
-KeywordExt_List::KeywordExt_List (KeywordExt *car)
+Keyword_List::Keyword_List (Keyword *car)
   : _cdr (NULL), _car (car)
+{
+}
+
+/* Unused constructor.  */
+KeywordExt_List::KeywordExt_List (KeywordExt *car)
+  : Keyword_List (car)
 {
 }

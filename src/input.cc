@@ -26,6 +26,11 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "options.h"
 #include "input.h"
 
+Input::Input (Keyword_Factory *keyword_factory)
+  : _factory (keyword_factory)
+{
+}
+
 /* Gathers the input stream into a buffer until one of two things occur:
 
    1. We read a '%' followed by a '%'
@@ -177,11 +182,11 @@ Input::set_output_types ()
     }
 }
 
-/* Extracts a key from an input line and creates a new KeywordExt_List for
+/* Extracts a key from an input line and creates a new Keyword_List for
    it. */
 
-static KeywordExt_List *
-parse_line (const char *line, const char *delimiters)
+Keyword_List *
+Input::parse_line (const char *line, const char *delimiters)
 {
   if (*line == '"')
     {
@@ -299,7 +304,7 @@ parse_line (const char *line, const char *delimiters)
             }
           lp++;
         }
-      return new KeywordExt_List (new KeywordExt (key, kp - key, option[TYPE] ? lp : ""));
+      return new Keyword_List (_factory->create_keyword (key, kp - key, option[TYPE] ? lp : ""));
     }
   else
     {
@@ -312,7 +317,7 @@ parse_line (const char *line, const char *delimiters)
       else
         /* Skip the first delimiter. */
         rest = &line[len + 1];
-      return new KeywordExt_List (new KeywordExt (line, len, option[TYPE] ? rest : ""));
+      return new Keyword_List (_factory->create_keyword (line, len, option[TYPE] ? rest : ""));
     }
 }
 
@@ -336,7 +341,7 @@ Input::read_keys ()
 
   _head = parse_line (ptr, delimiter);
 
-  for (KeywordExt_List *temp = _head;
+  for (Keyword_List *temp = _head;
        (ptr = Read_Line::read_next_line ()) && strcmp (ptr, "%%");
        temp = temp->rest())
     temp->rest() = parse_line (ptr, delimiter);

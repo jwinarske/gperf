@@ -1,5 +1,20 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword-list.h (Keyword_List): New class.
+	(KeywordExt_List): Inherit from it.
+	* src/keyword-list.cc (Keyword_List::Keyword_List): New constructor.
+	(KeywordExt_List::KeywordExt_List): Update.
+	* src/input.h (Input::Input): Add Keyword_Factory argument.
+	(Input::_factory): New field.
+	(Input::_head): Change type to Keyword_List*.
+	(Input::parse_line): New declaration.
+	* src/input.cc (Input::Input): New constructor.
+	(Input::parse_line): Renamed from parse_line. Use the _factory.
+	(Input::read_keys): Update.
+	* src/key-list.cc (KeywordExt_Factory): New class.
+	(Key_List::read_keys): Pass a KeywordExt_Factory as Input constructor
+	argument.
+
 	Avoid g++ -Wold-style-cast warnings.
 	* src/bool-array.icc: Use new-style casts.
 	* src/gen-perf.cc: Likewise.

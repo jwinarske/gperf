@@ -31,6 +31,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 class Input : private Read_Line
 {
 public:
+                        Input (Keyword_Factory *keyword_factory);
   void                  read_keys ();
 private:
 #ifndef strcspn
@@ -46,7 +47,10 @@ public:
   const char *          _struct_tag;                           /* Shorthand for user-defined struct tag type. */
   const char *          _include_src;                          /* C source code to be included verbatim. */
   bool                  _additional_code;                      /* True if any additional C code is included. */
-  KeywordExt_List *     _head;                            /* Points to the head of the linked list. */
+  Keyword_Factory *     _factory;                              /* Creates the keywords. */
+  Keyword_List *        _head;                            /* Points to the head of the linked list. */
+private:
+  Keyword_List *        parse_line (const char *line, const char *delimiters);
 };
 
 #endif

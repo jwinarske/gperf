@@ -48,6 +48,18 @@ Key_List::~Key_List ()
     }
 }
 
+class KeywordExt_Factory : public Keyword_Factory
+{
+virtual Keyword *       create_keyword (const char *allchars, int allchars_length,
+                                        const char *rest);
+};
+
+Keyword *
+KeywordExt_Factory::create_keyword (const char *allchars, int allchars_length, const char *rest)
+{
+  return new KeywordExt (allchars, allchars_length, rest);
+}
+
 /* Reads in all keys from standard input and creates a linked list pointed
    to by _head.  This list is then quickly checked for "links", i.e.,
    unhashable elements possessing identical key sets and lengths. */
@@ -55,14 +67,15 @@ Key_List::~Key_List ()
 void
 Key_List::read_keys ()
 {
-  Input inputter;
+  KeywordExt_Factory factory;
+  Input inputter (&factory);
   inputter.read_keys ();
   _array_type      = inputter._array_type;
   _return_type     = inputter._return_type;
   _struct_tag      = inputter._struct_tag;
   _include_src     = inputter._include_src;
   _additional_code = inputter._additional_code;
-  _head            = inputter._head;
+  _head            = static_cast<KeywordExt_List*>(inputter._head);
 
   KeywordExt_List *temp;
   KeywordExt_List *trail = NULL;
