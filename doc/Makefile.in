@@ -37,6 +37,7 @@ man1dir = $(mandir)/man1
 docdir = $(prefix)/doc/@PACKAGE@
 dvidir = $(docdir)
 psdir = $(docdir)
+pdfdir = $(docdir)
 htmldir = $(docdir)
 
 # Programs used by "make":
@@ -47,6 +48,7 @@ RM = rm -f
 TEX = tex
 TEXI2DVI = texi2dvi
 DVIPS = dvips -D600
+TEXI2PDF = texi2pdf
 MAKEINFO = LANG= LANGUAGE= makeinfo
 TEXI2HTML = texi2html
 
@@ -62,7 +64,7 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-all : info dvi ps html
+all : info dvi ps pdf html
 
 
 info : $(srcdir)/gperf.info
@@ -85,6 +87,14 @@ $(srcdir)/gperf.ps : $(srcdir)/gperf.dvi
 	$(DVIPS) -o $@ $<
 
 
+pdf : $(srcdir)/gperf.pdf
+
+$(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
+	cd $(srcdir) && $(TEXI2PDF) gperf.texi
+	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
+
+
 html : gperf.html gperf_toc.html
 
 gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
@@ -103,7 +113,9 @@ install : all force
 #	$(MKINSTALLDIRS) $(DESTDIR)$(dvidir)
 #	$(INSTALL_DATA) $(srcdir)/gperf.dvi $(DESTDIR)$(dvidir)/gperf.dvi
 #	$(MKINSTALLDIRS) $(DESTDIR)$(psdir)
-#	$(INSTALL_DATA) $(srcdir)/gperf.ps $(DESTDIR)$(dvidir)/gperf.ps
+#	$(INSTALL_DATA) $(srcdir)/gperf.ps $(DESTDIR)$(psdir)/gperf.ps
+#	$(MKINSTALLDIRS) $(DESTDIR)$(pdfdir)
+#	$(INSTALL_DATA) $(srcdir)/gperf.pdf $(DESTDIR)$(pdfdir)/gperf.pdf
 	$(MKINSTALLDIRS) $(DESTDIR)$(htmldir)
 	$(INSTALL_DATA) $(srcdir)/gperf.html $(DESTDIR)$(htmldir)/gperf.html
 
@@ -112,6 +124,7 @@ installdirs : force
 	$(MKINSTALLDIRS) $(DESTDIR)$(man1dir)
 #	$(MKINSTALLDIRS) $(DESTDIR)$(dvidir)
 #	$(MKINSTALLDIRS) $(DESTDIR)$(psdir)
+#	$(MKINSTALLDIRS) $(DESTDIR)$(pdfdir)
 	$(MKINSTALLDIRS) $(DESTDIR)$(htmldir)
 
 uninstall : force
@@ -119,6 +132,7 @@ uninstall : force
 	$(RM) $(DESTDIR)$(man1dir)/gperf.1
 #	$(RM) $(DESTDIR)$(dvidir)/gperf.dvi
 #	$(RM) $(DESTDIR)$(psdir)/gperf.ps
+#	$(RM) $(DESTDIR)$(pdfdir)/gperf.pdf
 	$(RM) $(DESTDIR)$(htmldir)/gperf.html
 
 check : all
@@ -132,7 +146,7 @@ distclean : clean
 	$(RM) config.status config.log config.cache Makefile
 
 maintainer-clean : distclean
-	$(RM) *.info *.dvi *.ps *.html
+	$(RM) *.info *.dvi *.ps *.pdf *.html
 
 force :
 

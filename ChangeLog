@@ -1,5 +1,11 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	Provide documentation also in PDF format.
+	* doc/Makefile.in (pdfdir, TEXI2PDF): New variables.
+	(all): Depend on pdf.
+	(pdf, gperf.pdf): New rules.
+	(maintainer-clean): Remove the PDF file.
+
 	* src/keyword-list.icc: New file, extracted from keyword-list.h.
 	* src/keyword-list.h: Include keyword-list.icc. Move inline methods
 	to there.
