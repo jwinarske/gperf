@@ -42,14 +42,14 @@ Options::operator != (enum Option_Type opt)
 
 /* Initializes the key Iterator. */
 INLINE void
-Options::reset (void)
+Options::reset ()
 {
   key_pos = 0;
 }
 
 /* Returns current key_position and advance index. */
 INLINE int
-Options::get (void)
+Options::get ()
 {
   return key_positions[key_pos++];
 }
@@ -63,14 +63,14 @@ Options::set_asso_max (int r)
 
 /* Returns the size of the table size. */
 INLINE int
-Options::get_asso_max (void)
+Options::get_asso_max ()
 {
   return size;
 }
 
 /* Returns total distinct key positions. */
 INLINE int
-Options::get_max_keysig_size (void)
+Options::get_max_keysig_size ()
 {
   return total_keysig_size;
 }
@@ -84,63 +84,63 @@ Options::set_keysig_size (int size)
 
 /* Returns the jump value. */
 INLINE int
-Options::get_jump (void)
+Options::get_jump ()
 {
   return jump;
 }
 
 /* Returns the generated function name. */
 INLINE const char *
-Options::get_function_name (void)
+Options::get_function_name ()
 {
   return function_name;
 }
 
 /* Returns the keyword key name. */
 INLINE const char *
-Options::get_key_name (void)
+Options::get_key_name ()
 {
   return key_name;
 }
 
 /* Returns the struct initializer suffix. */
 INLINE const char *
-Options::get_initializer_suffix (void)
+Options::get_initializer_suffix ()
 {
   return initializer_suffix;
 }
 
 /* Returns the hash function name. */
 INLINE const char *
-Options::get_hash_name (void)
+Options::get_hash_name ()
 {
   return hash_name;
 }
 
 /* Returns the hash table array name. */
 INLINE const char *
-Options::get_wordlist_name (void)
+Options::get_wordlist_name ()
 {
   return wordlist_name;
 }
 
 /* Returns the generated class name. */
 INLINE const char *
-Options::get_class_name (void)
+Options::get_class_name ()
 {
   return class_name;
 }
 
 /* Returns the initial associated character value. */
 INLINE int
-Options::initial_value (void)
+Options::initial_value ()
 {
   return initial_asso_value;
 }
 
 /* Returns the iterations value. */
 INLINE int
-Options::get_iterations (void)
+Options::get_iterations ()
 {
   return iterations;
 }

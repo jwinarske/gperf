@@ -52,7 +52,7 @@ Bool_Array::set_bit (unsigned int index)
 
 /* Resets all bits to zero.  */
 INLINE void
-Bool_Array::clear (void)
+Bool_Array::clear ()
 {
   /* If we wrap around it's time to zero things out again!  However, this only
      occurs once about every 2^32 iterations, so it will not happen more

@@ -1,3 +1,7 @@
+2002-10-13  Bruno Haible  <bruno@clisp.org>
+
+	* src/*: Simplify declarations of functions without arguments.
+
 2002-10-04  Bruno Haible  <bruno@clisp.org>
 
 	* src/output.h: New file, extracted from key-list.h.

@@ -35,7 +35,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
    hash table size.  Note: using the random numbers is often helpful,
    though not as deterministic, of course! */
 
-Gen_Perf::Gen_Perf (void)
+Gen_Perf::Gen_Perf ()
 {
   int asso_value_max;
   int non_linked_length;
@@ -283,7 +283,7 @@ Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
    exponential in the number of keys. */
 
 int
-Gen_Perf::doit_all (void)
+Gen_Perf::doit_all ()
 {
   KeywordExt_List *curr;
   for (curr = head; curr != NULL; curr = curr->rest())
@@ -341,7 +341,7 @@ Gen_Perf::doit_all (void)
 
 /* Prints out some diagnostics upon completion. */
 
-Gen_Perf::~Gen_Perf (void)
+Gen_Perf::~Gen_Perf ()
 {
   if (option[DEBUG])
     {

@@ -79,30 +79,30 @@ enum
 class Options
 {
 public:
-                      Options (void);
-                     ~Options (void);
+                      Options ();
+                     ~Options ();
   int                 operator[] (Option_Type option);
   void                operator() (int argc, char *argv[]);
   void                operator= (enum Option_Type);
   void                operator!= (enum Option_Type);
-  static void         print_options (void);
+  static void         print_options ();
   static void         set_asso_max (int r);
-  static int          get_asso_max (void);
-  static void         reset (void);
-  static int          get (void);
-  static int          get_iterations (void);
-  static int          get_max_keysig_size (void);
+  static int          get_asso_max ();
+  static void         reset ();
+  static int          get ();
+  static int          get_iterations ();
+  static int          get_max_keysig_size ();
   static void         set_keysig_size (int);
-  static int          get_jump (void);
-  static int          initial_value (void);
-  static int          get_total_switches (void);
-  static const char  *get_function_name (void);
-  static const char  *get_key_name (void);
-  static const char  *get_initializer_suffix (void);
-  static const char  *get_class_name (void);
-  static const char  *get_hash_name (void);
-  static const char  *get_wordlist_name (void);
-  static const char  *get_delimiter (void);
+  static int          get_jump ();
+  static int          initial_value ();
+  static int          get_total_switches ();
+  static const char  *get_function_name ();
+  static const char  *get_key_name ();
+  static const char  *get_initializer_suffix ();
+  static const char  *get_class_name ();
+  static const char  *get_hash_name ();
+  static const char  *get_wordlist_name ();
+  static const char  *get_delimiter ();
 
 private:
   static int          option_word;                        /* Holds the user-specified Options. */

@@ -85,7 +85,7 @@ Output::Output (KeywordExt_List *head_, const char *array_type_,
    find the final item! */
 
 void
-Output::compute_min_max (void)
+Output::compute_min_max ()
 {
   KeywordExt_List *temp;
   for (temp = head; temp->rest(); temp = temp->rest())
@@ -100,7 +100,7 @@ Output::compute_min_max (void)
 /* Returns the number of different hash values. */
 
 int
-Output::num_hash_values (void)
+Output::num_hash_values ()
 {
   int count = 1;
   KeywordExt_List *temp;
@@ -400,7 +400,7 @@ void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
    proper encoding for each key word. */
 
 void
-Output::output_hash_function (void)
+Output::output_hash_function ()
 {
   const int max_column  = 10;
   int field_width;
@@ -568,7 +568,7 @@ Output::output_hash_function (void)
    comparison code in generated function ``in_word_set''. */
 
 void
-Output::output_keylength_table (void)
+Output::output_keylength_table ()
 {
   const int  columns = 14;
   int        index;
@@ -688,7 +688,7 @@ output_keyword_blank_entries (int count, const char *indent)
 /* Prints out the array containing the key words for the hash function. */
 
 void
-Output::output_keyword_table (void)
+Output::output_keyword_table ()
 {
   const char *indent  = option[GLOBAL] ? "" : "  ";
   int         index;
@@ -749,7 +749,7 @@ Output::output_keyword_table (void)
    the smaller, contiguous range of the keyword table. */
 
 void
-Output::output_lookup_array (void)
+Output::output_lookup_array ()
 {
   if (option[DUP])
     {
@@ -912,7 +912,7 @@ Output::output_lookup_array (void)
 /* Generate all the tables needed for the lookup function. */
 
 void
-Output::output_lookup_tables (void)
+Output::output_lookup_tables ()
 {
   if (option[SWITCH])
     {
@@ -1341,7 +1341,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison)
 /* Generates C code for the lookup function. */
 
 void
-Output::output_lookup_function (void)
+Output::output_lookup_function ()
 {
   /* Output the function's head. */
   if (option[KRC] | option[C] | option[ANSIC])
@@ -1397,7 +1397,7 @@ Output::output_lookup_function (void)
    based upon the user's Options. */
 
 void
-Output::output (void)
+Output::output ()
 {
   compute_min_max ();
 

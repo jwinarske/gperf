@@ -40,7 +40,7 @@ Hash_Table::Hash_Table (KeywordExt **table_ptr, int s, int ignore_len):
   memset ((char *) table, 0, size * sizeof (*table));
 }
 
-Hash_Table::~Hash_Table (void)
+Hash_Table::~Hash_Table ()
 {
   if (option[DEBUG])
     {

@@ -41,7 +41,7 @@ public:
      and ignoring lines starting with '#'.  Returns NULL on error or EOF.
      The storage for the string is dynamically allocated and must be freed
      through delete[].  */
-  char *read_next_line (void);
+  char *read_next_line ();
 
 private:
   FILE *fp;                       /* FILE pointer to the input stream. */

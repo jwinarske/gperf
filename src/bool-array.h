@@ -39,10 +39,10 @@ public:
   Bool_Array (unsigned int s);
 
   /* Frees this object.  */
-  ~Bool_Array (void);
+  ~Bool_Array ();
 
   /* Resets all bits to zero.  */
-  void clear (void);
+  void clear ();
 
   /* Sets the specified bit to one.  Returns its previous value (0 or 1).  */
   int set_bit (unsigned int index);

@@ -59,10 +59,10 @@ private:
 #endif
   static int  already_determined (KeywordExt *ptr);
   static void set_determined (KeywordExt *ptr);
-  void        set_output_types (void);
-  void        dump (void);
-  const char *get_array_type (void);
-  const char *save_include_src (void);
+  void        set_output_types ();
+  void        dump ();
+  const char *get_array_type ();
+  const char *save_include_src ();
   const char *get_special_input (char delimiter);
   KeywordExt_List *merge (KeywordExt_List *list1, KeywordExt_List *list2);
   KeywordExt_List *merge_sort (KeywordExt_List *head);
@@ -72,13 +72,13 @@ protected:
   int         total_duplicates;                      /* Total number of duplicate hash values. */
 
 public:
-              Key_List   (void);
-             ~Key_List  (void);
-  int         keyword_list_length (void);
-  int         max_key_length (void);
-  void        reorder (void);
-  void        sort (void);
-  void        read_keys (void);
+              Key_List ();
+             ~Key_List ();
+  int         keyword_list_length ();
+  int         max_key_length ();
+  void        reorder ();
+  void        sort ();
+  void        read_keys ();
 };
 
 #endif

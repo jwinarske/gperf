@@ -35,18 +35,18 @@ class Output
 {
 public:
   Output (KeywordExt_List *head, const char *array_type, const char *return_type, const char *struct_tag, int additional_code, const char *include_src, int total_keys, int total_duplicates, int max_key_len, int min_key_len, Vectors *v);
-  void        output (void);
+  void        output ();
 private:
-  void        compute_min_max (void);
-  int         num_hash_values (void);
+  void        compute_min_max ();
+  int         num_hash_values ();
   void        output_constants (struct Output_Constants&);
-  void        output_hash_function (void);
-  void        output_keylength_table (void);
-  void        output_keyword_table (void);
-  void        output_lookup_array (void);
-  void        output_lookup_tables (void);
+  void        output_hash_function ();
+  void        output_keylength_table ();
+  void        output_keyword_table ();
+  void        output_lookup_array ();
+  void        output_lookup_tables ();
   void        output_lookup_function_body (const struct Output_Compare&);
-  void        output_lookup_function (void);
+  void        output_lookup_function ();
 
   /* Linked list of keywords.  */
   KeywordExt_List *head;

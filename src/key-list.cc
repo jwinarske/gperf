@@ -37,7 +37,7 @@ int Key_List::determined[MAX_ALPHA_SIZE];
 
 /* Destructor dumps diagnostics during debugging. */
 
-Key_List::~Key_List (void)
+Key_List::~Key_List ()
 {
   if (option[DEBUG])
     {
@@ -111,7 +111,7 @@ Key_List::get_special_input (char delimiter)
    generated code output. */
 
 const char *
-Key_List::save_include_src (void)
+Key_List::save_include_src ()
 {
   int c;
 
@@ -132,7 +132,7 @@ Key_List::save_include_src (void)
    use the default array of keys. */
 
 const char *
-Key_List::get_array_type (void)
+Key_List::get_array_type ()
 {
   return get_special_input ('%');
 }
@@ -167,7 +167,7 @@ Key_List::strcspn (const char *s, const char *reject)
    based upon various user Options. */
 
 void
-Key_List::set_output_types (void)
+Key_List::set_output_types ()
 {
   if (option[TYPE])
     {
@@ -344,7 +344,7 @@ parse_line (const char *line, const char *delimiters)
    unhashable elements possessing identical key sets and lengths. */
 
 void
-Key_List::read_keys (void)
+Key_List::read_keys ()
 {
   char *ptr;
 
@@ -568,7 +568,7 @@ Key_List::already_determined (KeywordExt *ptr)
    search process.  See Cichelli's paper from Jan 1980 JACM for details.... */
 
 void
-Key_List::reorder (void)
+Key_List::reorder ()
 {
   KeywordExt_List *ptr;
   for (ptr = head; ptr; ptr = ptr->rest())
@@ -611,7 +611,7 @@ Key_List::reorder (void)
 /* Sorts the keys by hash value. */
 
 void
-Key_List::sort (void)
+Key_List::sort ()
 {
   hash_sort       = 1;
   occurrence_sort = 0;
@@ -638,7 +638,7 @@ Key_List::dump ()
 
 /* Simple-minded constructor action here... */
 
-Key_List::Key_List (void)
+Key_List::Key_List ()
 {
   total_keys       = 1;
   max_key_len      = INT_MIN;
@@ -654,7 +654,7 @@ Key_List::Key_List (void)
 /* Returns the length of entire key list. */
 
 int
-Key_List::keyword_list_length (void)
+Key_List::keyword_list_length ()
 {
   return list_len;
 }
@@ -662,7 +662,7 @@ Key_List::keyword_list_length (void)
 /* Returns length of longest key read. */
 
 int
-Key_List::max_key_length (void)
+Key_List::max_key_length ()
 {
   return max_key_len;
 }

@@ -43,9 +43,9 @@ private:
   static void sort_set (char *union_set, int len);
 
 public:
-              Gen_Perf (void);
-             ~Gen_Perf (void);
-  int         doit_all (void);
+              Gen_Perf ();
+             ~Gen_Perf ();
+  int         doit_all ();
 };
 
 #endif

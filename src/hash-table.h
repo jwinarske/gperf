@@ -36,7 +36,7 @@ private:
 
 public:
                   Hash_Table (KeywordExt **t, int s, int ignore_len);
-                 ~Hash_Table (void);
+                 ~Hash_Table ();
   KeywordExt     *insert (KeywordExt *item);
 };
 

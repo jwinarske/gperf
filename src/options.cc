@@ -218,7 +218,7 @@ Options::long_usage (FILE * strm)
 /* Output command-line Options. */
 
 void
-Options::print_options (void)
+Options::print_options ()
 {
   int i;
 
@@ -363,7 +363,7 @@ Options::key_sort (char *base, int len)
 
 /* Sets the default Options. */
 
-Options::Options (void)
+Options::Options ()
 {
   key_positions[0]    = WORD_START;
   key_positions[1]    = WORD_END;
@@ -384,7 +384,7 @@ Options::Options (void)
 
 /* Dumps option status when debug is set. */
 
-Options::~Options (void)
+Options::~Options ()
 {
   if (option_word & DEBUG)
     {

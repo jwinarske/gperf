@@ -28,7 +28,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
    The storage for the string is dynamically allocated and must be freed
    through delete[].  */
 INLINE char *
-Read_Line::read_next_line (void)
+Read_Line::read_next_line ()
 {
   int c;
 

@@ -25,7 +25,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "options.h"
 
 /* Frees this object.  */
-Bool_Array::~Bool_Array (void)
+Bool_Array::~Bool_Array ()
 {
   /* Print out debugging diagnostics. */
   if (option[DEBUG])
