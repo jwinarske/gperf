@@ -154,8 +154,7 @@ Bostic's algorithm written in C, and distributed to net.sources around
 1984.  The current program is a heavily modified, enhanced, and extended
 implementation of Keith's basic idea, created at the University of
 California, Irvine.  Bugs, patches, and suggestions should be reported
-to both @code{<bug-gnu-utils@@gnu.org>} and
-@code{<gperf-bugs@@lists.sourceforge.net>}.
+to @code{<bug-gnu-gperf@@gnu.org>}.
 
 @item
 Special thanks is extended to Michael Tiemann and Doug Lea, for

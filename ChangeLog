@@ -1,3 +1,8 @@
+2001-08-02  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
+
+	* doc/gperf.texi: Change bug report address to <bug-gnu-gperf@gnu.org>.
+	* README: Updated.
+
 2000-12-18  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
         * src/configure.in: Add check for rand() in libm. Needed for BeOS.
