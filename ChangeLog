@@ -1,5 +1,11 @@
 2002-12-12  Bruno Haible  <bruno@clisp.org>
 
+	* src/output.h (Output::output_asso_values_ref): New declaration.
+	* src/output.cc (char_to_index): Remove variable.
+	(Output::output_asso_values_ref): New function.
+	(Output::output_hash_function): Use it.
+	(Output::output): Update.
+
 	* src/positions.h (Positions::is_useall, Positions::set_useall,
 	Positions::iterator, Positions::reviterator): New method declarations.
 	(Positions::_useall): New field.

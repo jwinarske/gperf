@@ -63,9 +63,6 @@ smallest_integral_type (int min, int max)
   return "int";
 }
 
-/* A cast from `char' to a valid array index.  */
-static const char *char_to_index;
-
 /* ------------------------------------------------------------------------- */
 
 /* Constructor.
@@ -561,6 +558,26 @@ void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
 
 /* ------------------------------------------------------------------------- */
 
+/* Generates a C expression for an asso_values[] reference.  */
+
+void
+Output::output_asso_values_ref (int pos) const
+{
+  printf ("asso_values[");
+  /* Always cast to unsigned char.  This is necessary when the alpha_inc
+     is nonzero, and also avoids a gcc warning "subscript has type 'char'".  */
+  printf ("(unsigned char)");
+  if (pos == Positions::LASTCHAR)
+    printf ("str[len - 1]");
+  else
+    {
+      printf ("str[%d]", pos);
+      if (_alpha_inc[pos])
+        printf ("+%u", _alpha_inc[pos]);
+    }
+  printf ("]");
+}
+
 /* Generates C code for the hash function that returns the
    proper encoding for each keyword.
    The hash function has the signature
@@ -665,20 +682,15 @@ Output::output_hash_function () const
               && _key_positions[1] == Positions::LASTCHAR)
             /* Optimize special case of "-k 1,$".  */
             {
-              printf ("asso_values[%sstr[len - 1]] + asso_values[%sstr[0]",
-                      char_to_index, char_to_index);
-              if (_alpha_inc[0])
-                printf ("+%u", _alpha_inc[0]);
-              printf ("]");
+              output_asso_values_ref (Positions::LASTCHAR);
+              printf (" + ");
+              output_asso_values_ref (0);
             }
           else
             {
               for (; key_pos != Positions::LASTCHAR; )
                 {
-                  printf ("asso_values[%sstr[%d]", char_to_index, key_pos);
-                  if (_alpha_inc[key_pos])
-                    printf ("+%u", _alpha_inc[key_pos]);
-                  printf ("]");
+                  output_asso_values_ref (key_pos);
                   if ((key_pos = iter.next ()) != PositionIterator::EOS)
                     printf (" + ");
                   else
@@ -686,7 +698,7 @@ Output::output_hash_function () const
                 }
 
               if (key_pos == Positions::LASTCHAR)
-                printf ("asso_values[%sstr[len - 1]]", char_to_index);
+                output_asso_values_ref (Positions::LASTCHAR);
             }
 
           printf (";\n");
@@ -713,11 +725,9 @@ Output::output_hash_function () const
                   for ( ; i > key_pos; i--)
                     printf ("      case %d:\n", i);
 
-                  printf ("        hval += asso_values[%sstr[%d]",
-                          char_to_index, key_pos);
-                  if (_alpha_inc[key_pos])
-                    printf ("+%u", _alpha_inc[key_pos]);
-                  printf ("];\n");
+                  printf ("        hval += ");
+                  output_asso_values_ref (key_pos);
+                  printf (";\n");
 
                   key_pos = iter.next ();
                 }
@@ -731,7 +741,10 @@ Output::output_hash_function () const
                   "    }\n"
                   "  return hval");
           if (key_pos == Positions::LASTCHAR)
-            printf (" + asso_values[%sstr[len - 1]]", char_to_index);
+            {
+              printf (" + ");
+              output_asso_values_ref (Positions::LASTCHAR);
+            }
           printf (";\n");
         }
     }
@@ -1576,8 +1589,6 @@ Output::output ()
       _return_type = (const_always[0] ? "const char *" : "char *");
       _struct_tag = (const_always[0] ? "const char *" : "char *");
     }
-
-  char_to_index = "(unsigned char)";
 
   printf ("/* ");
   if (option[KRC])

@@ -71,6 +71,9 @@ private:
   /* Outputs the maximum and minimum hash values etc.  */
   void                  output_constants (struct Output_Constants&) const;
 
+  /* Generates a C expression for an asso_values[] reference.  */
+  void                  output_asso_values_ref (int pos) const;
+
   /* Generates C code for the hash function that returns the
      proper encoding for each keyword.  */
   void                  output_hash_function () const;
