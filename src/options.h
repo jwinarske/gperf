@@ -155,7 +155,7 @@ public:
   void                  set_total_switches (int total_switches);
 
   /* Returns the factor by which to multiply the generated table's size.  */
-  int                   get_size_multiple () const;
+  float                 get_size_multiple () const;
 
   /* Returns the generated function name.  */
   const char *          get_function_name () const;
@@ -235,7 +235,7 @@ private:
   int                   _total_switches;
 
   /* Factor by which to multiply the generated table's size.  */
-  int                   _size_multiple;
+  float                 _size_multiple;
 
   /* Names used for generated lookup function.  */
   const char *          _function_name;

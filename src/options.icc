@@ -87,7 +87,7 @@ Options::get_total_switches () const
 }
 
 /* Returns the factor by which to multiply the generated table's size.  */
-INLINE int
+INLINE float
 Options::get_size_multiple () const
 {
   return _size_multiple;

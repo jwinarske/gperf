@@ -802,16 +802,11 @@ Search::get_max_keysig_size () const
 void
 Search::prepare_asso_values ()
 {
-  int size_multiple = option.get_size_multiple ();
   int non_linked_length = keyword_list_length ();
   int asso_value_max;
 
-  if (size_multiple == 0)
-    asso_value_max = non_linked_length;
-  else if (size_multiple > 0)
-    asso_value_max = non_linked_length * size_multiple;
-  else /* if (size_multiple < 0) */
-    asso_value_max = non_linked_length / -size_multiple;
+  asso_value_max =
+    static_cast<int>(non_linked_length * option.get_size_multiple());
   /* Round up to the next power of two.  This makes it easy to ensure
      an _asso_value[c] is >= 0 and < asso_value_max.  Also, the jump value
      being odd, it guarantees that Search::try_asso_value() will iterate

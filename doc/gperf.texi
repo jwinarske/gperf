@@ -1074,16 +1074,13 @@ table.
 Affects the size of the generated hash table.  The numeric argument for
 this option indicates ``how many times larger or smaller'' the maximum
 associated value range should be, in relationship to the number of keywords.
-If the @var{size-multiple} is negative the maximum associated value is
-calculated by @emph{dividing} the number of keywords by it.  For
-example, a value of 3 means ``allow the maximum associated value to be
-about 3 times larger than the number of input keywords''.  
-
-Conversely, a value of -3 means ``allow the maximum associated value to
-be about 3 times smaller than the number of input keywords''.  Negative
-values are useful for limiting the overall size of the generated hash
-table, though this usually increases the number of duplicate hash
-values.
+It can be written as an integer, a floating-point number or a fraction.
+For example, a value of 3 means ``allow the maximum associated value to be
+about 3 times larger than the number of input keywords''.
+Conversely, a value of 1/3 means ``allow the maximum associated value to
+be about 3 times smaller than the number of input keywords''.  Values
+smaller than 1 are useful for limiting the overall size of the generated hash
+table, though the option @samp{-m} is better at this purpose.
 
 If `generate switch' option @samp{-S} (or, equivalently, @samp{%switch}) is
 @emph{not} enabled, the maximum

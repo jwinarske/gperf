@@ -117,7 +117,7 @@ Algorithm employed by gperf:
                          in relationship to the number of keys, e.g. a value
                          of 3 means "allow the maximum associated value to
                          be about 3 times larger than the number of input
-                         keys". Conversely, a value of -3 means "make the
+                         keys". Conversely, a value of 1/3 means "make the
                          maximum associated value about 3 times smaller than
                          the number of input keys". A larger table should
                          decrease the time required for an unsuccessful

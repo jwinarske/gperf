@@ -234,7 +234,7 @@ Options::long_usage (FILE * stream) const
            "                         in relationship to the number of keys, e.g. a value\n"
            "                         of 3 means \"allow the maximum associated value to\n"
            "                         be about 3 times larger than the number of input\n"
-           "                         keys\". Conversely, a value of -3 means \"make the\n"
+           "                         keys\". Conversely, a value of 1/3 means \"make the\n"
            "                         maximum associated value about 3 times smaller than\n"
            "                         the number of input keys\". A larger table should\n"
            "                         decrease the time required for an unsuccessful\n"
@@ -481,7 +481,7 @@ Options::~Options ()
                "\ninitializer suffix = %s"
                "\nasso_values iterations = %d"
                "\njump value = %d"
-               "\nhash table size multiplier = %d"
+               "\nhash table size multiplier = %g"
                "\ninitial associated value = %d"
                "\ndelimiters = %s"
                "\nnumber of switch statements = %d\n",
@@ -873,8 +873,44 @@ Options::parse_options (int argc, char *argv[])
           }
         case 's':               /* Range of associated values, determines size of final table. */
           {
-            if (abs (_size_multiple = atoi (/*getopt*/optarg)) > 50)
-              fprintf (stderr, "%d is excessive, did you really mean this?! (try `%s --help' for help)\n", _size_multiple, program_name);
+            float numerator;
+            float denominator = 1;
+            bool invalid = false;
+            char *endptr;
+
+            numerator = strtod (/*getopt*/optarg, &endptr);
+            if (endptr == /*getopt*/optarg)
+              invalid = true;
+            else if (*endptr != '\0')
+              {
+                if (*endptr == '/')
+                  {
+                    char *denomptr = endptr + 1;
+                    denominator = strtod (denomptr, &endptr);
+                    if (endptr == denomptr || *endptr != '\0')
+                      invalid = true;
+                  }
+                else
+                  invalid = true;
+              }
+            if (invalid)
+              {
+                fprintf (stderr, "Invalid value for option -s.\n");
+                short_usage (stderr);
+                exit (1);
+              }
+            _size_multiple = numerator / denominator;
+            /* Backward compatibility: -3 means 1/3.  */
+            if (_size_multiple < 0)
+              _size_multiple = 1 / (-_size_multiple);
+            /* Catch stupid users.  */
+            if (_size_multiple == 0)
+              _size_multiple = 1;
+            /* Warnings.  */
+            if (_size_multiple > 50)
+              fprintf (stderr, "Size multiple %g is excessive, did you really mean this?! (try '%s --help' for help)\n", _size_multiple, program_name);
+            else if (_size_multiple < 0.01f)
+              fprintf (stderr, "Size multiple %g is extremely small, did you really mean this?! (try '%s --help' for help)\n", _size_multiple, program_name);
             break;
           }
         case 'S':               /* Generate switch statement output, rather than lookup table. */

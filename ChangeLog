@@ -1,3 +1,20 @@
+2002-12-07  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.h (Options::get_size_multiple): Change return type to
+	float.
+	(Options::_size_multiple): Change type to float.
+	* src/options.icc (Options::get_size_multiple): Change return type to
+	float.
+	* src/options.cc (Options::long_usage): Update description of option
+	-s.
+	(Options::~Options): Update.
+	(Options::parse_options): For option -s, accept a fraction.
+	* src/search.cc (Search::prepare_asso_values): Use get_size_multiple
+	as it is.
+	* tests/test-6.exp: Update.
+	* doc/gperf.texi (Algorithmic Details): Update description of option
+	-s.
+
 2002-12-04  Bruno Haible  <bruno@clisp.org>
 
 	Improve debugging output.
