@@ -1,5 +1,8 @@
 2000-08-28  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * lib/getopt.h (struct option): Use "const" also when compiling in
+          C++ mode. Avoids warnings from Sun CC and HP-UX aCC.
+
         * doc/Makefile.in (docdir): Change from $(datadir)/doc/@PACKAGE@ to
           $(prefix)/doc/@PACKAGE@, following the newest GNU standards.
 
