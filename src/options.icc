@@ -23,138 +23,138 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 INLINE int
 Options::operator[] (Option_Type option)
 {
-  return option_word & option;
+  return _option_word & option;
 }
 
 /* Enables option OPT. */
 INLINE void
 Options::operator = (enum Option_Type opt)
 {
-  option_word |= opt;
+  _option_word |= opt;
 }
 
 /* Disables option OPT. */
 INLINE void
 Options::operator != (enum Option_Type opt)
 {
-  option_word &= ~opt;
+  _option_word &= ~opt;
 }
 
 /* Initializes the key Iterator. */
 INLINE void
 Options::reset ()
 {
-  key_pos = 0;
+  _key_pos = 0;
 }
 
 /* Returns current key_position and advance index. */
 INLINE int
 Options::get ()
 {
-  return key_positions[key_pos++];
+  return _key_positions[_key_pos++];
 }
 
 /* Sets the size of the table size. */
 INLINE void
 Options::set_asso_max (int r)
 {
-  size = r;
+  _size = r;
 }
 
 /* Returns the size of the table size. */
 INLINE int
 Options::get_asso_max ()
 {
-  return size;
+  return _size;
 }
 
 /* Returns total distinct key positions. */
 INLINE int
 Options::get_max_keysig_size ()
 {
-  return total_keysig_size;
+  return _total_keysig_size;
 }
 
 /* Sets total distinct key positions. */
 INLINE void
 Options::set_keysig_size (int size)
 {
-  total_keysig_size = size;
+  _total_keysig_size = size;
 }
 
 /* Returns the jump value. */
 INLINE int
 Options::get_jump ()
 {
-  return jump;
+  return _jump;
 }
 
 /* Returns the generated function name. */
 INLINE const char *
 Options::get_function_name ()
 {
-  return function_name;
+  return _function_name;
 }
 
 /* Returns the keyword key name. */
 INLINE const char *
 Options::get_key_name ()
 {
-  return key_name;
+  return _key_name;
 }
 
 /* Returns the struct initializer suffix. */
 INLINE const char *
 Options::get_initializer_suffix ()
 {
-  return initializer_suffix;
+  return _initializer_suffix;
 }
 
 /* Returns the hash function name. */
 INLINE const char *
 Options::get_hash_name ()
 {
-  return hash_name;
+  return _hash_name;
 }
 
 /* Returns the hash table array name. */
 INLINE const char *
 Options::get_wordlist_name ()
 {
-  return wordlist_name;
+  return _wordlist_name;
 }
 
 /* Returns the generated class name. */
 INLINE const char *
 Options::get_class_name ()
 {
-  return class_name;
+  return _class_name;
 }
 
 /* Returns the initial associated character value. */
 INLINE int
 Options::initial_value ()
 {
-  return initial_asso_value;
+  return _initial_asso_value;
 }
 
 /* Returns the iterations value. */
 INLINE int
 Options::get_iterations ()
 {
-  return iterations;
+  return _iterations;
 }
 
 /* Returns the string used to delimit keywords from other attributes. */
 INLINE const char *
 Options::get_delimiter ()
 {
-  return delimiters;
+  return _delimiters;
 }
 
 /* Gets the total number of switch statements to generate. */
 INLINE int
 Options::get_total_switches ()
 {
-  return total_switches;
+  return _total_switches;
 }

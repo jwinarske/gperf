@@ -3,7 +3,7 @@
 /* Static class data members that are shared between several classes via
    inheritance.
 
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -29,9 +29,9 @@ static const int MAX_ALPHA_SIZE = 256;
 
 struct Vectors
 {
-  static int   ALPHA_SIZE;                  /* Size of alphabet. */
-  static int   occurrences[MAX_ALPHA_SIZE]; /* Counts occurrences of each key set character. */
-  static int   asso_values[MAX_ALPHA_SIZE]; /* Value associated with each character. */
+  static int   ALPHA_SIZE;                   /* Size of alphabet. */
+  static int   _occurrences[MAX_ALPHA_SIZE]; /* Counts occurrences of each key set character. */
+  static int   _asso_values[MAX_ALPHA_SIZE]; /* Value associated with each character. */
 };
 
 #endif

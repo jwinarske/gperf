@@ -1,5 +1,8 @@
 2002-10-13  Bruno Haible  <bruno@clisp.org>
 
+	* src/*.h: Prefix all field names with _.
+	* src/*.cc, src/*.icc: Update.
+
 	* src/*: Simplify declarations of functions without arguments.
 
 2002-10-04  Bruno Haible  <bruno@clisp.org>

@@ -57,24 +57,24 @@ static const char *const DEFAULT_WORDLIST_NAME = "wordlist";
 /* Default delimiters that separate keywords from their attributes. */
 static const char *const DEFAULT_DELIMITERS = ",\n";
 
-int Options::option_word;
-int Options::total_switches;
-int Options::total_keysig_size;
-int Options::size;
-int Options::key_pos;
-int Options::jump;
-int Options::initial_asso_value;
-int Options::argument_count;
-int Options::iterations;
-char **Options::argument_vector;
-const char *Options::function_name;
-const char *Options::key_name;
-const char *Options::initializer_suffix;
-const char *Options::class_name;
-const char *Options::hash_name;
-const char *Options::wordlist_name;
-const char *Options::delimiters;
-char Options::key_positions[MAX_KEY_POS];
+int Options::_option_word;
+int Options::_total_switches;
+int Options::_total_keysig_size;
+int Options::_size;
+int Options::_key_pos;
+int Options::_jump;
+int Options::_initial_asso_value;
+int Options::_argument_count;
+int Options::_iterations;
+char **Options::_argument_vector;
+const char *Options::_function_name;
+const char *Options::_key_name;
+const char *Options::_initializer_suffix;
+const char *Options::_class_name;
+const char *Options::_hash_name;
+const char *Options::_wordlist_name;
+const char *Options::_delimiters;
+char Options::_key_positions[MAX_KEY_POS];
 
 /* Prints program usage to given stream. */
 
@@ -224,9 +224,9 @@ Options::print_options ()
 
   printf ("/* Command-line: ");
 
-  for (i = 0; i < argument_count; i++)
+  for (i = 0; i < _argument_count; i++)
     {
-      const char *arg = argument_vector[i];
+      const char *arg = _argument_vector[i];
 
       /* Escape arg if it contains shell metacharacters. */
       if (*arg == '-')
@@ -365,28 +365,30 @@ Options::key_sort (char *base, int len)
 
 Options::Options ()
 {
-  key_positions[0]    = WORD_START;
-  key_positions[1]    = WORD_END;
-  key_positions[2]    = EOS;
-  total_keysig_size  = 2;
-  delimiters          = DEFAULT_DELIMITERS;
-  jump                = DEFAULT_JUMP_VALUE;
-  option_word         = DEFAULTCHARS | C;
-  function_name       = DEFAULT_NAME;
-  key_name            = DEFAULT_KEY;
-  initializer_suffix  = DEFAULT_INITIALIZER_SUFFIX;
-  hash_name           = DEFAULT_HASH_NAME;
-  wordlist_name       = DEFAULT_WORDLIST_NAME;
-  class_name          = DEFAULT_CLASS_NAME;
-  total_switches      = size = 1;
-  initial_asso_value  = iterations = 0;
+  _key_positions[0]   = WORD_START;
+  _key_positions[1]   = WORD_END;
+  _key_positions[2]   = EOS;
+  _total_keysig_size  = 2;
+  _delimiters         = DEFAULT_DELIMITERS;
+  _jump               = DEFAULT_JUMP_VALUE;
+  _option_word        = DEFAULTCHARS | C;
+  _function_name      = DEFAULT_NAME;
+  _key_name           = DEFAULT_KEY;
+  _initializer_suffix = DEFAULT_INITIALIZER_SUFFIX;
+  _hash_name          = DEFAULT_HASH_NAME;
+  _wordlist_name      = DEFAULT_WORDLIST_NAME;
+  _class_name         = DEFAULT_CLASS_NAME;
+  _size               = 1;
+  _total_switches     = 1;
+  _iterations         = 0;
+  _initial_asso_value = 0;
 }
 
 /* Dumps option status when debug is set. */
 
 Options::~Options ()
 {
-  if (option_word & DEBUG)
+  if (_option_word & DEBUG)
     {
       char *ptr;
 
@@ -423,38 +425,38 @@ Options::~Options ()
                "\ninitial associated value = %d"
                "\ndelimiters = %s"
                "\nnumber of switch statements = %d\n",
-               option_word & DEBUG ? "enabled" : "disabled",
-               option_word & ORDER ? "enabled" : "disabled",
-               option_word & TYPE ? "enabled" : "disabled",
-               option_word & RANDOM ? "enabled" : "disabled",
-               option_word & DEFAULTCHARS ? "enabled" : "disabled",
-               option_word & SWITCH ? "enabled" : "disabled",
-               option_word & NOLENGTH ? "enabled" : "disabled",
-               option_word & LENTABLE ? "enabled" : "disabled",
-               option_word & DUP ? "enabled" : "disabled",
-               option_word & FAST ? "enabled" : "disabled",
-               option_word & COMP ? "enabled" : "disabled",
-               option_word & NOTYPE ? "enabled" : "disabled",
-               option_word & GLOBAL ? "enabled" : "disabled",
-               option_word & CONST ? "enabled" : "disabled",
-               option_word & KRC ? "enabled" : "disabled",
-               option_word & C ? "enabled" : "disabled",
-               option_word & ANSIC ? "enabled" : "disabled",
-               option_word & CPLUSPLUS ? "enabled" : "disabled",
-               option_word & ENUM ? "enabled" : "disabled",
-               option_word & INCLUDE ? "enabled" : "disabled",
-               option_word & SEVENBIT ? "enabled" : "disabled",
-               iterations,
-               function_name, hash_name, wordlist_name, key_name,
-               initializer_suffix, jump, size - 1, initial_asso_value,
-               delimiters, total_switches);
-      if (option_word & ALLCHARS)
+               _option_word & DEBUG ? "enabled" : "disabled",
+               _option_word & ORDER ? "enabled" : "disabled",
+               _option_word & TYPE ? "enabled" : "disabled",
+               _option_word & RANDOM ? "enabled" : "disabled",
+               _option_word & DEFAULTCHARS ? "enabled" : "disabled",
+               _option_word & SWITCH ? "enabled" : "disabled",
+               _option_word & NOLENGTH ? "enabled" : "disabled",
+               _option_word & LENTABLE ? "enabled" : "disabled",
+               _option_word & DUP ? "enabled" : "disabled",
+               _option_word & FAST ? "enabled" : "disabled",
+               _option_word & COMP ? "enabled" : "disabled",
+               _option_word & NOTYPE ? "enabled" : "disabled",
+               _option_word & GLOBAL ? "enabled" : "disabled",
+               _option_word & CONST ? "enabled" : "disabled",
+               _option_word & KRC ? "enabled" : "disabled",
+               _option_word & C ? "enabled" : "disabled",
+               _option_word & ANSIC ? "enabled" : "disabled",
+               _option_word & CPLUSPLUS ? "enabled" : "disabled",
+               _option_word & ENUM ? "enabled" : "disabled",
+               _option_word & INCLUDE ? "enabled" : "disabled",
+               _option_word & SEVENBIT ? "enabled" : "disabled",
+               _iterations,
+               _function_name, _hash_name, _wordlist_name, _key_name,
+               _initializer_suffix, _jump, _size - 1, _initial_asso_value,
+               _delimiters, _total_switches);
+      if (_option_word & ALLCHARS)
         fprintf (stderr, "all characters are used in the hash function\n");
 
       fprintf (stderr, "maximum keysig size = %d\nkey positions are: \n",
-               total_keysig_size);
+               _total_keysig_size);
 
-      for (ptr = key_positions; *ptr != EOS; ptr++)
+      for (ptr = _key_positions; *ptr != EOS; ptr++)
         if (*ptr == WORD_END)
           fprintf (stderr, "$\n");
         else
@@ -508,11 +510,11 @@ Options::operator() (int argc, char *argv[])
   int    option_char;
 
   program_name = argv[0];
-  argument_count  = argc;
-  argument_vector = argv;
+  _argument_count  = argc;
+  _argument_vector = argv;
 
   while ((option_char =
-            getopt_long (argument_count, argument_vector,
+            getopt_long (_argument_count, _argument_vector,
                          "adcCDe:Ef:F:gGhH:i:Ij:k:K:lL:nN:oprs:S:tTvW:Z:7",
                          long_options, NULL))
          != -1)
@@ -523,56 +525,56 @@ Options::operator() (int argc, char *argv[])
           break;                /* This is now the default. */
         case 'c':               /* Generate strncmp rather than strcmp. */
           {
-            option_word |= COMP;
+            _option_word |= COMP;
             break;
           }
         case 'C':               /* Make the generated tables readonly (const). */
           {
-            option_word |= CONST;
+            _option_word |= CONST;
             break;
           }
         case 'd':               /* Enable debugging option. */
           {
-            option_word |= DEBUG;
+            _option_word |= DEBUG;
             fprintf (stderr, "Starting program %s, version %s, with debugging on.\n",
                              program_name, version_string);
             break;
           }
         case 'D':               /* Enable duplicate option. */
           {
-            option_word |= DUP;
+            _option_word |= DUP;
             break;
           }
         case 'e': /* Allows user to provide keyword/attribute separator */
           {
-            option.delimiters = /*getopt*/optarg;
+            _delimiters = /*getopt*/optarg;
             break;
           }
         case 'E':
           {
-            option_word |= ENUM;
+            _option_word |= ENUM;
             break;
           }
         case 'f':               /* Generate the hash table ``fast.'' */
           {
-            option_word |= FAST;
-            if ((iterations = atoi (/*getopt*/optarg)) < 0)
+            _option_word |= FAST;
+            if ((_iterations = atoi (/*getopt*/optarg)) < 0)
               {
                 fprintf (stderr, "iterations value must not be negative, assuming 0\n");
-                iterations = 0;
+                _iterations = 0;
               }
             break;
           }
         case 'F':
           {
-            initializer_suffix = /*getopt*/optarg;
+            _initializer_suffix = /*getopt*/optarg;
             break;
           }
         case 'g':               /* Use the ``inline'' keyword for generated sub-routines, ifdef __GNUC__. */
           break;                /* This is now the default. */
         case 'G':               /* Make the keyword table a global variable. */
           {
-            option_word |= GLOBAL;
+            _option_word |= GLOBAL;
             break;
           }
         case 'h':               /* Displays a list of helpful Options to the user. */
@@ -582,32 +584,32 @@ Options::operator() (int argc, char *argv[])
           }
         case 'H':               /* Sets the name for the hash function */
           {
-            hash_name = /*getopt*/optarg;
+            _hash_name = /*getopt*/optarg;
             break;
           }
         case 'i':               /* Sets the initial value for the associated values array. */
           {
-            if ((initial_asso_value = atoi (/*getopt*/optarg)) < 0)
-              fprintf (stderr, "Initial value %d should be non-zero, ignoring and continuing.\n", initial_asso_value);
+            if ((_initial_asso_value = atoi (/*getopt*/optarg)) < 0)
+              fprintf (stderr, "Initial value %d should be non-zero, ignoring and continuing.\n", _initial_asso_value);
             if (option[RANDOM])
               fprintf (stderr, "warning, -r option superceeds -i, ignoring -i option and continuing\n");
             break;
           }
         case 'I':               /* Enable #include statements. */
           {
-            option_word |= INCLUDE;
+            _option_word |= INCLUDE;
             break;
           }
         case 'j':               /* Sets the jump value, must be odd for later algorithms. */
           {
-            if ((jump = atoi (/*getopt*/optarg)) < 0)
+            if ((_jump = atoi (/*getopt*/optarg)) < 0)
               {
-                fprintf (stderr, "Jump value %d must be a positive number.\n", jump);
+                fprintf (stderr, "Jump value %d must be a positive number.\n", _jump);
                 short_usage (stderr);
                 exit (1);
               }
-            else if (jump && ((jump % 2) == 0))
-              fprintf (stderr, "Jump value %d should be odd, adding 1 and continuing...\n", jump++);
+            else if (_jump && ((_jump % 2) == 0))
+              fprintf (stderr, "Jump value %d should be odd, adding 1 and continuing...\n", _jump++);
             break;
           }
         case 'k':               /* Sets key positions used for hash function. */
@@ -617,12 +619,12 @@ Options::operator() (int argc, char *argv[])
             PositionStringParser sparser (/*getopt*/optarg, 1, MAX_KEY_POS - 1, WORD_END, BAD_VALUE, EOS);
 
             if (/*getopt*/optarg [0] == '*') /* Use all the characters for hashing!!!! */
-              option_word = (option_word & ~DEFAULTCHARS) | ALLCHARS;
+              _option_word = (_option_word & ~DEFAULTCHARS) | ALLCHARS;
             else
               {
                 char *key_pos;
 
-                for (key_pos = key_positions; (value = sparser.nextPosition()) != EOS; key_pos++)
+                for (key_pos = _key_positions; (value = sparser.nextPosition()) != EOS; key_pos++)
                   if (value == BAD_VALUE)
                     {
                       fprintf (stderr, "Illegal key value or range, use 1,2,3-%d,'$' or '*'.\n",
@@ -635,87 +637,87 @@ Options::operator() (int argc, char *argv[])
 
                 *key_pos = EOS;
 
-                if (! (total_keysig_size = (key_pos - key_positions)))
+                if (! (_total_keysig_size = (key_pos - _key_positions)))
                   {
                     fprintf (stderr, "No keys selected.\n");
                     short_usage (stderr);
                     exit (1);
                   }
-                else if (! key_sort (key_positions, total_keysig_size))
+                else if (! key_sort (_key_positions, _total_keysig_size))
                   {
                     fprintf (stderr, "Duplicate keys selected\n");
                     short_usage (stderr);
                     exit (1);
                   }
 
-                if (total_keysig_size != 2
-                    || (key_positions[0] != 1 || key_positions[1] != WORD_END))
-                  option_word &= ~DEFAULTCHARS;
+                if (_total_keysig_size != 2
+                    || (_key_positions[0] != 1 || _key_positions[1] != WORD_END))
+                  _option_word &= ~DEFAULTCHARS;
               }
             break;
           }
         case 'K':               /* Make this the keyname for the keyword component field. */
           {
-            key_name = /*getopt*/optarg;
+            _key_name = /*getopt*/optarg;
             break;
           }
         case 'l':               /* Create length table to avoid extra string compares. */
           {
-            option_word |= LENTABLE;
+            _option_word |= LENTABLE;
             break;
           }
         case 'L':               /* Deal with different generated languages. */
           {
-            option_word &= ~(KRC | C | ANSIC | CPLUSPLUS);
+            _option_word &= ~(KRC | C | ANSIC | CPLUSPLUS);
             if (!strcmp (/*getopt*/optarg, "KR-C"))
-              option_word |= KRC;
+              _option_word |= KRC;
             else if (!strcmp (/*getopt*/optarg, "C"))
-              option_word |= C;
+              _option_word |= C;
             else if (!strcmp (/*getopt*/optarg, "ANSI-C"))
-              option_word |= ANSIC;
+              _option_word |= ANSIC;
             else if (!strcmp (/*getopt*/optarg, "C++"))
-              option_word |= CPLUSPLUS;
+              _option_word |= CPLUSPLUS;
             else
               {
                 fprintf (stderr, "unsupported language option %s, defaulting to C\n", /*getopt*/optarg);
-                option_word |= C;
+                _option_word |= C;
               }
             break;
           }
         case 'n':               /* Don't include the length when computing hash function. */
           {
-            option_word |= NOLENGTH;
+            _option_word |= NOLENGTH;
             break;
           }
         case 'N':               /* Make generated lookup function name be optarg */
           {
-            function_name = /*getopt*/optarg;
+            _function_name = /*getopt*/optarg;
             break;
           }
         case 'o':               /* Order input by frequency of key set occurrence. */
           {
-            option_word |= ORDER;
+            _option_word |= ORDER;
             break;
           }
         case 'p':               /* Generated lookup function a pointer instead of int. */
           break;                /* This is now the default. */
         case 'r':               /* Utilize randomness to initialize the associated values table. */
           {
-            option_word |= RANDOM;
-            if (option.initial_asso_value != 0)
+            _option_word |= RANDOM;
+            if (_initial_asso_value != 0)
               fprintf (stderr, "warning, -r option superceeds -i, disabling -i option and continuing\n");
             break;
           }
         case 's':               /* Range of associated values, determines size of final table. */
           {
-            if (abs (size = atoi (/*getopt*/optarg)) > 50)
-              fprintf (stderr, "%d is excessive, did you really mean this?! (try `%s --help' for help)\n", size, program_name);
+            if (abs (_size = atoi (/*getopt*/optarg)) > 50)
+              fprintf (stderr, "%d is excessive, did you really mean this?! (try `%s --help' for help)\n", _size, program_name);
             break;
           }
         case 'S':               /* Generate switch statement output, rather than lookup table. */
           {
-            option_word |= SWITCH;
-            if ((option.total_switches = atoi (/*getopt*/optarg)) <= 0)
+            _option_word |= SWITCH;
+            if ((_total_switches = atoi (/*getopt*/optarg)) <= 0)
               {
                 fprintf (stderr, "number of switches %s must be a positive number\n", /*getopt*/optarg);
                 short_usage (stderr);
@@ -725,12 +727,12 @@ Options::operator() (int argc, char *argv[])
           }
         case 't':               /* Enable the TYPE mode, allowing arbitrary user structures. */
           {
-            option_word |= TYPE;
+            _option_word |= TYPE;
             break;
           }
         case 'T':   /* Don't print structure definition. */
           {
-            option_word |= NOTYPE;
+            _option_word |= NOTYPE;
             break;
           }
         case 'v':               /* Print out the version and quit. */
@@ -738,17 +740,17 @@ Options::operator() (int argc, char *argv[])
           exit (0);
         case 'W':               /* Sets the name for the hash table array */
           {
-            wordlist_name = /*getopt*/optarg;
+            _wordlist_name = /*getopt*/optarg;
             break;
           }
         case 'Z':               /* Set the class name. */
           {
-            class_name = /*getopt*/optarg;
+            _class_name = /*getopt*/optarg;
             break;
           }
         case '7':               /* Assume 7-bit characters. */
           {
-            option_word |= SEVENBIT;
+            _option_word |= SEVENBIT;
             Vectors::ALPHA_SIZE = 128;
             break;
           }

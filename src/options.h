@@ -105,24 +105,24 @@ public:
   static const char  *get_delimiter ();
 
 private:
-  static int          option_word;                        /* Holds the user-specified Options. */
-  static int          total_switches;                     /* Number of switch statements to generate. */
-  static int          total_keysig_size;                  /* Total number of distinct key_positions. */
-  static int          size;                               /* Range of the hash table. */
-  static int          key_pos;                            /* Tracks current key position for Iterator. */
-  static int          jump;                               /* Jump length when trying alternative values. */
-  static int          initial_asso_value;                 /* Initial value for asso_values table. */
-  static int          argument_count;                     /* Records count of command-line arguments. */
-  static int          iterations;                         /* Amount to iterate when a collision occurs. */
-  static char       **argument_vector;                    /* Stores a pointer to command-line vector. */
-  static const char  *function_name;                      /* Names used for generated lookup function. */
-  static const char  *key_name;                           /* Name used for keyword key. */
-  static const char  *initializer_suffix;                 /* Suffix for empty struct initializers. */
-  static const char  *class_name;                         /* Name used for generated C++ class. */
-  static const char  *hash_name;                          /* Name used for generated hash function. */
-  static const char  *wordlist_name;                      /* Name used for hash table array. */
-  static const char  *delimiters;                         /* Separates keywords from other attributes. */
-  static char         key_positions[MAX_KEY_POS];         /* Contains user-specified key choices. */
+  static int          _option_word;                       /* Holds the user-specified Options. */
+  static int          _total_switches;                    /* Number of switch statements to generate. */
+  static int          _total_keysig_size;                 /* Total number of distinct key_positions. */
+  static int          _size;                              /* Range of the hash table. */
+  static int          _key_pos;                           /* Tracks current key position for Iterator. */
+  static int          _jump;                              /* Jump length when trying alternative values. */
+  static int          _initial_asso_value;                /* Initial value for asso_values table. */
+  static int          _argument_count;                    /* Records count of command-line arguments. */
+  static int          _iterations;                        /* Amount to iterate when a collision occurs. */
+  static char       **_argument_vector;                   /* Stores a pointer to command-line vector. */
+  static const char  *_function_name;                     /* Names used for generated lookup function. */
+  static const char  *_key_name;                          /* Name used for keyword key. */
+  static const char  *_initializer_suffix;                /* Suffix for empty struct initializers. */
+  static const char  *_class_name;                        /* Name used for generated C++ class. */
+  static const char  *_hash_name;                         /* Name used for generated hash function. */
+  static const char  *_wordlist_name;                     /* Name used for hash table array. */
+  static const char  *_delimiters;                        /* Separates keywords from other attributes. */
+  static char         _key_positions[MAX_KEY_POS];        /* Contains user-specified key choices. */
   static int          key_sort (char *base, int len);     /* Sorts key positions in REVERSE order. */
   static void         short_usage (FILE * strm);          /* Prints proper program usage. */
   static void         long_usage (FILE * strm);           /* Prints proper program usage. */

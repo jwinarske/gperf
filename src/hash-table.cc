@@ -35,9 +35,9 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
    memory fragmentation, since we can now use alloca! */
 
 Hash_Table::Hash_Table (KeywordExt **table_ptr, int s, int ignore_len):
-     table (table_ptr), size (s), collisions (0), ignore_length (ignore_len)
+     _table (table_ptr), _size (s), _collisions (0), _ignore_length (ignore_len)
 {
-  memset ((char *) table, 0, size * sizeof (*table));
+  memset ((char *) _table, 0, _size * sizeof (*_table));
 }
 
 Hash_Table::~Hash_Table ()
@@ -50,15 +50,15 @@ Hash_Table::~Hash_Table ()
                "\ndumping the hash table\n"
                "total available table slots = %d, total bytes = %d, total collisions = %d\n"
                "location, %*s, keyword\n",
-               size, size * (int) sizeof (*table), collisions,
+               _size, _size * (int) sizeof (*_table), _collisions,
                field_width, "keysig");
 
-      for (int i = size - 1; i >= 0; i--)
-        if (table[i])
+      for (int i = _size - 1; i >= 0; i--)
+        if (_table[i])
           fprintf (stderr, "%8d, %*.*s, %.*s\n",
                    i,
-                   field_width, table[i]->selchars_length, table[i]->selchars,
-                   table[i]->allchars_length, table[i]->allchars);
+                   field_width, _table[i]->_selchars_length, _table[i]->_selchars,
+                   _table[i]->_allchars_length, _table[i]->_allchars);
 
       fprintf (stderr, "\nend dumping hash table\n\n");
     }
@@ -71,21 +71,21 @@ Hash_Table::~Hash_Table ()
 KeywordExt *
 Hash_Table::insert (KeywordExt *item)
 {
-  unsigned hash_val  = hashpjw (item->selchars, item->selchars_length);
-  int      probe     = hash_val & (size - 1);
-  int      increment = ((hash_val ^ item->allchars_length) | 1) & (size - 1);
+  unsigned hash_val  = hashpjw (item->_selchars, item->_selchars_length);
+  int      probe     = hash_val & (_size - 1);
+  int      increment = ((hash_val ^ item->_allchars_length) | 1) & (_size - 1);
 
-  while (table[probe])
+  while (_table[probe])
     {
-      if (table[probe]->selchars_length == item->selchars_length
-          && memcmp (table[probe]->selchars, item->selchars, item->selchars_length) == 0
-          && (ignore_length || table[probe]->allchars_length == item->allchars_length))
-        return table[probe];
+      if (_table[probe]->_selchars_length == item->_selchars_length
+          && memcmp (_table[probe]->_selchars, item->_selchars, item->_selchars_length) == 0
+          && (_ignore_length || _table[probe]->_allchars_length == item->_allchars_length))
+        return _table[probe];
 
-      collisions++;
-      probe = (probe + increment) & (size - 1);
+      _collisions++;
+      probe = (probe + increment) & (_size - 1);
     }
 
-  table[probe] = item;
+  _table[probe] = item;
   return NULL;
 }

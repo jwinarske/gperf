@@ -34,10 +34,10 @@ struct Keyword
 
   /* Data members defined immediately by the input file.  */
   /* The keyword as a string, possibly containing NUL bytes.  */
-  const char *const allchars;
-  const int allchars_length;
+  const char *const _allchars;
+  const int _allchars_length;
   /* Additional stuff seen on the same line of the input file.  */
-  const char *const rest;
+  const char *const _rest;
 };
 
 /* A keyword, in the context of a given keyposition list.  */
@@ -49,21 +49,21 @@ struct KeywordExt : public Keyword
   /* Data members depending on the keyposition list.  */
   /* The selected characters that participate for the hash function,
      reordered according to the keyposition list.  */
-  const char * selchars;
-  int selchars_length;
+  const char * _selchars;
+  int _selchars_length;
   /* Chained list of keywords having the same selchars.  */
-  KeywordExt * duplicate_link;
+  KeywordExt * _duplicate_link;
 
   /* Methods depending on the keyposition list.  */
   /* Initialize selchars and selchars_length, and update v->occurrences.  */
   void init_selchars (Vectors *v);
 
   /* Data members used by the algorithm.  */
-  int occurrence; /* A metric for frequency of key set occurrences. */
-  int hash_value; /* Hash value for the key. */
+  int _occurrence; /* A metric for frequency of key set occurrences. */
+  int _hash_value; /* Hash value for the key. */
 
   /* Data members used by the output routines.  */
-  int final_index;
+  int _final_index;
 };
 
 /* A factory for creating Keyword instances.  */

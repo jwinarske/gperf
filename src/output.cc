@@ -70,11 +70,11 @@ Output::Output (KeywordExt_List *head_, const char *array_type_,
                 int additional_code_, const char *include_src_,
                 int total_keys_, int total_duplicates_, int max_key_len_,
                 int min_key_len_, Vectors *v_)
-  : head (head_), array_type (array_type_), return_type (return_type_),
-    struct_tag (struct_tag_), additional_code (additional_code_),
-    include_src (include_src_), total_keys (total_keys_),
-    total_duplicates (total_duplicates_), max_key_len (max_key_len_),
-    min_key_len (min_key_len_), v (v_)
+  : _head (head_), _array_type (array_type_), _return_type (return_type_),
+    _struct_tag (struct_tag_), _additional_code (additional_code_),
+    _include_src (include_src_), _total_keys (total_keys_),
+    _total_duplicates (total_duplicates_), _max_key_len (max_key_len_),
+    _min_key_len (min_key_len_), _v (v_)
 {
 }
 
@@ -88,11 +88,11 @@ void
 Output::compute_min_max ()
 {
   KeywordExt_List *temp;
-  for (temp = head; temp->rest(); temp = temp->rest())
+  for (temp = _head; temp->rest(); temp = temp->rest())
     ;
 
-  min_hash_value = head->first()->hash_value;
-  max_hash_value = temp->first()->hash_value;
+  _min_hash_value = _head->first()->_hash_value;
+  _max_hash_value = temp->first()->_hash_value;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -106,11 +106,11 @@ Output::num_hash_values ()
   KeywordExt_List *temp;
   int value;
 
-  for (temp = head, value = temp->first()->hash_value; (temp = temp->rest()) != NULL; )
+  for (temp = _head, value = temp->first()->_hash_value; (temp = temp->rest()) != NULL; )
     {
-      if (value != temp->first()->hash_value)
+      if (value != temp->first()->_hash_value)
         {
-          value = temp->first()->hash_value;
+          value = temp->first()->_hash_value;
           count++;
         }
     }
@@ -198,11 +198,11 @@ void
 Output::output_constants (struct Output_Constants& style)
 {
   style.output_start ();
-  style.output_item ("TOTAL_KEYWORDS", total_keys);
-  style.output_item ("MIN_WORD_LENGTH", min_key_len);
-  style.output_item ("MAX_WORD_LENGTH", max_key_len);
-  style.output_item ("MIN_HASH_VALUE", min_hash_value);
-  style.output_item ("MAX_HASH_VALUE", max_hash_value);
+  style.output_item ("TOTAL_KEYWORDS", _total_keys);
+  style.output_item ("MIN_WORD_LENGTH", _min_key_len);
+  style.output_item ("MAX_WORD_LENGTH", _max_key_len);
+  style.output_item ("MIN_HASH_VALUE", _min_hash_value);
+  style.output_item ("MAX_HASH_VALUE", _max_hash_value);
   style.output_end ();
 }
 
@@ -407,7 +407,7 @@ Output::output_hash_function ()
 
   /* Calculate maximum number of digits required for MAX_HASH_VALUE. */
   field_width = 2;
-  for (int trunc = max_hash_value; (trunc /= 10) > 0;)
+  for (int trunc = _max_hash_value; (trunc /= 10) > 0;)
     field_width++;
 
   /* Output the function's head. */
@@ -450,16 +450,16 @@ Output::output_hash_function ()
   printf ("  static %s%s asso_values[] =\n"
           "    {",
           const_readonly_array,
-          smallest_integral_type (max_hash_value + 1));
+          smallest_integral_type (_max_hash_value + 1));
 
-  for (int count = 0; count < v->ALPHA_SIZE; count++)
+  for (int count = 0; count < _v->ALPHA_SIZE; count++)
     {
       if (count > 0)
         printf (",");
       if (!(count % max_column))
         printf ("\n     ");
       printf ("%*d", field_width,
-              v->occurrences[count] ? v->asso_values[count] : max_hash_value + 1);
+              _v->_occurrences[count] ? _v->_asso_values[count] : _max_hash_value + 1);
     }
 
   printf ("\n"
@@ -479,7 +479,7 @@ Output::output_hash_function ()
       /* Get first (also highest) key position. */
       key_pos = option.get ();
 
-      if (!option[ALLCHARS] && (key_pos == WORD_END || key_pos <= min_key_len))
+      if (!option[ALLCHARS] && (key_pos == WORD_END || key_pos <= _min_key_len))
         {
           /* We can perform additional optimizations here:
              Write it out as a single expression. Note that the values
@@ -516,7 +516,7 @@ Output::output_hash_function ()
           /* User wants *all* characters considered in hash. */
           if (option[ALLCHARS])
             {
-              for (int i = max_key_len; i > 0; i--)
+              for (int i = _max_key_len; i > 0; i--)
                 printf ("      case %d:\n"
                         "        hval += asso_values[%sstr[%d]];\n",
                         i, char_to_index, i - 1);
@@ -527,7 +527,7 @@ Output::output_hash_function ()
             }
           else                  /* do the hard part... */
             {
-              while (key_pos != WORD_END && key_pos > max_key_len)
+              while (key_pos != WORD_END && key_pos > _max_key_len)
                 if ((key_pos = option.get ()) == EOS)
                   break;
 
@@ -546,7 +546,7 @@ Output::output_hash_function ()
                     }
                   while (key_pos != EOS && key_pos != WORD_END);
 
-                  for ( ; i >= min_key_len; i--)
+                  for ( ; i >= _min_key_len; i--)
                     printf ("      case %d:\n", i);
                 }
 
@@ -578,23 +578,23 @@ Output::output_keylength_table ()
 
   printf ("%sstatic %s%s lengthtable[] =\n%s  {",
           indent, const_readonly_array,
-          smallest_integral_type (max_key_len),
+          smallest_integral_type (_max_key_len),
           indent);
 
   /* Generate an array of lengths, similar to output_keyword_table. */
 
   column = 0;
-  for (temp = head, index = 0; temp; temp = temp->rest())
+  for (temp = _head, index = 0; temp; temp = temp->rest())
     {
       if (option[SWITCH] && !option[TYPE]
-          && !(temp->first()->duplicate_link
-               || (temp->rest() && temp->first()->hash_value == temp->rest()->first()->hash_value)))
+          && !(temp->first()->_duplicate_link
+               || (temp->rest() && temp->first()->_hash_value == temp->rest()->first()->_hash_value)))
         continue;
 
-      if (index < temp->first()->hash_value && !option[SWITCH] && !option[DUP])
+      if (index < temp->first()->_hash_value && !option[SWITCH] && !option[DUP])
         {
           /* Some blank entries. */
-          for ( ; index < temp->first()->hash_value; index++)
+          for ( ; index < temp->first()->_hash_value; index++)
             {
               if (index > 0)
                 printf (",");
@@ -608,17 +608,17 @@ Output::output_keylength_table ()
         printf (",");
       if ((column++ % columns) == 0)
         printf("\n%s   ", indent);
-      printf ("%3d", temp->first()->allchars_length);
+      printf ("%3d", temp->first()->_allchars_length);
 
       /* Deal with links specially. */
-      if (temp->first()->duplicate_link) // implies option[DUP]
-        for (KeywordExt *links = temp->first()->duplicate_link; links; links = links->duplicate_link)
+      if (temp->first()->_duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = temp->first()->_duplicate_link; links; links = links->_duplicate_link)
           {
             ++index;
             printf (",");
             if ((column++ % columns) == 0)
               printf("\n%s   ", indent);
-            printf ("%3d", links->allchars_length);
+            printf ("%3d", links->_allchars_length);
           }
 
       index++;
@@ -637,16 +637,16 @@ output_keyword_entry (KeywordExt *temp, const char *indent)
   printf ("%s    ", indent);
   if (option[TYPE])
     printf ("{");
-  output_string (temp->allchars, temp->allchars_length);
+  output_string (temp->_allchars, temp->_allchars_length);
   if (option[TYPE])
     {
-      if (strlen (temp->rest) > 0)
-        printf (",%s", temp->rest);
+      if (strlen (temp->_rest) > 0)
+        printf (",%s", temp->_rest);
       printf ("}");
     }
   if (option[DEBUG])
     printf (" /* hash value = %d, index = %d */",
-            temp->hash_value, temp->final_index);
+            temp->_hash_value, temp->_final_index);
 }
 
 static void
@@ -696,7 +696,7 @@ Output::output_keyword_table ()
 
   printf ("%sstatic ",
           indent);
-  output_const_type (const_readonly_array, struct_tag);
+  output_const_type (const_readonly_array, _struct_tag);
   printf ("%s[] =\n"
           "%s  {\n",
           option.get_wordlist_name (),
@@ -704,33 +704,33 @@ Output::output_keyword_table ()
 
   /* Generate an array of reserved words at appropriate locations. */
 
-  for (temp = head, index = 0; temp; temp = temp->rest())
+  for (temp = _head, index = 0; temp; temp = temp->rest())
     {
       if (option[SWITCH] && !option[TYPE]
-          && !(temp->first()->duplicate_link
-               || (temp->rest() && temp->first()->hash_value == temp->rest()->first()->hash_value)))
+          && !(temp->first()->_duplicate_link
+               || (temp->rest() && temp->first()->_hash_value == temp->rest()->first()->_hash_value)))
         continue;
 
       if (index > 0)
         printf (",\n");
 
-      if (index < temp->first()->hash_value && !option[SWITCH] && !option[DUP])
+      if (index < temp->first()->_hash_value && !option[SWITCH] && !option[DUP])
         {
           /* Some blank entries. */
-          output_keyword_blank_entries (temp->first()->hash_value - index, indent);
+          output_keyword_blank_entries (temp->first()->_hash_value - index, indent);
           printf (",\n");
-          index = temp->first()->hash_value;
+          index = temp->first()->_hash_value;
         }
 
-      temp->first()->final_index = index;
+      temp->first()->_final_index = index;
 
       output_keyword_entry (temp->first(), indent);
 
       /* Deal with links specially. */
-      if (temp->first()->duplicate_link) // implies option[DUP]
-        for (KeywordExt *links = temp->first()->duplicate_link; links; links = links->duplicate_link)
+      if (temp->first()->_duplicate_link) // implies option[DUP]
+        for (KeywordExt *links = temp->first()->_duplicate_link; links; links = links->_duplicate_link)
           {
-            links->final_index = ++index;
+            links->_final_index = ++index;
             printf (",\n");
             output_keyword_entry (links, indent);
           }
@@ -764,44 +764,44 @@ Output::output_lookup_array ()
           int count;       /* Number of consecutive duplicates at this index. */
         };
 
-      duplicate_entry *duplicates = new duplicate_entry[total_duplicates];
-      int *lookup_array = new int[max_hash_value + 1 + 2*total_duplicates];
-      int lookup_array_size = max_hash_value + 1;
+      duplicate_entry *duplicates = new duplicate_entry[_total_duplicates];
+      int *lookup_array = new int[_max_hash_value + 1 + 2*_total_duplicates];
+      int lookup_array_size = _max_hash_value + 1;
       duplicate_entry *dup_ptr = &duplicates[0];
-      int *lookup_ptr = &lookup_array[max_hash_value + 1 + 2*total_duplicates];
+      int *lookup_ptr = &lookup_array[_max_hash_value + 1 + 2*_total_duplicates];
 
       while (lookup_ptr > lookup_array)
         *--lookup_ptr = DEFAULT_VALUE;
 
       /* Now dup_ptr = &duplicates[0] and lookup_ptr = &lookup_array[0]. */
 
-      for (KeywordExt_List *temp = head; temp; temp = temp->rest())
+      for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
         {
-          int hash_value = temp->first()->hash_value;
-          lookup_array[hash_value] = temp->first()->final_index;
+          int hash_value = temp->first()->_hash_value;
+          lookup_array[hash_value] = temp->first()->_final_index;
           if (option[DEBUG])
             fprintf (stderr, "keyword = %.*s, index = %d\n",
-                     temp->first()->allchars_length, temp->first()->allchars, temp->first()->final_index);
-          if (temp->first()->duplicate_link
-              || (temp->rest() && hash_value == temp->rest()->first()->hash_value))
+                     temp->first()->_allchars_length, temp->first()->_allchars, temp->first()->_final_index);
+          if (temp->first()->_duplicate_link
+              || (temp->rest() && hash_value == temp->rest()->first()->_hash_value))
             {
               /* Start a duplicate entry. */
               dup_ptr->hash_value = hash_value;
-              dup_ptr->index = temp->first()->final_index;
+              dup_ptr->index = temp->first()->_final_index;
               dup_ptr->count = 1;
 
               for (;;)
                 {
-                  for (KeywordExt *ptr = temp->first()->duplicate_link; ptr; ptr = ptr->duplicate_link)
+                  for (KeywordExt *ptr = temp->first()->_duplicate_link; ptr; ptr = ptr->_duplicate_link)
                     {
                       dup_ptr->count++;
                       if (option[DEBUG])
                         fprintf (stderr,
                                  "static linked keyword = %.*s, index = %d\n",
-                                 ptr->allchars_length, ptr->allchars, ptr->final_index);
+                                 ptr->_allchars_length, ptr->_allchars, ptr->_final_index);
                     }
 
-                  if (!(temp->rest() && hash_value == temp->rest()->first()->hash_value))
+                  if (!(temp->rest() && hash_value == temp->rest()->first()->_hash_value))
                     break;
 
                   temp = temp->rest();
@@ -809,7 +809,7 @@ Output::output_lookup_array ()
                   dup_ptr->count++;
                   if (option[DEBUG])
                     fprintf (stderr, "dynamic linked keyword = %.*s, index = %d\n",
-                             temp->first()->allchars_length, temp->first()->allchars, temp->first()->final_index);
+                             temp->first()->_allchars_length, temp->first()->_allchars, temp->first()->_final_index);
                 }
               assert (dup_ptr->count >= 2);
               dup_ptr++;
@@ -842,11 +842,11 @@ Output::output_lookup_array ()
           i = lookup_array_size;
           lookup_array_size += 2;
         found_i:
-          /* Put in an indirection from dup_ptr->hash_value to i.
-             At i and i+1 store dup_ptr->final_index and dup_ptr->count. */
+          /* Put in an indirection from dup_ptr->_hash_value to i.
+             At i and i+1 store dup_ptr->_final_index and dup_ptr->count. */
           assert (lookup_array[dup_ptr->hash_value] == dup_ptr->index);
-          lookup_array[dup_ptr->hash_value] = - 1 - total_keys - i;
-          lookup_array[i] = - total_keys + dup_ptr->index;
+          lookup_array[dup_ptr->hash_value] = - 1 - _total_keys - i;
+          lookup_array[i] = - _total_keys + dup_ptr->index;
           lookup_array[i + 1] = - dup_ptr->count;
           /* All these three values are <= -2, distinct from DEFAULT_VALUE. */
         }
@@ -917,9 +917,9 @@ Output::output_lookup_tables ()
   if (option[SWITCH])
     {
       /* Use the switch in place of lookup table. */
-      if (option[LENTABLE] && (option[DUP] && total_duplicates > 0))
+      if (option[LENTABLE] && (option[DUP] && _total_duplicates > 0))
         output_keylength_table ();
-      if (option[TYPE] || (option[DUP] && total_duplicates > 0))
+      if (option[TYPE] || (option[DUP] && _total_duplicates > 0))
         output_keyword_table ();
     }
   else
@@ -941,24 +941,24 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
 {
   if (option[DEBUG])
     printf ("%*s/* hash value = %4d, keyword = \"%.*s\" */\n",
-            indent, "", list->first()->hash_value, list->first()->allchars_length, list->first()->allchars);
+            indent, "", list->first()->_hash_value, list->first()->_allchars_length, list->first()->_allchars);
 
   if (option[DUP]
-      && (list->first()->duplicate_link
-          || (list->rest() && list->first()->hash_value == list->rest()->first()->hash_value)))
+      && (list->first()->_duplicate_link
+          || (list->rest() && list->first()->_hash_value == list->rest()->first()->_hash_value)))
     {
       if (option[LENTABLE])
         printf ("%*slengthptr = &lengthtable[%d];\n",
-                indent, "", list->first()->final_index);
+                indent, "", list->first()->_final_index);
       printf ("%*swordptr = &%s[%d];\n",
-              indent, "", option.get_wordlist_name (), list->first()->final_index);
+              indent, "", option.get_wordlist_name (), list->first()->_final_index);
 
       int count = 0;
       for (KeywordExt_List *temp = list; ; temp = temp->rest())
         {
-          for (KeywordExt *links = temp->first(); links; links = links->duplicate_link)
+          for (KeywordExt *links = temp->first(); links; links = links->_duplicate_link)
             count++;
-          if (!(temp->rest() && temp->first()->hash_value == temp->rest()->first()->hash_value))
+          if (!(temp->rest() && temp->first()->_hash_value == temp->rest()->first()->_hash_value))
             break;
         }
 
@@ -974,16 +974,16 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
         {
           printf ("%*sif (len == %d)\n"
                   "%*s  {\n",
-                  indent, "", list->first()->allchars_length,
+                  indent, "", list->first()->_allchars_length,
                   indent, "");
           indent += 4;
         }
       printf ("%*sresword = ",
               indent, "");
       if (option[TYPE])
-        printf ("&%s[%d]", option.get_wordlist_name (), list->first()->final_index);
+        printf ("&%s[%d]", option.get_wordlist_name (), list->first()->_final_index);
       else
-        output_string (list->first()->allchars, list->first()->allchars_length);
+        output_string (list->first()->_allchars, list->first()->_allchars_length);
       printf (";\n");
       printf ("%*sgoto compare;\n",
               indent, "");
@@ -997,7 +997,7 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
         *jumps_away = 1;
     }
 
-  while (list->rest() && list->first()->hash_value == list->rest()->first()->hash_value)
+  while (list->rest() && list->first()->_hash_value == list->rest()->first()->_hash_value)
     list = list->rest();
   list = list->rest();
   return list;
@@ -1023,24 +1023,24 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
       KeywordExt_List *temp = list;
       for (int count = size1; count > 0; count--)
         {
-          while (temp->first()->hash_value == temp->rest()->first()->hash_value)
+          while (temp->first()->_hash_value == temp->rest()->first()->_hash_value)
             temp = temp->rest();
           temp = temp->rest();
         }
 
       printf ("%*sif (key < %d)\n"
               "%*s  {\n",
-              indent, "", temp->first()->hash_value,
+              indent, "", temp->first()->_hash_value,
               indent, "");
 
-      output_switches (list, part1, size1, min_hash_value, temp->first()->hash_value-1, indent+4);
+      output_switches (list, part1, size1, min_hash_value, temp->first()->_hash_value-1, indent+4);
 
       printf ("%*s  }\n"
               "%*selse\n"
               "%*s  {\n",
               indent, "", indent, "", indent, "");
 
-      output_switches (temp, part2, size2, temp->first()->hash_value, max_hash_value, indent+4);
+      output_switches (temp, part2, size2, temp->first()->_hash_value, max_hash_value, indent+4);
 
       printf ("%*s  }\n",
               indent, "");
@@ -1048,7 +1048,7 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
   else
     {
       /* Output a single switch. */
-      int lowest_case_value = list->first()->hash_value;
+      int lowest_case_value = list->first()->_hash_value;
       if (size == 1)
         {
           int jumps_away = 0;
@@ -1079,7 +1079,7 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
             {
               int jumps_away = 0;
               printf ("%*s    case %d:\n",
-                      indent, "", list->first()->hash_value - lowest_case_value);
+                      indent, "", list->first()->_hash_value - lowest_case_value);
               list = output_switch_case (list, indent+6, &jumps_away);
               if (!jumps_away)
                 printf ("%*s      break;\n",
@@ -1114,25 +1114,25 @@ Output::output_lookup_function_body (const Output_Compare& comparison)
         {
           if (option[LENTABLE])
             printf ("          register %s%s *lengthptr;\n",
-                    const_always, smallest_integral_type (max_key_len));
+                    const_always, smallest_integral_type (_max_key_len));
           printf ("          register ");
-          output_const_type (const_readonly_array, struct_tag);
+          output_const_type (const_readonly_array, _struct_tag);
           printf ("*wordptr;\n");
           printf ("          register ");
-          output_const_type (const_readonly_array, struct_tag);
+          output_const_type (const_readonly_array, _struct_tag);
           printf ("*wordendptr;\n");
         }
       if (option[TYPE])
         {
           printf ("          register ");
-          output_const_type (const_readonly_array, struct_tag);
+          output_const_type (const_readonly_array, _struct_tag);
           printf ("*resword;\n\n");
         }
       else
         printf ("          register %sresword;\n\n",
-                struct_tag);
+                _struct_tag);
 
-      output_switches (head, num_switches, switch_size, min_hash_value, max_hash_value, 10);
+      output_switches (_head, num_switches, switch_size, _min_hash_value, _max_hash_value, 10);
 
       if (option[DUP])
         {
@@ -1241,7 +1241,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison)
               indent -= 4;
               printf ("%*s    }\n", indent, "");
             }
-          if (total_duplicates > 0)
+          if (_total_duplicates > 0)
             {
               printf ("%*s  else if (index < -TOTAL_KEYWORDS)\n"
                       "%*s    {\n"
@@ -1249,15 +1249,15 @@ Output::output_lookup_function_body (const Output_Compare& comparison)
                       indent, "", indent, "", indent, "");
               if (option[LENTABLE])
                 printf ("%*s      register %s%s *lengthptr = &lengthtable[TOTAL_KEYWORDS + lookup[offset]];\n",
-                        indent, "", const_always, smallest_integral_type (max_key_len));
+                        indent, "", const_always, smallest_integral_type (_max_key_len));
               printf ("%*s      register ",
                       indent, "");
-              output_const_type (const_readonly_array, struct_tag);
+              output_const_type (const_readonly_array, _struct_tag);
               printf ("*wordptr = &%s[TOTAL_KEYWORDS + lookup[offset]];\n",
                       option.get_wordlist_name ());
               printf ("%*s      register ",
                       indent, "");
-              output_const_type (const_readonly_array, struct_tag);
+              output_const_type (const_readonly_array, _struct_tag);
               printf ("*wordendptr = wordptr + -lookup[offset + 1];\n\n");
               printf ("%*s      while (wordptr < wordendptr)\n"
                       "%*s        {\n",
@@ -1350,7 +1350,7 @@ Output::output_lookup_function ()
             "#endif\n");
 
   printf ("%s%s\n",
-          const_for_struct, return_type);
+          const_for_struct, _return_type);
   if (option[CPLUSPLUS])
     printf ("%s::", option.get_class_name ());
   printf ("%s ", option.get_function_name ());
@@ -1416,8 +1416,8 @@ Output::output ()
 
   if (!option[TYPE])
     {
-      return_type = (const_always[0] ? "const char *" : "char *");
-      struct_tag = (const_always[0] ? "const char *" : "char *");
+      _return_type = (const_always[0] ? "const char *" : "char *");
+      _struct_tag = (const_always[0] ? "const char *" : "char *");
     }
 
   char_to_index = (option[SEVENBIT] ? "" : "(unsigned char)");
@@ -1434,10 +1434,10 @@ Output::output ()
   printf (" code produced by gperf version %s */\n", version_string);
   Options::print_options ();
 
-  printf ("%s\n", include_src);
+  printf ("%s\n", _include_src);
 
   if (option[TYPE] && !option[NOTYPE]) /* Output type declaration now, reference it later on.... */
-    printf ("%s;\n", array_type);
+    printf ("%s;\n", _array_type);
 
   if (option[INCLUDE])
     printf ("#include <string.h>\n"); /* Declare strlen(), strcmp(), strncmp(). */
@@ -1454,7 +1454,7 @@ Output::output ()
     }
 
   printf ("/* maximum key range = %d, duplicates = %d */\n\n",
-          max_hash_value - min_hash_value + 1, total_duplicates);
+          _max_hash_value - _min_hash_value + 1, _total_duplicates);
 
   if (option[CPLUSPLUS])
     printf ("class %s\n"
@@ -1466,7 +1466,7 @@ Output::output ()
             "};\n"
             "\n",
             option.get_class_name (), option.get_hash_name (),
-            const_for_struct, return_type, option.get_function_name ());
+            const_for_struct, _return_type, option.get_function_name ());
 
   output_hash_function ();
 
@@ -1475,7 +1475,7 @@ Output::output ()
 
   output_lookup_function ();
 
-  if (additional_code)
+  if (_additional_code)
     for (int c; (c = getchar ()) != EOF; putchar (c))
       ;
 

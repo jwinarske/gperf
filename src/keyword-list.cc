@@ -24,6 +24,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 /* Constructor.  */
 KeywordExt_List::KeywordExt_List (const char *s, int s_len, const char *r)
-  : KeywordExt (s, s_len, r), cdr (NULL)
+  : KeywordExt (s, s_len, r), _cdr (NULL)
 {
 }

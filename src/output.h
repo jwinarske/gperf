@@ -49,31 +49,31 @@ private:
   void        output_lookup_function ();
 
   /* Linked list of keywords.  */
-  KeywordExt_List *head;
+  KeywordExt_List *_head;
 
   /* Pointer to the type for word list. */
-  const char *array_type;
+  const char *_array_type;
   /* Pointer to return type for lookup function. */
-  const char *return_type;
+  const char *_return_type;
   /* Shorthand for user-defined struct tag type. */
-  const char *struct_tag;
+  const char *_struct_tag;
   /* True if any additional C code is included. */
-  int         additional_code;
+  int         _additional_code;
   /* C source code to be included verbatim. */
-  const char *include_src;
+  const char *_include_src;
   /* Total number of keys, counting duplicates. */
-  int         total_keys;
+  int         _total_keys;
   /* Total number of duplicate hash values. */
-  int         total_duplicates;
+  int         _total_duplicates;
   /* Maximum length of the longest keyword. */
-  int         max_key_len;
+  int         _max_key_len;
   /* Minimum length of the shortest keyword. */
-  int         min_key_len;
+  int         _min_key_len;
   /* Minimum hash value for all keywords. */
-  int         min_hash_value;
+  int         _min_hash_value;
   /* Maximum hash value for all keywords. */
-  int         max_hash_value;
-  Vectors * v;
+  int         _max_hash_value;
+  Vectors * _v;
 };
 
 #endif

@@ -32,9 +32,9 @@ Read_Line::read_next_line ()
 {
   int c;
 
-  while ((c = getc (fp)) == '#')
+  while ((c = getc (_fp)) == '#')
     {
-      while (c = getc (fp), c != EOF && c != '\n')
+      while (c = getc (_fp), c != EOF && c != '\n')
         ;
 
       if (c == EOF)
@@ -48,7 +48,7 @@ Read_Line::read_next_line ()
 
   char *line = NULL;
   size_t linesize = 0;
-  int length = get_line (&line, &linesize, fp);
+  int length = get_line (&line, &linesize, _fp);
   if (length < 0)
     {
       delete[] line;

@@ -27,25 +27,25 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 /* Initializes the bit array with room for s bits, numbered from 0 to s-1. */
 INLINE
 Bool_Array::Bool_Array (unsigned int s)
-  : size (s), iteration_number (1), storage_array (new unsigned int [s])
+  : _size (s), _iteration_number (1), _storage_array (new unsigned int [s])
 {
-  memset (storage_array, 0, s * sizeof (unsigned int));
+  memset (_storage_array, 0, s * sizeof (unsigned int));
   if (option[DEBUG])
     fprintf (stderr, "\nbool array size = %d, total bytes = %d\n",
-             size, (unsigned int) (size * sizeof (*storage_array)));
+             _size, (unsigned int) (_size * sizeof (*_storage_array)));
 }
 
 /* Sets the specified bit to one.  Returns its previous value (0 or 1).  */
 INLINE int
 Bool_Array::set_bit (unsigned int index)
 {
-  if (storage_array[index] == iteration_number)
+  if (_storage_array[index] == _iteration_number)
     /* The bit was set since the last clear() call.  */
     return 1;
   else
     {
       /* The last operation on this bit was clear().  Set it now.  */
-      storage_array[index] = iteration_number;
+      _storage_array[index] = _iteration_number;
       return 0;
     }
 }
@@ -58,10 +58,10 @@ Bool_Array::clear ()
      occurs once about every 2^32 iterations, so it will not happen more
      frequently than once per second.  */
 
-  if (++iteration_number == 0)
+  if (++_iteration_number == 0)
     {
-      iteration_number = 1;
-      memset (storage_array, 0, size * sizeof (unsigned int));
+      _iteration_number = 1;
+      memset (_storage_array, 0, _size * sizeof (unsigned int));
       if (option[DEBUG])
         {
           fprintf (stderr, "(re-initialized bool_array)\n");

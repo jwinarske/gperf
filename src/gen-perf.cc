@@ -45,8 +45,8 @@ Gen_Perf::Gen_Perf ()
     reorder ();
   asso_value_max    = option.get_asso_max ();
   non_linked_length = Key_List::keyword_list_length ();
-  num_done          = 1;
-  fewest_collisions = 0;
+  _num_done          = 1;
+  _fewest_collisions = 0;
   if (asso_value_max == 0)
     asso_value_max = non_linked_length;
   else if (asso_value_max > 0)
@@ -60,7 +60,7 @@ Gen_Perf::Gen_Perf ()
       srand ((long) time (0));
 
       for (int i = 0; i < ALPHA_SIZE; i++)
-        asso_values[i] = (rand () & asso_value_max - 1);
+        _asso_values[i] = (rand () & asso_value_max - 1);
     }
   else
     {
@@ -68,16 +68,16 @@ Gen_Perf::Gen_Perf ()
 
       if (asso_value)           /* Initialize array if user requests non-zero default. */
         for (int i = ALPHA_SIZE - 1; i >= 0; i--)
-          asso_values[i] = asso_value & option.get_asso_max () - 1;
+          _asso_values[i] = asso_value & option.get_asso_max () - 1;
     }
-  max_hash_value = Key_List::max_key_length () + option.get_asso_max () *
+  _max_hash_value = Key_List::max_key_length () + option.get_asso_max () *
     option.get_max_keysig_size ();
-  collision_detector = new Bool_Array (max_hash_value + 1);
+  _collision_detector = new Bool_Array (_max_hash_value + 1);
 
   if (option[DEBUG])
     fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
              "\nmaximum size of generated hash table is %d\n",
-             non_linked_length, asso_value_max, max_hash_value);
+             non_linked_length, asso_value_max, _max_hash_value);
 }
 
 /* Merge two disjoint hash key multisets to form the ordered disjoint union of the sets.
@@ -138,7 +138,7 @@ Gen_Perf::sort_set (char *union_set, int len)
       char tmp;
 
       for (curr = i + 1, tmp = union_set[curr];
-           curr > 0 && occurrences[(unsigned char)tmp] < occurrences[(unsigned char)(union_set[curr-1])];
+           curr > 0 && _occurrences[(unsigned char)tmp] < _occurrences[(unsigned char)(union_set[curr-1])];
            curr--)
         union_set[curr] = union_set[curr - 1];
 
@@ -151,14 +151,14 @@ Gen_Perf::sort_set (char *union_set, int len)
 inline int
 Gen_Perf::hash (KeywordExt *key_node)
 {
-  int sum = option[NOLENGTH] ? 0 : key_node->allchars_length;
+  int sum = option[NOLENGTH] ? 0 : key_node->_allchars_length;
 
-  const char *p = key_node->selchars;
-  int i = key_node->selchars_length;
+  const char *p = key_node->_selchars;
+  int i = key_node->_selchars_length;
   for (; i > 0; p++, i--)
-      sum += asso_values[(unsigned char)(*p)];
+      sum += _asso_values[(unsigned char)(*p)];
 
-  return key_node->hash_value = sum;
+  return key_node->_hash_value = sum;
 }
 
 /* Find out how character value change affects successfully hashed items.
@@ -170,7 +170,7 @@ Gen_Perf::hash (KeywordExt *key_node)
 inline int
 Gen_Perf::affects_prev (char c, KeywordExt *curr)
 {
-  int original_char = asso_values[(unsigned char)c];
+  int original_char = _asso_values[(unsigned char)c];
   int total_iterations = !option[FAST]
     ? option.get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
 
@@ -180,25 +180,25 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
     {
       int collisions = 0;
 
-      asso_values[(unsigned char)c] =
-        (asso_values[(unsigned char)c] + (option.get_jump () ? option.get_jump () : rand ()))
+      _asso_values[(unsigned char)c] =
+        (_asso_values[(unsigned char)c] + (option.get_jump () ? option.get_jump () : rand ()))
         & (option.get_asso_max () - 1);
 
       /* Iteration Number array is a win, O(1) intialization time! */
-      collision_detector->clear ();
+      _collision_detector->clear ();
 
       /* See how this asso_value change affects previous keywords.  If
          it does better than before we'll take it! */
 
-      for (KeywordExt_List *ptr = head; ; ptr = ptr->rest())
+      for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
         {
           KeywordExt *keyword = ptr->first();
-          if (collision_detector->set_bit (hash (keyword))
-              && ++collisions >= fewest_collisions)
+          if (_collision_detector->set_bit (hash (keyword))
+              && ++collisions >= _fewest_collisions)
             break;
           if (keyword == curr)
             {
-              fewest_collisions = collisions;
+              _fewest_collisions = collisions;
               if (option[DEBUG])
                 fprintf (stderr, "- resolved after %d iterations", total_iterations - i);
               return 0;
@@ -207,7 +207,7 @@ Gen_Perf::affects_prev (char c, KeywordExt *curr)
     }
 
   /* Restore original values, no more tries. */
-  asso_values[(unsigned char)c] = original_char;
+  _asso_values[(unsigned char)c] = original_char;
   /* If we're this far it's time to try the next character.... */
   return 1;
 }
@@ -226,17 +226,17 @@ Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
   if (option[DEBUG])
     {
       fprintf (stderr, "collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
-               num_done,
-               prior->allchars_length, prior->allchars,
-               curr->allchars_length, curr->allchars,
-               curr->hash_value);
+               _num_done,
+               prior->_allchars_length, prior->_allchars,
+               curr->_allchars_length, curr->_allchars,
+               curr->_hash_value);
       fflush (stderr);
     }
-  union_set_length = compute_disjoint_union (prior->selchars, prior->selchars_length, curr->selchars, curr->selchars_length, union_set);
+  union_set_length = compute_disjoint_union (prior->_selchars, prior->_selchars_length, curr->_selchars, curr->_selchars_length, union_set);
   sort_set (union_set, union_set_length);
 
   /* Try changing some values, if change doesn't alter other values continue normal action. */
-  fewest_collisions++;
+  _fewest_collisions++;
 
   const char *p = union_set;
   int i = union_set_length;
@@ -246,13 +246,13 @@ Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
         if (option[DEBUG])
           {
             fprintf (stderr, " by changing asso_value['%c'] (char #%d) to %d\n",
-                     *p, p - union_set + 1, asso_values[(unsigned char)(*p)]);
+                     *p, p - union_set + 1, _asso_values[(unsigned char)(*p)]);
             fflush (stderr);
           }
         return; /* Good, doesn't affect previous hash values, we'll take it. */
       }
 
-  for (KeywordExt_List *ptr = head; ; ptr = ptr->rest())
+  for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
     {
       KeywordExt* keyword = ptr->first();
       if (keyword == curr)
@@ -266,7 +266,7 @@ Gen_Perf::change (KeywordExt *prior, KeywordExt *curr)
     {
       fprintf (stderr, "** collision not resolved after %d iterations, %d duplicates remain, continuing...\n",
                !option[FAST] ? option.get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length (),
-               fewest_collisions + total_duplicates);
+               _fewest_collisions + _total_duplicates);
       fflush (stderr);
     }
 }
@@ -286,36 +286,36 @@ int
 Gen_Perf::doit_all ()
 {
   KeywordExt_List *curr;
-  for (curr = head; curr != NULL; curr = curr->rest())
+  for (curr = _head; curr != NULL; curr = curr->rest())
     {
       KeywordExt *currkw = curr->first();
 
       hash (currkw);
 
-      for (KeywordExt_List *ptr = head; ptr != curr; ptr = ptr->rest())
+      for (KeywordExt_List *ptr = _head; ptr != curr; ptr = ptr->rest())
         {
           KeywordExt *ptrkw = ptr->first();
 
-          if (ptrkw->hash_value == currkw->hash_value)
+          if (ptrkw->_hash_value == currkw->_hash_value)
             {
               change (ptrkw, currkw);
               break;
             }
         }
-      num_done++;
+      _num_done++;
     }
 
   /* Make one final check, just to make sure nothing weird happened.... */
 
-  collision_detector->clear ();
+  _collision_detector->clear ();
 
-  for (curr = head; curr; curr = curr->rest())
+  for (curr = _head; curr; curr = curr->rest())
     {
       unsigned int hashcode = hash (curr->first());
-      if (collision_detector->set_bit (hashcode))
+      if (_collision_detector->set_bit (hashcode))
         {
           if (option[DUP]) /* Keep track of this number... */
-            total_duplicates++;
+            _total_duplicates++;
           else /* Yow, big problems.  we're outta here! */
             {
               fprintf (stderr,
@@ -332,9 +332,9 @@ Gen_Perf::doit_all ()
      processing turned out O.K. */
 
   sort ();
-  Output outputter (head, array_type, return_type, struct_tag, additional_code,
-                    include_src, total_keys, total_duplicates, max_key_len,
-                    min_key_len, this);
+  Output outputter (_head, _array_type, _return_type, _struct_tag, _additional_code,
+                    _include_src, _total_keys, _total_duplicates, _max_key_len,
+                    _min_key_len, this);
   outputter.output ();
   return 0;
 }
@@ -348,13 +348,13 @@ Gen_Perf::~Gen_Perf ()
       fprintf (stderr, "\ndumping occurrence and associated values tables\n");
 
       for (int i = 0; i < ALPHA_SIZE; i++)
-        if (occurrences[i])
+        if (_occurrences[i])
           fprintf (stderr, "asso_values[%c] = %6d, occurrences[%c] = %6d\n",
-                   i, asso_values[i], i, occurrences[i]);
+                   i, _asso_values[i], i, _occurrences[i]);
 
       fprintf (stderr, "end table dumping\n");
 
     }
-  delete collision_detector;
+  delete _collision_detector;
 }
 

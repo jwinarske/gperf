@@ -1,5 +1,5 @@
 /* Static class data members that are shared between several classes.
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -21,5 +21,5 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "vectors.h"
 
 int Vectors::ALPHA_SIZE = MAX_ALPHA_SIZE;
-int Vectors::occurrences[MAX_ALPHA_SIZE];
-int Vectors::asso_values[MAX_ALPHA_SIZE];
+int Vectors::_occurrences[MAX_ALPHA_SIZE];
+int Vectors::_asso_values[MAX_ALPHA_SIZE];

@@ -35,10 +35,10 @@ public:
   /* Access to first element of list.  */
   KeywordExt* first () { return this; }
   /* Access to next element of list.  */
-  KeywordExt_List *& rest () { return cdr; }
+  KeywordExt_List *& rest () { return _cdr; }
 
 private:
-  KeywordExt_List * cdr;
+  KeywordExt_List * _cdr;
 };
 
 #endif

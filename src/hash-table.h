@@ -29,10 +29,10 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 class Hash_Table
 {
 private:
-  KeywordExt    **table;      /* Vector of pointers to linked lists of keywords. */
-  int             size;       /* Size of the vector. */
-  int             collisions; /* Find out how well our double hashing is working! */
-  int             ignore_length;
+  KeywordExt    **_table;      /* Vector of pointers to linked lists of keywords. */
+  int             _size;       /* Size of the vector. */
+  int             _collisions; /* Find out how well our double hashing is working! */
+  int             _ignore_length;
 
 public:
                   Hash_Table (KeywordExt **t, int s, int ignore_len);

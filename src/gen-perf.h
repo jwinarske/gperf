@@ -31,10 +31,10 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA  02111, USA. */
 class Gen_Perf : private Key_List
 {
 private:
-  int         max_hash_value;    /* Maximum possible hash value. */
-  int         fewest_collisions; /* Records fewest # of collisions for asso value. */
-  int         num_done;          /* Number of keywords processed without a collision. */
-  Bool_Array *collision_detector;
+  int         _max_hash_value;    /* Maximum possible hash value. */
+  int         _fewest_collisions; /* Records fewest # of collisions for asso value. */
+  int         _num_done;          /* Number of keywords processed without a collision. */
+  Bool_Array *_collision_detector;
 
   void        change (KeywordExt *prior, KeywordExt *curr);
   int         affects_prev (char c, KeywordExt *curr);

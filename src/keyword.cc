@@ -29,7 +29,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 /* Constructor.  */
 Keyword::Keyword (const char *s, int s_len, const char *r)
-  : allchars (s), allchars_length (s_len), rest (r)
+  : _allchars (s), _allchars_length (s_len), _rest (r)
 {
 }
 
@@ -38,7 +38,7 @@ Keyword::Keyword (const char *s, int s_len, const char *r)
 
 /* Constructor.  */
 KeywordExt::KeywordExt (const char *s, int s_len, const char *r)
-  : Keyword (s, s_len, r), duplicate_link (NULL), final_index (0)
+  : Keyword (s, s_len, r), _duplicate_link (NULL), _final_index (0)
 {
 }
 
@@ -61,16 +61,16 @@ static inline void sort_char_set (char *base, int len)
 /* Initialize selchars and selchars_length, and update v->occurrences.  */
 void KeywordExt::init_selchars (Vectors *v)
 {
-  const char *k = allchars;
+  const char *k = _allchars;
   char *key_set =
-    new char[(option[ALLCHARS] ? allchars_length : option.get_max_keysig_size ())];
+    new char[(option[ALLCHARS] ? _allchars_length : option.get_max_keysig_size ())];
   char *ptr = key_set;
   int i;
 
   if (option[ALLCHARS])
     /* Use all the character positions in the KEY. */
-    for (i = allchars_length; i > 0; k++, ptr++, i--)
-      v->occurrences[(unsigned char)(*ptr = *k)]++;
+    for (i = _allchars_length; i > 0; k++, ptr++, i--)
+      v->_occurrences[(unsigned char)(*ptr = *k)]++;
   else
     /* Only use those character positions specified by the user. */
     {
@@ -81,23 +81,23 @@ void KeywordExt::init_selchars (Vectors *v)
         {
           if (i == WORD_END)
             /* Special notation for last KEY position, i.e. '$'. */
-            *ptr = allchars[allchars_length - 1];
-          else if (i <= allchars_length)
+            *ptr = _allchars[_allchars_length - 1];
+          else if (i <= _allchars_length)
             /* Within range of KEY length, so we'll keep it. */
-            *ptr = allchars[i - 1];
+            *ptr = _allchars[i - 1];
           else
             /* Out of range of KEY length, so we'll just skip it. */
             continue;
-          v->occurrences[(unsigned char)*ptr]++;
+          v->_occurrences[(unsigned char)*ptr]++;
           ptr++;
         }
 
       /* Didn't get any hits and user doesn't want to consider the
         keylength, so there are essentially no usable hash positions! */
-      if (ptr == selchars && option[NOLENGTH])
+      if (ptr == _selchars && option[NOLENGTH])
         {
           fprintf (stderr, "Can't hash keyword %.*s with chosen key positions.\n",
-                   allchars_length, allchars);
+                   _allchars_length, _allchars);
           exit (1);
         }
     }
@@ -105,8 +105,8 @@ void KeywordExt::init_selchars (Vectors *v)
   /* Sort the KEY_SET items alphabetically. */
   sort_char_set (key_set, ptr - key_set);
 
-  selchars = key_set;
-  selchars_length = ptr - key_set;
+  _selchars = key_set;
+  _selchars_length = ptr - key_set;
 }
 
 

@@ -33,7 +33,7 @@ static const int TABLE_MULTIPLE     = 10;
 /* Efficiently returns the least power of two greater than or equal to X! */
 #define POW(X) ((!X)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
 
-int Key_List::determined[MAX_ALPHA_SIZE];
+int Key_List::_determined[MAX_ALPHA_SIZE];
 
 /* Destructor dumps diagnostics during debugging. */
 
@@ -43,7 +43,7 @@ Key_List::~Key_List ()
     {
       fprintf (stderr, "\nDumping key list information:\ntotal non-static linked keywords = %d"
                "\ntotal keywords = %d\ntotal duplicates = %d\nmaximum key length = %d\n",
-               list_len, total_keys, total_duplicates, max_key_len);
+               _list_len, _total_keys, _total_duplicates, _max_key_len);
       dump ();
       fprintf (stderr, "End dumping list.\n\n");
     }
@@ -171,32 +171,32 @@ Key_List::set_output_types ()
 {
   if (option[TYPE])
     {
-      array_type = get_array_type ();
-      if (!array_type)
+      _array_type = get_array_type ();
+      if (!_array_type)
         /* Something's wrong, but we'll catch it later on, in read_keys()... */
         return;
       /* Yow, we've got a user-defined type... */
-      int i = strcspn (array_type, "{\n\0");
+      int i = strcspn (_array_type, "{\n\0");
       /* Remove trailing whitespace. */
-      while (i > 0 && strchr (" \t", array_type[i-1]))
+      while (i > 0 && strchr (" \t", _array_type[i-1]))
         i--;
       int struct_tag_length = i;
 
       /* Set `struct_tag' to a naked "struct something". */
       char *structtag = new char[struct_tag_length + 1];
-      strncpy (structtag, array_type, struct_tag_length);
+      strncpy (structtag, _array_type, struct_tag_length);
       structtag[struct_tag_length] = '\0';
-      struct_tag = structtag;
+      _struct_tag = structtag;
 
       /* The return type of the lookup function is "struct something *".
          No "const" here, because if !option[CONST], some user code might want
          to modify the structure. */
       char *rettype = new char[struct_tag_length + 3];
-      strncpy (rettype, array_type, struct_tag_length);
+      strncpy (rettype, _array_type, struct_tag_length);
       rettype[struct_tag_length] = ' ';
       rettype[struct_tag_length + 1] = '*';
       rettype[struct_tag_length + 2] = '\0';
-      return_type = rettype;
+      _return_type = rettype;
     }
 }
 
@@ -348,7 +348,7 @@ Key_List::read_keys ()
 {
   char *ptr;
 
-  include_src = save_include_src ();
+  _include_src = save_include_src ();
   set_output_types ();
 
   /* Oops, problem with the input file. */
@@ -365,24 +365,24 @@ Key_List::read_keys ()
       KeywordExt_List *temp;
       KeywordExt_List *trail = NULL;
 
-      head = parse_line (ptr, delimiter);
-      head->first()->init_selchars(this);
+      _head = parse_line (ptr, delimiter);
+      _head->first()->init_selchars(this);
 
-      for (temp = head;
+      for (temp = _head;
            (ptr = Read_Line::read_next_line ()) && strcmp (ptr, "%%");
            temp = temp->rest())
         {
           temp->rest() = parse_line (ptr, delimiter);
           temp->rest()->first()->init_selchars(this);
-          total_keys++;
+          _total_keys++;
         }
 
       /* See if any additional C code is included at end of this file. */
       if (ptr)
-        additional_code = 1;
+        _additional_code = 1;
 
       /* Hash table this number of times larger than keyword number. */
-      int table_size = (list_len = total_keys) * TABLE_MULTIPLE;
+      int table_size = (_list_len = _total_keys) * TABLE_MULTIPLE;
       /* Table must be a power of 2 for the hash function scheme to work. */
       KeywordExt **table = new KeywordExt*[POW (table_size)];
 
@@ -392,7 +392,7 @@ Key_List::read_keys ()
       /* Test whether there are any links and also set the maximum length of
         an identifier in the keyword list. */
 
-      for (temp = head; temp; temp = temp->rest())
+      for (temp = _head; temp; temp = temp->rest())
         {
           KeywordExt *keyword = temp->first();
           KeywordExt *other_keyword = found_link.insert (keyword);
@@ -404,53 +404,53 @@ Key_List::read_keys ()
 
           if (other_keyword)
             {
-              total_duplicates++;
-              list_len--;
+              _total_duplicates++;
+              _list_len--;
               trail->rest() = temp->rest();
-              temp->first()->duplicate_link = other_keyword->duplicate_link;
-              other_keyword->duplicate_link = temp->first();
+              temp->first()->_duplicate_link = other_keyword->_duplicate_link;
+              other_keyword->_duplicate_link = temp->first();
 
               /* Complain if user hasn't enabled the duplicate option. */
               if (!option[DUP] || option[DEBUG])
                 fprintf (stderr, "Key link: \"%.*s\" = \"%.*s\", with key set \"%.*s\".\n",
-                                 keyword->allchars_length, keyword->allchars,
-                                 other_keyword->allchars_length, other_keyword->allchars,
-                                 keyword->selchars_length, keyword->selchars);
+                                 keyword->_allchars_length, keyword->_allchars,
+                                 other_keyword->_allchars_length, other_keyword->_allchars,
+                                 keyword->_selchars_length, keyword->_selchars);
             }
           else
             trail = temp;
 
           /* Update minimum and maximum keyword length, if needed. */
-          if (max_key_len < keyword->allchars_length)
-            max_key_len = keyword->allchars_length;
-          if (min_key_len > keyword->allchars_length)
-            min_key_len = keyword->allchars_length;
+          if (_max_key_len < keyword->_allchars_length)
+            _max_key_len = keyword->_allchars_length;
+          if (_min_key_len > keyword->_allchars_length)
+            _min_key_len = keyword->_allchars_length;
         }
 
       delete[] table;
 
       /* Exit program if links exists and option[DUP] not set, since we can't continue */
-      if (total_duplicates)
+      if (_total_duplicates)
         {
           if (option[DUP])
             fprintf (stderr, "%d input keys have identical hash values, examine output carefully...\n",
-                             total_duplicates);
+                             _total_duplicates);
           else
             {
               fprintf (stderr, "%d input keys have identical hash values,\ntry different key positions or use option -D.\n",
-                               total_duplicates);
+                               _total_duplicates);
               exit (1);
             }
         }
       /* Exit program if an empty string is used as key, since the comparison
          expressions don't work correctly for looking up an empty string. */
-      if (min_key_len == 0)
+      if (_min_key_len == 0)
         {
           fprintf (stderr, "Empty input key is not allowed.\nTo recognize an empty input key, your code should check for\nlen == 0 before calling the gperf generated lookup function.\n");
           exit (1);
         }
       if (option[ALLCHARS])
-        option.set_keysig_size (max_key_len);
+        option.set_keysig_size (_max_key_len);
     }
 }
 
@@ -477,8 +477,8 @@ Key_List::merge (KeywordExt_List *list1, KeywordExt_List *list2)
           *resultp = list1;
           break;
         }
-      if (occurrence_sort && list1->first()->occurrence < list2->first()->occurrence
-          || hash_sort && list1->first()->hash_value > list2->first()->hash_value)
+      if (_occurrence_sort && list1->first()->_occurrence < list2->first()->_occurrence
+          || _hash_sort && list1->first()->_hash_value > list2->first()->_hash_value)
         {
           *resultp = list2;
           resultp = &list2->rest(); list2 = list1; list1 = *resultp;
@@ -526,10 +526,10 @@ Key_List::get_occurrence (KeywordExt *ptr)
 {
   int value = 0;
 
-  const char *p = ptr->selchars;
-  unsigned int i = ptr->selchars_length;
+  const char *p = ptr->_selchars;
+  unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
-    value += occurrences[(unsigned char)(*p)];
+    value += _occurrences[(unsigned char)(*p)];
 
   return value;
 }
@@ -540,10 +540,10 @@ Key_List::get_occurrence (KeywordExt *ptr)
 inline void
 Key_List::set_determined (KeywordExt *ptr)
 {
-  const char *p = ptr->selchars;
-  unsigned int i = ptr->selchars_length;
+  const char *p = ptr->_selchars;
+  unsigned int i = ptr->_selchars_length;
   for (; i > 0; p++, i--)
-    determined[(unsigned char)(*p)] = 1;
+    _determined[(unsigned char)(*p)] = 1;
 }
 
 /* Returns TRUE if PTR's key set is already completely determined. */
@@ -553,10 +553,10 @@ Key_List::already_determined (KeywordExt *ptr)
 {
   int is_determined = 1;
 
-  const char *p = ptr->selchars;
-  unsigned int i = ptr->selchars_length;
+  const char *p = ptr->_selchars;
+  unsigned int i = ptr->_selchars_length;
   for (; is_determined && i > 0; p++, i--)
-    is_determined = determined[(unsigned char)(*p)];
+    is_determined = _determined[(unsigned char)(*p)];
 
   return is_determined;
 }
@@ -571,19 +571,19 @@ void
 Key_List::reorder ()
 {
   KeywordExt_List *ptr;
-  for (ptr = head; ptr; ptr = ptr->rest())
+  for (ptr = _head; ptr; ptr = ptr->rest())
     {
       KeywordExt *keyword = ptr->first();
 
-      keyword->occurrence = get_occurrence (keyword);
+      keyword->_occurrence = get_occurrence (keyword);
     }
 
-  hash_sort = 0;
-  occurrence_sort = 1;
+  _hash_sort = 0;
+  _occurrence_sort = 1;
 
-  head = merge_sort (head);
+  _head = merge_sort (_head);
 
-  for (ptr = head; ptr->rest(); ptr = ptr->rest())
+  for (ptr = _head; ptr->rest(); ptr = ptr->rest())
     {
       set_determined (ptr->first());
 
@@ -613,10 +613,10 @@ Key_List::reorder ()
 void
 Key_List::sort ()
 {
-  hash_sort       = 1;
-  occurrence_sort = 0;
+  _hash_sort       = 1;
+  _occurrence_sort = 0;
 
-  head = merge_sort (head);
+  _head = merge_sort (_head);
 }
 
 /* Dumps the key list to stderr stream. */
@@ -629,26 +629,26 @@ Key_List::dump ()
   fprintf (stderr, "\nList contents are:\n(hash value, key length, index, %*s, keyword):\n",
            field_width, "selchars");
 
-  for (KeywordExt_List *ptr = head; ptr; ptr = ptr->rest())
+  for (KeywordExt_List *ptr = _head; ptr; ptr = ptr->rest())
     fprintf (stderr, "%11d,%11d,%6d, %*.*s, %.*s\n",
-             ptr->first()->hash_value, ptr->first()->allchars_length, ptr->first()->final_index,
-             field_width, ptr->first()->selchars_length, ptr->first()->selchars,
-             ptr->first()->allchars_length, ptr->first()->allchars);
+             ptr->first()->_hash_value, ptr->first()->_allchars_length, ptr->first()->_final_index,
+             field_width, ptr->first()->_selchars_length, ptr->first()->_selchars,
+             ptr->first()->_allchars_length, ptr->first()->_allchars);
 }
 
 /* Simple-minded constructor action here... */
 
 Key_List::Key_List ()
 {
-  total_keys       = 1;
-  max_key_len      = INT_MIN;
-  min_key_len      = INT_MAX;
-  array_type       = 0;
-  return_type      = 0;
-  struct_tag       = 0;
-  head             = 0;
-  total_duplicates = 0;
-  additional_code  = 0;
+  _total_keys       = 1;
+  _max_key_len      = INT_MIN;
+  _min_key_len      = INT_MAX;
+  _array_type       = 0;
+  _return_type      = 0;
+  _struct_tag       = 0;
+  _head             = 0;
+  _total_duplicates = 0;
+  _additional_code  = 0;
 }
 
 /* Returns the length of entire key list. */
@@ -656,7 +656,7 @@ Key_List::Key_List ()
 int
 Key_List::keyword_list_length ()
 {
-  return list_len;
+  return _list_len;
 }
 
 /* Returns length of longest key read. */
@@ -664,6 +664,6 @@ Key_List::keyword_list_length ()
 int
 Key_List::max_key_length ()
 {
-  return max_key_len;
+  return _max_key_len;
 }
 

@@ -31,7 +31,7 @@ Bool_Array::~Bool_Array ()
   if (option[DEBUG])
     fprintf (stderr, "\ndumping boolean array information\n"
              "size = %d\niteration number = %d\nend of array dump\n",
-             size, iteration_number);
+             _size, _iteration_number);
 }
 
 #ifndef __OPTIMIZE__

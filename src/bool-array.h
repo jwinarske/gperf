@@ -48,11 +48,11 @@ public:
   int set_bit (unsigned int index);
 
 private:
-  unsigned int size;              /* Size of array.  */
-  unsigned int iteration_number;  /* Number of times clear() was called + 1. */
+  unsigned int _size;             /* Size of array.  */
+  unsigned int _iteration_number; /* Number of times clear() was called + 1. */
   /* For each index, we store in storage_array[index] the iteration_number at
      the time set_bit(index) was last called.  */
-  unsigned int *storage_array;  
+  unsigned int *_storage_array;  
 };
 
 #ifdef __OPTIMIZE__  /* efficiency hack! */
