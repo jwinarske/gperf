@@ -1,3 +1,10 @@
+2003-02-26  Bruno Haible  <bruno@clisp.org>
+
+	* Makefile.msvc: New file.
+	* README.woe32: New file.
+	* Makefile.devel (all): Depend on src/config.h.msvc.
+	(src/config.h.msvc): New rule.
+
 2003-01-07  Bruno Haible  <bruno@clisp.org>
 
 	* src/input.h (Input::_charset_dependent): New field.
