@@ -62,8 +62,9 @@ private:
   /* Returns the number of key positions.  */
   int                   get_max_keysig_size () const;
 
-  /* Initializes the asso_values[] related parameters and put a first guess
-     into asso_values[].  */
+  /* Initializes the asso_values[] related parameters.  */
+  void                  prepare_asso_values ();
+  /* Puts a first guess into asso_values[].  */
   void                  init_asso_values ();
 
   /* Computes a keyword's hash value, relative to the current _asso_values[],

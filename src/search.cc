@@ -386,11 +386,10 @@ Search::get_max_keysig_size () const
 
 /* ---------------------- Finding good asso_values[] ----------------------- */
 
-/* Initializes the asso_values[] related parameters and put a first guess
-   into asso_values[].  */
+/* Initializes the asso_values[] related parameters.  */
 
 void
-Search::init_asso_values ()
+Search::prepare_asso_values ()
 {
   int size_multiple = option.get_size_multiple ();
   int non_linked_length = keyword_list_length ();
@@ -416,22 +415,6 @@ Search::init_asso_values ()
   asso_value_max++;
   _asso_value_max = asso_value_max;
 
-  if (option[RANDOM])
-    {
-      srand (reinterpret_cast<long>(time (0)));
-
-      for (int i = 0; i < _alpha_size; i++)
-        _asso_values[i] = rand () & (asso_value_max - 1);
-    }
-  else
-    {
-      int asso_value = option.get_initial_asso_value ();
-
-      asso_value = asso_value & (_asso_value_max - 1);
-      for (int i = 0; i < _alpha_size; i++)
-        _asso_values[i] = asso_value;
-    }
-
   /* Given the bound for _asso_values[c], we have a bound for the possible
      hash values, as computed in compute_hash().  */
   _max_hash_value = (option[NOLENGTH] ? 0 : max_key_length ())
@@ -447,6 +430,30 @@ Search::init_asso_values ()
     fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
              "\nmaximum size of generated hash table is %d\n",
              non_linked_length, asso_value_max, _max_hash_value);
+
+  if (option[RANDOM] || option.get_jump () == 0)
+    /* We will use rand(), so initialize the random number generator.  */
+    srand (reinterpret_cast<long>(time (0)));
+}
+
+/* Puts a first guess into asso_values[].  */
+
+void
+Search::init_asso_values ()
+{
+  if (option[RANDOM])
+    {
+      for (int i = 0; i < _alpha_size; i++)
+        _asso_values[i] = rand () & (_asso_value_max - 1);
+    }
+  else
+    {
+      int asso_value = option.get_initial_asso_value ();
+
+      asso_value = asso_value & (_asso_value_max - 1);
+      for (int i = 0; i < _alpha_size; i++)
+        _asso_values[i] = asso_value;
+    }
 }
 
 /* Computes a keyword's hash value, relative to the current _asso_values[],
@@ -723,6 +730,7 @@ Search::optimize ()
   prepare ();
   if (option[ORDER])
     reorder ();
+  prepare_asso_values ();
 
   /* Search for good _asso_values[].  */
   find_asso_values ();
@@ -748,7 +756,7 @@ Search::optimize ()
         }
     }
 
-  /* Sorts the key word list by hash value.  */
+  /* Sorts the keyword list by hash value.  */
   sort ();
 }
 

@@ -1,5 +1,12 @@
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
+	Bug fix: When option -j 0 was used without option -r, the output was
+	not random.
+	* src/search.h (Search::prepare_asso_values): New method declaration.
+	* src/search.cc (Search::prepare_asso_values): New method, extracted
+	from Search::init_asso_values. Call srand also when "-j 0" was given.
+	(Search::optimize): Call prepare_asso_values().
+
 	* src/hash-table.h (Hash_Table::_ignore_length, Hash_Table::equal):
 	Declare as const.
 	* src/hash-table.cc (Hash_Table::equal): Declare as const.
