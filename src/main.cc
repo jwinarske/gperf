@@ -1,5 +1,5 @@
 /* Driver program for the Gen_Perf hash function generator
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -38,13 +38,10 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <stdio.h>
 #include "options.h"
 #include "gen-perf.h"
-#include "trace.h"
 
 int
 main (int argc, char *argv[])
 {
-  T (Trace t ("main");)
-
 #if LARGE_STACK_ARRAYS && defined(HAVE_GETRLIMIT) && defined(HAVE_SETRLIMIT) && defined(RLIMIT_STACK)
   /* Get rid of any avoidable limit on stack size.  */
   {

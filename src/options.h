@@ -2,7 +2,7 @@
 
 /* Handles parsing the Options provided to the user.
 
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -149,7 +149,6 @@ extern Options option;
 
 #ifdef __OPTIMIZE__
 
-#include "trace.h"
 #define INLINE inline
 #include "options.icc"
 #undef INLINE

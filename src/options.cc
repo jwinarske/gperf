@@ -1,5 +1,5 @@
 /* Handles parsing the Options provided to the user.
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -24,7 +24,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "getopt.h"
 #include "options.h"
 #include "iterator.h"
-#include "trace.h"
 #include "vectors.h"
 #include "version.h"
 
@@ -82,7 +81,6 @@ char Options::key_positions[MAX_KEY_POS];
 void
 Options::short_usage (FILE * strm)
 {
-  T (Trace t ("Options::short_usage");)
   fprintf (strm, "Usage: %s [-cCdDef[num]F<initializers>GhH<hashname>i<init>Ijk<keys>K<keyname>lL<language>nN<function name>ors<size>S<switches>tTvW<wordlistname>Z<class name>7] [input-file]\n"
                  "Try `%s --help' for more information.\n",
                  program_name, program_name);
@@ -91,7 +89,6 @@ Options::short_usage (FILE * strm)
 void
 Options::long_usage (FILE * strm)
 {
-  T (Trace t ("Options::long_usage");)
   fprintf (strm,
            "GNU `gperf' generates perfect hash functions.\n"
            "\n"
@@ -223,7 +220,6 @@ Options::long_usage (FILE * strm)
 void
 Options::print_options (void)
 {
-  T (Trace t ("Options::print_options");)
   int i;
 
   printf ("/* Command-line: ");
@@ -285,7 +281,6 @@ Options::print_options (void)
 inline int
 Options::key_sort (char *base, int len)
 {
-  T (Trace t ("Options::key_sort");)
   int i, j;
 
   for (i = 0, j = len - 1; i < j; i++)
@@ -306,7 +301,6 @@ Options::key_sort (char *base, int len)
 
 Options::Options (void)
 {
-  T (Trace t ("Options::Options");)
   key_positions[0]    = WORD_START;
   key_positions[1]    = WORD_END;
   key_positions[2]    = EOS;
@@ -328,7 +322,6 @@ Options::Options (void)
 
 Options::~Options (void)
 {
-  T (Trace t ("Options::~Options");)
   if (option_word & DEBUG)
     {
       char *ptr;
@@ -448,7 +441,6 @@ static const struct option long_options[] =
 void
 Options::operator() (int argc, char *argv[])
 {
-  T (Trace t ("Options::operator()");)
   int    option_char;
 
   program_name = argv[0];

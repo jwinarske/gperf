@@ -1,5 +1,22 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/trace.h: Remove file.
+	* src/trace.cc: Remove file.
+	* src/Makefile.in (OBJECTS): Remove trace.o.
+	(TRACE_H): Remove variable.
+	(trace.o): Remove rule.
+	Update all dependencies.
+	* src/bool-array.h, src/bool-array.cc, src/bool-array.icc: Don't use T.
+	* src/gen-perf.cc: Likewise.
+	* src/hash-table.cc: Likewise.
+	* src/iterator.cc: Likewise.
+	* src/key-list.cc: Likewise.
+	* src/list-node.cc: Likewise.
+	* src/main.cc: Likewise.
+	* src/new.cc: Likewise.
+	* src/options.h, src/options.cc, src/options.icc: Likewise.
+	* src/read-line.h, src/read-line.cc, src/read-line.icc: Likewise.
+
 	* tests/Makefile.in: Use gperf option -I, to avoid gcc-3.x warnings.
 	* tests/test.c: Don't use gets(), to avoid warnings.
 

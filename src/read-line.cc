@@ -1,6 +1,6 @@
 /* Correctly reads an arbitrarily size string.
 
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -24,7 +24,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <stdlib.h>
 #include <string.h> /* declares memcpy() */
 #include "options.h"
-#include "trace.h"
 
 /* Recursively fills up the buffer. */
 
@@ -39,7 +38,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 char *
 Read_Line::readln_aux (int chunks)
 {
-  T (Trace t ("Read_Line::readln_aux");)
 #if LARGE_STACK
   char buf[CHUNK_SIZE];
 #else

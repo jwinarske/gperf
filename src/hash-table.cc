@@ -1,5 +1,5 @@
 /* Hash table for checking keyword links.  Implemented using double hashing.
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -24,7 +24,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <string.h> /* declares memset(), strcmp() */
 #include <hash.h>
 #include "options.h"
-#include "trace.h"
 
 /* The size of the hash table is always the smallest power of 2 >= the size
    indicated by the user.  This allows several optimizations, including
@@ -38,13 +37,11 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 Hash_Table::Hash_Table (List_Node **table_ptr, int s, int ignore_len):
      table (table_ptr), size (s), collisions (0), ignore_length (ignore_len)
 {
-  T (Trace t ("Hash_Table::Hash_Table");)
   memset ((char *) table, 0, size * sizeof (*table));
 }
 
 Hash_Table::~Hash_Table (void)
 {
-  T (Trace t ("Hash_Table::~Hash_Table");)
   if (option[DEBUG])
     {
       int field_width = option.get_max_keysig_size ();
@@ -74,7 +71,6 @@ Hash_Table::~Hash_Table (void)
 List_Node *
 Hash_Table::insert (List_Node *item)
 {
-  T (Trace t ("Hash_Table::operator()");)
   unsigned hash_val  = hashpjw (item->char_set, item->char_set_length);
   int      probe     = hash_val & (size - 1);
   int      increment = ((hash_val ^ item->key_length) | 1) & (size - 1);

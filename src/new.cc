@@ -1,6 +1,6 @@
 /* Defines a buffered memory allocation abstraction that reduces calls to
    malloc.
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -22,7 +22,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h> /* declares malloc(), exit() */
-#include "trace.h"
 
 /* Determine default alignment.  If your C++ compiler does not
    like this then try something like #define DEFAULT_ALIGNMENT 8. */
@@ -36,7 +35,6 @@ const int ALIGNMENT = ((char *)&((struct fooalign *) 0)->d - (char *)0);
 void *
 operator new (size_t size)
 {
-  T (Trace t ("operator new");)
   static char *buf_start = 0;          /* Large array used to reduce calls to NEW. */
   static char *buf_end = 0;            /* Indicates end of BUF_START. */
   static size_t buf_size = 4096;       /* Size of buffer pointed to by BUF_START. */
@@ -80,7 +78,6 @@ operator delete (void *ptr)
   throw()
 #endif
 {
-  T (Trace t ("operator delete");)
   // We cannot call free here, as it doesn't match the mallocs.
   // free ((char *) ptr);
   (void) ptr;

@@ -1,5 +1,5 @@
 /* Routines for building, ordering, and printing the keyword list.
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -28,7 +28,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "read-line.h"
 #include "hash-table.h"
 #include "key-list.h"
-#include "trace.h"
 #include "version.h"
 
 /* Make the hash table 8 times larger than the number of keyword entries. */
@@ -43,7 +42,6 @@ int Key_List::determined[MAX_ALPHA_SIZE];
 
 Key_List::~Key_List (void)
 {
-  T (Trace t ("Key_List::~Key_List");)
   if (option[DEBUG])
     {
       fprintf (stderr, "\nDumping key list information:\ntotal non-static linked keywords = %d"
@@ -71,7 +69,6 @@ Key_List::~Key_List (void)
 const char *
 Key_List::get_special_input (char delimiter)
 {
-  T (Trace t ("Key_List::get_special_input");)
   int size  = 80;
   char *buf = new char[size];
   int c, i;
@@ -119,7 +116,6 @@ Key_List::get_special_input (char delimiter)
 const char *
 Key_List::save_include_src (void)
 {
-  T (Trace t ("Key_List::save_include_src");)
   int c;
 
   if ((c = getchar ()) != '%')
@@ -141,7 +137,6 @@ Key_List::save_include_src (void)
 const char *
 Key_List::get_array_type (void)
 {
-  T (Trace t ("Key_List::get_array_type");)
   return get_special_input ('%');
 }
 
@@ -153,7 +148,6 @@ Key_List::get_array_type (void)
 inline int
 Key_List::strcspn (const char *s, const char *reject)
 {
-  T (Trace t ("Key_List::strcspn");)
   const char *scan;
   const char *rej_scan;
   int   count = 0;
@@ -178,7 +172,6 @@ Key_List::strcspn (const char *s, const char *reject)
 void
 Key_List::set_output_types (void)
 {
-  T (Trace t ("Key_List::set_output_types");)
   if (option[TYPE])
     {
       array_type = get_array_type ();
@@ -355,7 +348,6 @@ parse_line (const char *line, const char *delimiters)
 void
 Key_List::read_keys (void)
 {
-  T (Trace t ("Key_List::read_keys");)
   char *ptr;
 
   include_src = save_include_src ();
@@ -482,7 +474,6 @@ Key_List::read_keys (void)
 List_Node *
 Key_List::merge (List_Node *list1, List_Node *list2)
 {
-  T (Trace t ("Key_List::merge");)
   List_Node *result;
   List_Node **resultp = &result;
   for (;;)
@@ -518,7 +509,6 @@ Key_List::merge (List_Node *list1, List_Node *list2)
 List_Node *
 Key_List::merge_sort (List_Node *head)
 {
-  T (Trace t ("Key_List::merge_sort");)
   if (!head || !head->next)
     return head;
   else
@@ -545,7 +535,6 @@ Key_List::merge_sort (List_Node *head)
 inline int
 Key_List::get_occurrence (List_Node *ptr)
 {
-  T (Trace t ("Key_List::get_occurrence");)
   int value = 0;
 
   const char *p = ptr->char_set;
@@ -562,8 +551,6 @@ Key_List::get_occurrence (List_Node *ptr)
 inline void
 Key_List::set_determined (List_Node *ptr)
 {
-  T (Trace t ("Key_List::set_determined");)
-
   const char *p = ptr->char_set;
   unsigned int i = ptr->char_set_length;
   for (; i > 0; p++, i--)
@@ -575,7 +562,6 @@ Key_List::set_determined (List_Node *ptr)
 inline int
 Key_List::already_determined (List_Node *ptr)
 {
-  T (Trace t ("Key_List::already_determined");)
   int is_determined = 1;
 
   const char *p = ptr->char_set;
@@ -595,7 +581,6 @@ Key_List::already_determined (List_Node *ptr)
 void
 Key_List::reorder (void)
 {
-  T (Trace t ("Key_List::reorder");)
   List_Node *ptr;
   for (ptr = head; ptr; ptr = ptr->next)
     ptr->occurrence = get_occurrence (ptr);
@@ -675,7 +660,6 @@ static const char *char_to_index;
 void
 Key_List::compute_min_max (void)
 {
-  T (Trace t ("Key_List::compute_min_max");)
   List_Node *temp;
   for (temp = head; temp->next; temp = temp->next)
     ;
@@ -691,7 +675,6 @@ Key_List::compute_min_max (void)
 int
 Key_List::num_hash_values (void)
 {
-  T (Trace t ("Key_List::num_hash_values");)
   int count = 1;
   List_Node *temp;
   int value;
@@ -734,19 +717,16 @@ struct Output_Defines : public Output_Constants
 
 void Output_Defines::output_start ()
 {
-  T (Trace t ("Output_Defines::output_start");)
   printf ("\n");
 }
 
 void Output_Defines::output_item (const char *name, int value)
 {
-  T (Trace t ("Output_Defines::output_item");)
   printf ("#define %s %d\n", name, value);
 }
 
 void Output_Defines::output_end ()
 {
-  T (Trace t ("Output_Defines::output_end");)
 }
 
 /* This class outputs an enumeration using `enum'. */
@@ -765,7 +745,6 @@ private:
 
 void Output_Enum::output_start ()
 {
-  T (Trace t ("Output_Enum::output_start");)
   printf ("%senum\n"
           "%s  {\n",
           indentation, indentation);
@@ -774,7 +753,6 @@ void Output_Enum::output_start ()
 
 void Output_Enum::output_item (const char *name, int value)
 {
-  T (Trace t ("Output_Enum::output_item");)
   if (pending_comma)
     printf (",\n");
   printf ("%s    %s = %d", indentation, name, value);
@@ -783,7 +761,6 @@ void Output_Enum::output_item (const char *name, int value)
 
 void Output_Enum::output_end ()
 {
-  T (Trace t ("Output_Enum::output_end");)
   if (pending_comma)
     printf ("\n");
   printf ("%s  };\n\n", indentation);
@@ -794,8 +771,6 @@ void Output_Enum::output_end ()
 void
 Key_List::output_constants (struct Output_Constants& style)
 {
-  T (Trace t ("Key_List::output_constants");)
-
   style.output_start ();
   style.output_item ("TOTAL_KEYWORDS", total_keys);
   style.output_item ("MIN_WORD_LENGTH", min_key_len);
@@ -813,8 +788,6 @@ Key_List::output_constants (struct Output_Constants& style)
 static void
 output_string (const char *key, int len)
 {
-  T (Trace t ("output_string");)
-
   putchar ('"');
   for (; len > 0; len--)
     {
@@ -878,7 +851,6 @@ private:
 
 void Output_Expr1::output_expr () const
 {
-  T (Trace t ("Output_Expr1::output_expr");)
   printf ("%s", p1);
 }
 
@@ -900,7 +872,6 @@ private:
 
 void Output_Expr2::output_expr () const
 {
-  T (Trace t ("Output_Expr2::output_expr");)
   printf ("%s%s", p1, p2);
 }
 
@@ -931,7 +902,6 @@ struct Output_Compare_Strcmp : public Output_Compare
 void Output_Compare_Strcmp::output_comparison (const Output_Expr& expr1,
                                                const Output_Expr& expr2) const
 {
-  T (Trace t ("Output_Compare_Strcmp::output_comparison");)
   printf ("*");
   expr1.output_expr ();
   printf (" == *");
@@ -958,7 +928,6 @@ struct Output_Compare_Strncmp : public Output_Compare
 void Output_Compare_Strncmp::output_comparison (const Output_Expr& expr1,
                                                 const Output_Expr& expr2) const
 {
-  T (Trace t ("Output_Compare_Strncmp::output_comparison");)
   printf ("*");
   expr1.output_expr ();
   printf (" == *");
@@ -988,7 +957,6 @@ struct Output_Compare_Memcmp : public Output_Compare
 void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
                                                const Output_Expr& expr2) const
 {
-  T (Trace t ("Output_Compare_Memcmp::output_comparison");)
   printf ("*");
   expr1.output_expr ();
   printf (" == *");
@@ -1008,7 +976,6 @@ void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
 void
 Key_List::output_hash_function (void)
 {
-  T (Trace t ("Key_List::output_hash_function");)
   const int max_column  = 10;
   int field_width;
 
@@ -1177,7 +1144,6 @@ Key_List::output_hash_function (void)
 void
 Key_List::output_keylength_table (void)
 {
-  T (Trace t ("Key_List::output_keylength_table");)
   const int  columns = 14;
   int        index;
   int        column;
@@ -1298,7 +1264,6 @@ output_keyword_blank_entries (int count, const char *indent)
 void
 Key_List::output_keyword_table (void)
 {
-  T (Trace t ("Key_List::output_keyword_table");)
   const char *indent  = option[GLOBAL] ? "" : "  ";
   int         index;
   List_Node  *temp;
@@ -1360,7 +1325,6 @@ Key_List::output_keyword_table (void)
 void
 Key_List::output_lookup_array (void)
 {
-  T (Trace t ("Key_List::output_lookup_array");)
   if (option[DUP])
     {
       const int DEFAULT_VALUE = -1;
@@ -1536,8 +1500,6 @@ Key_List::output_lookup_array (void)
 void
 Key_List::output_lookup_tables (void)
 {
-  T (Trace t ("Key_List::output_lookup_tables");)
-
   if (option[SWITCH])
     {
       /* Use the switch in place of lookup table. */
@@ -1563,8 +1525,6 @@ Key_List::output_lookup_tables (void)
 static List_Node *
 output_switch_case (List_Node *list, int indent, int *jumps_away)
 {
-  T (Trace t ("output_switch_case");)
-
   if (option[DEBUG])
     printf ("%*s/* hash value = %4d, keyword = \"%.*s\" */\n",
             indent, "", list->hash_value, list->key_length, list->key);
@@ -1635,8 +1595,6 @@ output_switch_case (List_Node *list, int indent, int *jumps_away)
 static void
 output_switches (List_Node *list, int num_switches, int size, int min_hash_value, int max_hash_value, int indent)
 {
-  T (Trace t ("output_switches");)
-
   if (option[DEBUG])
     printf ("%*s/* know %d <= key <= %d, contains %d cases */\n",
             indent, "", min_hash_value, max_hash_value, size);
@@ -1724,8 +1682,6 @@ output_switches (List_Node *list, int num_switches, int size, int min_hash_value
 void
 Key_List::output_lookup_function_body (const Output_Compare& comparison)
 {
-  T (Trace t ("Key_List::output_lookup_function_body");)
-
   printf ("  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)\n"
           "    {\n"
           "      register int key = %s (str, len);\n\n",
@@ -1973,8 +1929,6 @@ Key_List::output_lookup_function_body (const Output_Compare& comparison)
 void
 Key_List::output_lookup_function (void)
 {
-  T (Trace t ("Key_List::output_lookup_function");)
-
   /* Output the function's head. */
   if (option[KRC] | option[C] | option[ANSIC])
     printf ("#ifdef __GNUC__\n"
@@ -2031,8 +1985,6 @@ Key_List::output_lookup_function (void)
 void
 Key_List::output (void)
 {
-  T (Trace t ("Key_List::output");)
-
   compute_min_max ();
 
   if (option[C] | option[ANSIC] | option[CPLUSPLUS])
@@ -2123,7 +2075,6 @@ Key_List::output (void)
 void
 Key_List::sort (void)
 {
-  T (Trace t ("Key_List::sort");)
   hash_sort       = 1;
   occurrence_sort = 0;
 
@@ -2135,7 +2086,6 @@ Key_List::sort (void)
 void
 Key_List::dump ()
 {
-  T (Trace t ("Key_List::dump");)
   int field_width = option.get_max_keysig_size ();
 
   fprintf (stderr, "\nList contents are:\n(hash value, key length, index, %*s, keyword):\n",
@@ -2152,7 +2102,6 @@ Key_List::dump ()
 
 Key_List::Key_List (void)
 {
-  T (Trace t ("Key_List::Key_List");)
   total_keys       = 1;
   max_key_len      = INT_MIN;
   min_key_len      = INT_MAX;
@@ -2169,7 +2118,6 @@ Key_List::Key_List (void)
 int
 Key_List::keyword_list_length (void)
 {
-  T (Trace t ("Key_List::keyword_list_length");)
   return list_len;
 }
 
@@ -2178,7 +2126,6 @@ Key_List::keyword_list_length (void)
 int
 Key_List::max_key_length (void)
 {
-  T (Trace t ("Key_List::max_key_length");)
   return max_key_len;
 }
 

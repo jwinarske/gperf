@@ -1,6 +1,6 @@
 /* Inline Functions for bool-array.{h,cc}.
 
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -23,12 +23,10 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 //#include <stdio.h>
 //#include <string.h>
 //#include "options.h"
-//#include "trace.h"
 
 INLINE
 Bool_Array::Bool_Array (void)
 {
-  T (Trace t ("Bool_Array::Bool_Array");)
   storage_array = 0;
   iteration_number = size = 0;
 }
@@ -36,7 +34,6 @@ Bool_Array::Bool_Array (void)
 INLINE void
 Bool_Array::init (STORAGE_TYPE *buffer, unsigned int s)
 {
-  T (Trace t ("Bool_Array::init");)
   size             = s;
   iteration_number = 1;
   storage_array    = buffer;
@@ -49,7 +46,6 @@ Bool_Array::init (STORAGE_TYPE *buffer, unsigned int s)
 INLINE int
 Bool_Array::find (int index)
 {
-  T (Trace t ("Bool_Array::find");)
   if (storage_array[index] == iteration_number)
     return 1;
   else
@@ -62,7 +58,6 @@ Bool_Array::find (int index)
 INLINE void
 Bool_Array::reset (void)
 {
-  T (Trace t ("Bool_Array::reset");)
   /* If we wrap around it's time to zero things out again!  However, this only
      occurs once about every 2^31 or 2^15 iterations, so it should probably
      never happen! */

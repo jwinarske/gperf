@@ -1,5 +1,5 @@
 /* Provides an Iterator for keyword characters.
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -21,13 +21,11 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include "iterator.h"
 
 #include <ctype.h>
-#include "trace.h"
 
 /* Constructor for Iterator. */
 
 Iterator::Iterator (const char *s, int lo, int hi, int word_end, int bad_val, int key_end)
 {
-  T (Trace t ("Iterator::Iterator");)
   end         = key_end;
   error_value = bad_val;
   end_word    = word_end;
@@ -42,7 +40,6 @@ Iterator::Iterator (const char *s, int lo, int hi, int word_end, int bad_val, in
 int
 Iterator::operator() (void)
 {
-  T (Trace t ("Iterator::operator()");)
 /* Variables to record the Iterator's status when handling ranges, e.g., 3-12. */
 
   static int size;

@@ -1,5 +1,5 @@
 /* Fast lookup table abstraction implemented as an Iteration Number Array
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -23,7 +23,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <stdio.h>
 #include <string.h>
 #include "options.h"
-#include "trace.h"
 
 STORAGE_TYPE * Bool_Array::storage_array;
 STORAGE_TYPE Bool_Array::iteration_number;
@@ -33,7 +32,6 @@ unsigned int Bool_Array::size;
 
 Bool_Array::~Bool_Array (void)
 {
-  T (Trace t ("Bool_Array::~Bool_Array");)
   if (option[DEBUG])
     fprintf (stderr, "\ndumping boolean array information\n"
              "size = %d\niteration number = %d\nend of array dump\n",

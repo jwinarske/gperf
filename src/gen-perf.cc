@@ -1,6 +1,6 @@
 /* Provides high-level routines to manipulate the keywork list
    structures the code generation output.
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -24,7 +24,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <time.h> /* declares time() */
 #include "options.h"
 #include "gen-perf.h"
-#include "trace.h"
 
 /* Efficiently returns the least power of two greater than or equal to X! */
 #define POW(X) ((!X)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
@@ -37,7 +36,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 
 Gen_Perf::Gen_Perf (void)
 {
-  T (Trace t ("Gen_Perf::Gen_Perf");)
   int asso_value_max;
   int non_linked_length;
 
@@ -88,7 +86,6 @@ Gen_Perf::Gen_Perf (void)
 inline int
 Gen_Perf::compute_disjoint_union  (const char *set_1, int size_1, const char *set_2, int size_2, char *set_3)
 {
-  T (Trace t ("Gen_Perf::compute_disjoint_union");)
   char *base = set_3;
 
   while (size_1 > 0 && size_2 > 0)
@@ -131,7 +128,6 @@ Gen_Perf::compute_disjoint_union  (const char *set_1, int size_1, const char *se
 inline void
 Gen_Perf::sort_set (char *union_set, int len)
 {
-  T (Trace t ("Gen_Perf::sort_set");)
   int i, j;
 
   for (i = 0, j = len - 1; i < j; i++)
@@ -153,7 +149,6 @@ Gen_Perf::sort_set (char *union_set, int len)
 inline int
 Gen_Perf::hash (List_Node *key_node)
 {
-  T (Trace t ("Gen_Perf::hash");)
   int sum = option[NOLENGTH] ? 0 : key_node->key_length;
 
   const char *p = key_node->char_set;
@@ -173,7 +168,6 @@ Gen_Perf::hash (List_Node *key_node)
 inline int
 Gen_Perf::affects_prev (char c, List_Node *curr)
 {
-  T (Trace t ("Gen_Perf::affects_prev");)
   int original_char = asso_values[(unsigned char)c];
   int total_iterations = !option[FAST]
     ? option.get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
@@ -217,7 +211,6 @@ Gen_Perf::affects_prev (char c, List_Node *curr)
 void
 Gen_Perf::change (List_Node *prior, List_Node *curr)
 {
-  T (Trace t ("Gen_Perf::change");)
   static char *union_set;
   int union_set_length;
 
@@ -281,7 +274,6 @@ Gen_Perf::change (List_Node *prior, List_Node *curr)
 int
 Gen_Perf::operator() (void)
 {
-  T (Trace t ("Gen_Perf::operator()");)
 #if LARGE_STACK_ARRAYS
   STORAGE_TYPE buffer[max_hash_value + 1];
 #else
@@ -342,7 +334,6 @@ Gen_Perf::operator() (void)
 
 Gen_Perf::~Gen_Perf (void)
 {
-  T (Trace t ("Gen_Perf::~Gen_Perf");)
   if (option[DEBUG])
     {
       fprintf (stderr, "\ndumping occurrence and associated values tables\n");

@@ -3,7 +3,7 @@
 /* Reads arbitrarily long string from input file, returning it as a
    dynamically allocated buffer.
 
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -43,7 +43,6 @@ public:
 
 #ifdef __OPTIMIZE__
 
-#include "trace.h"
 #define INLINE inline
 #include "read-line.icc"
 #undef INLINE

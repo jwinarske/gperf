@@ -2,7 +2,7 @@
 
 /* Simple lookup table abstraction implemented as an Iteration Number Array.
 
-   Copyright (C) 1989-1998 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -26,8 +26,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 #ifndef bool_array_h
 #define bool_array_h 1
-
-#include "trace.h"
 
 #ifdef LO_CAL
 /* If we are on a memory diet then we'll only make these use a limited

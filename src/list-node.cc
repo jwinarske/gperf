@@ -1,5 +1,5 @@
 /* Creates and initializes a new list node.
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 
 This file is part of GNU GPERF.
@@ -23,7 +23,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <stdio.h>
 #include <stdlib.h> /* declares exit() */
 #include "options.h"
-#include "trace.h"
 
 /* Sorts the key set alphabetically to speed up subsequent operations.
    Uses insertion sort since the set is probably quite small. */
@@ -31,7 +30,6 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 inline void
 List_Node::set_sort (char *base, int len)
 {
-  T (Trace t ("List_Node::set_sort");)
   int i, j;
 
   for (i = 0, j = len - 1; i < j; i++)
@@ -60,7 +58,6 @@ List_Node::set_sort (char *base, int len)
 List_Node::List_Node (const char *k, int len, const char *r):
      link (0), next (0), key (k), key_length (len), rest (r), index (0)
 {
-  T (Trace t ("List_Node::List_Node");)
   char *key_set = new char[(option[ALLCHARS] ? len : option.get_max_keysig_size ())];
   char *ptr = key_set;
   int i;
