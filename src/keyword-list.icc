@@ -1,4 +1,4 @@
-/* Keyword list.
+/* Inline Functions for keyword-list.{h,cc}.
 
    Copyright (C) 2002 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>.
@@ -20,28 +20,34 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Specification. */
-#include "keyword-list.h"
+/* -------------------------- Keyword_List class --------------------------- */
 
-#include <stddef.h>
-
-/* Constructor.  */
-Keyword_List::Keyword_List (Keyword *car)
-  : _cdr (NULL), _car (car)
+/* Access to first element of list.  */
+INLINE Keyword *
+Keyword_List::first ()
 {
+  return _car;
 }
 
-/* Unused constructor.  */
-KeywordExt_List::KeywordExt_List (KeywordExt *car)
-  : Keyword_List (car)
+/* Access to next element of list.  */
+INLINE Keyword_List *&
+Keyword_List::rest ()
 {
+  return _cdr;
 }
 
+/* ------------------------- KeywordExt_List class ------------------------- */
 
-#ifndef __OPTIMIZE__
+/* Access to first element of list.  */
+INLINE KeywordExt *
+KeywordExt_List::first ()
+{
+  return static_cast<KeywordExt*>(_car);
+}
 
-#define INLINE /* not inline */
-#include "keyword-list.icc"
-#undef INLINE
-
-#endif /* not defined __OPTIMIZE__ */
+/* Access to next element of list.  */
+INLINE KeywordExt_List *&
+KeywordExt_List::rest ()
+{
+  return static_cast<KeywordExt_List*>(_cdr);
+}

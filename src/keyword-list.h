@@ -35,9 +35,9 @@ public:
                         Keyword_List (Keyword *car);
 
   /* Access to first element of list.  */
-  Keyword *             first () { return _car; }
+  Keyword *             first ();
   /* Access to next element of list.  */
-  Keyword_List *&       rest () { return _cdr; }
+  Keyword_List *&       rest ();
 
 protected:
   Keyword_List *        _cdr;
@@ -52,9 +52,17 @@ public:
                         KeywordExt_List (KeywordExt *car);
 
   /* Access to first element of list.  */
-  KeywordExt *          first () { return static_cast<KeywordExt*>(_car); }
+  KeywordExt *          first ();
   /* Access to next element of list.  */
-  KeywordExt_List *&    rest () { return static_cast<KeywordExt_List*>(_cdr); }
+  KeywordExt_List *&    rest ();
 };
+
+#ifdef __OPTIMIZE__
+
+#define INLINE inline
+#include "keyword-list.icc"
+#undef INLINE
+
+#endif
 
 #endif

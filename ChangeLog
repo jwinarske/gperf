@@ -1,5 +1,11 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/keyword-list.icc: New file, extracted from keyword-list.h.
+	* src/keyword-list.h: Include keyword-list.icc. Move inline methods
+	to there.
+	* src/keyword-list.cc: Include keyword-list.icc.
+	* src/Makefile.in (KEYWORD_LIST_H): Add keyword-list.icc.
+
 	* lib/hashpjw.h (hashpjw): Change argument type to 'unsigned char *'.
 	* lib/hash.cc (hashpjw): Likewise.
 	* src/keyword.icc: New file.
