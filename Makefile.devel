@@ -11,19 +11,19 @@ CONFIGURES = configure lib/configure src/configure tests/configure doc/configure
 configures : $(CONFIGURES)
 
 configure : configure.in aclocal.m4
-	autoconf -l .
+	autoconf-2.52 -l .
 
 lib/configure : lib/configure.in aclocal.m4
-	cd lib && autoconf -l ..
+	cd lib && autoconf-2.52 -l ..
 
 src/configure : src/configure.in aclocal.m4
-	cd src && autoconf -l ..
+	cd src && autoconf-2.52 -l ..
 
 tests/configure : tests/configure.in aclocal.m4
-	cd tests && autoconf -l ..
+	cd tests && autoconf-2.52 -l ..
 
 doc/configure : doc/configure.in aclocal.m4
-	cd doc && autoconf -l ..
+	cd doc && autoconf-2.52 -l ..
 
 check-configures : $(CONFIGURES)
 	set -e; for f in $(CONFIGURES); do bash -x -n $$f; done

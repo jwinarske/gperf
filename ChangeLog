@@ -1,3 +1,10 @@
+2002-11-10  Bruno Haible  <bruno@clisp.org>
+
+	Upgrade to autoconf-2.52.
+	* configure.in: Use AC_CONFIG_SUBDIRS instead of AC_OUTPUT_SUBDIRS.
+	* Makefile.devel (configure, lib/configure, src/configure,
+	tests/configure, doc/configure): Use autoconf-2.52.
+
 2002-11-09  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.texi: Talk about "bytes" instead of "characters". Talk

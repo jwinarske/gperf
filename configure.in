@@ -23,6 +23,12 @@ dnl 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 AC_INIT(doc/gperf.1)
 AC_PROG_MAKE_SET
+
+dnl An autoconf-2.52 bug: AC_CONFIG_SUBDIRS requires AC_CONFIG_AUX_DIR_DEFAULT.
+ac_aux_dir=$srcdir
+AC_PROVIDE([AC_CONFIG_AUX_DIR_DEFAULT])
+AC_CONFIG_SUBDIRS(lib src tests doc)
+
 dnl This piece of sed script replaces every line containing '@subdir@'
 dnl by several consecutive lines, each referencing one subdir.
 extrasub="$extrasub"'
@@ -44,4 +50,3 @@ d
 }
 '
 AC_OUTPUT(Makefile)
-AC_OUTPUT_SUBDIRS(lib src tests doc)
