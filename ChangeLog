@@ -1,3 +1,20 @@
+2002-11-09  Bruno Haible  <bruno@clisp.org>
+
+	* doc/gperf.texi: Talk about "bytes" instead of "characters". Talk
+	about "keywords", not "keys". Talk about "input file", not "keyfile".
+	(@menu): Fix a menu entry.
+	(Contributors): Don't mention cperf.
+	(Motivation): Fix an off-by-one error in the definition of "minimal".
+	Mention GNU Java. Recommend http URL instead of anonymous ftp.
+	(Search Structures): Mention GNU Java.
+	(Output Format): Drop reference to node 'Implementation'.
+	(Output Details): Talk about "slot-name" instead of "key name".
+	(Algorithmic Details): Talk about "selected byte positons", not
+	"key positions". Upper limit is now 255. Explain a third reason
+	why duplicates can occur. Describe negative effects of
+	--occurrence-sort.
+	(Implementation): Remove chapter.
+
 2002-11-07  Bruno Haible  <bruno@clisp.org>
 
 	* src/bool-array.cc (Bool_Array::~Bool_Array): Free _storage_array.
