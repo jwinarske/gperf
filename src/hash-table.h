@@ -53,12 +53,12 @@ private:
   /* log2(_size).  */
   unsigned int          _log_size;
   /* A detail of the comparison function.  */
-  bool                  _ignore_length;
+  bool const            _ignore_length;
   /* Statistics: Number of collisions so far.  */
   unsigned int          _collisions;
 
   /* Compares two items.  */
-  bool                  equal (KeywordExt *item1, KeywordExt *item2);
+  bool                  equal (KeywordExt *item1, KeywordExt *item2) const;
 };
 
 #endif

@@ -24,7 +24,7 @@
 
 /* Access to first element of list.  */
 INLINE Keyword *
-Keyword_List::first ()
+Keyword_List::first () const
 {
   return _car;
 }
@@ -40,7 +40,7 @@ Keyword_List::rest ()
 
 /* Access to first element of list.  */
 INLINE KeywordExt *
-KeywordExt_List::first ()
+KeywordExt_List::first () const
 {
   return static_cast<KeywordExt*>(_car);
 }

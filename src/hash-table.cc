@@ -121,7 +121,7 @@ Hash_Table::~Hash_Table ()
 
 /* Compares two items.  */
 inline bool
-Hash_Table::equal (KeywordExt *item1, KeywordExt *item2)
+Hash_Table::equal (KeywordExt *item1, KeywordExt *item2) const
 {
   return item1->_selchars_length == item2->_selchars_length
          && memcmp (item1->_selchars, item2->_selchars, item2->_selchars_length)

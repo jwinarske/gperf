@@ -59,56 +59,56 @@ private:
   void                  compute_min_max ();
 
   /* Returns the number of different hash values.  */
-  int                   num_hash_values ();
+  int                   num_hash_values () const;
 
   /* Outputs the maximum and minimum hash values etc.  */
-  void                  output_constants (struct Output_Constants&);
+  void                  output_constants (struct Output_Constants&) const;
 
   /* Generates C code for the hash function that returns the
      proper encoding for each keyword.  */
-  void                  output_hash_function ();
+  void                  output_hash_function () const;
 
   /* Prints out a table of keyword lengths, for use with the
      comparison code in generated function 'in_word_set'.  */
-  void                  output_keylength_table ();
+  void                  output_keylength_table () const;
 
   /* Prints out the array containing the keywords for the hash function.  */
-  void                  output_keyword_table ();
+  void                  output_keyword_table () const;
 
   /* Generates the large, sparse table that maps hash values into
      the smaller, contiguous range of the keyword table.  */
-  void                  output_lookup_array ();
+  void                  output_lookup_array () const;
 
   /* Generate all the tables needed for the lookup function.  */
-  void                  output_lookup_tables ();
+  void                  output_lookup_tables () const;
 
   /* Generates C code to perform the keyword lookup.  */
-  void                  output_lookup_function_body (const struct Output_Compare&);
+  void                  output_lookup_function_body (const struct Output_Compare&) const;
 
   /* Generates C code for the lookup function.  */
-  void                  output_lookup_function ();
+  void                  output_lookup_function () const;
 
   /* Linked list of keywords.  */
   KeywordExt_List *     _head;
 
   /* Pointer to the type for word list. */
-  const char *          _array_type;
+  const char * const    _array_type;
   /* Pointer to return type for lookup function. */
   const char *          _return_type;
   /* Shorthand for user-defined struct tag type. */
   const char *          _struct_tag;
   /* True if any additional C code is included. */
-  bool                  _additional_code;
+  bool const            _additional_code;
   /* C source code to be included verbatim. */
-  const char *          _include_src;
+  const char * const    _include_src;
   /* Total number of keys, counting duplicates. */
-  int                   _total_keys;
+  int const             _total_keys;
   /* Total number of duplicate hash values. */
-  int                   _total_duplicates;
+  int const             _total_duplicates;
   /* Maximum length of the longest keyword. */
-  int                   _max_key_len;
+  int const             _max_key_len;
   /* Minimum length of the shortest keyword. */
-  int                   _min_key_len;
+  int const             _min_key_len;
   /* Minimum hash value for all keywords. */
   int                   _min_hash_value;
   /* Maximum hash value for all keywords. */

@@ -39,28 +39,28 @@ private:
   void                  prepare ();
 
   /* Merges two sorted lists together to form one sorted list.  */
-  KeywordExt_List *     merge (KeywordExt_List *list1, KeywordExt_List *list2);
+  KeywordExt_List *     merge (KeywordExt_List *list1, KeywordExt_List *list2) const;
   /* Sorts a list using the recursive merge sort algorithm.  */
-  KeywordExt_List *     merge_sort (KeywordExt_List *head);
+  KeywordExt_List *     merge_sort (KeywordExt_List *head) const;
 
   /* Computes the sum of occurrences of the _selchars of a keyword.  */
-  int                   compute_occurrence (KeywordExt *ptr);
+  int                   compute_occurrence (KeywordExt *ptr) const;
 
   /* Auxiliary functions used by Search::reorder().  */
   void                  clear_determined ();
   void                  set_determined (KeywordExt *keyword);
-  bool                  already_determined (KeywordExt *keyword);
+  bool                  already_determined (KeywordExt *keyword) const;
   /* Reorders the keyword list so as to minimize search times.  */
   void                  reorder ();
 
   /* Returns the length of keyword list.  */
-  int                   keyword_list_length ();
+  int                   keyword_list_length () const;
 
   /* Returns the maximum length of keywords.  */
-  int                   max_key_length ();
+  int                   max_key_length () const;
 
   /* Returns the number of key positions.  */
-  int                   get_max_keysig_size ();
+  int                   get_max_keysig_size () const;
 
   /* Initializes the asso_values[] related parameters and put a first guess
      into asso_values[].  */
@@ -68,10 +68,10 @@ private:
 
   /* Computes a keyword's hash value, relative to the current _asso_values[],
      and stores it in keyword->_hash_value.  */
-  int                   compute_hash (KeywordExt *keyword);
+  int                   compute_hash (KeywordExt *keyword) const;
 
   /* Sorts the given set in increasing frequency of _occurrences[].  */
-  void                  sort_by_occurrence (unsigned char *set, int len);
+  void                  sort_by_occurrence (unsigned char *set, int len) const;
 
   /* Tries various other values for _asso_values[c].  */
   bool                  try_asso_value (unsigned char c, KeywordExt *curr, int iterations);
@@ -83,7 +83,9 @@ private:
   /* Finds good _asso_values[].  */
   void                  find_asso_values ();
 
+  /* Sorts the keyword list by hash value.  */
   void                  sort ();
+
 public:
 
   /* Linked list of keywords.  */

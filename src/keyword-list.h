@@ -35,7 +35,7 @@ public:
                         Keyword_List (Keyword *car);
 
   /* Access to first element of list.  */
-  Keyword *             first ();
+  Keyword *             first () const;
   /* Access to next element of list.  */
   Keyword_List *&       rest ();
 
@@ -52,7 +52,7 @@ public:
                         KeywordExt_List (KeywordExt *car);
 
   /* Access to first element of list.  */
-  KeywordExt *          first ();
+  KeywordExt *          first () const;
   /* Access to next element of list.  */
   KeywordExt_List *&    rest ();
 };

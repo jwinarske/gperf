@@ -119,7 +119,7 @@ Output::compute_min_max ()
 /* Returns the number of different hash values.  */
 
 int
-Output::num_hash_values ()
+Output::num_hash_values () const
 {
   /* Since the list is already sorted by hash value we can count the
      different hash values in a single pass through the list.  */
@@ -216,7 +216,7 @@ void Output_Enum::output_end ()
 /* Outputs the maximum and minimum hash values etc.  */
 
 void
-Output::output_constants (struct Output_Constants& style)
+Output::output_constants (struct Output_Constants& style) const
 {
   style.output_start ();
   style.output_item ("TOTAL_KEYWORDS", _total_keys);
@@ -430,7 +430,7 @@ void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
      unsigned int <hash> (const char *str, unsigned int len).  */
 
 void
-Output::output_hash_function ()
+Output::output_hash_function () const
 {
   /* Output the function's head.  */
   if (option[CPLUSPLUS])
@@ -610,7 +610,7 @@ Output::output_hash_function ()
    Only called if option[LENTABLE].  */
 
 void
-Output::output_keylength_table ()
+Output::output_keylength_table () const
 {
   const int columns = 14;
   const char * const indent = option[GLOBAL] ? "" : "  ";
@@ -732,7 +732,7 @@ output_keyword_blank_entries (int count, const char *indent)
 /* Prints out the array containing the keywords for the hash function.  */
 
 void
-Output::output_keyword_table ()
+Output::output_keyword_table () const
 {
   const char *indent  = option[GLOBAL] ? "" : "  ";
   int         index;
@@ -793,7 +793,7 @@ Output::output_keyword_table ()
    the smaller, contiguous range of the keyword table.  */
 
 void
-Output::output_lookup_array ()
+Output::output_lookup_array () const
 {
   if (option[DUP])
     {
@@ -956,7 +956,7 @@ Output::output_lookup_array ()
 /* Generate all the tables needed for the lookup function.  */
 
 void
-Output::output_lookup_tables ()
+Output::output_lookup_tables () const
 {
   if (option[SWITCH])
     {
@@ -1138,7 +1138,7 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
 /* Generates C code to perform the keyword lookup.  */
 
 void
-Output::output_lookup_function_body (const Output_Compare& comparison)
+Output::output_lookup_function_body (const Output_Compare& comparison) const
 {
   printf ("  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)\n"
           "    {\n"
@@ -1385,7 +1385,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison)
 /* Generates C code for the lookup function.  */
 
 void
-Output::output_lookup_function ()
+Output::output_lookup_function () const
 {
   /* Output the function's head.  */
   if (option[KRC] | option[C] | option[ANSIC])

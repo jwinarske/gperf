@@ -161,7 +161,7 @@ Search::prepare ()
    every comparison.  */
 
 KeywordExt_List *
-Search::merge (KeywordExt_List *list1, KeywordExt_List *list2)
+Search::merge (KeywordExt_List *list1, KeywordExt_List *list2) const
 {
   KeywordExt_List *result;
   KeywordExt_List **resultp = &result;
@@ -199,7 +199,7 @@ Search::merge (KeywordExt_List *list1, KeywordExt_List *list2)
    is set to true.  */
 
 KeywordExt_List *
-Search::merge_sort (KeywordExt_List *head)
+Search::merge_sort (KeywordExt_List *head) const
 {
   if (!head || !head->rest())
     /* List of length 0 or 1.  Nothing to do.  */
@@ -239,7 +239,7 @@ Search::merge_sort (KeywordExt_List *head)
    in other keywords have a low occurrence sum.  */
 
 inline int
-Search::compute_occurrence (KeywordExt *ptr)
+Search::compute_occurrence (KeywordExt *ptr) const
 {
   int value = 0;
 
@@ -276,7 +276,7 @@ Search::set_determined (KeywordExt *keyword)
    Returns true if the keyword's selected characters are all determined.  */
 
 inline bool
-Search::already_determined (KeywordExt *keyword)
+Search::already_determined (KeywordExt *keyword) const
 {
   const unsigned char *p = keyword->_selchars;
   unsigned int i = keyword->_selchars_length;
@@ -363,7 +363,7 @@ Search::reorder ()
 /* Returns the length of keyword list.  */
 
 int
-Search::keyword_list_length ()
+Search::keyword_list_length () const
 {
   return _list_len;
 }
@@ -371,7 +371,7 @@ Search::keyword_list_length ()
 /* Returns the maximum length of keywords.  */
 
 int
-Search::max_key_length ()
+Search::max_key_length () const
 {
   return _max_key_len;
 }
@@ -379,7 +379,7 @@ Search::max_key_length ()
 /* Returns the number of key positions.  */
 
 int
-Search::get_max_keysig_size ()
+Search::get_max_keysig_size () const
 {
   return option[ALLCHARS] ? _max_key_len : option.get_max_keysig_size ();
 }
@@ -454,7 +454,7 @@ Search::init_asso_values ()
    This is called very frequently, and needs to be fast!  */
 
 inline int
-Search::compute_hash (KeywordExt *keyword)
+Search::compute_hash (KeywordExt *keyword) const
 {
   int sum = option[NOLENGTH] ? 0 : keyword->_allchars_length;
 
@@ -519,7 +519,7 @@ compute_disjoint_union (const unsigned char *set_1, int size_1,
 /* Sorts the given set in increasing frequency of _occurrences[].  */
 
 inline void
-Search::sort_by_occurrence (unsigned char *set, int len)
+Search::sort_by_occurrence (unsigned char *set, int len) const
 {
   /* Use bubble sort, since the set is typically short.  */
   for (int i = 1; i < len; i++)
@@ -706,7 +706,7 @@ Search::find_asso_values ()
 
 /* ------------------------------------------------------------------------- */
 
-/* Sorts the keys by hash value. */
+/* Sorts the keyword list by hash value.  */
 
 void
 Search::sort ()
