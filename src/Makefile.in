@@ -61,7 +61,7 @@ VPATH = $(srcdir)
 
 OBJECTS  = new.o options.o iterator.o main.o gen-perf.o key-list.o list-node.o \
            hash-table.o bool-array.o read-line.o trace.o vectors.o version.o
-LIBS     = ../lib/libgp.a -lm
+LIBS     = ../lib/libgp.a @GPERF_LIBM@
 CPPFLAGS = -I. -I$(srcdir)/../lib
 
 TARGETPROG = gperf

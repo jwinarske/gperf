@@ -1,3 +1,8 @@
+2000-12-18  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
+
+        * src/configure.in: Add check for rand() in libm. Needed for BeOS.
+        * src/Makefile.in (LIBS): Use @GPERF_LIBM@ instead of hardwiring -lm.
+
 2000-11-20  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
         * doc/help2man: Update to version 1.23.

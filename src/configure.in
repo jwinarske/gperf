@@ -66,6 +66,11 @@ AC_CHECK_FUNCS(setrlimit)
 fi
 fi
 dnl
+dnl           checks for libraries
+dnl
+AC_CHECK_LIB(m, rand, GPERF_LIBM="-lm", GPERF_LIBM="")
+AC_SUBST(GPERF_LIBM)
+dnl
 dnl           That's it.
 dnl
 AC_OUTPUT(Makefile)
