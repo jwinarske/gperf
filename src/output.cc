@@ -1334,7 +1334,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
 
       printf ("      if (key <= MAX_HASH_VALUE && key >= MIN_HASH_VALUE)\n"
               "        {\n");
-      if (option[DUP])
+      if (option[DUP] && _total_duplicates > 0)
         {
           if (option[LENTABLE])
             printf ("          register %s%s *lengthptr;\n",
@@ -1358,7 +1358,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
 
       output_switches (_head, num_switches, switch_size, _min_hash_value, _max_hash_value, 10);
 
-      if (option[DUP])
+      if (option[DUP] && _total_duplicates > 0)
         {
           int indent = 8;
           printf ("%*s  return 0;\n"

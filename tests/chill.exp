@@ -446,8 +446,6 @@ in_word_set (str, len)
 
       if (key <= MAX_HASH_VALUE && key >= MIN_HASH_VALUE)
         {
-          register struct resword *wordptr;
-          register struct resword *wordendptr;
           register struct resword *resword;
 
           switch (key - 4)
@@ -1352,16 +1350,6 @@ in_word_set (str, len)
               case 1045:
                 resword = &wordlist[299];
                 goto compare;
-            }
-          return 0;
-        multicompare:
-          while (wordptr < wordendptr)
-            {
-              register const char *s = wordptr->name;
-
-              if (*str == *s && !strcmp (str + 1, s + 1))
-                return wordptr;
-              wordptr++;
             }
           return 0;
         compare:

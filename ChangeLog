@@ -1,5 +1,9 @@
 2003-01-01  Bruno Haible  <bruno@clisp.org>
 
+	* src/output.cc (Output::output_lookup_function_body): Omit the
+	multicompare code section and its variables when it is not used.
+	* tests/chill.exp: Regenerated.
+
 	* src/output.c (Output_Compare::output_firstchar_comparison): New
 	method.
 	(Output_Compare_Strcmp::output_comparison,
