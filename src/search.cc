@@ -993,6 +993,16 @@ Search::find_asso_values ()
       }
   }
 
+  /* Backtracking according to the standard Prolog call pattern:
+
+                          +------------------+
+        -------CALL------>|                  |-------RETURN------>
+                          |                  |
+        <------FAIL-------|                  |<------REDO---------
+                          +------------------+
+
+     A CALL and RETURN increase the stack pointer, FAIL and REDO decrease it.
+   */
   {
     /* Current stack pointer.  */
     StackEntry *sp = &stack[0];
@@ -1014,7 +1024,8 @@ Search::find_asso_values ()
     /* Remaining number of iterations.  */
     int iter;
 
-   STARTOUTERLOOP:
+    /* ==== CALL ==== */
+   CALL:
 
     /* Next keyword from the list.  */
     curr = sp->_curr;
@@ -1092,7 +1103,7 @@ Search::find_asso_values ()
                         fflush (stderr);
                       }
                     goto RECURSE_COLLISION;
-                   BACKTRACK_COLLISION: ;
+                   BACKTRACK_COLLISION:
                     if (option[DEBUG])
                       {
                         fprintf (stderr, "back to collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
@@ -1126,36 +1137,43 @@ Search::find_asso_values ()
                      iterations);
             fflush (stderr);
           }
-
-       BACKTRACK_NO_COLLISION:
-        if (sp != stack)
-          {
-            sp--;
-            curr = sp->_curr;
-            prior = sp->_prior;
-            if (prior == NULL)
-              goto BACKTRACK_NO_COLLISION;
-            union_set = sp->_union_set;
-            union_set_length = sp->_union_set_length;
-            union_index = sp->_union_index;
-            c = sp->_c;
-            original_asso_value = sp->_original_asso_value;
-            iter = sp->_iter;
-            goto BACKTRACK_COLLISION;
-          }
-
-        /* No solution found after an exhaustive search!
-           We should ideally turn off option[FAST] and, if that doesn't help,
-           multiply _asso_value_max by 2.  */
-        fprintf (stderr,
-                 "\nBig failure, always got duplicate hash code values.\n");
-        if (option[POSITIONS])
-          fprintf (stderr, "try options -m or -r, or use new key positions.\n\n");
-        else
-          fprintf (stderr, "try options -m or -r.\n\n");
-        exit (1);
       }
-     goto RECURSE_NO_COLLISION;
+    else
+      {
+        /* Nothing to do, just recurse.  */
+        goto RECURSE_NO_COLLISION;
+       BACKTRACK_NO_COLLISION: ;
+      }
+
+    /* ==== FAIL ==== */
+    if (sp != stack)
+      {
+        sp--;
+        /* ==== REDO ==== */
+        curr = sp->_curr;
+        prior = sp->_prior;
+        if (prior == NULL)
+          goto BACKTRACK_NO_COLLISION;
+        union_set = sp->_union_set;
+        union_set_length = sp->_union_set_length;
+        union_index = sp->_union_index;
+        c = sp->_c;
+        original_asso_value = sp->_original_asso_value;
+        iter = sp->_iter;
+        goto BACKTRACK_COLLISION;
+      }
+
+    /* No solution found after an exhaustive search!
+       We should ideally turn off option[FAST] and, if that doesn't help,
+       multiply _asso_value_max by 2.  */
+    fprintf (stderr,
+             "\nBig failure, always got duplicate hash code values.\n");
+    if (option[POSITIONS])
+      fprintf (stderr, "try options -m or -r, or use new key positions.\n\n");
+    else
+      fprintf (stderr, "try options -m or -r.\n\n");
+    exit (1);
+
    RECURSE_COLLISION:
     /*sp->_union_set = union_set;*/ // redundant
     sp->_union_set_length = union_set_length;
@@ -1166,9 +1184,10 @@ Search::find_asso_values ()
    RECURSE_NO_COLLISION:
     /*sp->_curr = curr;*/ // redundant
     sp->_prior = prior;
+    /* ==== RETURN ==== */
     sp++;
     if (sp - stack < _list_len)
-      goto STARTOUTERLOOP;
+      goto CALL;
   }
 
   /* Deallocate stack.  */
