@@ -1,6 +1,6 @@
 # Makefile for gperf/tests
 
-# Copyright (C) 1989, 1992, 1993, 1995, 1998 Free Software Foundation, Inc.
+# Copyright (C) 1989, 1992, 1993, 1995, 1998, 2000 Free Software Foundation, Inc.
 # written by Douglas C. Schmidt (schmidt@ics.uci.edu)
 #
 # This file is part of GNU GPERF.
@@ -125,97 +125,97 @@ check-test:
 # usable. (There are still platforms where gcc-2.8.0's fixincludes does not
 # work well enough.)
 
-VALIDATE = CC='$(CC)' CFLAGS='$(CFLAGS)' CXX='$(CXX)' CXXFLAGS='$(CXXFLAGS)' GPERF='$(GPERF)' ./validate
+VALIDATE = CC='$(CC)' CFLAGS='$(CFLAGS)' CXX='$(CXX)' CXXFLAGS='$(CXXFLAGS)' GPERF='$(GPERF)' $(srcdir)/validate
 
 check-lang-syntax : force
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -c
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -E
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -G
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -G -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -G -E
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -D
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -D -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10 -c
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10 -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10 -E
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10 -G
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10 -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10 -D
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 10 -D -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -S 1000
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -D
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -D -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -S 10
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -S 10 -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -S 10 -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -S 10 -D
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -S 10 -D -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -p -S 1000
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -K key_name
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -H hash_function_name
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest1.gperf -W word_list_name
-	sed -e 's,in_word_set,lookup_function_name,g' < jstest1.gperf > tmp-jstest1.gperf && \
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -c
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -E
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -G
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -G -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -G -E
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -c
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -E
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -G
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 10 -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -S 1000
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 10 -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -p -S 1000
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -K key_name
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -H hash_function_name
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf -W word_list_name
+	sed -e 's,in_word_set,lookup_function_name,g' < $(srcdir)/jstest1.gperf > tmp-jstest1.gperf && \
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 tmp-jstest1.gperf -N lookup_function_name
-	sed -e 's,Perfect_Hash,class_name,g' < jstest1.gperf > tmp-jstest1.gperf && \
+	sed -e 's,Perfect_Hash,class_name,g' < $(srcdir)/jstest1.gperf > tmp-jstest1.gperf && \
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 tmp-jstest1.gperf -Z class_name
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -c
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -E
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -G
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -G -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -G -E
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -D
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -D -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10 -c
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10 -C
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10 -E
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10 -G
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10 -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10 -D
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 10 -D -l
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -S 1000
-	sed -e 's,name,key_name,g' < jstest2.gperf > tmp-jstest2.gperf && \
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -c
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -E
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -G
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -G -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -G -E
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -c
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -C
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -E
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -G
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -D
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 10 -D -l
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -S 1000
+	sed -e 's,name,key_name,g' < $(srcdir)/jstest2.gperf > tmp-jstest2.gperf && \
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 tmp-jstest2.gperf -t -p -K key_name
-	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 jstest2.gperf -t -p -H hash_function_name
-	sed -e 's,in_word_set,lookup_function_name,g' < jstest2.gperf > tmp-jstest2.gperf && \
+	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest2.gperf -t -p -H hash_function_name
+	sed -e 's,in_word_set,lookup_function_name,g' < $(srcdir)/jstest2.gperf > tmp-jstest2.gperf && \
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 tmp-jstest2.gperf -t -p -N lookup_function_name
-	sed -e 's,Perfect_Hash,class_name,g' < jstest2.gperf > tmp-jstest2.gperf && \
+	sed -e 's,Perfect_Hash,class_name,g' < $(srcdir)/jstest2.gperf > tmp-jstest2.gperf && \
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 tmp-jstest2.gperf -t -p -Z class_name
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -c
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -C
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -E
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -G
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -G -C
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -G -E
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -l
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -D
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -D -l
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10 -c
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10 -C
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10 -E
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10 -G
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10 -l
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10 -D
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 10 -D -l
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -S 1000
-	sed -e 's,name,key_name,g' < jstest3.gperf > tmp-jstest3.gperf && \
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -c
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -C
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -E
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -G
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -G -C
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -G -E
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -l
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -D
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -D -l
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -c
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -C
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -E
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -G
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -l
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -D
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 10 -D -l
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -S 1000
+	sed -e 's,name,key_name,g' < $(srcdir)/jstest3.gperf > tmp-jstest3.gperf && \
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 tmp-jstest3.gperf -t -p -K key_name
-	$(VALIDATE) C,ANSI-C,C++ -k1,2 jstest3.gperf -t -p -H hash_function_name
-	sed -e 's,in_word_set,lookup_function_name,g' < jstest3.gperf > tmp-jstest3.gperf && \
+	$(VALIDATE) C,ANSI-C,C++ -k1,2 $(srcdir)/jstest3.gperf -t -p -H hash_function_name
+	sed -e 's,in_word_set,lookup_function_name,g' < $(srcdir)/jstest3.gperf > tmp-jstest3.gperf && \
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 tmp-jstest3.gperf -t -p -N lookup_function_name
-	sed -e 's,Perfect_Hash,class_name,g' < jstest3.gperf > tmp-jstest3.gperf && \
+	sed -e 's,Perfect_Hash,class_name,g' < $(srcdir)/jstest3.gperf > tmp-jstest3.gperf && \
 	$(VALIDATE) C,ANSI-C,C++ -k1,2 tmp-jstest3.gperf -t -p -Z class_name
 
 mostlyclean : clean
