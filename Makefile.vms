@@ -33,7 +33,7 @@ docdir = $(datadir).doc.gperf
 
 # Programs used by "make":
 
-CC = cl
+CC = cc
 CXX = cxx
 
 # These flags affect binary compatibility. GNU gperf does not need them,
@@ -71,16 +71,16 @@ all : gperf.exe
 	$(LN) [.src]config.h_vms [.src]config.h
 
 [.lib]getopt.obj : [.lib]getopt.c
-	$(CC) $(INCLUDES) $(CFLAGS) /define=($(DEFS)) [.lib]getopt.c /obj=[.lib]getopt.obj
+	$(CC) $(INCLUDES) $(CFLAGS) /define=("VMS=1") [.lib]getopt.c /obj=[.lib]getopt.obj
 
 [.lib]getopt1.obj : [.lib]getopt1.c
-	$(CC) $(INCLUDES) $(CFLAGS) /define=($(DEFS)) [.lib]getopt1.c /obj=[.lib]getopt1.obj
+	$(CC) $(INCLUDES) $(CFLAGS) /define=("VMS=1") [.lib]getopt1.c /obj=[.lib]getopt1.obj
 
 [.lib]getline.obj : [.lib]getline.cc
-	$(CXX) $(INCLUDES) $(CXXFLAGS) /define=($(DEFS)) [.lib]getline.cc /obj=[.lib]getline.obj
+	$(CXX) $(INCLUDES) $(CXXFLAGS) /define=("VMS=1") [.lib]getline.cc /obj=[.lib]getline.obj
 
 [.lib]hash.obj : [.lib]hash.cc
-	$(CXX) $(INCLUDES) $(CXXFLAGS) /define=($(DEFS)) [.lib]hash.cc /obj=[.lib]hash.obj
+	$(CXX) $(INCLUDES) $(CXXFLAGS) /define=("VMS=1") [.lib]hash.cc /obj=[.lib]hash.obj
 
 # Dependencies.
 CONFIG_H = [.src]config.h
