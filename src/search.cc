@@ -251,10 +251,10 @@ Search::find_positions ()
                 {
                   int n = keyword1->_allchars_length;
                   int i;
-                  for (i = 1; i < n; i++)
+                  for (i = 0; i < n - 1; i++)
                     {
-                      unsigned char c1 = keyword1->_allchars[i-1];
-                      unsigned char c2 = keyword2->_allchars[i-1];
+                      unsigned char c1 = keyword1->_allchars[i];
+                      unsigned char c2 = keyword2->_allchars[i];
                       if (option[UPPERLOWER])
                         {
                           if (c1 >= 'A' && c1 <= 'Z')
@@ -265,13 +265,13 @@ Search::find_positions ()
                       if (c1 != c2)
                         break;
                     }
-                  if (i < n)
+                  if (i < n - 1)
                     {
                       int j;
-                      for (j = i + 1; j <= n; j++)
+                      for (j = i + 1; j < n; j++)
                         {
-                          unsigned char c1 = keyword1->_allchars[j-1];
-                          unsigned char c2 = keyword2->_allchars[j-1];
+                          unsigned char c1 = keyword1->_allchars[j];
+                          unsigned char c2 = keyword2->_allchars[j];
                           if (option[UPPERLOWER])
                             {
                               if (c1 >= 'A' && c1 <= 'Z')
@@ -282,7 +282,7 @@ Search::find_positions ()
                           if (c1 != c2)
                             break;
                         }
-                      if (j > n)
+                      if (j >= n)
                         {
                           /* Position i is mandatory.  */
                           if (!mandatory.contains (i))
@@ -295,8 +295,8 @@ Search::find_positions ()
     }
 
   /* 2. Add positions, as long as this decreases the duplicates count.  */
-  int imax = (_max_key_len < Positions::MAX_KEY_POS
-              ? _max_key_len : Positions::MAX_KEY_POS);
+  int imax = (_max_key_len - 1 < Positions::MAX_KEY_POS - 1
+              ? _max_key_len - 1 : Positions::MAX_KEY_POS - 1);
   Positions current = mandatory;
   unsigned int current_duplicates_count = count_duplicates_tuple (current);
   for (;;)
@@ -304,7 +304,7 @@ Search::find_positions ()
       Positions best;
       unsigned int best_duplicates_count = UINT_MAX;
 
-      for (int i = imax; i >= 0; i--)
+      for (int i = imax; i >= -1; i--)
         if (!current.contains (i))
           {
             Positions tryal = current;
@@ -315,7 +315,7 @@ Search::find_positions ()
                or if it produces the same number of duplicates but with
                a more efficient hash function.  */
             if (try_duplicates_count < best_duplicates_count
-                || (try_duplicates_count == best_duplicates_count && i > 0))
+                || (try_duplicates_count == best_duplicates_count && i >= 0))
               {
                 best = tryal;
                 best_duplicates_count = try_duplicates_count;
@@ -337,7 +337,7 @@ Search::find_positions ()
       Positions best;
       unsigned int best_duplicates_count = UINT_MAX;
 
-      for (int i = imax; i >= 0; i--)
+      for (int i = imax; i >= -1; i--)
         if (current.contains (i) && !mandatory.contains (i))
           {
             Positions tryal = current;
@@ -348,7 +348,7 @@ Search::find_positions ()
                or if it produces the same number of duplicates but with
                a more efficient hash function.  */
             if (try_duplicates_count < best_duplicates_count
-                || (try_duplicates_count == best_duplicates_count && i == 0))
+                || (try_duplicates_count == best_duplicates_count && i == -1))
               {
                 best = tryal;
                 best_duplicates_count = try_duplicates_count;
@@ -370,9 +370,9 @@ Search::find_positions ()
       Positions best;
       unsigned int best_duplicates_count = UINT_MAX;
 
-      for (int i1 = imax; i1 >= 0; i1--)
+      for (int i1 = imax; i1 >= -1; i1--)
         if (current.contains (i1) && !mandatory.contains (i1))
-          for (int i2 = imax; i2 >= 0; i2--)
+          for (int i2 = imax; i2 >= -1; i2--)
             if (current.contains (i2) && !mandatory.contains (i2) && i2 != i1)
               for (int i3 = imax; i3 >= 0; i3--)
                 if (!current.contains (i3))
@@ -389,7 +389,7 @@ Search::find_positions ()
                        a more efficient hash function.  */
                     if (try_duplicates_count < best_duplicates_count
                         || (try_duplicates_count == best_duplicates_count
-                            && (i1 == 0 || i2 == 0 || i3 > 0)))
+                            && (i1 == -1 || i2 == -1 || i3 >= 0)))
                       {
                         best = tryal;
                         best_duplicates_count = try_duplicates_count;
@@ -422,7 +422,7 @@ Search::find_positions ()
             seen_lastchar = true;
           else
             {
-              fprintf (stderr, "%d", i);
+              fprintf (stderr, "%d", i + 1);
               first = false;
             }
         }
@@ -509,8 +509,8 @@ Search::compute_alpha_unify (const Positions& positions, const unsigned int *alp
                   unsigned int c;
                   if (i == Positions::LASTCHAR)
                     c = static_cast<unsigned char>(keyword->_allchars[keyword->_allchars_length - 1]);
-                  else if (i <= keyword->_allchars_length)
-                    c = static_cast<unsigned char>(keyword->_allchars[i - 1]);
+                  else if (i < keyword->_allchars_length)
+                    c = static_cast<unsigned char>(keyword->_allchars[i]);
                   else
                     continue;
                   if (c >= 'A' && c <= 'Z')
@@ -518,7 +518,7 @@ Search::compute_alpha_unify (const Positions& positions, const unsigned int *alp
                   if (c >= 'a' && c <= 'z')
                     {
                       if (i != Positions::LASTCHAR)
-                        c += alpha_inc[i - 1];
+                        c += alpha_inc[i];
                       /* Unify c with c - ('a'-'A').  */
                       unsigned int d = alpha_unify[c];
                       unsigned int b = c - ('a'-'A');
@@ -622,7 +622,7 @@ Search::find_alpha_inc ()
               if (key_pos == PositionIterator::EOS
                   || key_pos == Positions::LASTCHAR)
                 abort ();
-              indices[j] = key_pos - 1;
+              indices[j] = key_pos;
             }
         }
 

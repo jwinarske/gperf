@@ -70,7 +70,6 @@ hash (str, len)
   switch (hval)
     {
       default:
-      case 5:
         hval += asso_values[(unsigned char)str[4]+1];
       case 4:
       case 3:

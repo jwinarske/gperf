@@ -35,7 +35,7 @@ bool
 Positions::contains (int pos) const
 {
   unsigned int count = _size;
-  const unsigned char *p = _positions + _size - 1;
+  const int *p = _positions + _size - 1;
 
   for (; count > 0; p--, count--)
     {
@@ -52,13 +52,13 @@ Positions::add (int pos)
 {
   unsigned int count = _size;
 
-  if (count == MAX_KEY_POS + 1)
+  if (count == MAX_SIZE)
     {
       fprintf (stderr, "Positions::add internal error: overflow\n");
       exit (1);
     }
 
-  unsigned char *p = _positions + _size - 1;
+  int *p = _positions + _size - 1;
 
   for (; count > 0; p--, count--)
     {
@@ -81,7 +81,7 @@ Positions::remove (int pos)
   unsigned int count = _size;
   if (count > 0)
     {
-      unsigned char *p = _positions + _size - 1;
+      int *p = _positions + _size - 1;
 
       if (*p == pos)
         {
@@ -90,7 +90,7 @@ Positions::remove (int pos)
         }
       if (*p < pos)
         {
-          unsigned char prev = *p;
+          int prev = *p;
 
           for (;;)
             {
@@ -106,7 +106,7 @@ Positions::remove (int pos)
                 }
               if (*p > pos)
                 break;
-              unsigned char curr = *p;
+              int curr = *p;
               *p = prev;
               prev = curr;
             }
@@ -123,17 +123,18 @@ Positions::print () const
   bool first = true;
   bool seen_LASTCHAR = false;
   unsigned int count = _size;
-  const unsigned char *p = _positions + _size - 1;
+  const int *p = _positions + _size - 1;
 
-  for (; count > 0; p--, count--)
+  for (; count > 0; p--)
     {
+      count--;
       if (*p == LASTCHAR)
         seen_LASTCHAR = true;
       else
         {
           if (!first)
             printf (",");
-          printf ("%d", *p);
+          printf ("%d", *p + 1);
           if (count > 0 && p[-1] == *p + 1)
             {
               printf ("-");
@@ -143,7 +144,7 @@ Positions::print () const
                   count--;
                 }
               while (count > 0 && p[-1] == *p + 1);
-              printf ("%d", *p);
+              printf ("%d", *p + 1);
             }
           first = false;
         }

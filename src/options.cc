@@ -526,7 +526,7 @@ Options::~Options ()
             if (pos == Positions::LASTCHAR)
               fprintf (stderr, "$\n");
             else
-              fprintf (stderr, "%d\n", pos);
+              fprintf (stderr, "%d\n", pos + 1);
         }
 
       fprintf (stderr, "finished dumping Options\n");
@@ -767,7 +767,7 @@ Options::parse_options (int argc, char *argv[])
         case 'k':               /* Sets key positions used for hash function.  */
           {
             _option_word |= POSITIONS;
-            const int BAD_VALUE = -2;
+            const int BAD_VALUE = -3;
             const int EOS = PositionIterator::EOS;
             int       value;
             PositionStringParser sparser (/*getopt*/optarg, 1, Positions::MAX_KEY_POS, Positions::LASTCHAR, BAD_VALUE, EOS);
@@ -776,8 +776,8 @@ Options::parse_options (int argc, char *argv[])
               _option_word |= ALLCHARS;
             else
               {
-                unsigned char *key_positions = _key_positions.pointer();
-                unsigned char *key_pos;
+                int *key_positions = _key_positions.pointer();
+                int *key_pos;
 
                 for (key_pos = key_positions; (value = sparser.nextPosition()) != EOS; key_pos++)
                   {
@@ -788,16 +788,19 @@ Options::parse_options (int argc, char *argv[])
                         short_usage (stderr);
                         exit (1);
                       }
-                    if (key_pos - key_positions == Positions::MAX_KEY_POS + 1)
+                    if (key_pos - key_positions == Positions::MAX_SIZE)
                       {
-                        /* More than Positions::MAX_KEY_POS + 1 key positions.
+                        /* More than Positions::MAX_SIZE key positions.
                            Since all key positions are in the range
-                           1..Positions::MAX_KEY_POS or == Positions::LASTCHAR,
+                           0..Positions::MAX_KEY_POS-1 or == Positions::LASTCHAR,
                            there must be duplicates.  */
                         fprintf (stderr, "Duplicate key positions selected\n");
                         short_usage (stderr);
                         exit (1);
                       }
+                    if (value != Positions::LASTCHAR)
+                      /* We use 0-based indices in the class Positions.  */
+                      value = value - 1;
                     *key_pos = value;
                   }
 

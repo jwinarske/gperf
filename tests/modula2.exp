@@ -54,7 +54,6 @@ hash (str, len)
   switch (len)
     {
       default:
-      case 8:
         hval += asso_values[(unsigned char)str[7]];
       case 7:
         hval += asso_values[(unsigned char)str[6]];

@@ -34,11 +34,16 @@ class Positions
   friend class PositionReverseIterator;
 public:
   /* Denotes the last char of a keyword, depending on the keyword's length.  */
-  enum {                LASTCHAR = 0 };
+  enum {                LASTCHAR = -1 };
 
-  /* Maximum key position specifiable by the user.
-     Note that this must fit into the element type of _positions[], below.  */
+  /* Maximum key position specifiable by the user, 1-based.
+     Note that MAX_KEY_POS-1 must fit into the element type of _positions[],
+     below.  */
   enum {                MAX_KEY_POS = 255 };
+
+  /* Maximum possible size.  Since duplicates are eliminated and the possible
+     0-based positions are -1 .. MAX_KEY_POS-1, this is:  */
+  enum {                MAX_SIZE = MAX_KEY_POS + 1 };
 
   /* Constructors.  */
                         Positions ();
@@ -56,7 +61,7 @@ public:
   unsigned int          get_size () const;
 
   /* Write access.  */
-  unsigned char *       pointer ();
+  int *                 pointer ();
   void                  set_size (unsigned int size);
 
   /* Sorts the array in reverse order.
@@ -74,11 +79,9 @@ public:
 private:
   /* Number of positions.  */
   unsigned int          _size;
-  /* Array of positions.  1 for the first char, 2 for the second char etc.,
-     LASTCHAR for the last char.
-     Note that since duplicates are eliminated, the maximum possible size
-     is MAX_KEY_POS + 1.  */
-  unsigned char         _positions[MAX_KEY_POS + 1];
+  /* Array of positions.  0 for the first char, 1 for the second char etc.,
+     LASTCHAR for the last char.  */
+  int                   _positions[MAX_SIZE];
 };
 
 /* This class denotes an iterator through a set of byte positions.  */
@@ -90,7 +93,7 @@ public:
                         PositionIterator (Positions const& positions);
 
   /* End of iteration marker.  */
-  enum {                EOS = -1 };
+  enum {                EOS = -2 };
 
   /* Retrieves the next position, or EOS past the end.  */
   int                   next ();
@@ -110,7 +113,7 @@ public:
                         PositionReverseIterator (Positions const& positions);
 
   /* End of iteration marker.  */
-  enum {                EOS = -1 };
+  enum {                EOS = -2 };
 
   /* Retrieves the next position, or EOS past the end.  */
   int                   next ();

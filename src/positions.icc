@@ -84,7 +84,7 @@ Positions::get_size () const
 
 /* Write access.  */
 
-INLINE unsigned char *
+INLINE int *
 Positions::pointer ()
 {
   return _positions;
@@ -103,7 +103,7 @@ Positions::sort ()
 {
   /* Bubble sort.  */
   bool duplicate_free = true;
-  unsigned char *base = _positions;
+  int *base = _positions;
   unsigned int len = _size;
 
   for (unsigned int i = 1; i < len; i++)

@@ -674,7 +674,7 @@ Output::output_hash_function () const
       /* Get the highest key position.  */
       key_pos = iter.next ();
 
-      if (key_pos == Positions::LASTCHAR || key_pos <= _min_key_len)
+      if (key_pos == Positions::LASTCHAR || key_pos < _min_key_len)
         {
           /* We can perform additional optimizations here:
              Write it out as a single expression. Note that the values
@@ -685,7 +685,7 @@ Output::output_hash_function () const
                   option[NOLENGTH] ? "" : "len + ");
 
           if (_key_positions.get_size() == 2
-              && _key_positions[0] == 1
+              && _key_positions[0] == 0
               && _key_positions[1] == Positions::LASTCHAR)
             /* Optimize special case of "-k 1,$".  */
             {
@@ -699,9 +699,9 @@ Output::output_hash_function () const
             {
               for (; key_pos != Positions::LASTCHAR; )
                 {
-                  printf ("asso_values[%sstr[%d]", char_to_index, key_pos - 1);
-                  if (_alpha_inc[key_pos - 1])
-                    printf ("+%u", _alpha_inc[key_pos - 1]);
+                  printf ("asso_values[%sstr[%d]", char_to_index, key_pos);
+                  if (_alpha_inc[key_pos])
+                    printf ("+%u", _alpha_inc[key_pos]);
                   printf ("]");
                   if ((key_pos = iter.next ()) != PositionIterator::EOS)
                     printf (" + ");
@@ -725,7 +725,7 @@ Output::output_hash_function () const
                   option[NOLENGTH] ? "0" : "len",
                   option[NOLENGTH] ? "len" : "hval");
 
-          while (key_pos != Positions::LASTCHAR && key_pos > _max_key_len)
+          while (key_pos != Positions::LASTCHAR && key_pos >= _max_key_len)
             if ((key_pos = iter.next ()) == PositionIterator::EOS)
               break;
 
@@ -734,13 +734,13 @@ Output::output_hash_function () const
               int i = key_pos;
               do
                 {
-                  for ( ; i >= key_pos; i--)
+                  for ( ; i > key_pos; i--)
                     printf ("      case %d:\n", i);
 
                   printf ("        hval += asso_values[%sstr[%d]",
-                          char_to_index, key_pos - 1);
-                  if (_alpha_inc[key_pos - 1])
-                    printf ("+%u", _alpha_inc[key_pos - 1]);
+                          char_to_index, key_pos);
+                  if (_alpha_inc[key_pos])
+                    printf ("+%u", _alpha_inc[key_pos]);
                   printf ("];\n");
 
                   key_pos = iter.next ();

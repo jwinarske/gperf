@@ -91,12 +91,12 @@ KeywordExt::init_selchars_low (bool use_all_chars, const Positions& positions, c
           if (i == Positions::LASTCHAR)
             /* Special notation for last KEY position, i.e. '$'.  */
             c = static_cast<unsigned char>(_allchars[_allchars_length - 1]);
-          else if (i <= _allchars_length)
+          else if (i < _allchars_length)
             {
               /* Within range of KEY length, so we'll keep it.  */
-              c = static_cast<unsigned char>(_allchars[i - 1]);
+              c = static_cast<unsigned char>(_allchars[i]);
               if (alpha_inc)
-                c += alpha_inc[i - 1];
+                c += alpha_inc[i];
             }
           else
             /* Out of range of KEY length, so we'll just skip it.  */

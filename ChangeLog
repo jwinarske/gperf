@@ -1,3 +1,31 @@
+2002-12-11  Bruno Haible  <bruno@clisp.org>
+
+	Change the positions to be 0-based, instead of 1-based.
+	* src/positions.h (Positions::LASTCHAR): Set to -1.
+	(Positions::MAX_SIZE): New constant.
+	(Positions::pointer): Change return type.
+	(Positions::_positions): Change element type.
+	(PositionIterator::EOS, PositionReverseIterator::EOS): Set to -2.
+	* src/positions.icc (Positions::pointer): Change return type.
+	(Positions::sort): Update.
+	* src/positions.cc (Positions::contains, Positions::add,
+	Positions::remove): Update.
+	(Positions::print): Update. Fix off-by-one bug.
+	* src/options.cc (Options::~Options): Update.
+	(Options::parse_options): Set BAD_VALUE to -3. Update.
+	* src/keyword.cc (KeywordExt::init_selchars_low): Update.
+	* src/search.cc (Search::find_positions, Search::compute_alpha_unify,
+	Search::find_alpha_inc): Update.
+	* src/output.cc (Output::output_hash_function): Update. Don't emit
+	a 'case' statement right after 'default:'.
+	* tests/c-parse.exp: Regenerated.
+	* tests/charsets.exp: Regenerated.
+	* tests/cplusplus.exp: Regenerated.
+	* tests/java.exp: Regenerated.
+	* tests/languages.exp: Regenerated.
+	* tests/modula2.exp: Regenerated.
+	* tests/objc.exp: Regenerated.
+
 2002-12-10  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.h: Reorder enum values.
