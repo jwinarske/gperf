@@ -1,3 +1,7 @@
+New in 3.0.1:
+
+* Bug fix.
+
 New in 3.0:
 
 * Added option --output that allows to specify the output file name.

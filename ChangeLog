@@ -1,3 +1,16 @@
+
+2003-06-12  Bruno Haible  <bruno@clisp.org>
+
+	* gperf-3.0.1 released.
+
+	* src/version.cc: Bump version number to 3.0.1.
+	* doc/gperf.texi: Likewise.
+	* tests/c-parse.exp, tests/charsets.exp, tests/chill.exp,
+	tests/cplusplus.exp, tests/gpc.exp, tests/incomplete.exp,
+	tests/java.exp, tests/languages.exp, tests/modula2.exp,
+	tests/objc.exp, tests/permut2.exp, tests/permut3.exp,
+	tests/permutc2.exp, tests/test-4.exp: Update.
+
 2003-05-31  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.texi (User-supplied Struct): Mention the possibility of an
