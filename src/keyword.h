@@ -26,6 +26,9 @@
 #ifndef keyword_h
 #define keyword_h 1
 
+/* Class defined in "options.h".  */
+class Positions;
+
 /* An instance of this class is a keyword, as specified in the input file.  */
 
 struct Keyword
@@ -64,8 +67,10 @@ struct KeywordExt : public Keyword
   KeywordExt *          _duplicate_link;
 
   /* Methods depending on the keyposition list.  */
-  /* Initialize selchars and selchars_length.  */
-  void                  init_selchars ();
+  /* Initializes selchars and selchars_length.  */
+  void                  init_selchars (bool use_all_chars, const Positions& positions);
+  /* Deletes selchars.  */
+  void                  delete_selchars ();
 
   /* Data members used by the algorithm.  */
   int                   _occurrence; /* Frequency of key set occurrences.  */

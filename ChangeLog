@@ -1,3 +1,55 @@
+2002-11-17  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.h (POSITIONS): New enum value.
+	(Positions::Positions): New copy constructor.
+	(Positions::operator=, Positions::contains, Position::add,
+	Positions::remove, Positions::print): New method declaration.
+	(Options::get_max_keysig_size): Remove method.
+	* src/options.icc (Positions::Positions): New copy constructor.
+	(Positions::operator=): New method.
+	(Options::get_max_keysig_size): Remove method.
+	* src/options.cc (Options::Options): Initialize _key_positions
+	trivially.
+	(Options::parse_options): Option -k sets POSITIONS.
+	(Positions::contains, Positions::add, Positions::remove,
+	Positions::print): New methods.
+	* src/hash-table.cc (Hash_Table::~Hash_Table): Compute the field
+	width explicitly, instead of using Options::get_max_keysig_size.
+	* src/keyword.h (KeywordExt::init_selchars): Add arguments
+	use_all_chars, positions.
+	(KeywordExt::delete_selchars): New declaration.
+	* src/keyword.cc (KeywordExt::init_selchars): Add arguments
+	use_all_chars, positions. Remove error message if there are no key
+	positions.
+	(KeywordExt::delete_selchars): New method.
+	* src/search.h: Include options.h.
+	(Search::preprepare, Search::init_selchars, Search::delete_selchars,
+	Search::count_duplicates, Search::find_positions): New declarations.
+	(Search::_key_positions): New field.
+	* src/search.cc (Search::Search): Initialize _key_positions.
+	(Search::preprepare, Search::init_selchars, Search::delete_selchars,
+	Search::count_duplicates, Search::find_positions): New functions.
+	(Search::prepare): Call preprepare and find_positions. Tweak error
+	message.
+	(Search::get_max_keysig_size): Use _key_positions instead of
+	option.get_key_positions().
+	(Search::optimize): Tweak error message.
+	* src/output.h: Include options.h.
+	(Output::Output): Add Positions argument.
+	(Output::_key_positions): New field.
+	* src/output.cc (Output::Output): Add Positions argument.
+	(Output::output_hash_function): Omit the table if there are no
+	positions at all. Use _key_positions instead of
+	option.get_key_positions().
+	(Output::output): Output the computed positions as a comment.
+	* src/main.cc (main): Pass the Positions from Searcher to Output.
+	* src/Makefile.in (SEARCH_H, OUTPUT_H): Include OPTIONS_H.
+	* tests/Makefile.in (check-test): Pass key positions explicitly.
+	* tests/gpc.exp: Update.
+	* tests/test-4.exp: Update.
+	* doc/gperf.texi (Algorithmic Details): Mention that -k is not needed
+	usually.
+
 2002-11-16  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.h (Options::get_slot_name): Renamed from

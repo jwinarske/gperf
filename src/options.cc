@@ -442,7 +442,7 @@ Options::Options ()
     _hash_name (DEFAULT_HASH_NAME),
     _wordlist_name (DEFAULT_WORDLIST_NAME),
     _delimiters (DEFAULT_DELIMITERS),
-    _key_positions (1, Positions::LASTCHAR)
+    _key_positions ()
 {
 }
 
@@ -766,6 +766,7 @@ Options::parse_options (int argc, char *argv[])
           }
         case 'k':               /* Sets key positions used for hash function. */
           {
+            _option_word |= POSITIONS;
             const int BAD_VALUE = -2;
             const int EOS = PositionIterator::EOS;
             int       value;
@@ -782,7 +783,7 @@ Options::parse_options (int argc, char *argv[])
                   {
                     if (value == BAD_VALUE)
                       {
-                        fprintf (stderr, "Invalid key value or range, use 1,2,3-%d,'$' or '*'.\n",
+                        fprintf (stderr, "Invalid position value or range, use 1,2,3-%d,'$' or '*'.\n",
                                          Positions::MAX_KEY_POS);
                         short_usage (stderr);
                         exit (1);
@@ -793,7 +794,7 @@ Options::parse_options (int argc, char *argv[])
                            Since all key positions are in the range
                            1..Positions::MAX_KEY_POS or == Positions::LASTCHAR,
                            there must be duplicates.  */
-                        fprintf (stderr, "Duplicate keys selected\n");
+                        fprintf (stderr, "Duplicate key positions selected\n");
                         short_usage (stderr);
                         exit (1);
                       }
@@ -803,7 +804,7 @@ Options::parse_options (int argc, char *argv[])
                 unsigned int total_keysig_size = key_pos - key_positions;
                 if (total_keysig_size == 0)
                   {
-                    fprintf (stderr, "No keys selected.\n");
+                    fprintf (stderr, "No key positions selected.\n");
                     short_usage (stderr);
                     exit (1);
                   }
@@ -814,7 +815,7 @@ Options::parse_options (int argc, char *argv[])
                    when generating code.  */
                 if (! _key_positions.sort())
                   {
-                    fprintf (stderr, "Duplicate keys selected\n");
+                    fprintf (stderr, "Duplicate key positions selected\n");
                     short_usage (stderr);
                     exit (1);
                   }
@@ -938,6 +939,137 @@ Options::parse_options (int argc, char *argv[])
       exit (1);
     }
 }
+
+/* ---------------------------- Class Positions ---------------------------- */
+
+/* Set operations.  Assumes the array is in reverse order.  */
+
+bool
+Positions::contains (int pos) const
+{
+  unsigned int count = _size;
+  const unsigned char *p = _positions + _size - 1;
+
+  for (; count > 0; p--, count--)
+    {
+      if (*p == pos)
+        return true;
+      if (*p > pos)
+        break;
+    }
+  return false;
+}
+
+void
+Positions::add (int pos)
+{
+  unsigned int count = _size;
+
+  if (count == MAX_KEY_POS + 1)
+    {
+      fprintf (stderr, "Positions::add internal error: overflow\n");
+      exit (1);
+    }
+
+  unsigned char *p = _positions + _size - 1;
+
+  for (; count > 0; p--, count--)
+    {
+      if (*p == pos)
+        {
+          fprintf (stderr, "Positions::add internal error: duplicate\n");
+          exit (1);
+        }
+      if (*p > pos)
+        break;
+      p[1] = p[0];
+    }
+  p[1] = pos;
+  _size++;
+}
+
+void
+Positions::remove (int pos)
+{
+  unsigned int count = _size;
+  if (count > 0)
+    {
+      unsigned char *p = _positions + _size - 1;
+
+      if (*p == pos)
+        {
+          _size--;
+          return;
+        }
+      if (*p < pos)
+        {
+          unsigned char prev = *p;
+
+          for (;;)
+            {
+              p--;
+              count--;
+              if (count == 0)
+                break;
+              if (*p == pos)
+                {
+                  *p = prev;
+                  _size--;
+                  return;
+                }
+              if (*p > pos)
+                break;
+              unsigned char curr = *p;
+              *p = prev;
+              prev = curr;
+            }
+        }
+    }
+  fprintf (stderr, "Positions::remove internal error: not found\n");
+  exit (1);
+}
+
+/* Output in external syntax.  */
+void
+Positions::print () const
+{
+  bool first = true;
+  bool seen_LASTCHAR = false;
+  unsigned int count = _size;
+  const unsigned char *p = _positions + _size - 1;
+
+  for (; count > 0; p--, count--)
+    {
+      if (*p == LASTCHAR)
+        seen_LASTCHAR = true;
+      else
+        {
+          if (!first)
+            printf (",");
+          printf ("%d", *p);
+          if (count > 0 && p[-1] == *p + 1)
+            {
+              printf ("-");
+              do
+                {
+                  p--;
+                  count--;
+                }
+              while (count > 0 && p[-1] == *p + 1);
+              printf ("%d", *p);
+            }
+          first = false;
+        }
+    }
+  if (seen_LASTCHAR)
+    {
+      if (!first)
+        printf (",");
+      printf ("$");
+    }
+}
+
+/* ------------------------------------------------------------------------- */
 
 #ifndef __OPTIMIZE__
 

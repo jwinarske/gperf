@@ -91,8 +91,8 @@ KEYWORD_LIST_H = keyword-list.h keyword-list.icc $(KEYWORD_H)
 INPUT_H = input.h $(KEYWORD_LIST_H)
 BOOL_ARRAY_H = bool-array.h bool-array.icc $(OPTIONS_H)
 HASH_TABLE_H = hash-table.h $(KEYWORD_H)
-SEARCH_H = search.h $(KEYWORD_LIST_H) $(BOOL_ARRAY_H)
-OUTPUT_H = output.h $(KEYWORD_LIST_H)
+SEARCH_H = search.h $(KEYWORD_LIST_H) $(OPTIONS_H) $(BOOL_ARRAY_H)
+OUTPUT_H = output.h $(KEYWORD_LIST_H) $(OPTIONS_H)
 
 version.o : version.cc $(VERSION_H)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/version.cc

@@ -27,6 +27,7 @@
 #define search_h 1
 
 #include "keyword-list.h"
+#include "options.h"
 #include "bool-array.h"
 
 class Search
@@ -36,6 +37,18 @@ public:
                         ~Search ();
   void                  optimize ();
 private:
+  void                  preprepare ();
+
+  /* Initializes each keyword's _selchars array.  */
+  void                  init_selchars (bool use_all_chars, const Positions& positions) const;
+  /* Deletes each keyword's _selchars array.  */
+  void                  delete_selchars () const;
+
+  /* Count the duplicate keywords that occur with a given set of positions.  */
+  unsigned int          count_duplicates (const Positions& positions) const;
+
+  void                  find_positions ();
+
   void                  prepare ();
 
   /* Computes the sum of occurrences of the _selchars of a keyword.  */
@@ -90,15 +103,18 @@ public:
   /* Total number of keywords, counting duplicates.  */
   int                   _total_keys;
 
-  /* Total number of duplicates that have been moved to _duplicate_link lists
-     (not counting their representatives which stay on the main list).  */
-  int                   _total_duplicates;
-
   /* Maximum length of the longest keyword.  */
   int                   _max_key_len;
 
   /* Minimum length of the shortest keyword.  */
   int                   _min_key_len;
+
+  /* User-specified or computed key positions.  */
+  Positions             _key_positions;
+
+  /* Total number of duplicates that have been moved to _duplicate_link lists
+     (not counting their representatives which stay on the main list).  */
+  int                   _total_duplicates;
 
   /* Size of alphabet.  */
   int const             _alpha_size;

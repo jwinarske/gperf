@@ -41,63 +41,66 @@ enum Option_Type
   /* Apply ordering heuristic to speed-up search time.  */
   ORDER        = 1 << 1,
 
+  /* Use the given key positions.  */
+  POSITIONS    = 1 << 2,
+
   /* Use all characters in hash function.  */
-  ALLCHARS     = 1 << 2,
+  ALLCHARS     = 1 << 3,
 
   /* Handle user-defined type structured keyword input.  */
-  TYPE         = 1 << 3,
+  TYPE         = 1 << 4,
 
   /* Randomly initialize the associated values table.  */
-  RANDOM       = 1 << 4,
+  RANDOM       = 1 << 5,
 
   /* Generate switch output to save space.  */
-  SWITCH       = 1 << 5,
+  SWITCH       = 1 << 6,
 
   /* Don't include keyword length in hash computations.  */
-  NOLENGTH     = 1 << 6,
+  NOLENGTH     = 1 << 7,
 
   /* Generate a length table for string comparison.  */
-  LENTABLE     = 1 << 7,
+  LENTABLE     = 1 << 8,
 
   /* Handle duplicate hash values for keywords.  */
-  DUP          = 1 << 8,
+  DUP          = 1 << 9,
 
   /* Generate the hash function "fast".  */
-  FAST         = 1 << 9,
+  FAST         = 1 << 10,
 
   /* Don't include user-defined type definition in output -- it's already
      defined elsewhere.  */
-  NOTYPE       = 1 << 10,
+  NOTYPE       = 1 << 11,
 
   /* Generate strncmp rather than strcmp.  */
-  COMP         = 1 << 11,
+  COMP         = 1 << 12,
 
   /* Make the keyword table a global variable.  */
-  GLOBAL       = 1 << 12,
+  GLOBAL       = 1 << 13,
 
   /* Make the generated tables readonly (const).  */
-  CONST        = 1 << 13,
+  CONST        = 1 << 14,
 
   /* Generate K&R C code: no prototypes, no const.  */
-  KRC          = 1 << 14,
+  KRC          = 1 << 15,
 
   /* Generate C code: no prototypes, but const (user can #define it away).  */
-  C            = 1 << 15,
+  C            = 1 << 16,
 
   /* Generate ISO/ANSI C code: prototypes and const, but no class.  */
-  ANSIC        = 1 << 16,
+  ANSIC        = 1 << 17,
 
   /* Generate C++ code: prototypes, const, class, inline, enum.  */
-  CPLUSPLUS    = 1 << 17,
+  CPLUSPLUS    = 1 << 18,
 
   /* Use enum for constants.  */
-  ENUM         = 1 << 18,
+  ENUM         = 1 << 19,
 
   /* Generate #include statements.  */
-  INCLUDE      = 1 << 21,
+  INCLUDE      = 1 << 20,
 
   /* Assume 7-bit, not 8-bit, characters.  */
-  SEVENBIT     = 1 << 22
+  SEVENBIT     = 1 << 21
 };
 
 /* This class denotes a set of key positions.  */
@@ -115,8 +118,14 @@ public:
 
   /* Constructors.  */
                         Positions ();
-                        Positions (int key1);
-                        Positions (int key1, int key2);
+                        Positions (int pos1);
+                        Positions (int pos1, int pos2);
+
+  /* Copy constructor.  */
+                        Positions (const Positions& src);
+
+  /* Assignment operator.  */
+  Positions&            operator= (const Positions& src);
 
   /* Accessors.  */
   int                   operator[] (unsigned int index) const;
@@ -129,6 +138,14 @@ public:
   /* Sorts the array in reverse order.
      Returns true if there are no duplicates, false otherwise.  */
   bool                  sort ();
+
+  /* Set operations.  Assumes the array is in reverse order.  */
+  bool                  contains (int pos) const;
+  void                  add (int pos);
+  void                  remove (int pos);
+
+  /* Output in external syntax.  */
+  void                  print () const;
 
 private:
   /* Number of positions.  */
@@ -246,12 +263,8 @@ public:
   void                  set_delimiters (const char *delimiters);
 
   /* Returns key positions.
-     Only to be called if !options[ALLCHARS].  */
+     Only to be used if !options[ALLCHARS].  */
   const Positions&      get_key_positions () const;
-
-  /* Returns total distinct key positions.
-     Only to be called if !options[ALLCHARS].  */
-  int                   get_max_keysig_size () const;
 
 private:
   /* Prints program usage to given stream.  */

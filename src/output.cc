@@ -87,8 +87,9 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 unsigned int verbatim_declarations_lineno,
                 const char *verbatim_code, const char *verbatim_code_end,
                 unsigned int verbatim_code_lineno,
-                int total_keys, int total_duplicates, int max_key_len,
-                int min_key_len, int alpha_size, const int *occurrences,
+                int total_keys, int max_key_len, int min_key_len,
+                const Positions& positions, int total_duplicates,
+                int alpha_size, const int *occurrences,
                 const int *asso_values)
   : _head (head), _struct_decl (struct_decl),
     _struct_decl_lineno (struct_decl_lineno), _return_type (return_type),
@@ -99,9 +100,10 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
     _verbatim_code (verbatim_code),
     _verbatim_code_end (verbatim_code_end),
     _verbatim_code_lineno (verbatim_code_lineno),
-    _total_keys (total_keys), _total_duplicates (total_duplicates),
+    _total_keys (total_keys),
     _max_key_len (max_key_len), _min_key_len (min_key_len),
-    _alpha_size (alpha_size),
+    _key_positions (positions),
+    _total_duplicates (total_duplicates), _alpha_size (alpha_size),
     _occurrences (occurrences), _asso_values (asso_values)
 {
 }
@@ -480,32 +482,33 @@ Output::output_hash_function () const
   printf ("{\n");
 
   /* First the asso_values array.  */
-  {
-    printf ("  static %s%s asso_values[] =\n"
-            "    {",
-            const_readonly_array,
-            smallest_integral_type (_max_hash_value + 1));
+  if (option[ALLCHARS] || _key_positions.get_size() > 0)
+    {
+      printf ("  static %s%s asso_values[] =\n"
+              "    {",
+              const_readonly_array,
+              smallest_integral_type (_max_hash_value + 1));
 
-    const int columns = 10;
+      const int columns = 10;
 
-    /* Calculate maximum number of digits required for MAX_HASH_VALUE.  */
-    int field_width = 2;
-    for (int trunc = _max_hash_value; (trunc /= 10) > 0;)
-      field_width++;
+      /* Calculate maximum number of digits required for MAX_HASH_VALUE.  */
+      int field_width = 2;
+      for (int trunc = _max_hash_value; (trunc /= 10) > 0;)
+        field_width++;
 
-    for (int count = 0; count < _alpha_size; count++)
-      {
-        if (count > 0)
-          printf (",");
-        if ((count % columns) == 0)
-          printf ("\n     ");
-        printf ("%*d", field_width,
-                _occurrences[count] ? _asso_values[count] : _max_hash_value + 1);
-      }
+      for (int count = 0; count < _alpha_size; count++)
+        {
+          if (count > 0)
+            printf (",");
+          if ((count % columns) == 0)
+            printf ("\n     ");
+          printf ("%*d", field_width,
+                  _occurrences[count] ? _asso_values[count] : _max_hash_value + 1);
+        }
 
-    printf ("\n"
-            "    };\n");
-  }
+      printf ("\n"
+              "    };\n");
+    }
 
   if (option[ALLCHARS])
     {
@@ -526,12 +529,18 @@ Output::output_hash_function () const
               "    }\n"
               "  return hval;\n");
     }
+  else if (_key_positions.get_size() == 0)
+    {
+      /* Trivial case: No key positions at all.  */
+      printf ("  return %s;\n",
+              option[NOLENGTH] ? "0" : "len");
+    }
   else
     {
       /* Iterate through the key positions.  Remember that Positions::sort()
          has sorted them in decreasing order, with Positions::LASTCHAR coming
          last.  */
-      PositionIterator iter (option.get_key_positions());
+      PositionIterator iter (_key_positions);
       int key_pos;
 
       /* Get the highest key position.  */
@@ -547,9 +556,9 @@ Output::output_hash_function () const
           printf ("  return %s",
                   option[NOLENGTH] ? "" : "len + ");
 
-          if (option.get_key_positions().get_size() == 2
-              && option.get_key_positions()[0] == 1
-              && option.get_key_positions()[1] == Positions::LASTCHAR)
+          if (_key_positions.get_size() == 2
+              && _key_positions[0] == 1
+              && _key_positions[1] == Positions::LASTCHAR)
             /* Optimize special case of "-k 1,$".  */
             printf ("asso_values[%sstr[len - 1]] + asso_values[%sstr[0]]",
                     char_to_index, char_to_index);
@@ -1492,6 +1501,12 @@ Output::output ()
   printf (" code produced by gperf version %s */\n", version_string);
   option.print_options ();
   printf ("\n");
+  if (!option[POSITIONS])
+    {
+      printf ("/* Computed positions: -k'");
+      _key_positions.print();
+      printf ("' */\n");
+    }
 
   if (_verbatim_declarations < _verbatim_declarations_end)
     {

@@ -89,16 +89,11 @@ Hash_Table::~Hash_Table ()
     {
       int field_width;
 
-      if (option[ALLCHARS])
-        {
-          field_width = 0;
-          for (int i = _size - 1; i >= 0; i--)
-            if (_table[i])
-              if (field_width < _table[i]->_selchars_length)
-                field_width = _table[i]->_selchars_length;
-        }
-      else
-        field_width = option.get_max_keysig_size ();
+      field_width = 0;
+      for (int i = _size - 1; i >= 0; i--)
+        if (_table[i])
+          if (field_width < _table[i]->_selchars_length)
+            field_width = _table[i]->_selchars_length;
 
       fprintf (stderr,
                "\ndumping the hash table\n"

@@ -27,7 +27,7 @@
 #include <stdlib.h> /* declares exit(), rand(), srand() */
 #include <string.h> /* declares memset(), memcmp() */
 #include <time.h> /* declares time() */
-#include <limits.h> /* defines INT_MIN, INT_MAX */
+#include <limits.h> /* defines INT_MIN, INT_MAX, UINT_MAX */
 #include "options.h"
 #include "hash-table.h"
 
@@ -35,6 +35,7 @@
 
 Search::Search (KeywordExt_List *list)
   : _head (list),
+    _key_positions (option.get_key_positions()),
     _alpha_size (option[SEVENBIT] ? 128 : 256),
     _occurrences (new int[_alpha_size]),
     _asso_values (new int[_alpha_size]),
@@ -43,7 +44,7 @@ Search::Search (KeywordExt_List *list)
 }
 
 void
-Search::prepare ()
+Search::preprepare ()
 {
   KeywordExt_List *temp;
 
@@ -51,10 +52,6 @@ Search::prepare ()
   _total_keys = 0;
   for (temp = _head; temp; temp = temp->rest())
     _total_keys++;
-
-  /* Initialize each keyword's _selchars array.  */
-  for (temp = _head; temp; temp = temp->rest())
-    temp->first()->init_selchars();
 
   /* Compute the minimum and maximum keyword length.  */
   _max_key_len = INT_MIN;
@@ -78,6 +75,212 @@ Search::prepare ()
                        "len == 0 before calling the gperf generated lookup function.\n");
       exit (1);
     }
+}
+
+/* Initializes each keyword's _selchars array.  */
+void
+Search::init_selchars (bool use_all_chars, const Positions& positions) const
+{
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+    temp->first()->init_selchars(use_all_chars, positions);
+}
+
+/* Deletes each keyword's _selchars array.  */
+void
+Search::delete_selchars () const
+{
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+    temp->first()->delete_selchars();
+}
+
+/* Count the duplicate keywords that occur with a given set of positions.  */
+unsigned int
+Search::count_duplicates (const Positions& positions) const
+{
+  init_selchars (false, positions);
+
+  unsigned int count = 0;
+  Hash_Table representatives (_total_keys, option[NOLENGTH]);
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+    {
+      KeywordExt *keyword = temp->first();
+      if (representatives.insert (keyword))
+        count++;
+    }
+
+  delete_selchars ();
+
+  return count;
+}
+
+void
+Search::find_positions ()
+{
+  /* Determine good key positions.  */
+
+  /* 1. Find positions that must occur in order to distinguish duplicates.  */
+  Positions mandatory;
+
+  if (!option[DUP])
+    {
+      for (KeywordExt_List *l1 = _head; l1 && l1->rest(); l1 = l1->rest())
+        {
+          KeywordExt *keyword1 = l1->first();
+          for (KeywordExt_List *l2 = l1->rest(); l2; l2 = l2->rest())
+            {
+              KeywordExt *keyword2 = l2->first();
+
+              /* If keyword1 and keyword2 have the same length and differ
+                 in just one position, and it is not the last character,
+                 this position is mandatory.  */
+              if (keyword1->_allchars_length == keyword2->_allchars_length)
+                {
+                  int n = keyword1->_allchars_length;
+                  int i;
+                  for (i = 1; i < n; i++)
+                    if (keyword1->_allchars[i-1] != keyword2->_allchars[i-1])
+                      break;
+                  if (i < n
+                      && memcmp (&keyword1->_allchars[i],
+                                 &keyword2->_allchars[i],
+                                 n - i)
+                         == 0)
+                    {
+                      /* Position i is mandatory.  */
+                      if (!mandatory.contains (i))
+                        mandatory.add (i);
+                    }
+                }
+            }
+        }
+    }
+
+  /* 2. Add positions, as long as this decreases the duplicates count.  */
+  int imax = (_max_key_len < Positions::MAX_KEY_POS
+              ? _max_key_len : Positions::MAX_KEY_POS);
+  Positions current = mandatory;
+  unsigned int current_duplicates_count = count_duplicates (current);
+  for (;;)
+    {
+      Positions best;
+      unsigned int best_duplicates_count = UINT_MAX;
+
+      for (int i = imax; i >= 0; i--)
+        if (!current.contains (i))
+          {
+            Positions tryal = current;
+            tryal.add (i);
+            unsigned int try_duplicates_count = count_duplicates (tryal);
+
+            /* We prefer 'try' to 'best' if it produces less duplicates,
+               or if it produces the same number of duplicates but with
+               a more efficient hash function.  */
+            if (try_duplicates_count < best_duplicates_count
+                || (try_duplicates_count == best_duplicates_count && i > 0))
+              {
+                best = tryal;
+                best_duplicates_count = try_duplicates_count;
+              }
+          }
+
+      /* Stop adding positions when it gives no improvement.  */
+      if (best_duplicates_count >= current_duplicates_count)
+        break;
+
+      current = best;
+      current_duplicates_count = best_duplicates_count;
+    }
+
+  /* 3. Remove positions, as long as this doesn't increase the duplicates
+     count.  */
+  for (;;)
+    {
+      Positions best;
+      unsigned int best_duplicates_count = UINT_MAX;
+
+      for (int i = imax; i >= 0; i--)
+        if (current.contains (i) && !mandatory.contains (i))
+          {
+            Positions tryal = current;
+            tryal.remove (i);
+            unsigned int try_duplicates_count = count_duplicates (tryal);
+
+            /* We prefer 'try' to 'best' if it produces less duplicates,
+               or if it produces the same number of duplicates but with
+               a more efficient hash function.  */
+            if (try_duplicates_count < best_duplicates_count
+                || (try_duplicates_count == best_duplicates_count && i == 0))
+              {
+                best = tryal;
+                best_duplicates_count = try_duplicates_count;
+              }
+          }
+
+      /* Stop removing positions when it gives no improvement.  */
+      if (best_duplicates_count > current_duplicates_count)
+        break;
+
+      current = best;
+      current_duplicates_count = best_duplicates_count;
+    }
+
+  /* 4. Replace two positions by one, as long as this doesn't increase the
+     duplicates count.  */
+  for (;;)
+    {
+      Positions best;
+      unsigned int best_duplicates_count = UINT_MAX;
+
+      for (int i1 = imax; i1 >= 0; i1--)
+        if (current.contains (i1) && !mandatory.contains (i1))
+          for (int i2 = imax; i2 >= 0; i2--)
+            if (current.contains (i2) && !mandatory.contains (i2) && i2 != i1)
+              for (int i3 = imax; i3 >= 0; i3--)
+                if (!current.contains (i3))
+                  {
+                    Positions tryal = current;
+                    tryal.remove (i1);
+                    tryal.remove (i2);
+                    tryal.add (i3);
+                    unsigned int try_duplicates_count =
+                      count_duplicates (tryal);
+
+                    /* We prefer 'try' to 'best' if it produces less duplicates,
+                       or if it produces the same number of duplicates but with
+                       a more efficient hash function.  */
+                    if (try_duplicates_count < best_duplicates_count
+                        || (try_duplicates_count == best_duplicates_count
+                            && (i1 == 0 || i2 == 0 || i3 > 0)))
+                      {
+                        best = tryal;
+                        best_duplicates_count = try_duplicates_count;
+                      }
+                  }
+
+      /* Stop removing positions when it gives no improvement.  */
+      if (best_duplicates_count > current_duplicates_count)
+        break;
+
+      current = best;
+      current_duplicates_count = best_duplicates_count;
+    }
+
+  /* That's it.  Hope it's good enough.  */
+  _key_positions = current;
+}
+
+void
+Search::prepare ()
+{
+  KeywordExt_List *temp;
+
+  preprepare ();
+
+  if (!option[POSITIONS])
+    find_positions ();
+
+  /* Initialize each keyword's _selchars array.  */
+  init_selchars (option[ALLCHARS], _key_positions);
 
   /* Check for duplicates, i.e. keywords with the same _selchars array
      (and - if !option[NOLENGTH] - also the same length).
@@ -140,8 +343,12 @@ Search::prepare ()
                          _total_duplicates);
       else
         {
-          fprintf (stderr, "%d input keys have identical hash values,\ntry different key positions or use option -D.\n",
+          fprintf (stderr, "%d input keys have identical hash values,\n",
                            _total_duplicates);
+          if (option[POSITIONS])
+            fprintf (stderr, "try different key positions or use option -D.\n");
+          else
+            fprintf (stderr, "use option -D.\n");
           exit (1);
         }
     }
@@ -313,7 +520,7 @@ Search::max_key_length () const
 int
 Search::get_max_keysig_size () const
 {
-  return option[ALLCHARS] ? _max_key_len : option.get_max_keysig_size ();
+  return option[ALLCHARS] ? _max_key_len : _key_positions.get_size();
 }
 
 /* ---------------------- Finding good asso_values[] ----------------------- */
@@ -758,9 +965,12 @@ Search::optimize ()
           else /* Yow, big problems.  we're outta here! */
             {
               fprintf (stderr,
-                       "\nInternal error, duplicate value %d:\n"
-                       "try options -D or -m or -r, or use new key positions.\n\n",
+                       "\nInternal error, duplicate hash code value %d:\n",
                        hashcode);
+              if (option[POSITIONS])
+                fprintf (stderr, "try options -m or -D or -r, or use new key positions.\n\n");
+              else
+                fprintf (stderr, "try options -m or -D or -r.\n\n");
               exit (1);
             }
         }

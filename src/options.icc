@@ -32,18 +32,37 @@ Positions::Positions ()
 }
 
 INLINE
-Positions::Positions (int key1)
+Positions::Positions (int pos1)
   : _size (1)
 {
-  _positions[0] = key1;
+  _positions[0] = pos1;
 }
 
 INLINE
-Positions::Positions (int key1, int key2)
+Positions::Positions (int pos1, int pos2)
   : _size (2)
 {
-  _positions[0] = key1;
-  _positions[1] = key2;
+  _positions[0] = pos1;
+  _positions[1] = pos2;
+}
+
+/* Copy constructor.  */
+
+INLINE
+Positions::Positions (const Positions& src)
+  : _size (src._size)
+{
+  memcpy (_positions, src._positions, _size * sizeof (_positions[0]));
+}
+
+/* Assignment operator.  */
+
+INLINE Positions&
+Positions::operator= (const Positions& src)
+{
+  _size = src._size;
+  memcpy (_positions, src._positions, _size * sizeof (_positions[0]));
+  return *this;
 }
 
 /* Accessors.  */
@@ -238,17 +257,9 @@ Options::get_delimiters () const
 }
 
 /* Returns key positions.
-   Only to be called if !options[ALLCHARS].  */
+   Only to be used if !options[ALLCHARS].  */
 INLINE const Positions&
 Options::get_key_positions () const
 {
   return _key_positions;
-}
-
-/* Returns total distinct key positions.
-   Only to be called if !options[ALLCHARS].  */
-INLINE int
-Options::get_max_keysig_size () const
-{
-  return _key_positions.get_size();
 }

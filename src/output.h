@@ -27,6 +27,7 @@
 #define output_h 1
 
 #include "keyword-list.h"
+#include "options.h"
 
 /* OSF/1 cxx needs these forward declarations. */
 struct Output_Constants;
@@ -48,8 +49,9 @@ public:
                                 const char *verbatim_code_end,
                                 unsigned int verbatim_code_lineno,
                                 int total_keys,
-                                int total_duplicates,
                                 int max_key_len, int min_key_len,
+                                const Positions& positions,
+                                int total_duplicates,
                                 int alpha_size,
                                 const int *occurrences,
                                 const int *asso_values);
@@ -113,12 +115,14 @@ private:
   unsigned int const    _verbatim_code_lineno;
   /* Total number of keys, counting duplicates. */
   int const             _total_keys;
-  /* Total number of duplicate hash values. */
-  int const             _total_duplicates;
   /* Maximum length of the longest keyword. */
   int const             _max_key_len;
   /* Minimum length of the shortest keyword. */
   int const             _min_key_len;
+  /* Key positions.  Only to be used if !options[ALLCHARS].  */
+  Positions const       _key_positions;
+  /* Total number of duplicate hash values. */
+  int const             _total_duplicates;
   /* Minimum hash value for all keywords. */
   int                   _min_hash_value;
   /* Maximum hash value for all keywords. */

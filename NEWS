@@ -27,6 +27,8 @@ New in 2.8:
     %define word-array-name NAME
     %switch=COUNT
     %omit-struct-type
+* When the option -k is not given, the default key positions are now
+  computed depending on the set of keywords.
 * If the input file is given by name, the output file will now contain
   #line directives referring to the input file.
 * Bug fixes.

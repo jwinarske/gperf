@@ -135,7 +135,7 @@ check-test:
 	diff $(srcdir)/java.exp java.out
 	$(GPERF) -n -k1-8 -l < $(srcdir)/modula2.gperf > modula2.out
 	diff $(srcdir)/modula2.exp modula2.out
-	$(GPERF) -D -p -t < $(srcdir)/c-parse.gperf > test-4.out
+	$(GPERF) -D -p -t -k1,'$$' < $(srcdir)/c-parse.gperf > test-4.out
 	diff $(srcdir)/test-4.exp test-4.out
 	$(GPERF) -g -o -j1 -t -p -N is_reserved_word < $(srcdir)/gpc.gperf > gpc.out
 	diff $(srcdir)/gpc.exp gpc.out

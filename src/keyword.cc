@@ -47,7 +47,7 @@ static inline void sort_char_set (unsigned char *base, int len)
     }
 }
 
-/* Initialize selchars and selchars_length.
+/* Initializes selchars and selchars_length.
    The hash function will be computed as
    asso_values[allchars[key_pos[0]]] + asso_values[allchars[key_pos[1]]] + ...
    We compute selchars as the multiset
@@ -57,14 +57,15 @@ static inline void sort_char_set (unsigned char *base, int len)
    Furthermore we sort the selchars array, to ease detection of duplicates
    later.
  */
-void KeywordExt::init_selchars ()
+void
+KeywordExt::init_selchars (bool use_all_chars, const Positions& positions)
 {
   const char *k = _allchars;
   unsigned char *key_set =
-    new unsigned char[(option[ALLCHARS] ? _allchars_length : option.get_max_keysig_size ())];
+    new unsigned char[(use_all_chars ? _allchars_length : positions.get_size ())];
   unsigned char *ptr = key_set;
 
-  if (option[ALLCHARS])
+  if (use_all_chars)
     /* Use all the character positions in the KEY.  */
     for (int i = _allchars_length; i > 0; k++, i--)
       {
@@ -76,7 +77,7 @@ void KeywordExt::init_selchars ()
     {
       /* Iterate through the list of key_positions, initializing selchars
          (via ptr).  */
-      PositionIterator iter (option.get_key_positions ());
+      PositionIterator iter (positions);
 
       for (int i; (i = iter.next ()) != PositionIterator::EOS; )
         {
@@ -91,15 +92,6 @@ void KeywordExt::init_selchars ()
             continue;
           ptr++;
         }
-
-      /* Didn't get any hits and user doesn't want to consider the
-         keylength, so there are essentially no usable hash positions!  */
-      if (ptr == key_set && option[NOLENGTH])
-        {
-          fprintf (stderr, "Can't hash keyword %.*s with chosen key positions.\n",
-                   _allchars_length, _allchars);
-          exit (1);
-        }
     }
 
   /* Sort the KEY_SET items alphabetically.  */
@@ -107,6 +99,13 @@ void KeywordExt::init_selchars ()
 
   _selchars = key_set;
   _selchars_length = ptr - key_set;
+}
+
+/* Deletes selchars.  */
+void
+KeywordExt::delete_selchars ()
+{
+  delete[] _selchars;
 }
 
 

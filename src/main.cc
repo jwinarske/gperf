@@ -103,9 +103,10 @@ main (int argc, char *argv[])
                           inputter._verbatim_code_end,
                           inputter._verbatim_code_lineno,
                           searcher._total_keys,
-                          searcher._total_duplicates,
                           searcher._max_key_len,
                           searcher._min_key_len,
+                          searcher._key_positions,
+                          searcher._total_duplicates,
                           searcher._alpha_size,
                           searcher._occurrences,
                           searcher._asso_values);

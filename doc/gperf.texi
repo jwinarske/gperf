@@ -985,6 +985,10 @@ with length less than the indicated byte positions work properly, since
 selected byte positions exceeding the keyword length are simply not
 referenced in the hash function.
 
+This option is not normally needed since version 2.8 of @code{gperf};
+the default byte positions are computed depending on the keyword set,
+through a search that minimizes the number of byte positions.
+
 @item -D
 @itemx --duplicates
 @cindex Duplicates
