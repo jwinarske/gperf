@@ -55,7 +55,7 @@ installdirs :
 
 uninstall :
 
-check : check-link-c check-link-c++ check-c check-ada check-modula3 check-pascal check-test
+check : check-link-c check-link-c++ check-c check-ada check-modula3 check-pascal check-lang-utf8 check-lang-ucs2 check-test
 	@true
 
 extracheck : @CHECK_LANG_SYNTAX@
@@ -100,6 +100,23 @@ check-pascal:
 	@echo "testing Pascal reserved words, all items should be found in the set"
 	./pout -v < $(srcdir)/pascal.gperf > pascal.out
 	diff $(srcdir)/pascal.exp pascal.out
+
+# check for 8-bit cleanliness
+check-lang-utf8:
+	$(GPERF) -k1 -t -I -K foreign_name < $(srcdir)/lang-utf8.gperf > lu8inset.c
+	$(CC) $(CFLAGS) -o lu8out lu8inset.c test.o
+	@echo "testing UTF-8 encoded languages, all items should be found in the set"
+	sed -e '1,6d' -e 's/,.*//' < $(srcdir)/lang-utf8.gperf | ./lu8out -v > lang-utf8.out
+	diff $(srcdir)/lang-utf8.exp lang-utf8.out
+
+# check for binary keywords with NUL bytes
+check-lang-ucs2:
+	$(CC) -c $(CFLAGS) $(srcdir)/test2.c
+	$(GPERF) -k4 -t -l -I -K foreign_name < $(srcdir)/lang-ucs2.gperf > lu2inset.c
+	$(CC) $(CFLAGS) -o lu2out lu2inset.c test2.o
+	@echo "testing UCS-2 encoded languages, all items should be found in the set"
+	./lu2out -v < $(srcdir)/lang-ucs2.in > lang-ucs2.out
+	diff $(srcdir)/lang-ucs2.exp lang-ucs2.out
 
 # these next 5 are demos that show off the generated code
 check-test:

@@ -9,6 +9,12 @@
 
         * AUTHORS: New file.
 
+        * tests/Makefile.in (all): Add check-lang-utf8 and check-lang-ucs2.
+          (check-lang-utf8, check-lang-ucs2): New targets.
+        * tests/lang-utf8.gperf, tests/lang-utf8.exp: New files.
+        * tests/lang-ucs2.gperf, tests/test2.c, tests/lang-ucs2.in,
+          tests/lang-ucs2.exp: New files.
+
         Allow the use of embedded NULs in keys.
         * lib/hash.h (hashpjw): Add a length argument.
         * lib/hash.cc (hashpjw): Likewise. Don't stop when encountering a NUL
