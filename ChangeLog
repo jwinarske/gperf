@@ -1,5 +1,8 @@
 2000-08-20  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/version.cc: Bump version number to 2.7.2.
+        * doc/gperf.texi: Likewise.
+
         Allow the use of embedded NULs in keys.
         * lib/hash.h (hashpjw): Add a length argument.
         * lib/hash.cc (hashpjw): Likewise. Don't stop when encountering a NUL
