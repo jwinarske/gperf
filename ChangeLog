@@ -24,8 +24,8 @@
 
         * src/main.cc (main): Check for write error on stdout before returning.
 
-        * src/Makefile.in (LDFLAGS): New definition, to catch the value given at
-          configure time.
+        * src/Makefile.in (LDFLAGS): New definition, to catch the value given
+          at configure time.
 
         Make the structure initializers customizable. Based on a patch by
         Kaveh R. Ghazi <ghazi@caip.rutgers.edu>.
@@ -43,8 +43,8 @@
           initializer_suffix.
         * doc/gperf.texi: Document option "-F".
 
-        * COPYING: Replace with GPL version 2 (with new FSF address and Y2K safe
-          year format).
+        * COPYING: Replace with GPL version 2 (with new FSF address and Y2K
+          safe year format).
 
         * doc/gpl.texinfo: New file.
         * doc/gperf.texi: Document it.
