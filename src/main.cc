@@ -1,4 +1,4 @@
-/* Driver program for the Gen_Perf hash function generator
+/* Driver program for the hash function generator
    Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
@@ -20,26 +20,63 @@
    If not, write to the Free Software Foundation, Inc.,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Simple driver program for the Gen_Perf.hash function generator.
-   Most of the hard work is done in class Gen_Perf and its class methods. */
-
 #include <stdio.h>
 #include "options.h"
-#include "gen-perf.h"
+#include "input.h"
+#include "search.h"
+#include "output.h"
+
+
+/* This Keyword factory produces KeywordExt instances.  */
+
+class KeywordExt_Factory : public Keyword_Factory
+{
+virtual Keyword *       create_keyword (const char *allchars, int allchars_length,
+                                        const char *rest);
+};
+
+Keyword *
+KeywordExt_Factory::create_keyword (const char *allchars, int allchars_length, const char *rest)
+{
+  return new KeywordExt (allchars, allchars_length, rest);
+}
+
 
 int
 main (int argc, char *argv[])
 {
-  /* Sets the Options. */
+  /* Set the Options. */
   option.parse_options (argc, argv);
 
-  /* Initializes the key word list. */
-  Gen_Perf generate_table;
+  /* Initialize the key word list. */
+  KeywordExt_Factory factory;
+  Input inputter (&factory);
+  Vectors::ALPHA_SIZE = (option[SEVENBIT] ? 128 : 256);
+  inputter.read_keys ();
+  /* We can cast the keyword list to KeywordExt_List* because its list
+     elements were created by KeywordExt_Factory. */
+  KeywordExt_List* list = static_cast<KeywordExt_List*>(inputter._head);
 
-  /* Generates and prints the Gen_Perf hash table. */
-  int status = generate_table.doit_all ();
+  /* Search for a good hash function.  */
+  Search searcher (list);
+  searcher.optimize ();
+
+  /* Output the hash function code.  */
+  Output outputter (searcher._head,
+                    inputter._array_type,
+                    inputter._return_type,
+                    inputter._struct_tag,
+                    inputter._additional_code,
+                    inputter._include_src,
+                    searcher._total_keys,
+                    searcher._total_duplicates,
+                    searcher._max_key_len,
+                    searcher._min_key_len,
+                    &searcher);
+  outputter.output ();
 
   /* Check for write error on stdout. */
+  int status = 0;
   if (fflush (stdout) || ferror (stdout))
     status = 1;
 

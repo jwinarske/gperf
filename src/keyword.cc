@@ -60,8 +60,8 @@ static inline void sort_char_set (char *base, int len)
     }
 }
 
-/* Initialize selchars and selchars_length, and update v->occurrences.  */
-void KeywordExt::init_selchars (Vectors *v)
+/* Initialize selchars and selchars_length, and update occurrences.  */
+void KeywordExt::init_selchars (int *occurrences)
 {
   const char *k = _allchars;
   char *key_set =
@@ -71,7 +71,7 @@ void KeywordExt::init_selchars (Vectors *v)
   if (option[ALLCHARS])
     /* Use all the character positions in the KEY. */
     for (int i = _allchars_length; i > 0; k++, ptr++, i--)
-      v->_occurrences[static_cast<unsigned char>(*ptr = *k)]++;
+      occurrences[static_cast<unsigned char>(*ptr = *k)]++;
   else
     /* Only use those character positions specified by the user. */
     {
@@ -90,7 +90,7 @@ void KeywordExt::init_selchars (Vectors *v)
           else
             /* Out of range of KEY length, so we'll just skip it. */
             continue;
-          v->_occurrences[static_cast<unsigned char>(*ptr)]++;
+          occurrences[static_cast<unsigned char>(*ptr)]++;
           ptr++;
         }
 

@@ -152,6 +152,9 @@ Input::strcspn (const char *s, const char *reject)
 void
 Input::set_output_types ()
 {
+  _array_type = NULL;
+  _return_type = NULL;
+  _struct_tag = NULL;
   if (option[TYPE])
     {
       _array_type = get_array_type ();
@@ -348,6 +351,7 @@ Input::read_keys ()
     temp->rest() = parse_line (ptr, delimiter);
 
   /* See if any additional C code is included at end of this file. */
+  _additional_code = false;
   if (ptr)
     _additional_code = true;
 }

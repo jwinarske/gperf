@@ -1,5 +1,26 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.h: New file, combines src/key-list.h, src/gen-perf.h.
+	* src/search,cc: New file, combines src/key-list.cc, src/gen-perf.cc.
+	* src/key-list.h: Remove file.
+	* src/key-list.cc: Remove file.
+	* src/gen-perf.h: Remove file.
+	* src/gen-perf.cc: Remove file.
+	* src/main.cc (KeywordExt_Factory): Moved here from gen-perf.cc.
+	(main): Inline some code from gen-perf.cc.
+	* src/keyword.h (KeywordExt::init_selchars): Take the occurrences
+	vector as argument.
+	* src/keyword.cc (KeywordExt::init_selchars): Take the occurrences
+	vector as argument.
+	* src/input.cc (Input::set_output_types): Initialize _array_type,
+	_return_type, _struct_tag.
+	(Input::read_keys): Initialize _additional_code.
+	* src/Makefile.in (OBJECTS): Add search.o.
+	Remove key-list.o, gen-perf.o.
+	(KEY_LIST_H, GEN_PERF_H): Remove variables.
+	(gen-perf.o, key-list.o): Remove rules.
+	(search.o): New rule.
+
 	* *, */*: Update copyright notice to GPL version 2.
 
 	* src/keyword-list.h (Keyword_List): New class.

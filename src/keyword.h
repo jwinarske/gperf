@@ -57,8 +57,8 @@ struct KeywordExt : public Keyword
   KeywordExt *          _duplicate_link;
 
   /* Methods depending on the keyposition list.  */
-  /* Initialize selchars and selchars_length, and update v->occurrences.  */
-  void                  init_selchars (Vectors *v);
+  /* Initialize selchars and selchars_length, and update occurrences.  */
+  void                  init_selchars (int *occurrences);
 
   /* Data members used by the algorithm.  */
   int                   _occurrence; /* A metric for frequency of key set occurrences. */
