@@ -57,8 +57,9 @@ static inline void sort_char_set (unsigned int *base, int len)
    Furthermore we sort the selchars array, to ease detection of duplicates
    later.
  */
-void
-KeywordExt::init_selchars (bool use_all_chars, const Positions& positions)
+
+unsigned int *
+KeywordExt::init_selchars_low (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc)
 {
   const char *k = _allchars;
   unsigned int *key_set =
@@ -69,7 +70,10 @@ KeywordExt::init_selchars (bool use_all_chars, const Positions& positions)
     /* Use all the character positions in the KEY.  */
     for (int i = _allchars_length; i > 0; k++, i--)
       {
-        *ptr = static_cast<unsigned char>(*k);
+        unsigned int c = static_cast<unsigned char>(*k);
+        if (alpha_inc)
+          c += alpha_inc[k-_allchars];
+        *ptr = c;
         ptr++;
       }
   else
@@ -81,24 +85,45 @@ KeywordExt::init_selchars (bool use_all_chars, const Positions& positions)
 
       for (int i; (i = iter.next ()) != PositionIterator::EOS; )
         {
+          unsigned int c;
           if (i == Positions::LASTCHAR)
             /* Special notation for last KEY position, i.e. '$'.  */
-            *ptr = static_cast<unsigned char>(_allchars[_allchars_length - 1]);
+            c = static_cast<unsigned char>(_allchars[_allchars_length - 1]);
           else if (i <= _allchars_length)
-            /* Within range of KEY length, so we'll keep it.  */
-            *ptr = static_cast<unsigned char>(_allchars[i - 1]);
+            {
+              /* Within range of KEY length, so we'll keep it.  */
+              c = static_cast<unsigned char>(_allchars[i - 1]);
+              if (alpha_inc)
+                c += alpha_inc[i - 1];
+            }
           else
             /* Out of range of KEY length, so we'll just skip it.  */
             continue;
+          *ptr = c;
           ptr++;
         }
     }
 
-  /* Sort the KEY_SET items alphabetically.  */
-  sort_char_set (key_set, ptr - key_set);
-
   _selchars = key_set;
   _selchars_length = ptr - key_set;
+
+  return key_set;
+}
+
+void
+KeywordExt::init_selchars_tuple (bool use_all_chars, const Positions& positions)
+{
+  init_selchars_low (use_all_chars, positions, NULL);
+}
+
+void
+KeywordExt::init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc)
+{
+  unsigned int *selchars =
+    init_selchars_low (use_all_chars, positions, alpha_inc);
+
+  /* Sort the selchars elements alphabetically.  */
+  sort_char_set (selchars, _selchars_length);
 }
 
 /* Deletes selchars.  */

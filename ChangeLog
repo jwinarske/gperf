@@ -1,5 +1,44 @@
 2002-11-17  Bruno Haible  <bruno@clisp.org>
 
+	Avoid artificial duplicates.
+	* src/keyword.h (KeywordExt::init_selchars_tuple): New declaration.
+	(KeywordExt::init_selchars_multiset): Renamed from
+	KeywordExt::init_selchars.
+	(KeywordExt::init_selchars_low): New declaration.
+	* src/keyword.cc (KeywordExt::init_selchars_low): Renamed from
+	KeywordExt::init_selchars. Add alpha_inc argument. Remove sorting.
+	(KeywordExt::init_selchars_tuple): New method.
+	(KeywordExt::init_selchars_multiset): New method, replaces
+	KeywordExt::init_selchars.
+	* src/search.h (Search::init_selchars_tuple): Renamed from
+	Search::init_selchars.
+	(Search::count_duplicates_tuple): Renamed from Search::count_duplicates.
+	(Search::init_selchars_multiset, Search::count_duplicates_multiset,
+	Search::find_alpha_inc): New declarations.
+	(Search::_alpha_inc): New field.
+	(Search::_alpha_size, Search::_occurrences, Search::_asso_values,
+	Search::_determined): Make non-const.
+	* src/search.cc (Search::Search): Don't initialize _key_positions,
+	_alpha_size, _occurrences, _asso_values, _determined here.
+	(Search::init_selchars_tuple): Renamed from Search::init_selchars.
+	(Search::count_duplicates_tuple): Renamed from Search::count_duplicates.
+	(Search::find_positions): Update.
+	(Search::init_selchars_multiset, Search::count_duplicates_multiset,
+	Search::find_alpha_inc): New methods.
+	(Search::prepare): Move preprepare, find_positions calls away.
+	Initialize _alpha_size, _occurrences, _asso_values, _determined here.
+	(Search::optimize): Call preprepare, find_positions here. Initialize
+	_key_positions here.
+	(Search::~Search): Deallocate _alpha_inc.
+	* src/output.cc (Output::Output): Add alpha_inc argument.
+	(Output::output_hash_function): Use _alpha_inc.
+	* src/output.h (Output::Output): Add alpha_inc argument.
+	(Output::_alpha_inc): New field.
+	* src/main.cc (main): Pass _alpha_inc from Search to Output.
+	* tests/chill.exp: Update.
+	* doc/gperf.texi (Algorithmic Details): Remove description of
+	artificial duplicates.
+
 	* src/keyword.h (KeywordExt::_selchars): Change type to
 	'const unsigned int *'.
 	* src/keyword.cc (sort_char_set): Change argument type to

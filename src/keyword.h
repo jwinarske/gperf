@@ -67,8 +67,10 @@ struct KeywordExt : public Keyword
   KeywordExt *          _duplicate_link;
 
   /* Methods depending on the keyposition list.  */
-  /* Initializes selchars and selchars_length.  */
-  void                  init_selchars (bool use_all_chars, const Positions& positions);
+  /* Initializes selchars and selchars_length, without reordering.  */
+  void                  init_selchars_tuple (bool use_all_chars, const Positions& positions);
+  /* Initializes selchars and selchars_length, with reordering.  */
+  void                  init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc);
   /* Deletes selchars.  */
   void                  delete_selchars ();
 
@@ -78,6 +80,9 @@ struct KeywordExt : public Keyword
 
   /* Data members used by the output routines.  */
   int                   _final_index;
+
+private:
+  unsigned int *        init_selchars_low (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc);
 };
 
 /* An abstract factory for creating Keyword instances.

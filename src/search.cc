@@ -31,15 +31,44 @@
 #include "options.h"
 #include "hash-table.h"
 
+/* The most general form of the hash function is
+
+      hash (keyword) = sum (asso_values[keyword[i] + alpha_inc[i]] : i in Pos)
+
+   where Pos is a set of byte positions,
+   each alpha_inc[i] is a nonnegative integer,
+   each asso_values[c] is a nonnegative integer.
+
+   Theorem 1: If all keywords are different, there is a set Pos such that
+   all tuples (keyword[i] : i in Pos) are different.
+
+   Theorem 2: If all tuples (keyword[i] : i in Pos) are different, there
+   are nonnegative integers alpha_inc[i] such that all multisets
+   {keyword[i] + alpha_inc[i] : i in Pos} are different.
+
+   Theorem 3: If all multisets selchars[keyword] are different, there are
+   nonnegative integers asso_values[c] such that all hash values
+   sum (asso_values[c] : c in selchars[keyword]) are different.
+
+   Based on these three facts, we find the hash function in three steps:
+
+   Step 1 (Finding good byte positions):
+   Find a set Pos, as small as possible, such that all tuples
+   (keyword[i] : i in Pos) are different.
+
+   Step 2 (Finding good alpha increments):
+   Find nonnegative integers alpha_inc[i], as many of them as possible being
+   zero, and the others being as small as possible, such that all multisets
+   {keyword[i] + alpha_inc[i] : i in Pos} are different.
+
+   Step 3 (Finding good asso_values):
+   Find asso_values[c] such that all hash (keyword) are different.
+ */
+
 /* -------------------- Initialization and Preparation --------------------- */
 
 Search::Search (KeywordExt_List *list)
-  : _head (list),
-    _key_positions (option.get_key_positions()),
-    _alpha_size (option[SEVENBIT] ? 128 : 256),
-    _occurrences (new int[_alpha_size]),
-    _asso_values (new int[_alpha_size]),
-    _determined (new bool[_alpha_size])
+  : _head (list)
 {
 }
 
@@ -77,12 +106,14 @@ Search::preprepare ()
     }
 }
 
+/* ---------------------- Finding good byte positions ---------------------- */
+
 /* Initializes each keyword's _selchars array.  */
 void
-Search::init_selchars (bool use_all_chars, const Positions& positions) const
+Search::init_selchars_tuple (bool use_all_chars, const Positions& positions) const
 {
   for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-    temp->first()->init_selchars(use_all_chars, positions);
+    temp->first()->init_selchars_tuple(use_all_chars, positions);
 }
 
 /* Deletes each keyword's _selchars array.  */
@@ -95,29 +126,31 @@ Search::delete_selchars () const
 
 /* Count the duplicate keywords that occur with a given set of positions.  */
 unsigned int
-Search::count_duplicates (const Positions& positions) const
+Search::count_duplicates_tuple (const Positions& positions) const
 {
-  init_selchars (false, positions);
+  init_selchars_tuple (option[ALLCHARS], positions);
 
   unsigned int count = 0;
-  Hash_Table representatives (_total_keys, option[NOLENGTH]);
-  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-    {
-      KeywordExt *keyword = temp->first();
-      if (representatives.insert (keyword))
-        count++;
-    }
+  {
+    Hash_Table representatives (_total_keys, option[NOLENGTH]);
+    for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+      {
+        KeywordExt *keyword = temp->first();
+        if (representatives.insert (keyword))
+          count++;
+      }
+  }
 
   delete_selchars ();
 
   return count;
 }
 
+/* Find good key positions.  */
+
 void
 Search::find_positions ()
 {
-  /* Determine good key positions.  */
-
   /* 1. Find positions that must occur in order to distinguish duplicates.  */
   Positions mandatory;
 
@@ -159,7 +192,7 @@ Search::find_positions ()
   int imax = (_max_key_len < Positions::MAX_KEY_POS
               ? _max_key_len : Positions::MAX_KEY_POS);
   Positions current = mandatory;
-  unsigned int current_duplicates_count = count_duplicates (current);
+  unsigned int current_duplicates_count = count_duplicates_tuple (current);
   for (;;)
     {
       Positions best;
@@ -170,7 +203,7 @@ Search::find_positions ()
           {
             Positions tryal = current;
             tryal.add (i);
-            unsigned int try_duplicates_count = count_duplicates (tryal);
+            unsigned int try_duplicates_count = count_duplicates_tuple (tryal);
 
             /* We prefer 'try' to 'best' if it produces less duplicates,
                or if it produces the same number of duplicates but with
@@ -203,7 +236,7 @@ Search::find_positions ()
           {
             Positions tryal = current;
             tryal.remove (i);
-            unsigned int try_duplicates_count = count_duplicates (tryal);
+            unsigned int try_duplicates_count = count_duplicates_tuple (tryal);
 
             /* We prefer 'try' to 'best' if it produces less duplicates,
                or if it produces the same number of duplicates but with
@@ -243,7 +276,7 @@ Search::find_positions ()
                     tryal.remove (i2);
                     tryal.add (i3);
                     unsigned int try_duplicates_count =
-                      count_duplicates (tryal);
+                      count_duplicates_tuple (tryal);
 
                     /* We prefer 'try' to 'best' if it produces less duplicates,
                        or if it produces the same number of duplicates but with
@@ -269,18 +302,141 @@ Search::find_positions ()
   _key_positions = current;
 }
 
+/* --------------------- Finding good alpha increments --------------------- */
+
+/* Initializes each keyword's _selchars array.  */
+void
+Search::init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc) const
+{
+  for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+    temp->first()->init_selchars_multiset(use_all_chars, positions, alpha_inc);
+}
+
+/* Count the duplicate keywords that occur with the given set of positions
+   and a given alpha_inc[] array.  */
+unsigned int
+Search::count_duplicates_multiset (const unsigned int *alpha_inc) const
+{
+  init_selchars_multiset (option[ALLCHARS], _key_positions, alpha_inc);
+
+  unsigned int count = 0;
+  {
+    Hash_Table representatives (_total_keys, option[NOLENGTH]);
+    for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+      {
+        KeywordExt *keyword = temp->first();
+        if (representatives.insert (keyword))
+          count++;
+      }
+  }
+
+  delete_selchars ();
+
+  return count;
+}
+
+/* Find good _alpha_inc[].  */
+
+void
+Search::find_alpha_inc ()
+{
+  /* The goal is to choose _alpha_inc[] such that it doesn't introduce
+     artificial duplicates.  */
+  unsigned int duplicates_goal = count_duplicates_tuple (_key_positions);
+
+  /* Start with zero increments.  This is sufficient in most cases.  */
+  unsigned int *current = new unsigned int [_max_key_len];
+  for (int i = 0; i < _max_key_len; i++)
+    current[i] = 0;
+  unsigned int current_duplicates_count = count_duplicates_multiset (current);
+
+  if (current_duplicates_count > duplicates_goal)
+    {
+      /* Look which _alpha_inc[i] we are free to increment.  */
+      unsigned int nindices;
+      if (option[ALLCHARS])
+        nindices = _max_key_len;
+      else
+        {
+          /* Ignore Positions::LASTCHAR.  Remember that since Positions are
+             sorted in decreasing order, Positions::LASTCHAR comes last.  */
+          nindices = (_key_positions.get_size() == 0
+                      || _key_positions[_key_positions.get_size() - 1]
+                         != Positions::LASTCHAR
+                      ? _key_positions.get_size()
+                      : _key_positions.get_size() - 1);
+        }
+
+      unsigned int indices[nindices];
+      if (option[ALLCHARS])
+        for (unsigned int j = 0; j < nindices; j++)
+          indices[j] = j;
+      else
+        {
+          PositionIterator iter (_key_positions);
+          for (unsigned int j = 0; j < nindices; j++)
+            {
+              int key_pos = iter.next ();
+              if (key_pos == PositionIterator::EOS
+                  || key_pos == Positions::LASTCHAR)
+                abort ();
+              indices[j] = key_pos - 1;
+            }
+        }
+
+      /* Perform several rounds of searching for a good alpha increment.
+         Each round reduces the number of artificial collisions by adding
+         an increment in a single key position.  */
+      unsigned int best[_max_key_len];
+      unsigned int tryal[_max_key_len];
+      do
+        {
+          /* An increment of 1 is not always enough.  Try higher increments
+             also.  */
+          for (unsigned int inc = 1; ; inc++)
+            {
+              unsigned int best_duplicates_count = UINT_MAX;
+
+              for (unsigned int j = 0; j < nindices; j++)
+                {
+                  memcpy (tryal, current, _max_key_len * sizeof (unsigned int));
+                  tryal[indices[j]] += inc;
+                  unsigned int try_duplicates_count =
+                    count_duplicates_multiset (tryal);
+
+                  /* We prefer 'try' to 'best' if it produces less
+                     duplicates.  */
+                  if (try_duplicates_count < best_duplicates_count)
+                    {
+                      memcpy (best, tryal, _max_key_len * sizeof (unsigned int));
+                      best_duplicates_count = try_duplicates_count;
+                    }
+                }
+
+              /* Stop this round when we got an improvement.  */
+              if (best_duplicates_count < current_duplicates_count)
+                {
+                  memcpy (current, best, _max_key_len * sizeof (unsigned int));
+                  current_duplicates_count = best_duplicates_count;
+                  break;
+                }
+            }
+        }
+      while (current_duplicates_count > duplicates_goal);
+    }
+
+  _alpha_inc = current;
+}
+
+/* ------------------------------------------------------------------------- */
+
 void
 Search::prepare ()
 {
   KeywordExt_List *temp;
 
-  preprepare ();
-
-  if (!option[POSITIONS])
-    find_positions ();
-
   /* Initialize each keyword's _selchars array.  */
-  init_selchars (option[ALLCHARS], _key_positions);
+  init_selchars_multiset(option[ALLCHARS], _key_positions, _alpha_inc);
 
   /* Check for duplicates, i.e. keywords with the same _selchars array
      (and - if !option[NOLENGTH] - also the same length).
@@ -357,7 +513,16 @@ Search::prepare ()
         }
     }
 
+  /* Compute _alpha_size, the upper bound on the indices passed to
+     asso_values[].  */
+  unsigned int max_alpha_inc = 0;
+  for (int i = 0; i < _max_key_len; i++)
+    if (max_alpha_inc < _alpha_inc[i])
+      max_alpha_inc = _alpha_inc[i];
+  _alpha_size = (option[SEVENBIT] ? 128 : 256) + max_alpha_inc;
+
   /* Compute the occurrences of each character in the alphabet.  */
+  _occurrences = new int[_alpha_size];
   memset (_occurrences, 0, _alpha_size * sizeof (_occurrences[0]));
   for (temp = _head; temp; temp = temp->rest())
     {
@@ -366,6 +531,10 @@ Search::prepare ()
       for (int count = keyword->_selchars_length; count > 0; ptr++, count--)
         _occurrences[*ptr]++;
     }
+
+  /* Memory allocation.  */
+  _asso_values = new int[_alpha_size];
+  _determined = new bool[_alpha_size];
 }
 
 /* ---------------- Reordering the Keyword list (optional) ----------------- */
@@ -878,6 +1047,11 @@ void
 Search::optimize ()
 {
   /* Preparations.  */
+  preprepare ();
+  _key_positions = option.get_key_positions();
+  if (!option[POSITIONS])
+    find_positions ();
+  find_alpha_inc ();
   prepare ();
   if (option[ORDER])
     reorder ();
@@ -1025,4 +1199,5 @@ Search::~Search ()
     }
   delete[] _asso_values;
   delete[] _occurrences;
+  delete[] _alpha_inc;
 }

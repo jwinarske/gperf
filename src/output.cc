@@ -88,8 +88,8 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 const char *verbatim_code, const char *verbatim_code_end,
                 unsigned int verbatim_code_lineno,
                 int total_keys, int max_key_len, int min_key_len,
-                const Positions& positions, int total_duplicates,
-                int alpha_size, const int *occurrences,
+                const Positions& positions, const unsigned int *alpha_inc,
+                int total_duplicates, int alpha_size, const int *occurrences,
                 const int *asso_values)
   : _head (head), _struct_decl (struct_decl),
     _struct_decl_lineno (struct_decl_lineno), _return_type (return_type),
@@ -102,7 +102,7 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
     _verbatim_code_lineno (verbatim_code_lineno),
     _total_keys (total_keys),
     _max_key_len (max_key_len), _min_key_len (min_key_len),
-    _key_positions (positions),
+    _key_positions (positions), _alpha_inc (alpha_inc),
     _total_duplicates (total_duplicates), _alpha_size (alpha_size),
     _occurrences (occurrences), _asso_values (asso_values)
 {
@@ -521,9 +521,14 @@ Output::output_hash_function () const
               option[NOLENGTH] ? "len" : "hval");
 
       for (int i = _max_key_len; i > 0; i--)
-        printf ("      case %d:\n"
-                "        hval += asso_values[%sstr[%d]];\n",
-                i, char_to_index, i - 1);
+        {
+          printf ("      case %d:\n"
+                  "        hval += asso_values[%sstr[%d]",
+                  i, char_to_index, i - 1);
+          if (_alpha_inc[i - 1])
+            printf ("+%u", _alpha_inc[i - 1]);
+          printf ("];\n");
+        }
 
       printf ("        break;\n"
               "    }\n"
@@ -560,13 +565,21 @@ Output::output_hash_function () const
               && _key_positions[0] == 1
               && _key_positions[1] == Positions::LASTCHAR)
             /* Optimize special case of "-k 1,$".  */
-            printf ("asso_values[%sstr[len - 1]] + asso_values[%sstr[0]]",
-                    char_to_index, char_to_index);
+            {
+              printf ("asso_values[%sstr[len - 1]] + asso_values[%sstr[0]",
+                      char_to_index, char_to_index);
+              if (_alpha_inc[0])
+                printf ("+%u", _alpha_inc[0]);
+              printf ("]");
+            }
           else
             {
               for (; key_pos != Positions::LASTCHAR; )
                 {
-                  printf ("asso_values[%sstr[%d]]", char_to_index, key_pos - 1);
+                  printf ("asso_values[%sstr[%d]", char_to_index, key_pos - 1);
+                  if (_alpha_inc[key_pos - 1])
+                    printf ("+%u", _alpha_inc[key_pos - 1]);
+                  printf ("]");
                   if ((key_pos = iter.next ()) != PositionIterator::EOS)
                     printf (" + ");
                   else
@@ -601,8 +614,11 @@ Output::output_hash_function () const
                   for ( ; i >= key_pos; i--)
                     printf ("      case %d:\n", i);
 
-                  printf ("        hval += asso_values[%sstr[%d]];\n",
+                  printf ("        hval += asso_values[%sstr[%d]",
                           char_to_index, key_pos - 1);
+                  if (_alpha_inc[key_pos - 1])
+                    printf ("+%u", _alpha_inc[key_pos - 1]);
+                  printf ("];\n");
 
                   key_pos = iter.next ();
                 }

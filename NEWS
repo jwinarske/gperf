@@ -31,6 +31,9 @@ New in 2.8:
   computed depending on the set of keywords.
 * If the input file is given by name, the output file will now contain
   #line directives referring to the input file.
+* Some keyword sets containing permutations, like { "xy", "yx", "xz", "zx" }
+  or { "abc", "acb", "bca", "cab" }, are now handled by gperf without
+  requiring the option -D.
 * Bug fixes.
 
 New in 2.7.2:

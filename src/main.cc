@@ -106,6 +106,7 @@ main (int argc, char *argv[])
                           searcher._max_key_len,
                           searcher._min_key_len,
                           searcher._key_positions,
+                          searcher._alpha_inc,
                           searcher._total_duplicates,
                           searcher._alpha_size,
                           searcher._occurrences,

@@ -993,7 +993,7 @@ through a search that minimizes the number of byte positions.
 @itemx --duplicates
 @cindex Duplicates
 Handle keywords whose selected byte sets hash to duplicate values.
-Duplicate hash values can occur for three reasons:
+Duplicate hash values can occur for two reasons:
 
 @itemize @bullet
 @item
@@ -1002,15 +1002,6 @@ all your input keywords without finding a unique mapping for each word.
 However, frequently only a very small number of duplicates occur, and 
 the majority of keywords still require one probe into the table.  To
 overcome this problem, the option @samp{-m 50} should be used.
-
-@item
-Since the @code{gperf} generated hash function treats the bytes at
-different byte positions with equal weight, keywords that are permutations
-of each other can lead to the same hash function value if they are not
-disambiguated by the set of selected byte positions.  Sometimes even this
-is not possible; for example, the keyword set @{"xy", "yx", "xz", "zx"@}
-will always lead to duplicates, regardless how the selected byte positions
-are chosen.  You can use the option @samp{-D} to handle this rare case.
 
 @item
 Sometimes a set of keywords may have the same names, but possess different

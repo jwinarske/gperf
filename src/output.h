@@ -51,6 +51,7 @@ public:
                                 int total_keys,
                                 int max_key_len, int min_key_len,
                                 const Positions& positions,
+                                const unsigned int *alpha_inc,
                                 int total_duplicates,
                                 int alpha_size,
                                 const int *occurrences,
@@ -121,6 +122,8 @@ private:
   int const             _min_key_len;
   /* Key positions.  Only to be used if !options[ALLCHARS].  */
   Positions const       _key_positions;
+  /* Adjustments to add to bytes add specific key positions.  */
+  const unsigned int * const _alpha_inc;
   /* Total number of duplicate hash values. */
   int const             _total_duplicates;
   /* Minimum hash value for all keywords. */

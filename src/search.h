@@ -40,14 +40,25 @@ private:
   void                  preprepare ();
 
   /* Initializes each keyword's _selchars array.  */
-  void                  init_selchars (bool use_all_chars, const Positions& positions) const;
+  void                  init_selchars_tuple (bool use_all_chars, const Positions& positions) const;
   /* Deletes each keyword's _selchars array.  */
   void                  delete_selchars () const;
 
   /* Count the duplicate keywords that occur with a given set of positions.  */
-  unsigned int          count_duplicates (const Positions& positions) const;
+  unsigned int          count_duplicates_tuple (const Positions& positions) const;
 
+  /* Find good key positions.  */
   void                  find_positions ();
+
+  /* Initializes each keyword's _selchars array.  */
+  void                  init_selchars_multiset (bool use_all_chars, const Positions& positions, const unsigned int *alpha_inc) const;
+
+  /* Count the duplicate keywords that occur with the given set of positions
+     and a given alpha_inc[] array.  */
+  unsigned int          count_duplicates_multiset (const unsigned int *alpha_inc) const;
+
+  /* Find good _alpha_inc[].  */
+  void                  find_alpha_inc ();
 
   void                  prepare ();
 
@@ -112,19 +123,22 @@ public:
   /* User-specified or computed key positions.  */
   Positions             _key_positions;
 
+  /* Adjustments to add to bytes add specific key positions.  */
+  unsigned int *        _alpha_inc;
+
   /* Total number of duplicates that have been moved to _duplicate_link lists
      (not counting their representatives which stay on the main list).  */
   int                   _total_duplicates;
 
   /* Size of alphabet.  */
-  int const             _alpha_size;
+  int                   _alpha_size;
 
   /* Counts occurrences of each key set character.
      _occurrences[c] is the number of times that c occurs among the _selchars
      of a keyword.  */
-  int * const           _occurrences;
+  int *                 _occurrences;
   /* Value associated with each character. */
-  int * const           _asso_values;
+  int *                 _asso_values;
 
 private:
 
@@ -132,7 +146,7 @@ private:
   int                   _list_len;
 
   /* Vector used during Search::reorder().  */
-  bool * const          _determined;
+  bool *                _determined;
 
   /* Exclusive upper bound for every _asso_values[c].  A power of 2.  */
   int                   _asso_value_max;
