@@ -1,5 +1,21 @@
 2002-11-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/search.h (Search::init_asso_values, Search::find_asso_values):
+	New declarations.
+	(Search::try_asso_value): Renamed from Search::affects_prev.
+	(Search::change_some_asso_value): Renamed from Search::change.
+	(Search::set_asso_max, Search::get_asso_max): Remove methods.
+	(Search::_union_set): New field.
+	* src/search.cc (Search::init_asso_values): New method, extracted
+	from Search::optimize.
+	(Search::try_asso_value): Renamed from Search::affects_prev. Take the
+	iteration count as argument.
+	(Search::change_some_asso_value): Renamed from Search::change. Don't
+	make union_set static. Don't increment _fewest_collisions here.
+	(Search::find_asso_values): New method, extracted from
+	Search::optimize.
+	(Search::optimize); Update.
+
 	* src/search.h (Search::compute_hash): Renamed from Search::hash.
 	(Search::compute_disjoint_union): Remove declaration.
 	(Search::sort_by_occurrence): Renamed from Search::sort_set.

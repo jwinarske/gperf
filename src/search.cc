@@ -31,8 +31,7 @@
 #include "options.h"
 #include "hash-table.h"
 
-/* Efficiently returns the least power of two greater than or equal to X! */
-#define POW(X) ((!X)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
+/* -------------------- Initialization and Preparation --------------------- */
 
 Search::Search (KeywordExt_List *list)
   : _head (list),
@@ -41,7 +40,6 @@ Search::Search (KeywordExt_List *list)
     _asso_values (new int[_alpha_size]),
     _determined (new bool[_alpha_size])
 {
-  memset (_asso_values, 0, _alpha_size * sizeof (_asso_values[0]));
 }
 
 void
@@ -154,6 +152,8 @@ Search::prepare ()
     }
 }
 
+/* ----------------------- Sorting the Keyword list ------------------------ */
+
 /* Merges two sorted lists together to form one sorted list.
    The sorting criterion depends on which of _occurrence_sort and _hash_sort
    is set to true.  This is a kludge, but permits nice sharing of almost
@@ -229,6 +229,8 @@ Search::merge_sort (KeywordExt_List *head)
       return merge (merge_sort (head), merge_sort (right_half));
     }
 }
+
+/* ---------------- Reordering the Keyword list (optional) ----------------- */
 
 /* Computes the sum of occurrences of the _selchars of a keyword.
    This is a kind of correlation measure: Keywords which have many
@@ -356,6 +358,8 @@ Search::reorder ()
     }
 }
 
+/* ------------------------------------------------------------------------- */
+
 /* Returns the length of keyword list.  */
 
 int
@@ -378,6 +382,71 @@ int
 Search::get_max_keysig_size ()
 {
   return option[ALLCHARS] ? _max_key_len : option.get_max_keysig_size ();
+}
+
+/* ---------------------- Finding good asso_values[] ----------------------- */
+
+/* Initializes the asso_values[] related parameters and put a first guess
+   into asso_values[].  */
+
+void
+Search::init_asso_values ()
+{
+  int size_multiple = option.get_size_multiple ();
+  int non_linked_length = keyword_list_length ();
+  int asso_value_max;
+
+  if (size_multiple == 0)
+    asso_value_max = non_linked_length;
+  else if (size_multiple > 0)
+    asso_value_max = non_linked_length * size_multiple;
+  else /* if (size_multiple < 0) */
+    asso_value_max = non_linked_length / -size_multiple;
+  /* Round up to the next power of two.  This makes it easy to ensure
+     an _asso_value[c] is >= 0 and < asso_value_max.  Also, the jump value
+     being odd, it guarantees that Search::try_asso_value() will iterate
+     through different values for _asso_value[c].  */
+  if (asso_value_max == 0)
+    asso_value_max = 1;
+  asso_value_max |= asso_value_max >> 1;
+  asso_value_max |= asso_value_max >> 2;
+  asso_value_max |= asso_value_max >> 4;
+  asso_value_max |= asso_value_max >> 8;
+  asso_value_max |= asso_value_max >> 16;
+  asso_value_max++;
+  _asso_value_max = asso_value_max;
+
+  if (option[RANDOM])
+    {
+      srand (reinterpret_cast<long>(time (0)));
+
+      for (int i = 0; i < _alpha_size; i++)
+        _asso_values[i] = rand () & (asso_value_max - 1);
+    }
+  else
+    {
+      int asso_value = option.get_initial_asso_value ();
+
+      asso_value = asso_value & (_asso_value_max - 1);
+      for (int i = 0; i < _alpha_size; i++)
+        _asso_values[i] = asso_value;
+    }
+
+  /* Given the bound for _asso_values[c], we have a bound for the possible
+     hash values, as computed in compute_hash().  */
+  _max_hash_value = (option[NOLENGTH] ? 0 : max_key_length ())
+                    + (_asso_value_max - 1) * get_max_keysig_size ();
+  /* Allocate a sparse bit vector for detection of collisions of hash
+     values.  */
+  _collision_detector = new Bool_Array (_max_hash_value + 1);
+
+  /* Allocate scratch set.  */
+  _union_set = new unsigned char [2 * get_max_keysig_size ()];
+
+  if (option[DEBUG])
+    fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
+             "\nmaximum size of generated hash table is %d\n",
+             non_linked_length, asso_value_max, _max_hash_value);
 }
 
 /* Computes a keyword's hash value, relative to the current _asso_values[],
@@ -467,68 +536,67 @@ Search::sort_by_occurrence (unsigned char *set, int len)
     }
 }
 
-/* Find out how character value change affects successfully hashed items.
-   Returns FALSE if no other hash values are affected, else returns TRUE.
-   Note that because option.get_asso_max() is a power of two we can guarantee
-   that all valid asso_values are visited without repetition since
-   Option.Get_Jump was forced to be an odd value! */
+/* Tries various other values for _asso_values[c].  A value is successful
+   if, with it, the recomputed hash values for the keywords from
+   _head->first() to curr - inclusive - give fewer than _fewest_collisions
+   collisions.  Up to the given number of iterations are performed.
+   If successful, _asso_values[c] is changed, _fewest_collisions is decreased,
+   and false is returned.
+   If all iterations are unsuccessful, _asso_values[c] is restored and
+   true is returned.
+   This is called very frequently, and needs to be fast!  */
 
 inline bool
-Search::affects_prev (unsigned char c, KeywordExt *curr)
+Search::try_asso_value (unsigned char c, KeywordExt *curr, int iterations)
 {
-  int original_char = _asso_values[c];
-  int total_iterations = !option[FAST]
-    ? get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length ();
+  int original_value = _asso_values[c];
 
-  /* Try all valid associated values. */
-
-  for (int i = total_iterations - 1; i >= 0; i--)
+  /* Try many valid associated values.  */
+  for (int i = iterations - 1; i >= 0; i--)
     {
       int collisions = 0;
 
+      /* Try next value.  Wrap around mod _asso_value_max.  */
       _asso_values[c] =
         (_asso_values[c] + (option.get_jump () ? option.get_jump () : rand ()))
-        & (get_asso_max () - 1);
+        & (_asso_value_max - 1);
 
-      /* Iteration Number array is a win, O(1) intialization time! */
+      /* Iteration Number array is a win, O(1) intialization time!  */
       _collision_detector->clear ();
-
-      /* See how this asso_value change affects previous keywords.  If
-         it does better than before we'll take it! */
 
       for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
         {
           KeywordExt *keyword = ptr->first();
+
+          /* Compute new hash code for the keyword, and see whether it
+             collides with another keyword's hash code.  If we have too
+             many collisions, we can safely abort the fruitless loop.  */
           if (_collision_detector->set_bit (compute_hash (keyword))
               && ++collisions >= _fewest_collisions)
             break;
+
           if (keyword == curr)
             {
               _fewest_collisions = collisions;
               if (option[DEBUG])
-                fprintf (stderr, "- resolved after %d iterations", total_iterations - i);
+                fprintf (stderr, "- resolved after %d iterations",
+                         iterations - i);
               return false;
             }
         }
     }
 
-  /* Restore original values, no more tries. */
-  _asso_values[c] = original_char;
-  /* If we're this far it's time to try the next character.... */
+  /* Restore original values, no more tries.  */
+  _asso_values[c] = original_value;
   return true;
 }
 
-/* Change a character value, try least-used characters first. */
+/* Attempts to change an _asso_value[], in order to resolve a hash value
+   collision between the two given keywords.  */
 
 void
-Search::change (KeywordExt *prior, KeywordExt *curr)
+Search::change_some_asso_value (KeywordExt *prior, KeywordExt *curr)
 {
-  static unsigned char *union_set;
-  int union_set_length;
-
-  if (!union_set)
-    union_set = new unsigned char [2 * get_max_keysig_size ()];
-
   if (option[DEBUG])
     {
       fprintf (stderr, "collision on keyword #%d, prior = \"%.*s\", curr = \"%.*s\" hash = %d\n",
@@ -538,26 +606,50 @@ Search::change (KeywordExt *prior, KeywordExt *curr)
                curr->_hash_value);
       fflush (stderr);
     }
-  union_set_length = compute_disjoint_union (prior->_selchars, prior->_selchars_length, curr->_selchars, curr->_selchars_length, union_set);
+
+  /* To achieve that the two hash values become different, we have to
+     change an _asso_values[c] for a character c that contributes to the
+     hash functions of prior and curr with different multiplicity.
+     So we compute the set of such c.  */
+  unsigned char *union_set = _union_set;
+  int union_set_length =
+    compute_disjoint_union (prior->_selchars, prior->_selchars_length,
+                            curr->_selchars, curr->_selchars_length,
+                            union_set);
+
+  /* Sort by decreasing occurrence: Try least-used characters c first.
+     The idea is that this reduces the number of freshly introduced
+     collisions.  */
   sort_by_occurrence (union_set, union_set_length);
 
-  /* Try changing some values, if change doesn't alter other values continue normal action. */
-  _fewest_collisions++;
+  int iterations =
+    !option[FAST]
+    ? _asso_value_max    /* Try all possible values of _asso_values[c].  */
+    : option.get_iterations ()
+      ? option.get_iterations ()
+      : keyword_list_length ();
 
   const unsigned char *p = union_set;
   int i = union_set_length;
   for (; i > 0; p++, i--)
-    if (!affects_prev (*p, curr))
+    if (!try_asso_value (*p, curr, iterations))
       {
+        /* Good, this _asso_values[] modification reduces the number of
+           collisions so far.
+           All keyword->_hash_value up to curr - inclusive - and
+           _fewest_collisions have been updated.  */
         if (option[DEBUG])
           {
             fprintf (stderr, " by changing asso_value['%c'] (char #%d) to %d\n",
                      *p, p - union_set + 1, _asso_values[*p]);
             fflush (stderr);
           }
-        return; /* Good, doesn't affect previous hash values, we'll take it. */
+        return;
       }
 
+  /* Failed to resolve a collision.  */
+
+  /* Recompute all keyword->_hash_value up to curr - inclusive -.  */
   for (KeywordExt_List *ptr = _head; ; ptr = ptr->rest())
     {
       KeywordExt* keyword = ptr->first();
@@ -569,91 +661,78 @@ Search::change (KeywordExt *prior, KeywordExt *curr)
   if (option[DEBUG])
     {
       fprintf (stderr, "** collision not resolved after %d iterations, %d duplicates remain, continuing...\n",
-               !option[FAST] ? get_asso_max () : option.get_iterations () ? option.get_iterations () : keyword_list_length (),
-               _fewest_collisions + _total_duplicates);
+               iterations, _fewest_collisions + _total_duplicates);
       fflush (stderr);
     }
 }
+
+/* Finds good _asso_values[].  */
+
+void
+Search::find_asso_values ()
+{
+  _fewest_collisions = 0;
+  init_asso_values ();
+
+  /* Add one keyword after the other and see whether its hash value collides
+     with one of the previous hash values.  */
+  _num_done = 1;
+  for (KeywordExt_List *curr_ptr = _head;
+       curr_ptr != NULL;
+       curr_ptr = curr_ptr->rest(), _num_done++)
+    {
+      KeywordExt *curr = curr_ptr->first();
+
+      /* Compute this keyword's hash value.  */
+      compute_hash (curr);
+
+      /* See if it collides with a prior keyword.  */
+      for (KeywordExt_List *prior_ptr = _head;
+           prior_ptr != curr_ptr;
+           prior_ptr = prior_ptr->rest())
+        {
+          KeywordExt *prior = prior_ptr->first();
+
+          if (prior->_hash_value == curr->_hash_value)
+            {
+              _fewest_collisions++;
+              /* Handle collision.  */
+              change_some_asso_value (prior, curr);
+              break;
+            }
+        }
+    }
+}
+
+/* ------------------------------------------------------------------------- */
 
 /* Sorts the keys by hash value. */
 
 void
 Search::sort ()
 {
-  _hash_sort       = true;
+  _hash_sort = true;
   _occurrence_sort = false;
-
   _head = merge_sort (_head);
 }
 
 void
 Search::optimize ()
 {
+  /* Preparations.  */
   prepare ();
   if (option[ORDER])
     reorder ();
-  _num_done          = 1;
-  _fewest_collisions = 0;
-  int asso_value_max    = option.get_size_multiple ();
-  int non_linked_length = keyword_list_length ();
-  if (asso_value_max == 0)
-    asso_value_max = non_linked_length;
-  else if (asso_value_max > 0)
-    asso_value_max *= non_linked_length;
-  else /* if (asso_value_max < 0) */
-    asso_value_max = non_linked_length / -asso_value_max;
-  set_asso_max (POW (asso_value_max));
 
-  if (option[RANDOM])
-    {
-      srand (reinterpret_cast<long>(time (0)));
-
-      for (int i = 0; i < _alpha_size; i++)
-        _asso_values[i] = rand () & (asso_value_max - 1);
-    }
-  else
-    {
-      int asso_value = option.get_initial_asso_value ();
-
-      if (asso_value)           /* Initialize array if user requests non-zero default. */
-        for (int i = _alpha_size - 1; i >= 0; i--)
-          _asso_values[i] = asso_value & get_asso_max () - 1;
-    }
-  _max_hash_value = max_key_length () + get_asso_max () * get_max_keysig_size ();
-  _collision_detector = new Bool_Array (_max_hash_value + 1);
-
-  if (option[DEBUG])
-    fprintf (stderr, "total non-linked keys = %d\nmaximum associated value is %d"
-             "\nmaximum size of generated hash table is %d\n",
-             non_linked_length, asso_value_max, _max_hash_value);
-
-  KeywordExt_List *curr;
-  for (curr = _head; curr != NULL; curr = curr->rest())
-    {
-      KeywordExt *currkw = curr->first();
-
-      compute_hash (currkw);
-
-      for (KeywordExt_List *ptr = _head; ptr != curr; ptr = ptr->rest())
-        {
-          KeywordExt *ptrkw = ptr->first();
-
-          if (ptrkw->_hash_value == currkw->_hash_value)
-            {
-              change (ptrkw, currkw);
-              break;
-            }
-        }
-      _num_done++;
-    }
+  /* Search for good _asso_values[].  */
+  find_asso_values ();
 
   /* Make one final check, just to make sure nothing weird happened.... */
-
   _collision_detector->clear ();
-
-  for (curr = _head; curr; curr = curr->rest())
+  for (KeywordExt_List *curr_ptr = _head; curr_ptr; curr_ptr = curr_ptr->rest())
     {
-      unsigned int hashcode = compute_hash (curr->first());
+      KeywordExt *curr = curr_ptr->first();
+      unsigned int hashcode = compute_hash (curr);
       if (_collision_detector->set_bit (hashcode))
         {
           if (option[DUP]) /* Keep track of this number... */
@@ -673,7 +752,7 @@ Search::optimize ()
   sort ();
 }
 
-/* Prints out some diagnostics upon completion. */
+/* Prints out some diagnostics upon completion.  */
 
 Search::~Search ()
 {

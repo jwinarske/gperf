@@ -62,15 +62,27 @@ private:
   /* Returns the number of key positions.  */
   int                   get_max_keysig_size ();
 
+  /* Initializes the asso_values[] related parameters and put a first guess
+     into asso_values[].  */
+  void                  init_asso_values ();
+
   /* Computes a keyword's hash value, relative to the current _asso_values[],
      and stores it in keyword->_hash_value.  */
-  int                   compute_hash (KeywordExt *key_node);
+  int                   compute_hash (KeywordExt *keyword);
 
   /* Sorts the given set in increasing frequency of _occurrences[].  */
   void                  sort_by_occurrence (unsigned char *set, int len);
 
-  bool                  affects_prev (unsigned char c, KeywordExt *curr);
-  void                  change (KeywordExt *prior, KeywordExt *curr);
+  /* Tries various other values for _asso_values[c].  */
+  bool                  try_asso_value (unsigned char c, KeywordExt *curr, int iterations);
+
+  /* Attempts to change an _asso_value[], in order to resolve a hash value
+     collision between the two given keywords.  */
+  void                  change_some_asso_value (KeywordExt *prior, KeywordExt *curr);
+
+  /* Finds good _asso_values[].  */
+  void                  find_asso_values ();
+
   void                  sort ();
 public:
 
@@ -114,13 +126,23 @@ private:
   /* Vector used during Search::reorder().  */
   bool * const          _determined;
 
-  int                   _num_done;          /* Number of keywords processed without a collision. */
-  int                   _fewest_collisions; /* Records fewest # of collisions for asso value. */
-  int                   _max_hash_value;    /* Maximum possible hash value. */
+  /* Exclusive upper bound for every _asso_values[c].  A power of 2.  */
+  int                   _asso_value_max;
+
+  /* Maximal possible hash value.  */
+  int                   _max_hash_value;
+
+  /* Sparse bit vector for collision detection.  */
   Bool_Array *          _collision_detector;
-  int                   _size;                                 /* Range of the hash table. */
-  void                  set_asso_max (int r) { _size = r; }
-  int                   get_asso_max () { return _size; }
+
+  /* Minimal number of collisions found so far.  */
+  int                   _fewest_collisions;
+
+  /* Scratch set, used during Search::change_some_asso_value.  */
+  unsigned char *       _union_set;
+
+  /* Number of keyword being handled during Search::find_asso_values.  */
+  int                   _num_done;
 };
 
 #endif
