@@ -25,6 +25,9 @@ Language for the output code:
 Details in the output code:
   -K, --slot-name=NAME   Select name of the keyword component in the keyword
                          structure.
+  -F, --initializer-suffix=INITIALIZERS
+                         Initializers for additional components in the keyword
+                         structure.
   -H, --hash-fn-name=NAME
                          Specify name of generated hash function. Default is
                          `hash'.
