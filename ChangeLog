@@ -91,6 +91,28 @@
 
         * doc/Makefile.in (MAKEINFO): Unset LANG while running makeinfo.
 
+1998-05-20  Bruno Haible  <bruno@linuix.mathematik.uni-karlsruhe.de>
+
+        * doc/Makefile.in (gperf.dvi, clean): Remove gperf.cps.
+          (install, installdirs, uninstall): Don't install gperf.dvi. The
+          info and HTML documentations are sufficient for on-line use, and
+          users who wish to print the documentation (in PS or DVI format)
+          can do this directly off the source distribution.
+          (DVIPS): Use "-D600" instead of "-Pljfour", for portability.
+
+1998-05-20  Akim Demaille  <demaille@inf.enst.fr>
+
+        * doc/gperf.texi: Many modifications:
+          (Output Format): Declare `hash' and `in_word_set' as functions.
+          (Concept Index): New section.
+          (Title page): Use standard presentation.
+          (Top): Use @top instead of @unnumbered so that automatic master
+          update works.
+          (Motivation): Avoid spaces in @var.
+          (Options): Use the standard name ``Invoking ...''.
+          (Options): Declare also the long form of the options.
+          (Options): Remove redundant @itemize when @table is used.
+
 1998-05-08  Andreas Schwab  <schwab@issan.informatik.uni-dortmund.de>
 
         * aclocal.m4 (CL_PROG_INSTALL): Set cl_cv_path_install, not

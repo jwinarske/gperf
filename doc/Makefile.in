@@ -33,6 +33,7 @@ mandir = @mandir@
 man1dir = $(mandir)/man1
 docdir = $(datadir)/doc/@PACKAGE@
 dvidir = $(docdir)
+psdir = $(docdir)
 htmldir = $(docdir)
 
 # Programs used by "make":
@@ -42,7 +43,7 @@ RM = rm -f
 # Programs used by "make" if you have changed the documentation files:
 TEX = tex
 TEXI2DVI = texi2dvi
-DVIPS = dvips -Pljfour
+DVIPS = dvips -D600
 MAKEINFO = LANG= LANGUAGE= makeinfo
 TEXI2HTML = texi2html
 
@@ -69,9 +70,9 @@ $(srcdir)/gperf.info : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 dvi : $(srcdir)/gperf.dvi
 
 $(srcdir)/gperf.dvi : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
-	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log
+	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
 	cd $(srcdir) && $(TEXI2DVI) gperf.texi
-	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log
+	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
 
 
 ps : $(srcdir)/gperf.ps
@@ -98,8 +99,10 @@ install : all force
 	$(INSTALL_DATA) $(srcdir)/gperf.1 $(DESTDIR)$(man1dir)/gperf.1
 	if [ ! -d $(DESTDIR)$(datadir)/doc ] ; then mkdir $(DESTDIR)$(datadir)/doc ; fi
 	if [ ! -d $(DESTDIR)$(docdir) ] ; then mkdir $(DESTDIR)$(docdir) ; fi
-	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
-	$(INSTALL_DATA) $(srcdir)/gperf.dvi $(DESTDIR)$(dvidir)/gperf.dvi
+#	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
+#	$(INSTALL_DATA) $(srcdir)/gperf.dvi $(DESTDIR)$(dvidir)/gperf.dvi
+#	if [ ! -d $(DESTDIR)$(psdir) ] ; then mkdir $(DESTDIR)$(psdir) ; fi
+#	$(INSTALL_DATA) $(srcdir)/gperf.ps $(DESTDIR)$(dvidir)/gperf.ps
 	if [ ! -d $(DESTDIR)$(htmldir) ] ; then mkdir $(DESTDIR)$(htmldir) ; fi
 	$(INSTALL_DATA) $(srcdir)/gperf.html $(DESTDIR)$(htmldir)/gperf.html
 
@@ -109,13 +112,15 @@ installdirs : force
 	if [ ! -d $(DESTDIR)$(man1dir) ] ; then mkdir $(DESTDIR)$(man1dir) ; fi
 	if [ ! -d $(DESTDIR)$(datadir)/doc ] ; then mkdir $(DESTDIR)$(datadir)/doc ; fi
 	if [ ! -d $(DESTDIR)$(docdir) ] ; then mkdir $(DESTDIR)$(docdir) ; fi
-	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
+#	if [ ! -d $(DESTDIR)$(dvidir) ] ; then mkdir $(DESTDIR)$(dvidir) ; fi
+#	if [ ! -d $(DESTDIR)$(psdir) ] ; then mkdir $(DESTDIR)$(psdir) ; fi
 	if [ ! -d $(DESTDIR)$(htmldir) ] ; then mkdir $(DESTDIR)$(htmldir) ; fi
 
 uninstall : force
 	$(RM) $(DESTDIR)$(infodir)/gperf.info
 	$(RM) $(DESTDIR)$(man1dir)/gperf.1
-	$(RM) $(DESTDIR)$(dvidir)/gperf.dvi
+#	$(RM) $(DESTDIR)$(dvidir)/gperf.dvi
+#	$(RM) $(DESTDIR)$(psdir)/gperf.ps
 	$(RM) $(DESTDIR)$(htmldir)/gperf.html
 
 check : all
@@ -123,7 +128,7 @@ check : all
 mostlyclean : clean
 
 clean : force
-	$(RM) *~ *.aux *.toc *.cp *.fn *.ky *.pg *.tp *.vr *.my *.log core
+	$(RM) *~ *.aux *.toc *.cp *.fn *.ky *.pg *.tp *.vr *.my *.log *.cps core
 
 distclean : clean
 	$(RM) config.status config.log config.cache Makefile
