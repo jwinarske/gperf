@@ -1,3 +1,8 @@
+New in 3.1:
+
+* Added option --length-table-name.
+* Added declaration %define length-table-name.
+
 New in 3.0.1:
 
 * Bug fix.

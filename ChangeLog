@@ -1,3 +1,24 @@
+2004-08-21  Bruce Lilly <blilly@erols.com>
+
+	* src/input.cc (Input::read_input): Accept length-table-name
+	declaration.
+	* src/options.h (Options::get_lengthtable_name,
+	Options::set_lengthtable_name): New declarations.
+	(Options): Add field _lengthtable_name.
+	* src/options.icc (Options::get_lengthtable_name): New inline method.
+	* src/options.cc (DEFAULT_LENGTHTABLE_NAME): New constant.
+	(Options::long_usage): Document --length-table-name option.
+	(Options::Options): Initialize _lengthtable_name field.
+	(Options::~Options): Update.
+	(Options::set_lengthtable_name): New method.
+	(long_options): Add option --length-table-name.
+	(Options::parse_options): Implement --length-table-name option.
+	* src/output.cc (Output::output_keylength_table, output_switch_case,
+	Output::output_lookup_function_body): Use option.get_lengthtable_name.
+	* doc/gperf.texi (Gperf Declarations): Document %define
+	length-table-name.
+	(Output Details): Document --length-table-name option.
+
 2003-06-12  Bruno Haible  <bruno@clisp.org>
 
 	* gperf-3.0.1 released.

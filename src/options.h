@@ -2,7 +2,7 @@
 
 /* Handles parsing the Options provided to the user.
 
-   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -194,6 +194,11 @@ public:
   /* Sets the hash table array name, if not already set.  */
   void                  set_wordlist_name (const char *name);
 
+  /* Returns the length table array name.  */
+  const char *          get_lengthtable_name () const;
+  /* Sets the length table array name, if not already set.  */
+  void                  set_lengthtable_name (const char *name);
+
   /* Returns the string pool name.  */
   const char *          get_stringpool_name () const;
   /* Sets the string pool name, if not already set.  */
@@ -264,6 +269,9 @@ private:
 
   /* Name used for hash table array.  */
   const char *          _wordlist_name;
+
+  /* Name used for length table array.  */
+  const char *          _lengthtable_name;
 
   /* Name used for the string pool.  */
   const char *          _stringpool_name;

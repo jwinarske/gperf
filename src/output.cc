@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -916,9 +916,11 @@ Output::output_keylength_table () const
   const int columns = 14;
   const char * const indent = option[GLOBAL] ? "" : "  ";
 
-  printf ("%sstatic %s%s lengthtable[] =\n%s  {",
+  printf ("%sstatic %s%s %s[] =\n"
+          "%s  {",
           indent, const_readonly_array,
           smallest_integral_type (_max_key_len),
+          option.get_lengthtable_name (),
           indent);
 
   /* Generate an array of lengths, similar to output_keyword_table.  */
@@ -1423,8 +1425,8 @@ output_switch_case (KeywordExt_List *list, int indent, int *jumps_away)
   if (option[DUP] && list->first()->_duplicate_link)
     {
       if (option[LENTABLE])
-        printf ("%*slengthptr = &lengthtable[%d];\n",
-                indent, "", list->first()->_final_index);
+        printf ("%*slengthptr = &%s[%d];\n",
+                indent, "", option.get_lengthtable_name (), list->first()->_final_index);
       printf ("%*swordptr = &%s[%d];\n",
               indent, "", option.get_wordlist_name (), list->first()->_final_index);
 
@@ -1682,8 +1684,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
           if (option[LENTABLE])
             {
               printf ("%*s    {\n"
-                      "%*s      if (len == lengthtable[index])\n",
-                      indent, "", indent, "");
+                      "%*s      if (len == %s[index])\n",
+                      indent, "", indent, "", option.get_lengthtable_name ());
               indent += 4;
             }
           printf ("%*s    {\n"
@@ -1721,8 +1723,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                       "%*s      register int offset = - 1 - TOTAL_KEYWORDS - index;\n",
                       indent, "", indent, "", indent, "");
               if (option[LENTABLE])
-                printf ("%*s      register %s%s *lengthptr = &lengthtable[TOTAL_KEYWORDS + lookup[offset]];\n",
-                        indent, "", const_always, smallest_integral_type (_max_key_len));
+                printf ("%*s      register %s%s *lengthptr = &%s[TOTAL_KEYWORDS + lookup[offset]];\n",
+                        indent, "", const_always, smallest_integral_type (_max_key_len),
+                        option.get_lengthtable_name ());
               printf ("%*s      register ",
                       indent, "");
               output_const_type (const_readonly_array, _wordlist_eltype);
@@ -1781,8 +1784,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
           int indent = 8;
           if (option[LENTABLE])
             {
-              printf ("%*sif (len == lengthtable[key])\n",
-                      indent, "");
+              printf ("%*sif (len == %s[key])\n",
+                      indent, "", option.get_lengthtable_name ());
               indent += 2;
             }
 
