@@ -1,3 +1,8 @@
+2003-01-07  Bruno Haible  <bruno@clisp.org>
+
+	* src/keyword-list.icc (KeywordExt_List::rest): Use a portable cast.
+	(Only in GCC a cast of an lvalue is an lvalue.)
+
 2003-01-01  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.cc (Options::parse_options): Update copyright year.

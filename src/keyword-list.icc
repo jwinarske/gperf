@@ -1,6 +1,6 @@
 /* Inline Functions for keyword-list.{h,cc}.
 
-   Copyright (C) 2002 Free Software Foundation, Inc.
+   Copyright (C) 2002-2003 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>.
 
    This file is part of GNU GPERF.
@@ -49,5 +49,5 @@ KeywordExt_List::first () const
 INLINE KeywordExt_List *&
 KeywordExt_List::rest ()
 {
-  return static_cast<KeywordExt_List*>(_cdr);
+  return *reinterpret_cast<KeywordExt_List**>(&_cdr);
 }
