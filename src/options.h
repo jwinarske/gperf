@@ -215,19 +215,21 @@ public:
   const char *          get_wordlist_name () const;
 
   /* Returns the string used to delimit keywords from other attributes.  */
-  const char *          get_delimiter () const;
+  const char *          get_delimiters () const;
 
-  /* Returns key positions.  */
+  /* Returns key positions.
+     Only to be called if !options[ALLCHARS].  */
   const Positions&      get_key_positions () const;
 
-  /* Returns total distinct key positions. */
+  /* Returns total distinct key positions.
+     Only to be called if !options[ALLCHARS].  */
   int                   get_max_keysig_size () const;
 
 private:
-  /* Prints program usage to given stream. */
+  /* Prints program usage to given stream.  */
   void                  short_usage (FILE * stream) const;
 
-  /* Prints program usage to given stream. */
+  /* Prints program usage to given stream.  */
   void                  long_usage (FILE * stream) const;
 
   /* Records count of command-line arguments.  */

@@ -343,14 +343,14 @@ Input::read_keys ()
     }
 
   /* Read in all the keywords from the input file. */
-  const char *delimiter = option.get_delimiter ();
+  const char *delimiters = option.get_delimiters ();
 
-  _head = parse_line (ptr, delimiter);
+  _head = parse_line (ptr, delimiters);
 
   for (Keyword_List *temp = _head;
        (ptr = Read_Line::read_next_line ()) && strcmp (ptr, "%%");
        temp = temp->rest())
-    temp->rest() = parse_line (ptr, delimiter);
+    temp->rest() = parse_line (ptr, delimiters);
 
   /* See if any additional C code is included at end of this file. */
   _additional_code = false;

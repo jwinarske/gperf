@@ -1,5 +1,11 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/options.h (Options::get_delimiters): Renamed from
+	Options::get_delimiter.
+	* src/options.icc (Options::get_delimiters): Renamed from
+	Options::get_delimiter.
+	* src/input.cc (Input::read_keys): Update.
+
 	Bug fix.
 	* src/options.cc (Options::print_options): Escape backquote inside
 	double-quoted strings.

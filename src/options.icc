@@ -193,19 +193,21 @@ Options::get_wordlist_name () const
 
 /* Returns the string used to delimit keywords from other attributes.  */
 INLINE const char *
-Options::get_delimiter () const
+Options::get_delimiters () const
 {
   return _delimiters;
 }
 
-/* Returns key positions.  */
+/* Returns key positions.
+   Only to be called if !options[ALLCHARS].  */
 INLINE const Positions&
 Options::get_key_positions () const
 {
   return _key_positions;
 }
 
-/* Returns total distinct key positions. */
+/* Returns total distinct key positions.
+   Only to be called if !options[ALLCHARS].  */
 INLINE int
 Options::get_max_keysig_size () const
 {
