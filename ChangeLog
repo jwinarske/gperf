@@ -1,5 +1,17 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * tests/c-parse.gperf: Updated from gcc-2.95.2/gcc/c-parse.gperf.
+        * tests/objc.gperf: New file, from gcc-2.95.2/gcc/objc/objc.gperf.
+        * tests/chill.gperf: New file, from gcc-2.95.2/gcc/ch/gperf.
+        * tests/cplusplus.gperf: New file, from gcc-2.95.2/gcc/cp/gxx.gperf.
+        * tests/gplus.gperf: Remove file.
+        * tests/java.gperf: New file, from gcc-2.95.2/gcc/java/keyword.gperf.
+        * tests/Makefile: Check them all.
+        * tests/c-parse.exp: Renamed from tests/test-1.exp.
+        * tests/modula2.exp: Renamed from tests/test-2.exp.
+        * tests/cplusplus.exp: Renamed from tests/test-3.exp.
+        * tests/gpc.exp: Renamed from tests/test-5.exp.
+
         * src/key-list.cc (output_switch_case): Add trailing semicolon to
           lengthptr assignment line. Fixes bug with -D and -S.
           From Reini Urban <rurban@sbox.tu-graz.ac.at>. Also reported by

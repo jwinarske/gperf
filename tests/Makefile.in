@@ -103,16 +103,22 @@ check-pascal:
 
 # these next 5 are demos that show off the generated code
 check-test:
-	$(GPERF) -p -j1 -g -o -t -N is_reserved_word -k1,3,'$$' < $(srcdir)/c-parse.gperf > test-1.out
-	diff $(srcdir)/test-1.exp test-1.out
-	$(GPERF) -n -k1-8 -l < $(srcdir)/modula2.gperf > test-2.out
-	diff $(srcdir)/test-2.exp test-2.out
-	$(GPERF) -p -j 1 -o -a -C -g -t -k1,4,$$ < $(srcdir)/gplus.gperf > test-3.out
-	diff $(srcdir)/test-3.exp test-3.out
+	$(GPERF) -L C -F ', 0, 0' -p -j1 -i 1 -g -o -t -G -N is_reserved_word -k1,3,'$$' < $(srcdir)/c-parse.gperf > c-parse.out
+	diff $(srcdir)/c-parse.exp c-parse.out
+	$(GPERF) -p -j1 -i 1 -g -o -t -N is_reserved_word -k1,3,'$$' < $(srcdir)/objc.gperf > objc.out
+	diff $(srcdir)/objc.exp objc.out
+	$(GPERF) -L C -F ', 0, 0, 0' -D -E -S1 -p -j1 -i 1 -g -o -t -k'*' < $(srcdir)/chill.gperf > chill.out
+	diff $(srcdir)/chill.exp chill.out
+	$(GPERF) -L C -F ', 0, 0' -p -j1 -g -o -t -N is_reserved_word -k1,4,7,'$$' < $(srcdir)/cplusplus.gperf > cplusplus.out
+	diff $(srcdir)/cplusplus.exp cplusplus.out
+	$(GPERF) -L C -F ', 0' -p -t -j1 -i 1 -g -o -N java_keyword -k1,3,'$$' < $(srcdir)/java.gperf > java.out
+	diff $(srcdir)/java.exp java.out
+	$(GPERF) -n -k1-8 -l < $(srcdir)/modula2.gperf > modula2.out
+	diff $(srcdir)/modula2.exp modula2.out
 	$(GPERF) -D -p -t < $(srcdir)/c-parse.gperf > test-4.out
 	diff $(srcdir)/test-4.exp test-4.out
-	$(GPERF) -g -o -j1 -t -p -N is_reserved_word < $(srcdir)/gpc.gperf > test-5.out
-	diff $(srcdir)/test-5.exp test-5.out
+	$(GPERF) -g -o -j1 -t -p -N is_reserved_word < $(srcdir)/gpc.gperf > gpc.out
+	diff $(srcdir)/gpc.exp gpc.out
 # prints out the help message
 	-$(GPERF) -h > test-6.out 2>&1
 	diff $(srcdir)/test-6.exp test-6.out
