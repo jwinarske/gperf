@@ -42,6 +42,10 @@ Details in the output code:
   -Z, --class-name=NAME  Specify name of generated C++ class. Default name is
                          'Perfect_Hash'.
   -7, --seven-bit        Assume 7-bit characters.
+  -l, --compare-strlen   Compare key lengths before trying a string
+                         comparison. This is necessary if the keywords
+                         contain NUL bytes. It also helps cut down on the
+                         number of string comparisons made during the lookup.
   -c, --compare-strncmp  Generate comparison code using strncmp rather than
                          strcmp.
   -C, --readonly-tables  Make the contents of generated lookup tables
@@ -81,9 +85,6 @@ Algorithm employed by gperf:
                          hash function to consider ALL key positions, and $
                          indicates the "final character" of a key, e.g.,
                          $,1,2,4,6-10.
-  -l, --compare-strlen   Compare key lengths before trying a string
-                         comparison. This helps cut down on the number of
-                         string comparisons made during the lookup.
   -D, --duplicates       Handle keywords that hash to duplicate values. This
                          is useful for certain highly redundant keyword sets.
   -f, --fast=ITERATIONS  Generate the gen-perf.hash function "fast". This

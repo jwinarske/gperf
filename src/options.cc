@@ -138,6 +138,11 @@ Options::long_usage (FILE * stream) const
   fprintf (stream,
            "  -7, --seven-bit        Assume 7-bit characters.\n");
   fprintf (stream,
+           "  -l, --compare-strlen   Compare key lengths before trying a string\n"
+           "                         comparison. This is necessary if the keywords\n"
+           "                         contain NUL bytes. It also helps cut down on the\n"
+           "                         number of string comparisons made during the lookup.\n");
+  fprintf (stream,
            "  -c, --compare-strncmp  Generate comparison code using strncmp rather than\n"
            "                         strcmp.\n");
   fprintf (stream,
@@ -187,10 +192,6 @@ Options::long_usage (FILE * stream) const
            "                         indicates the \"final character\" of a key, e.g.,\n"
            "                         $,1,2,4,6-10.\n",
            Positions::MAX_KEY_POS);
-  fprintf (stream,
-           "  -l, --compare-strlen   Compare key lengths before trying a string\n"
-           "                         comparison. This helps cut down on the number of\n"
-           "                         string comparisons made during the lookup.\n");
   fprintf (stream,
            "  -D, --duplicates       Handle keywords that hash to duplicate values. This\n"
            "                         is useful for certain highly redundant keyword sets.\n");

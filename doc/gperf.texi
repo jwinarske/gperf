@@ -683,6 +683,17 @@ test like @samp{c >= 'A' && c <= 'Z'} guarantees this.) This was the
 default in versions of @code{gperf} earlier than 2.7; now the default is
 to support 8-bit and multibyte characters.
 
+@item -l
+@itemx --compare-strlen
+Compare keyword lengths before trying a string comparison.  This option
+is mandatory for binary comparisons (@pxref{Binary Strings}).  It also might
+cut down on the number of string comparisons made during the lookup, since
+keywords with different lengths are never compared via @code{strcmp}.
+However, using @samp{-l} might greatly increase the size of the
+generated C code if the lookup table range is large (which implies that
+the switch option @samp{-S} is not enabled), since the length table
+contains as many elements as there are entries in the lookup table.
+
 @item -c
 @itemx --compare-strncmp
 Generates C code that uses the @code{strncmp} function to perform
@@ -766,17 +777,6 @@ keyword, obviously).  Keywords
 with length less than the indicated byte positions work properly, since
 selected byte positions exceeding the keyword length are simply not
 referenced in the hash function.
-
-@item -l
-@itemx --compare-strlen
-Compare keyword lengths before trying a string comparison.  This might cut
-down on the number of string comparisons made during the lookup, since
-keywords with different lengths are never compared via @code{strcmp}.
-However, using @samp{-l} might greatly increase the size of the
-generated C code if the lookup table range is large (which implies that
-the switch option @samp{-S} is not enabled), since the length table
-contains as many elements as there are entries in the lookup table.
-This option is mandatory for binary comparisons (@pxref{Binary Strings}).
 
 @item -D
 @itemx --duplicates

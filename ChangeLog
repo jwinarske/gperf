@@ -1,3 +1,10 @@
+2002-11-16  Bruno Haible  <bruno@clisp.org>
+
+	* doc/gperf.texi: Move description of option -l from section
+	Algorithmic Details to section Output Details.
+	* src/options.cc (Options::long_usage): Likewise.
+	* tests/test-6.exp: Update.
+
 2002-11-12  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.h (Output::get_output_file_name): New method.
