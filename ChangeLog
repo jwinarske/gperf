@@ -43,6 +43,7 @@
           result.
           (Gen_Perf::hash): Use explicit length of char_set.
           (Gen_Perf::change): Specify explicit length of key.
+        * doc/gperf.texi: Document it.
 
         * doc/help2man: New file, help2man version 1.022.
         * Makefile.devel (all): Add doc/gperf.1.
