@@ -34,10 +34,12 @@
 /* The most general form of the hash function is
 
       hash (keyword) = sum (asso_values[keyword[i] + alpha_inc[i]] : i in Pos)
+                       + len (keyword)
 
    where Pos is a set of byte positions,
    each alpha_inc[i] is a nonnegative integer,
-   each asso_values[c] is a nonnegative integer.
+   each asso_values[c] is a nonnegative integer,
+   len (keyword) is the keyword's length if !option[NOLENGTH], or 0 otherwise.
 
    Theorem 1: If all keywords are different, there is a set Pos such that
    all tuples (keyword[i] : i in Pos) are different.
@@ -63,9 +65,23 @@
 
    Step 3 (Finding good asso_values):
    Find asso_values[c] such that all hash (keyword) are different.
+
+   In other words, each step finds a projection that is injective on the
+   given finite set:
+     proj1 : String --> Map (Pos --> N)
+     proj2 : Map (Pos --> N) --> Map (Pos --> N) / S(Pos)
+     proj3 : Map (Pos --> N) / S(Pos) --> N
+   where N denotes the set of nonnegative integers, and S(Pos) is the
+   symmetric group over Pos.
+
+   This was the theory for option[NOLENGTH]; if !option[NOLENGTH], slight
+   modifications apply:
+     proj1 : String --> Map (Pos --> N) x N
+     proj2 : Map (Pos --> N) x N --> Map (Pos --> N) / S(Pos) x N
+     proj3 : Map (Pos --> N) / S(Pos) x N --> N
  */
 
-/* -------------------- Initialization and Preparation --------------------- */
+/* ==================== Initialization and Preparation ===================== */
 
 Search::Search (KeywordExt_List *list)
   : _head (list)
@@ -106,7 +122,7 @@ Search::preprepare ()
     }
 }
 
-/* ---------------------- Finding good byte positions ---------------------- */
+/* ====================== Finding good byte positions ====================== */
 
 /* Initializes each keyword's _selchars array.  */
 void
@@ -124,10 +140,16 @@ Search::delete_selchars () const
     temp->first()->delete_selchars();
 }
 
-/* Count the duplicate keywords that occur with a given set of positions.  */
+/* Count the duplicate keywords that occur with a given set of positions.
+   In other words, it returns the difference
+     # K - # proj1 (K)
+   where K is the multiset of given keywords.  */
 unsigned int
 Search::count_duplicates_tuple (const Positions& positions) const
 {
+  /* Run through the keyword list and count the duplicates incrementally.
+     The result does not depend on the order of the keyword list, thanks to
+     the formula above.  */
   init_selchars_tuple (option[ALLCHARS], positions);
 
   unsigned int count = 0;
@@ -151,6 +173,13 @@ Search::count_duplicates_tuple (const Positions& positions) const
 void
 Search::find_positions ()
 {
+  /* If the user gave the key positions, we use them.  */
+  if (option[POSITIONS])
+    {
+      _key_positions = option.get_key_positions();
+      return;
+    }
+
   /* 1. Find positions that must occur in order to distinguish duplicates.  */
   Positions mandatory;
 
@@ -302,7 +331,7 @@ Search::find_positions ()
   _key_positions = current;
 }
 
-/* --------------------- Finding good alpha increments --------------------- */
+/* ===================== Finding good alpha increments ===================== */
 
 /* Initializes each keyword's _selchars array.  */
 void
@@ -313,10 +342,16 @@ Search::init_selchars_multiset (bool use_all_chars, const Positions& positions, 
 }
 
 /* Count the duplicate keywords that occur with the given set of positions
-   and a given alpha_inc[] array.  */
+   and a given alpha_inc[] array.
+   In other words, it returns the difference
+     # K - # proj2 (proj1 (K))
+   where K is the multiset of given keywords.  */
 unsigned int
 Search::count_duplicates_multiset (const unsigned int *alpha_inc) const
 {
+  /* Run through the keyword list and count the duplicates incrementally.
+     The result does not depend on the order of the keyword list, thanks to
+     the formula above.  */
   init_selchars_multiset (option[ALLCHARS], _key_positions, alpha_inc);
 
   unsigned int count = 0;
@@ -341,7 +376,8 @@ void
 Search::find_alpha_inc ()
 {
   /* The goal is to choose _alpha_inc[] such that it doesn't introduce
-     artificial duplicates.  */
+     artificial duplicates.
+     In other words, the goal is  # proj2 (proj1 (K)) = # proj1 (K).  */
   unsigned int duplicates_goal = count_duplicates_tuple (_key_positions);
 
   /* Start with zero increments.  This is sufficient in most cases.  */
@@ -428,7 +464,7 @@ Search::find_alpha_inc ()
   _alpha_inc = current;
 }
 
-/* ------------------------------------------------------------------------- */
+/* ======================= Finding good asso_values ======================== */
 
 void
 Search::prepare ()
@@ -988,7 +1024,7 @@ Search::change_some_asso_value (KeywordExt *prior, KeywordExt *curr)
     }
 }
 
-/* Finds good _asso_values[].  */
+/* Finds some _asso_values[] that fit.  */
 
 void
 Search::find_asso_values ()
@@ -1026,32 +1062,11 @@ Search::find_asso_values ()
     }
 }
 
-/* ------------------------------------------------------------------------- */
-
-/* Comparison function for sorting by increasing _hash_value.  */
-static bool
-less_by_hash_value (KeywordExt *keyword1, KeywordExt *keyword2)
-{
-  return keyword1->_hash_value < keyword2->_hash_value;
-}
-
-/* Sorts the keyword list by hash value.  */
+/* Finds good _asso_values[].  */
 
 void
-Search::sort ()
+Search::find_good_asso_values ()
 {
-  _head = mergesort_list (_head, less_by_hash_value);
-}
-
-void
-Search::optimize ()
-{
-  /* Preparations.  */
-  preprepare ();
-  _key_positions = option.get_key_positions();
-  if (!option[POSITIONS])
-    find_positions ();
-  find_alpha_inc ();
   prepare ();
   if (option[ORDER])
     reorder ();
@@ -1129,6 +1144,39 @@ Search::optimize ()
       delete[] best_asso_values;
       /* The keywords' _hash_value fields are recomputed below.  */
     }
+}
+
+/* ========================================================================= */
+
+/* Comparison function for sorting by increasing _hash_value.  */
+static bool
+less_by_hash_value (KeywordExt *keyword1, KeywordExt *keyword2)
+{
+  return keyword1->_hash_value < keyword2->_hash_value;
+}
+
+/* Sorts the keyword list by hash value.  */
+
+void
+Search::sort ()
+{
+  _head = mergesort_list (_head, less_by_hash_value);
+}
+
+void
+Search::optimize ()
+{
+  /* Preparations.  */
+  preprepare ();
+
+  /* Step 1: Finding good byte positions.  */
+  find_positions ();
+
+  /* Step 2: Finding good alpha increments.  */
+  find_alpha_inc ();
+
+  /* Step 3: Finding good asso_values.  */
+  find_good_asso_values ();
 
   /* Make one final check, just to make sure nothing weird happened.... */
   _collision_detector->clear ();

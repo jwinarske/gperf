@@ -1,3 +1,14 @@
+2002-11-19  Bruno Haible  <bruno@clisp.org>
+
+	* src/search.h (Search::find_good_asso_values): New declaration.
+	* src/search.cc: Add comments about the basic structure of the
+	algorithm.
+	(Search::find_positions): Move the option[POSITIONS] test to here.
+	(Search::find_good_asso_values): New method, extracted from
+	Search::optimize.
+	(Search::optimize): Remove option[POSITIONS] test. Call
+	find_good_asso_values.
+
 2002-11-17  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.cc (Options::parse_options): Include copyright notice

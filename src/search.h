@@ -100,8 +100,11 @@ private:
      collision between the two given keywords.  */
   void                  change_some_asso_value (KeywordExt *prior, KeywordExt *curr);
 
-  /* Finds good _asso_values[].  */
+  /* Finds some _asso_values[] that fit.  */
   void                  find_asso_values ();
+
+  /* Finds good _asso_values[].  */
+  void                  find_good_asso_values ();
 
   /* Sorts the keyword list by hash value.  */
   void                  sort ();
