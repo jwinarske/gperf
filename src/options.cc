@@ -21,9 +21,9 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 #include <stdio.h>
 #include <stdlib.h> /* declares atoi(), abs(), exit() */
 #include <string.h> /* declares strcmp() */
+#include <ctype.h>  /* declares isdigit() */
 #include "getopt.h"
 #include "options.h"
-#include "iterator.h"
 #include "vectors.h"
 #include "version.h"
 
@@ -273,6 +273,70 @@ Options::print_options (void)
   printf (" */");
 }
 
+/* Parses a string denoting key positions.  */
+
+class PositionStringParser
+{
+public:
+  PositionStringParser (const char *s, int lo, int hi, int word_end, int bad_val, int key_end);
+  int nextPosition ();
+private:
+  const char *str;  /* A pointer to the string provided by the user. */
+  int end;          /* Value returned after last key is processed. */
+  int end_word;     /* A value marking the abstract ``end of word'' ( usually '$'). */
+  int error_value;  /* Error value returned when input is syntactically erroneous. */
+  int hi_bound;     /* Greatest possible value, inclusive. */
+  int lo_bound;     /* Smallest possible value, inclusive. */
+  int size;
+  int curr_value;
+  int upper_bound;
+};
+
+PositionStringParser::PositionStringParser (const char *s, int lo, int hi, int word_end, int bad_val, int key_end)
+  : str (s), end (key_end), end_word (word_end), error_value (bad_val), hi_bound (hi), lo_bound (lo),
+    size (0), curr_value (0), upper_bound (0)
+{
+}
+
+int PositionStringParser::nextPosition ()
+{
+  if (size)
+    {
+      if (++curr_value >= upper_bound)
+        size = 0;
+      return curr_value;
+    }
+  else
+    {
+      while (*str)
+        switch (*str)
+          {
+          default: return error_value;
+          case ',': str++; break;
+          case '$': str++; return end_word;
+          case '0': case '1': case '2': case '3': case '4':
+          case '5': case '6': case '7': case '8': case '9':
+            for (curr_value = 0; isdigit ((unsigned char)(*str)); str++)
+              curr_value = curr_value * 10 + (*str - '0');
+
+            if (*str == '-')
+              {
+
+                for (size = 1, upper_bound = 0;
+                     isdigit ((unsigned char)(*++str));
+                     upper_bound = upper_bound * 10 + (*str - '0'));
+
+                if (upper_bound <= curr_value || upper_bound > hi_bound)
+                  return error_value;
+              }
+            return curr_value >= lo_bound && curr_value <= hi_bound
+              ? curr_value : error_value;
+          }
+
+      return end;
+    }
+}
+
 /* Sorts the key positions *IN REVERSE ORDER!!*
    This makes further routines more efficient.  Especially when generating code.
    Uses a simple Insertion Sort since the set is probably ordered.
@@ -281,17 +345,17 @@ Options::print_options (void)
 inline int
 Options::key_sort (char *base, int len)
 {
-  int i, j;
-
-  for (i = 0, j = len - 1; i < j; i++)
+  /* Bubble sort.  */
+  for (int i = 1; i < len; i++)
     {
-      int curr, tmp;
+      int j;
+      int tmp;
 
-      for (curr = i + 1,tmp = base[curr]; curr > 0 && tmp >= base[curr - 1]; curr--)
-        if ((base[curr] = base[curr - 1]) == tmp) /* oh no, a duplicate!!! */
+      for (j = i, tmp = base[j]; j > 0 && tmp >= base[j - 1]; j--)
+        if ((base[j] = base[j - 1]) == tmp) /* oh no, a duplicate!!! */
           return 0;
 
-      base[curr] = tmp;
+      base[j] = tmp;
     }
 
   return 1;
@@ -550,7 +614,7 @@ Options::operator() (int argc, char *argv[])
           {
             const int BAD_VALUE = -1;
             int       value;
-            Iterator  expand (/*getopt*/optarg, 1, MAX_KEY_POS - 1, WORD_END, BAD_VALUE, EOS);
+            PositionStringParser sparser (/*getopt*/optarg, 1, MAX_KEY_POS - 1, WORD_END, BAD_VALUE, EOS);
 
             if (/*getopt*/optarg [0] == '*') /* Use all the characters for hashing!!!! */
               option_word = (option_word & ~DEFAULTCHARS) | ALLCHARS;
@@ -558,7 +622,7 @@ Options::operator() (int argc, char *argv[])
               {
                 char *key_pos;
 
-                for (key_pos = key_positions; (value = expand ()) != EOS; key_pos++)
+                for (key_pos = key_positions; (value = sparser.nextPosition()) != EOS; key_pos++)
                   if (value == BAD_VALUE)
                     {
                       fprintf (stderr, "Illegal key value or range, use 1,2,3-%d,'$' or '*'.\n",

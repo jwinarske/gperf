@@ -1,5 +1,13 @@
 2002-10-03  Bruno Haible  <bruno@clisp.org>
 
+	* src/iterator.h: Remove file.
+	* src/iterator.cc: Remove file.
+	* src/options.cc: (PositionStringParser): New class, taken from old
+	iterator.cc.
+	* src/Makefile.in (OBJECTS): Remove iterator.o.
+	(ITERATOR_H): Remove variable.
+	(iterator.o): Remove rule.
+
 	* src/keyword-list.h: New file.
 	* src/keyword-list.cc: New file.
 	* src/list-node.h: Remove file.
