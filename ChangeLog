@@ -1,5 +1,8 @@
 2000-08-19  Bruno Haible  <bruno@linuix.math.u-bordeaux.fr>
 
+        * src/Makefile.in (LDFLAGS): New definition, to catch the value given at
+          configure time.
+
         Make the structure initializers customizable. Based on a patch by
         Kaveh R. Ghazi <ghazi@caip.rutgers.edu>.
         * src/options.h (Options::get_initializer_suffix,

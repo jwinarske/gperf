@@ -39,6 +39,8 @@ CPP = @CPP@
 CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CXXCPP = @CXXCPP@
+# Both C and C++ compiler
+LDFLAGS = @LDFLAGS@
 # Other
 MV = mv
 LN = ln
