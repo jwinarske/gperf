@@ -1,4 +1,4 @@
-/* Correctly reads an arbitrarily size string.
+/* Correctly reads an arbitrarily long string.
 
    Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>

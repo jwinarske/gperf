@@ -45,12 +45,12 @@ KeywordExt_Factory::create_keyword (const char *allchars, int allchars_length, c
 int
 main (int argc, char *argv[])
 {
-  /* Set the Options. */
+  /* Set the Options.  Open the input file and assign stdin to it.  */
   option.parse_options (argc, argv);
 
   /* Initialize the key word list. */
   KeywordExt_Factory factory;
-  Input inputter (&factory);
+  Input inputter (stdin, &factory);
   inputter.read_keys ();
   /* We can cast the keyword list to KeywordExt_List* because its list
      elements were created by KeywordExt_Factory. */

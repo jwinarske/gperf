@@ -32,7 +32,7 @@
 class Input : private Read_Line
 {
 public:
-                        Input (Keyword_Factory *keyword_factory);
+                        Input (FILE *stream, Keyword_Factory *keyword_factory);
   void                  read_keys ();
 private:
 #ifndef strcspn

@@ -29,8 +29,8 @@
 #include <limits.h> /* defines UCHAR_MAX etc. */
 #include "options.h"
 
-Input::Input (Keyword_Factory *keyword_factory)
-  : _factory (keyword_factory)
+Input::Input (FILE *stream, Keyword_Factory *keyword_factory)
+  : Read_Line (stream), _factory (keyword_factory)
 {
 }
 

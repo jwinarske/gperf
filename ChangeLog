@@ -1,5 +1,12 @@
 2002-11-02  Bruno Haible  <bruno@clisp.org>
 
+	* src/read-line.h (Read_Line::Read_Line): Make FILE* argument
+	mandatory. Move body to read-line.icc.
+	* src/read-line.icc (Read_Line::Read_Line): New constructor.
+	* src/input.h (Input::Input): Add FILE* argument.
+	* src/input.cc (Input::Input): Likewise.
+	* src/main.cc (main): Pass stdin to Input constructor.
+
 	* src/options.h (DEFAULTCHARS): Remove.
 	(Positions::MAX_KEY_POS): Set to 255.
 	(Positions::_positions): Increase array size.

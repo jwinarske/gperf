@@ -37,7 +37,7 @@ class Read_Line
 public:
 
   /* Initializes the instance with a given input stream.  */
-                        Read_Line (FILE *stream = stdin) : _fp (stream) {}
+                        Read_Line (FILE *stream);
 
   /* Reads the next line and returns it, excluding the terminating newline,
      and ignoring lines starting with '#'.  Returns NULL on error or EOF.
@@ -46,7 +46,8 @@ public:
   char *                read_next_line ();
 
 private:
-  FILE * const          _fp;             /* FILE pointer to the input stream. */
+  /* FILE pointer to the input stream.  */
+  FILE * const          _fp;
 };
 
 #ifdef __OPTIMIZE__

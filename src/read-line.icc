@@ -25,6 +25,13 @@
 //#include <stdio.h>
 //#include "getline.h"
 
+/* Initializes the instance with a given input stream.  */
+INLINE
+Read_Line::Read_Line (FILE *stream)
+  : _fp (stream)
+{
+}
+
 /* Reads the next line and returns it, excluding the terminating newline,
    and ignoring lines starting with '#'.  Returns NULL on error or EOF.
    The storage for the string is dynamically allocated and must be freed
