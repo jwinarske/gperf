@@ -62,7 +62,7 @@ private:
 
   /* For each index, we store in storage_array[index] the iteration_number at
      the time set_bit(index) was last called.  */
-  unsigned int * const  _storage_array;  
+  unsigned int * const  _storage_array;
 };
 
 #ifdef __OPTIMIZE__  /* efficiency hack! */
