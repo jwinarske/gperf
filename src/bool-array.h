@@ -38,28 +38,28 @@ class Bool_Array
 public:
   /* Initializes the bit array with room for SIZE bits, numbered from
      0 to SIZE-1. */
-  Bool_Array (unsigned int size);
+                        Bool_Array (unsigned int size);
 
   /* Frees this object.  */
-  ~Bool_Array ();
+                        ~Bool_Array ();
 
   /* Resets all bits to zero.  */
-  void clear ();
+  void                  clear ();
 
   /* Sets the specified bit to one.  Returns its previous value (0 or 1).  */
-  int set_bit (unsigned int index);
+  int                   set_bit (unsigned int index);
 
 private:
   /* Size of array.  */
-  unsigned int const _size;
+  unsigned int const    _size;
 
   /* Current iteration number.  Always nonzero.  Starts out as 1, and is
      incremented each time clear() is called.  */
-  unsigned int _iteration_number;
+  unsigned int          _iteration_number;
 
   /* For each index, we store in storage_array[index] the iteration_number at
      the time set_bit(index) was last called.  */
-  unsigned int * const _storage_array;  
+  unsigned int * const  _storage_array;  
 };
 
 #ifdef __OPTIMIZE__  /* efficiency hack! */

@@ -29,9 +29,9 @@ static const int MAX_ALPHA_SIZE = 256;
 
 struct Vectors
 {
-  static int   ALPHA_SIZE;                   /* Size of alphabet. */
-  static int   _occurrences[MAX_ALPHA_SIZE]; /* Counts occurrences of each key set character. */
-  static int   _asso_values[MAX_ALPHA_SIZE]; /* Value associated with each character. */
+  static int            ALPHA_SIZE;                   /* Size of alphabet. */
+  static int            _occurrences[MAX_ALPHA_SIZE]; /* Counts occurrences of each key set character. */
+  static int            _asso_values[MAX_ALPHA_SIZE]; /* Value associated with each character. */
 };
 
 #endif

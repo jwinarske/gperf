@@ -1,3 +1,7 @@
+2002-10-16  Bruno Haible  <bruno@clisp.org>
+
+	* src/*.h: Align all member names at column 24.
+
 2002-10-15  Bruno Haible  <bruno@clisp.org>
 
 	* src/input.h: New file.

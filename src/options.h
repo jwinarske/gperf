@@ -108,34 +108,34 @@ class Positions
   friend class PositionIterator;
 public:
   /* Denotes the last char of a keyword, depending on the keyword's length.  */
-  static const int LASTCHAR = 0;
+  static const int      LASTCHAR = 0;
 
   /* Maximum size of the set.  */
-  static const int MAX_KEY_POS = 127;
+  static const int      MAX_KEY_POS = 127;
 
   /* Constructors.  */
-  Positions ();
-  Positions (int key1);
-  Positions (int key1, int key2);
+                        Positions ();
+                        Positions (int key1);
+                        Positions (int key1, int key2);
 
   /* Accessors.  */
-  int operator[] (unsigned int index) const;
-  unsigned int get_size () const;
+  int                   operator[] (unsigned int index) const;
+  unsigned int          get_size () const;
 
   /* Write access.  */
-  unsigned char * pointer ();
-  void set_size (unsigned int size);
+  unsigned char *       pointer ();
+  void                  set_size (unsigned int size);
 
   /* Sorts the array in reverse order.
      Returns 1 if there are no duplicates, 0 otherwise.  */
-  int sort ();
+  int                   sort ();
 
 private:
   /* Number of positions, excluding the terminating PositionIterator::EOS.  */
-  unsigned int _size;
+  unsigned int          _size;
   /* Array of positions.  1 for the first char, 2 for the second char etc.,
      LASTCHAR for the last char.  PositionIterator::EOS past the end.  */
-  unsigned char _positions[MAX_KEY_POS];
+  unsigned char         _positions[MAX_KEY_POS];
 };
 
 /* This class denotes an iterator through a set of key positions.  */
@@ -144,17 +144,17 @@ class PositionIterator
 {
 public:
   /* Initializes an iterator through POSITIONS.  */
-  PositionIterator (Positions const& positions);
+                        PositionIterator (Positions const& positions);
 
   /* End of iteration marker.  */
-  static const int EOS = Positions::MAX_KEY_POS;
+  static const int      EOS = Positions::MAX_KEY_POS;
 
   /* Retrieves the next position, or EOS past the end.  */
-  int next ();
+  int                   next ();
 
 private:
-  const Positions& _set;
-  int _index;
+  const Positions&      _set;
+  int                   _index;
 };
 
 /* Class manager for gperf program Options. */
@@ -163,118 +163,118 @@ class Options
 {
 public:
   /* Constructor.  */
-  Options ();
+                        Options ();
 
   /* Destructor.  */
-  ~Options ();
+                        ~Options ();
 
   /* Parses the options given in the command-line arguments.  */
-  void parse_options (int argc, char *argv[]);
+  void                  parse_options (int argc, char *argv[]);
 
   /* Prints the given options.  */
-  void print_options () const;
+  void                  print_options () const;
 
   /* Accessors.  */
 
   /* Tests a given boolean option.  Returns 1 if set, 0 otherwise.  */
-  int operator[] (Option_Type option) const;
+  int                   operator[] (Option_Type option) const;
 
   /* Returns the iterations value.  */
-  int get_iterations () const;
+  int                   get_iterations () const;
 
   /* Returns the jump value.  */
-  int get_jump () const;
+  int                   get_jump () const;
 
   /* Returns the initial associated character value.  */
-  int get_initial_asso_value () const;
+  int                   get_initial_asso_value () const;
 
   /* Returns the total number of switch statements to generate.  */
-  int get_total_switches () const;
+  int                   get_total_switches () const;
 
   /* Returns the factor by which to multiply the generated table's size.  */
-  int get_size_multiple () const;
+  int                   get_size_multiple () const;
 
   /* Returns the generated function name.  */
-  const char * get_function_name () const;
+  const char *          get_function_name () const;
 
   /* Returns the keyword key name.  */
-  const char * get_key_name () const;
+  const char *          get_key_name () const;
 
   /* Returns the struct initializer suffix.  */
-  const char * get_initializer_suffix () const;
+  const char *          get_initializer_suffix () const;
 
   /* Returns the generated class name.  */
-  const char * get_class_name () const;
+  const char *          get_class_name () const;
 
   /* Returns the hash function name.  */
-  const char * get_hash_name () const;
+  const char *          get_hash_name () const;
 
   /* Returns the hash table array name.  */
-  const char * get_wordlist_name () const;
+  const char *          get_wordlist_name () const;
 
   /* Returns the string used to delimit keywords from other attributes.  */
-  const char * get_delimiter () const;
+  const char *          get_delimiter () const;
 
   /* Returns key positions.  */
-  const Positions& get_key_positions () const;
+  const Positions&      get_key_positions () const;
 
   /* Returns total distinct key positions. */
-  int get_max_keysig_size () const;
+  int                   get_max_keysig_size () const;
 
 private:
   /* Prints program usage to given stream. */
-  void short_usage (FILE * stream) const;
+  void                  short_usage (FILE * stream) const;
 
   /* Prints program usage to given stream. */
-  void long_usage (FILE * stream) const;
+  void                  long_usage (FILE * stream) const;
 
   /* Records count of command-line arguments.  */
-  int _argument_count;
+  int                   _argument_count;
 
   /* Stores a pointer to command-line argument vector.  */
-  char **_argument_vector;
+  char **               _argument_vector;
 
   /* Holds the boolean options.  */
-  int _option_word;
+  int                   _option_word;
 
   /* Amount to iterate when a collision occurs.  */
-  int _iterations;
+  int                   _iterations;
 
   /* Jump length when trying alternative values.  */
-  int _jump;
+  int                   _jump;
 
   /* Initial value for asso_values table.  */
-  int _initial_asso_value;
+  int                   _initial_asso_value;
 
   /* Number of switch statements to generate.  */
-  int _total_switches;
+  int                   _total_switches;
 
   /* Factor by which to multiply the generated table's size.  */
-  int _size_multiple;
+  int                   _size_multiple;
 
   /* Names used for generated lookup function.  */
-  const char *_function_name;
+  const char *          _function_name;
 
   /* Name used for keyword key.  */
-  const char *_key_name;
+  const char *          _key_name;
 
   /* Suffix for empty struct initializers.  */
-  const char *_initializer_suffix;
+  const char *          _initializer_suffix;
 
   /* Name used for generated C++ class.  */
-  const char *_class_name;
+  const char *          _class_name;
 
   /* Name used for generated hash function.  */
-  const char *_hash_name;
+  const char *          _hash_name;
 
   /* Name used for hash table array.  */
-  const char *_wordlist_name;
+  const char *          _wordlist_name;
 
   /* Separates keywords from other attributes.  */
-  const char *_delimiters;
+  const char *          _delimiters;
 
   /* Contains user-specified key choices.  */
-  Positions _key_positions;
+  Positions             _key_positions;
 };
 
 /* Global option coordinator for the entire program.  */

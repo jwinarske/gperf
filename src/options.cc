@@ -295,24 +295,24 @@ Options::print_options () const
 class PositionStringParser
 {
 public:
-  PositionStringParser (const char *str, int low_bound, int high_bound, int end_word_marker, int error_value, int end_marker);
-  int nextPosition ();
+                        PositionStringParser (const char *str, int low_bound, int high_bound, int end_word_marker, int error_value, int end_marker);
+  int                   nextPosition ();
 private:
   /* A pointer to the string provided by the user.  */
-  const char * _str;
+  const char *          _str;
   /* Smallest possible value, inclusive.  */
-  int const _low_bound;
+  int const             _low_bound;
   /* Greatest possible value, inclusive.  */
-  int const _high_bound;
+  int const             _high_bound;
   /* A value marking the abstract "end of word" ( usually '$').  */
-  int const _end_word_marker;
+  int const             _end_word_marker;
   /* Error value returned when input is syntactically erroneous.  */
-  int const _error_value;
+  int const             _error_value;
   /* Value returned after last key is processed.  */
-  int const _end_marker;
-  int _size;
-  int _curr_value;
-  int _upper_bound;
+  int const             _end_marker;
+  int                   _size;
+  int                   _curr_value;
+  int                   _upper_bound;
 };
 
 PositionStringParser::PositionStringParser (const char *str, int low_bound, int high_bound, int end_word_marker, int error_value, int end_marker)

@@ -31,21 +31,21 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA  02111, USA. */
 class Gen_Perf : private Key_List
 {
 private:
-  int         _max_hash_value;    /* Maximum possible hash value. */
-  int         _fewest_collisions; /* Records fewest # of collisions for asso value. */
-  int         _num_done;          /* Number of keywords processed without a collision. */
-  Bool_Array *_collision_detector;
+  int                   _max_hash_value;    /* Maximum possible hash value. */
+  int                   _fewest_collisions; /* Records fewest # of collisions for asso value. */
+  int                   _num_done;          /* Number of keywords processed without a collision. */
+  Bool_Array *          _collision_detector;
 
-  void        change (KeywordExt *prior, KeywordExt *curr);
-  int         affects_prev (char c, KeywordExt *curr);
-  static int  hash (KeywordExt *key_node);
-  static int  compute_disjoint_union (const char *set_1, int size_1, const char *set_2, int size_2, char *set_3);
-  static void sort_set (char *union_set, int len);
+  void                  change (KeywordExt *prior, KeywordExt *curr);
+  int                   affects_prev (char c, KeywordExt *curr);
+  static int            hash (KeywordExt *key_node);
+  static int            compute_disjoint_union (const char *set_1, int size_1, const char *set_2, int size_2, char *set_3);
+  static void           sort_set (char *union_set, int len);
 
 public:
-              Gen_Perf ();
-             ~Gen_Perf ();
-  int         doit_all ();
+                        Gen_Perf ();
+                        ~Gen_Perf ();
+  int                   doit_all ();
 };
 
 #endif

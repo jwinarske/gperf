@@ -30,51 +30,51 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 struct Keyword
 {
   /* Constructor.  */
-  Keyword (const char *allchars, int allchars_length, const char *rest);
+                        Keyword (const char *allchars, int allchars_length, const char *rest);
 
   /* Data members defined immediately by the input file.  */
   /* The keyword as a string, possibly containing NUL bytes.  */
-  const char *const _allchars;
-  const int _allchars_length;
+  const char *const     _allchars;
+  const int             _allchars_length;
   /* Additional stuff seen on the same line of the input file.  */
-  const char *const _rest;
+  const char *const     _rest;
 };
 
 /* A keyword, in the context of a given keyposition list.  */
 struct KeywordExt : public Keyword
 {
   /* Constructor.  */
-  KeywordExt (const char *allchars, int allchars_length, const char *rest);
+                        KeywordExt (const char *allchars, int allchars_length, const char *rest);
 
   /* Data members depending on the keyposition list.  */
   /* The selected characters that participate for the hash function,
      reordered according to the keyposition list.  */
-  const char * _selchars;
-  int _selchars_length;
+  const char *          _selchars;
+  int                   _selchars_length;
   /* Chained list of keywords having the same selchars.  */
-  KeywordExt * _duplicate_link;
+  KeywordExt *          _duplicate_link;
 
   /* Methods depending on the keyposition list.  */
   /* Initialize selchars and selchars_length, and update v->occurrences.  */
-  void init_selchars (Vectors *v);
+  void                  init_selchars (Vectors *v);
 
   /* Data members used by the algorithm.  */
-  int _occurrence; /* A metric for frequency of key set occurrences. */
-  int _hash_value; /* Hash value for the key. */
+  int                   _occurrence; /* A metric for frequency of key set occurrences. */
+  int                   _hash_value; /* Hash value for the key. */
 
   /* Data members used by the output routines.  */
-  int _final_index;
+  int                   _final_index;
 };
 
 /* A factory for creating Keyword instances.  */
 class Keyword_Factory
 {
 public:
-  Keyword_Factory ();
-  virtual ~Keyword_Factory ();
+                        Keyword_Factory ();
+  virtual               ~Keyword_Factory ();
   /* Creates a new Keyword.  */
-  virtual Keyword * create_keyword (const char *allchars, int allchars_length,
-                                    const char *rest) = 0;
+  virtual Keyword *     create_keyword (const char *allchars, int allchars_length,
+                                        const char *rest) = 0;
 };
 
 #endif

@@ -30,15 +30,15 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 class KeywordExt_List : private KeywordExt {
 public:
   /* Constructor.  */
-  KeywordExt_List (const char *allchars, int allchars_length, const char *rest);
+                        KeywordExt_List (const char *allchars, int allchars_length, const char *rest);
 
   /* Access to first element of list.  */
-  KeywordExt* first () { return this; }
+  KeywordExt *          first () { return this; }
   /* Access to next element of list.  */
-  KeywordExt_List *& rest () { return _cdr; }
+  KeywordExt_List *&    rest () { return _cdr; }
 
 private:
-  KeywordExt_List * _cdr;
+  KeywordExt_List *     _cdr;
 };
 
 #endif

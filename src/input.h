@@ -31,22 +31,22 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111, USA.  */
 class Input : private Read_Line
 {
 public:
-  void        read_keys ();
+  void                  read_keys ();
 private:
 #ifndef strcspn
-  static int  strcspn (const char *s, const char *reject);
+  static int            strcspn (const char *s, const char *reject);
 #endif
-  void        set_output_types ();
-  const char *get_array_type ();
-  const char *save_include_src ();
-  const char *get_special_input (char delimiter);
+  void                  set_output_types ();
+  const char *          get_array_type ();
+  const char *          save_include_src ();
+  const char *          get_special_input (char delimiter);
 public:
-  const char *_array_type;                           /* Pointer to the type for word list. */
-  const char *_return_type;                          /* Pointer to return type for lookup function. */
-  const char *_struct_tag;                           /* Shorthand for user-defined struct tag type. */
-  const char *_include_src;                          /* C source code to be included verbatim. */
-  int         _additional_code;                      /* True if any additional C code is included. */
-  KeywordExt_List *_head;                            /* Points to the head of the linked list. */
+  const char *          _array_type;                           /* Pointer to the type for word list. */
+  const char *          _return_type;                          /* Pointer to return type for lookup function. */
+  const char *          _struct_tag;                           /* Shorthand for user-defined struct tag type. */
+  const char *          _include_src;                          /* C source code to be included verbatim. */
+  int                   _additional_code;                      /* True if any additional C code is included. */
+  KeywordExt_List *     _head;                            /* Points to the head of the linked list. */
 };
 
 #endif
