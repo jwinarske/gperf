@@ -2,7 +2,7 @@
 
 /* A set of byte positions.
 
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002, 2005 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -25,6 +25,10 @@
 
 #ifndef positions_h
 #define positions_h 1
+
+/* Classes defined below.  */
+class PositionIterator;
+class PositionReverseIterator;
 
 /* This class denotes a set of byte positions, used to access a keyword.  */
 
