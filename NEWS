@@ -1,5 +1,6 @@
-New in 3.1:
+New in 3.0.2:
 
+* Compiles with g++-4.0.x.
 * Added option --length-table-name.
 * Added declaration %define length-table-name.
 
