@@ -1,5 +1,15 @@
 2005-07-30  Bruno Haible  <bruno@clisp.org>
 
+	* src/version.cc: Bump version number to 3.0.2.
+	* doc/gperf.texi: Likewise.
+	* tests/c-parse.exp, tests/charsets.exp, tests/chill.exp,
+	tests/cplusplus.exp, tests/gpc.exp, tests/incomplete.exp,
+	tests/java.exp, tests/languages.exp, tests/modula2.exp,
+	tests/objc.exp, tests/permut2.exp, tests/permut3.exp,
+	tests/permutc2.exp, tests/test-4.exp: Update.
+
+2005-07-30  Bruno Haible  <bruno@clisp.org>
+
 	* src/positions.h: Add forward declarations of friend classes.
 	Needed for compilation with g++ 4.0.
 
