@@ -1,3 +1,9 @@
+2005-08-27  Bruno Haible  <bruno@clisp.org>
+
+	Fix missing ranlib detection when cross-compiling.
+	* aclocal.m4 (CL_PROG_RANLIB): Remove macro.
+	* lib/configure.in: Use AC_PROG_RANLIB instead of CL_PROG_RANLIB.
+
 2005-07-30  Bruno Haible  <bruno@clisp.org>
 
 	* src/version.cc: Bump version number to 3.0.2.
