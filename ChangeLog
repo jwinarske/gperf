@@ -1,3 +1,7 @@
+2005-08-29  Brendan Kehoe  <brendan@zen.org>
+
+	* src/keyword.cc: Tweak comment to avoid nesting.
+
 2005-08-27  Bruno Haible  <bruno@clisp.org>
 
 	Fix missing ranlib detection when cross-compiling.
