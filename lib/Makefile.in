@@ -40,6 +40,8 @@ CPP = @CPP@
 CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CXXCPP = @CXXCPP@
+# Both C and C++ compiler
+OBJEXT = @OBJEXT@
 # Other
 AR = ar
 AR_FLAGS = rc
@@ -60,7 +62,7 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-OBJECTS  = getopt.o getopt1.o getline.o hash.o
+OBJECTS  = getopt.$(OBJEXT) getopt1.$(OBJEXT) getline.$(OBJEXT) hash.$(OBJEXT)
 CPPFLAGS = -I$(srcdir)
 
 TARGETLIB = libgp.a

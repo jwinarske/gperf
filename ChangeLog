@@ -1,3 +1,14 @@
+2006-01-13  Brendan Kehoe  <brendan@zen.org>
+
+	* configure.in: Add AC_OBJEXT and AC_EXEEXT.
+	* lib/Makefile.in (OBJEXT): Define for subst.
+	(OBJECTS): Use $(OBJEXT) instead of '.o'.
+	* src/Makefile.in: Make dependencies use $(OBJEXT).
+	(OBJEXT, EXEEXT): Define for subst.
+	(TARGETPROG): Add $(EXEEXT).
+	(OBJECTS): Use $(OBJEXT) instead of '.o'.
+	(clean): Remove *.$(OBJEXT) instead of *.o.
+
 2006-01-13  Bruno Haible  <bruno@clisp.org>
 
 	Fix #line directives for filenames containing backslashes.
