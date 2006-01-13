@@ -1,3 +1,13 @@
+2006-01-13  Bruno Haible  <bruno@clisp.org>
+
+	Fix #line directives for filenames containing backslashes.
+	* src/output.cc (output_line_directive): New function.
+	(output_keyword_entry, Output::output): Use it.
+	Reported by Alexander <alexander.me@gmail.com>.
+
+	* src/options.cc (Options::parse_options): Update years in --version
+	output.
+
 2005-08-29  Brendan Kehoe  <brendan@zen.org>
 
 	* src/keyword.cc: Tweak comment to avoid nesting.

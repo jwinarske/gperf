@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -468,6 +468,22 @@ output_string (const char *key, int len)
         }
     }
   putchar ('"');
+}
+
+/* ------------------------------------------------------------------------- */
+
+/* Outputs a #line directive, referring to the given line number.  */
+
+static void
+output_line_directive (unsigned int lineno)
+{
+  const char *file_name = option.get_input_file_name ();
+  if (file_name != NULL)
+    {
+      printf ("#line %u ", lineno);
+      output_string (file_name, strlen (file_name));
+      printf ("\n");
+    }
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1084,9 +1100,8 @@ Output::output_string_pool () const
 static void
 output_keyword_entry (KeywordExt *temp, int stringpool_index, const char *indent)
 {
-  if (option[TYPE] && option.get_input_file_name ())
-    printf ("#line %u \"%s\"\n",
-            temp->_lineno, option.get_input_file_name ());
+  if (option[TYPE])
+    output_line_directive (temp->_lineno);
   printf ("%s    ", indent);
   if (option[TYPE])
     printf ("{");
@@ -2003,18 +2018,14 @@ Output::output ()
 
   if (_verbatim_declarations < _verbatim_declarations_end)
     {
-      if (option.get_input_file_name ())
-        printf ("#line %u \"%s\"\n",
-                _verbatim_declarations_lineno, option.get_input_file_name ());
+      output_line_directive (_verbatim_declarations_lineno);
       fwrite (_verbatim_declarations, 1,
               _verbatim_declarations_end - _verbatim_declarations, stdout);
     }
 
   if (option[TYPE] && !option[NOTYPE]) /* Output type declaration now, reference it later on.... */
     {
-      if (option.get_input_file_name ())
-        printf ("#line %u \"%s\"\n",
-                _struct_decl_lineno, option.get_input_file_name ());
+      output_line_directive (_struct_decl_lineno);
       printf ("%s\n", _struct_decl);
     }
 
@@ -2075,9 +2086,7 @@ Output::output ()
 
   if (_verbatim_code < _verbatim_code_end)
     {
-      if (option.get_input_file_name ())
-        printf ("#line %u \"%s\"\n",
-                _verbatim_code_lineno, option.get_input_file_name ());
+      output_line_directive (_verbatim_code_lineno);
       fwrite (_verbatim_code, 1, _verbatim_code_end - _verbatim_code, stdout);
     }
 
