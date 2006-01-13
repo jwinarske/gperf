@@ -7,7 +7,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 30 July 2005
+@set UPDATED 13 January 2006
 @set EDITION 3.0.2
 @set VERSION 3.0.2
 @c ---------------------
