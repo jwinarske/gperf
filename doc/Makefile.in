@@ -64,7 +64,7 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-all : info dvi ps pdf html
+all : info ps pdf html
 
 
 info : $(srcdir)/gperf.info

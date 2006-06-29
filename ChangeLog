@@ -1,6 +1,10 @@
-2006-01-22  Brendan Kehoe  <brendan@zen.org>
+2006-06-29  Brendan Kehoe  <brendan@zen.org>
 
 	* gperf-3.0.2 released.
+
+	* doc/Makefile.in (all): No longer depend on dvi.
+
+2006-01-22  Brendan Kehoe  <brendan@zen.org>
 
 	* doc/gperf.texi: Update copyright to be 1989-2006.
 	(UPDATED): Change to 22 January 2006.
