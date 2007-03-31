@@ -1,3 +1,7 @@
+2007-03-31  Brendan Kehoe  <brendan@zen.org>
+
+	* gperf-3.0.3 released.
+
 2007-03-31  Bruno Haible  <bruno@clisp.org>
 
 	* tests/test.c (in_word_set): New declaration.
