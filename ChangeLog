@@ -1,3 +1,16 @@
+2007-03-31  Bruno Haible  <bruno@clisp.org>
+
+	Change generated code after the meaning of __inline is changed in
+	GCC 4.3.
+	* src/output.cc (Output::output_lookup_function): Emit an inline
+	marker that also works with gcc-4.3 in c99 or gnu99 mode.
+	* tests/c-parse.exp, tests/charsets.exp, tests/chill.exp,
+	tests/cplusplus.exp, tests/gpc.exp, tests/incomplete.exp,
+	tests/java.exp, tests/languages.exp, tests/modula2.exp,
+	tests/objc.exp, tests/permut2.exp, tests/permut3.exp,
+	tests/permutc2.exp, tests/test-4.exp: Update.
+	Reported by Bruce Korb <Bruce.Korb@gmail.com>.
+
 2006-06-29  Brendan Kehoe  <brendan@zen.org>
 
 	* gperf-3.0.2 released.

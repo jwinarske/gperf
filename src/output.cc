@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -1884,8 +1884,14 @@ Output::output_lookup_function () const
 {
   /* Output the function's head.  */
   if (option[KRC] | option[C] | option[ANSIC])
+    /* GCC 4.3 and above with -std=c99 or -std=gnu99 implements ISO C99
+       inline semantics, unless -fgnu89-inline is used.  It defines a macro
+       __GNUC_STDC_INLINE__ to indicate this situation.  */
     printf ("#ifdef __GNUC__\n"
             "__inline\n"
+            "#ifdef __GNUC_STDC_INLINE__\n"
+            "__attribute__ ((__gnu_inline__))\n"
+            "#endif\n"
             "#endif\n");
 
   printf ("%s%s\n",
