@@ -1,5 +1,5 @@
 /* Handles parsing the Options provided to the user.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -1005,7 +1005,7 @@ Options::parse_options (int argc, char *argv[])
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
 ",
-                   "1989-1998, 2000-2004, 2006");
+                   "1989-1998, 2000-2004, 2006-2007");
           fprintf (stdout, "Written by %s and %s.\n",
                    "Douglas C. Schmidt", "Bruno Haible");
           exit (0);
