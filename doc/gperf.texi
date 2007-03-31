@@ -7,9 +7,9 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 22 January 2006
-@set EDITION 3.0.2
-@set VERSION 3.0.2
+@set UPDATED 31 March 2007
+@set EDITION 3.0.3
+@set VERSION 3.0.3
 @c ---------------------
 
 @c remove the black boxes generated in the GPL appendix.
@@ -66,7 +66,7 @@ Software Foundation instead of in the original English.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1989-2004 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2007 Free Software Foundation, Inc.
 
 
 Permission is granted to make and distribute verbatim copies of
@@ -767,7 +767,7 @@ functions
 @cindex hash table
 
 Several options control how the generated C code appears on the standard 
-output.  Two C function are generated.  They are called @code{hash} and 
+output.  Two C functions are generated.  They are called @code{hash} and 
 @code{in_word_set}, although you may modify their names with a command-line 
 option.  Both functions require two arguments, a string, @code{char *} 
 @var{str}, and a length parameter, @code{int} @var{len}.  Their default 
