@@ -6,7 +6,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
    This file documents the features of the GNU Perfect Hash Function
-Generator 3.0.2.
+Generator 3.0.3.
 
    Copyright (C) 1989-2006 Free Software Foundation, Inc.
 
@@ -1019,7 +1019,7 @@ File: gperf.info,  Node: Output Format,  Next: Binary Strings,  Prev: Input Form
 ===================================================
 
 Several options control how the generated C code appears on the standard
-output.  Two C function are generated.  They are called `hash' and
+output.  Two C functions are generated.  They are called `hash' and
 `in_word_set', although you may modify their names with a command-line
 option.  Both functions require two arguments, a string, `char *' STR,
 and a length parameter, `int' LEN.  Their default function prototypes
@@ -1692,17 +1692,17 @@ Node: Keywords43182
 Node: Functions45127
 Node: Controls for GNU indent45662
 Node: Output Format46610
-Node: Binary Strings49401
-Node: Options50549
-Node: Output File51335
-Node: Input Details51727
-Node: Output Language53563
-Node: Output Details54979
-Node: Algorithmic Details62243
-Node: Verbosity67500
-Node: Bugs68211
-Node: Projects69804
-Node: Bibliography70933
-Node: Concept Index72990
+Node: Binary Strings49402
+Node: Options50550
+Node: Output File51336
+Node: Input Details51728
+Node: Output Language53564
+Node: Output Details54980
+Node: Algorithmic Details62244
+Node: Verbosity67501
+Node: Bugs68212
+Node: Projects69805
+Node: Bibliography70934
+Node: Concept Index72991
 
 End Tag Table

@@ -1,14 +1,14 @@
 <HTML>
 <HEAD>
-<!-- This HTML file has been created by texi2html 1.52
-     from gperf.texi on 22 January 2006 -->
+<!-- This HTML file has been created by texi2html 1.51
+     from gperf.texi on 31 March 2007 -->
 
 <TITLE>Perfect Hash Function Generator</TITLE>
 </HEAD>
 <BODY>
-<H1>User's Guide to <CODE>gperf</CODE> 3.0.2</H1>
+<H1>User's Guide to <CODE>gperf</CODE> 3.0.3</H1>
 <H2>The GNU Perfect Hash Function Generator</H2>
-<H2>Edition 3.0.2, 22 January 2006</H2>
+<H2>Edition 3.0.3, 31 March 2007</H2>
 <ADDRESS>Douglas C. Schmidt</ADDRESS>
 <ADDRESS>Bruno Haible</ADDRESS>
 <P>
@@ -570,7 +570,7 @@ or from <CODE>http://www.cs.wustl.edu/~schmidt/resume.html</CODE>.
 
 </P>
 <P>
-A <EM>static search structure</EM> is an Abstract Data Type with certain
+A <STRONG>static search structure</STRONG> is an Abstract Data Type with certain
 fundamental operations, e.g., <EM>initialize</EM>, <EM>insert</EM>,
 and <EM>retrieve</EM>.  Conceptually, all insertions occur before any
 retrievals.  In practice, <CODE>gperf</CODE> generates a <EM>static</EM> array
@@ -580,7 +580,7 @@ insertions.  It is a useful data structure for representing <EM>static
 search sets</EM>.  Static search sets occur frequently in software system
 applications.  Typical static search sets include compiler reserved
 words, assembler instruction opcodes, and built-in shell interpreter
-commands.  Search set members, called <EM>keywords</EM>, are inserted into
+commands.  Search set members, called <STRONG>keywords</STRONG>, are inserted into
 the structure only once, usually during program initialization, and are
 not generally modified at run-time.
 
@@ -654,7 +654,7 @@ efficiently identify their respective reserved keywords.
 The perfect hash function generator <CODE>gperf</CODE> reads a set of
 "keywords" from an input file (or from the standard input by
 default).  It attempts to derive a perfect hashing function that
-recognizes a member of the <EM>static keyword set</EM> with at most a
+recognizes a member of the <STRONG>static keyword set</STRONG> with at most a
 single probe into the lookup table.  If <CODE>gperf</CODE> succeeds in
 generating such a function it produces a pair of C source code routines
 that perform hashing and table lookup recognition.  All generated C code
@@ -1211,7 +1211,7 @@ functions
 </P>
 <P>
 Several options control how the generated C code appears on the standard 
-output.  Two C function are generated.  They are called <CODE>hash</CODE> and 
+output.  Two C functions are generated.  They are called <CODE>hash</CODE> and 
 <CODE>in_word_set</CODE>, although you may modify their names with a command-line 
 option.  Both functions require two arguments, a string, <CODE>char *</CODE> 
 <VAR>str</VAR>, and a length parameter, <CODE>int</CODE> <VAR>len</VAR>.  Their default 
@@ -1224,7 +1224,7 @@ function prototypes are as follows:
 <DD><A NAME="IDX35"></A>
 By default, the generated <CODE>hash</CODE> function returns an integer value
 created by adding <VAR>len</VAR> to several user-specified <VAR>str</VAR> byte
-positions indexed into an <EM>associated values</EM> table stored in a
+positions indexed into an <STRONG>associated values</STRONG> table stored in a
 local static array.  The associated values table is constructed
 internally by <CODE>gperf</CODE> and later output as a static local C array
 called <SAMP>`hash_table'</SAMP>.  The relevant selected positions (i.e. indices
@@ -1970,34 +1970,7 @@ Foundation, 1989.
 <H1><A NAME="SEC28" HREF="gperf.html#TOC28">Concept Index</A></H1>
 
 <P>
-Jump to:
-<A HREF="#cindex_%">%</A>
--
-<A HREF="#cindex_a">a</A>
--
-<A HREF="#cindex_b">b</A>
--
-<A HREF="#cindex_c">c</A>
--
-<A HREF="#cindex_d">d</A>
--
-<A HREF="#cindex_f">f</A>
--
-<A HREF="#cindex_h">h</A>
--
-<A HREF="#cindex_i">i</A>
--
-<A HREF="#cindex_j">j</A>
--
-<A HREF="#cindex_k">k</A>
--
-<A HREF="#cindex_m">m</A>
--
-<A HREF="#cindex_n">n</A>
--
-<A HREF="#cindex_s">s</A>
-<P>
-<H2><A NAME="cindex_%">%</A></H2>
+<H2>%</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX8"><SAMP>`%%'</SAMP></A>
 <LI><A HREF="gperf.html#IDX18"><SAMP>`%7bit'</SAMP></A>
@@ -2026,56 +1999,56 @@ Jump to:
 <LI><A HREF="gperf.html#IDX32"><SAMP>`%{'</SAMP></A>
 <LI><A HREF="gperf.html#IDX33"><SAMP>`%}'</SAMP></A>
 </DIR>
-<H2><A NAME="cindex_a">a</A></H2>
+<H2>a</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX43">Array name</A>, <A HREF="gperf.html#IDX44">Array name</A>
 </DIR>
-<H2><A NAME="cindex_b">b</A></H2>
+<H2>b</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX1">Bugs</A>
 </DIR>
-<H2><A NAME="cindex_c">c</A></H2>
+<H2>c</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX42">Class name</A>
 </DIR>
-<H2><A NAME="cindex_d">d</A></H2>
+<H2>d</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX5">Declaration section</A>
 <LI><A HREF="gperf.html#IDX39">Delimiters</A>
 <LI><A HREF="gperf.html#IDX46">Duplicates</A>
 </DIR>
-<H2><A NAME="cindex_f">f</A></H2>
+<H2>f</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX4">Format</A>
 <LI><A HREF="gperf.html#IDX7">Functions section</A>
 </DIR>
-<H2><A NAME="cindex_h">h</A></H2>
+<H2>h</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX35">hash</A>
 <LI><A HREF="gperf.html#IDX34">hash table</A>
 </DIR>
-<H2><A NAME="cindex_i">i</A></H2>
+<H2>i</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX36">in_word_set</A>
 <LI><A HREF="gperf.html#IDX41">Initializers</A>
 </DIR>
-<H2><A NAME="cindex_j">j</A></H2>
+<H2>j</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX47">Jump value</A>
 </DIR>
-<H2><A NAME="cindex_k">k</A></H2>
+<H2>k</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX6">Keywords section</A>
 </DIR>
-<H2><A NAME="cindex_m">m</A></H2>
+<H2>m</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX3">Minimal perfect hash functions</A>
 </DIR>
-<H2><A NAME="cindex_n">n</A></H2>
+<H2>n</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX38">NUL</A>
 </DIR>
-<H2><A NAME="cindex_s">s</A></H2>
+<H2>s</H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX40">Slot name</A>
 <LI><A HREF="gperf.html#IDX2">Static search structure</A>
@@ -2084,8 +2057,8 @@ Jump to:
 
 </P>
 <P><HR><P>
-This document was generated on 22 January 2006 using the
-<A HREF="http://wwwinfo.cern.ch/dis/texi2html/">texi2html</A>
-translator version 1.52.</P>
+This document was generated on 31 March 2007 using the
+<A HREF="http://wwwcn.cern.ch/dci/texi2html/">texi2html</A>
+translator version 1.51.</P>
 </BODY>
 </HTML>

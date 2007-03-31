@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
-<!-- This HTML file has been created by texi2html 1.52
-     from gperf.texi on 22 January 2006 -->
+<!-- This HTML file has been created by texi2html 1.51
+     from gperf.texi on 31 March 2007 -->
 
 <TITLE>Perfect Hash Function Generator - 3  High-Level Description of GNU gperf</TITLE>
 </HEAD>
@@ -16,7 +16,7 @@ Go to the <A HREF="gperf_1.html">first</A>, <A HREF="gperf_4.html">previous</A>,
 The perfect hash function generator <CODE>gperf</CODE> reads a set of
 "keywords" from an input file (or from the standard input by
 default).  It attempts to derive a perfect hashing function that
-recognizes a member of the <EM>static keyword set</EM> with at most a
+recognizes a member of the <STRONG>static keyword set</STRONG> with at most a
 single probe into the lookup table.  If <CODE>gperf</CODE> succeeds in
 generating such a function it produces a pair of C source code routines
 that perform hashing and table lookup recognition.  All generated C code
@@ -573,7 +573,7 @@ functions
 </P>
 <P>
 Several options control how the generated C code appears on the standard 
-output.  Two C function are generated.  They are called <CODE>hash</CODE> and 
+output.  Two C functions are generated.  They are called <CODE>hash</CODE> and 
 <CODE>in_word_set</CODE>, although you may modify their names with a command-line 
 option.  Both functions require two arguments, a string, <CODE>char *</CODE> 
 <VAR>str</VAR>, and a length parameter, <CODE>int</CODE> <VAR>len</VAR>.  Their default 
@@ -586,7 +586,7 @@ function prototypes are as follows:
 <DD><A NAME="IDX35"></A>
 By default, the generated <CODE>hash</CODE> function returns an integer value
 created by adding <VAR>len</VAR> to several user-specified <VAR>str</VAR> byte
-positions indexed into an <EM>associated values</EM> table stored in a
+positions indexed into an <STRONG>associated values</STRONG> table stored in a
 local static array.  The associated values table is constructed
 internally by <CODE>gperf</CODE> and later output as a static local C array
 called <SAMP>`hash_table'</SAMP>.  The relevant selected positions (i.e. indices
