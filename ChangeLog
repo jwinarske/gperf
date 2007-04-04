@@ -1,3 +1,13 @@
+2007-04-04  Bruno Haible  <bruno@clisp.org>
+
+	* configure.ac: Renamed from configure.in.
+	* doc/configure.ac: Renamed from doc/configure.in.
+	* lib/configure.ac: Renamed from lib/configure.in.
+	* src/configure.ac: Renamed from src/configure.in.
+	* tests/configure.ac: Renamed from tests/configure.in.
+	* Makefile.devel: Update.
+	* INSTALL: Update.
+
 2007-03-31  Brendan Kehoe  <brendan@zen.org>
 
 	* gperf-3.0.3 released.
