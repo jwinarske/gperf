@@ -1,5 +1,18 @@
 2007-04-04  Bruno Haible  <bruno@clisp.org>
 
+	Support for newer GNU standards.
+	* doc/configure.ac (mandir): Remove assignment.
+	* doc/Makefile.in (datarootdir): New variable.
+	(docdir, dvidir, psdir, pdfdir, htmldir): Use value determined by
+	autoconf.
+	* configure: Regenerated with autoconf-2.61.
+	* doc/configure: Likewise.
+	* lib/configure: Likewise.
+	* src/configure: Likewise.
+	* tests/configure: Likewise.
+
+2007-04-04  Bruno Haible  <bruno@clisp.org>
+
 	* doc/Makefile.in (MAKEINFO): Disable also the LC_MESSAGES and LC_ALL
 	environment variables.
 

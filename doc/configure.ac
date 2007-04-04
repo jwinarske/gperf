@@ -1,6 +1,6 @@
 dnl autoconf configuration for gperf/doc
 
-dnl Copyright (C) 1998, 2000, 2002-2003 Free Software Foundation, Inc.
+dnl Copyright (C) 1998, 2000, 2002-2003, 2007 Free Software Foundation, Inc.
 dnl Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 dnl and Bruno Haible <bruno@clisp.org>.
 dnl
@@ -25,11 +25,6 @@ AC_INIT(gperf.1)
 PACKAGE=gperf
 AC_SUBST(PACKAGE)
 AC_PROG_MAKE_SET
-dnl
-dnl           installation directories
-dnl
-dnl Prefer modern Filesystem Hierarchy Standard over antiquated GNU standards.
-test "$mandir" != '${prefix}/man' || mandir='${datadir}/man'
 dnl
 dnl           checks for programs
 dnl
