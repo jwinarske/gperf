@@ -1,6 +1,6 @@
 # Makefile for gperf/doc
 
-# Copyright (C) 1998, 2000, 2002-2003 Free Software Foundation, Inc.
+# Copyright (C) 1998, 2000, 2002-2003, 2007 Free Software Foundation, Inc.
 # Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 # and Bruno Haible <bruno@clisp.org>.
 #
@@ -49,7 +49,7 @@ TEX = tex
 TEXI2DVI = texi2dvi
 DVIPS = dvips -D600
 TEXI2PDF = texi2pdf
-MAKEINFO = LANG= LANGUAGE= makeinfo
+MAKEINFO = LANG= LC_MESSAGES= LC_ALL= LANGUAGE= makeinfo
 TEXI2HTML = texi2html
 
 # Programs used by "make install":

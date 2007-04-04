@@ -1,5 +1,10 @@
 2007-04-04  Bruno Haible  <bruno@clisp.org>
 
+	* doc/Makefile.in (MAKEINFO): Disable also the LC_MESSAGES and LC_ALL
+	environment variables.
+
+2007-04-04  Bruno Haible  <bruno@clisp.org>
+
 	* configure.ac: Renamed from configure.in.
 	* doc/configure.ac: Renamed from doc/configure.in.
 	* lib/configure.ac: Renamed from lib/configure.in.
