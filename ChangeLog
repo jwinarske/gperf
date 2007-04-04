@@ -10,6 +10,9 @@
 	* lib/configure: Likewise.
 	* src/configure: Likewise.
 	* tests/configure: Likewise.
+	* src/config.h.in: Likewise.
+	* src/config.h.msvc: Likewise.
+	* src/config.h_vms: Likewise.
 
 2007-04-04  Bruno Haible  <bruno@clisp.org>
 
