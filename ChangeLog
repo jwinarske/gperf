@@ -5,6 +5,11 @@
 	* doc/Makefile.in (datarootdir): New variable.
 	(docdir, dvidir, psdir, pdfdir, htmldir): Use value determined by
 	autoconf.
+	* configure.ac: Require autoconf >= 2.60.
+	* doc/configure.ac: Likewise.
+	* lib/configure.ac: Likewise.
+	* src/configure.ac: Likewise.
+	* tests/configure.ac: Likewise.
 	* configure: Regenerated with autoconf-2.61.
 	* doc/configure: Likewise.
 	* lib/configure: Likewise.

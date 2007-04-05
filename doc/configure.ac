@@ -21,6 +21,7 @@ dnl along with this program; see the file COPYING.
 dnl If not, write to the Free Software Foundation, Inc.,
 dnl 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
+AC_PREREQ([2.60])
 AC_INIT(gperf.1)
 PACKAGE=gperf
 AC_SUBST(PACKAGE)

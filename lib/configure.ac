@@ -1,6 +1,6 @@
 dnl autoconf configuration for gperf/lib
 
-dnl Copyright (C) 1998, 2002, 2005 Free Software Foundation, Inc.
+dnl Copyright (C) 1998, 2002, 2005, 2007 Free Software Foundation, Inc.
 dnl Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 dnl and Bruno Haible <bruno@clisp.org>.
 dnl
@@ -21,6 +21,7 @@ dnl along with this program; see the file COPYING.
 dnl If not, write to the Free Software Foundation, Inc.,
 dnl 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
+AC_PREREQ([2.60])
 AC_INIT(hash.cc)
 AC_PROG_MAKE_SET
 dnl
