@@ -1,3 +1,11 @@
+2007-04-06  Bruno Haible  <bruno@clisp.org>
+
+	Improve support for mingw.
+	* tests/Makefile.in (check-c, check-ada, check-modula3, check-pascal,
+	check-lang-utf8, check-lang-ucs2): Remove '\r' from output before diff.
+	(POSTPROCESS_FOR_MINGW): New variable.
+	(check-test): Use it to postprocess output before diff.
+
 2007-04-04  Bruno Haible  <bruno@clisp.org>
 
 	Support for newer GNU standards.
