@@ -1,3 +1,8 @@
+2007-04-06  Brendan Kehoe  <brendan@zen.org>
+
+	* gperf-3.0.3 released.
+	* src/version.cc: Bump to 3.0.3.
+
 2007-04-06  Bruno Haible  <bruno@clisp.org>
 
 	Improve support for mingw.
@@ -41,10 +46,6 @@
 	* tests/configure.ac: Renamed from tests/configure.in.
 	* Makefile.devel: Update.
 	* INSTALL: Update.
-
-2007-03-31  Brendan Kehoe  <brendan@zen.org>
-
-	* gperf-3.0.3 released.
 
 2007-03-31  Bruno Haible  <bruno@clisp.org>
 
