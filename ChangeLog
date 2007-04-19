@@ -1,7 +1,8 @@
-2007-04-06  Brendan Kehoe  <brendan@zen.org>
+2007-04-19  Brendan Kehoe  <brendan@zen.org>
 
 	* gperf-3.0.3 released.
 	* src/version.cc: Bump to 3.0.3.
+	* tests/*.exp: Bump to 3.0.3 in header.
 
 2007-04-06  Bruno Haible  <bruno@clisp.org>
 
