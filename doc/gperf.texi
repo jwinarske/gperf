@@ -1,6 +1,13 @@
 \input texinfo @c -*- texinfo -*-
 @c %**start of header
 @setfilename gperf.info
+@c The @ifset makeinfo ... @end ifset conditional evaluates to true in makeinfo
+@c for info and html output, but to false in texi2html.
+@ifnottex
+@ifclear texi2html
+@set makeinfo
+@end ifclear
+@end ifnottex
 @settitle Perfect Hash Function Generator
 @c @setchapternewpage odd
 @c %**end of header
@@ -19,16 +26,18 @@
 @syncodeindex fn cp
 @c @synindex pg cp
 
+@ifinfo
 @dircategory Programming Tools
 @direntry
 * Gperf: (gperf).                Perfect Hash Function Generator.
 @end direntry
+@end ifinfo
 
 @ifinfo
 This file documents the features of the GNU Perfect Hash Function
 Generator @value{VERSION}.
 
-Copyright @copyright{} 1989-2006 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2007 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -87,7 +96,12 @@ included in a translation approved by the author instead of in the
 original English.
 @end titlepage
 
-@ifinfo
+@ifnottex
+@c Table of Contents
+@contents
+@end ifnottex
+
+@ifset makeinfo
 @node Top, Copying, (dir), (dir)
 @top Introduction
 
@@ -141,7 +155,7 @@ Invoking @code{gperf}
 @end detailmenu
 @end menu
 
-@end ifinfo
+@end ifset
 
 @node Copying, Contributors, Top, Top
 @unnumbered GNU GENERAL PUBLIC LICENSE
@@ -1366,5 +1380,9 @@ Foundation, 1989.
 
 @printindex cp
 
+@iftex
+@c Table of Contents
 @contents
+@end iftex
+
 @bye

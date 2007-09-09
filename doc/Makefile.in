@@ -51,7 +51,7 @@ TEXI2DVI = texi2dvi
 DVIPS = dvips -D600
 TEXI2PDF = texi2pdf
 MAKEINFO = LANG= LC_MESSAGES= LC_ALL= LANGUAGE= makeinfo
-TEXI2HTML = texi2html
+TEXI2HTML = perl $(srcdir)/texi2html
 
 # Programs used by "make install":
 INSTALL = @INSTALL@
@@ -99,11 +99,11 @@ $(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 html : gperf.html gperf_toc.html
 
 gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
-	cd $(srcdir) && $(TEXI2HTML) -expandinfo -number -monolithic gperf.texi
+	cd $(srcdir) && $(TEXI2HTML) -number -monolithic gperf.texi
 
 gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 	cd $(srcdir) && $(RM) gperf_*.html
-	cd $(srcdir) && $(TEXI2HTML) -expandinfo -number -split_chapter gperf.texi
+	cd $(srcdir) && $(TEXI2HTML) -number -split_chapter gperf.texi
 
 
 install : all force

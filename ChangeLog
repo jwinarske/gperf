@@ -1,3 +1,13 @@
+2007-09-08  Bruno Haible  <bruno@clisp.org>
+
+	Allow creating the HTML documentation with texi2html or makeinfo.
+	* doc/texi2html: New file, from GNU gettext.
+	* doc/Makefile.in (TEXI2HTML): Invoke it.
+	(gperf.html, gperf_toc.html): Don't pass option -expandinfo.
+	* doc/gperf.texi (makeinfo): New variable.
+	(dircategory, direntry): Enclose in @ifinfo.
+	(Table of Contents): Move to the beginning except in TeX mode.
+
 2007-04-30  Brendan Kehoe  <brendan@zen.org>
 
 	* gperf-3.0.3 released.
