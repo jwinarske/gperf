@@ -1,5 +1,18 @@
 2007-09-08  Bruno Haible  <bruno@clisp.org>
 
+	Change generated code to avoid a warning by GCC 4.2 that the meaning
+	of __inline will be changed (!).
+	* src/output.cc (Output::output_lookup_function): Emit the inline
+	marker also for gcc-4.2 in c99 mode.
+	* tests/c-parse.exp, tests/charsets.exp, tests/chill.exp,
+	tests/cplusplus.exp, tests/gpc.exp, tests/incomplete.exp,
+	tests/java.exp, tests/languages.exp, tests/modula2.exp,
+	tests/objc.exp, tests/permut2.exp, tests/permut3.exp,
+	tests/permutc2.exp, tests/test-4.exp: Update.
+	Reported by Jim Meyering <jim@meyering.net>.
+
+2007-09-08  Bruno Haible  <bruno@clisp.org>
+
 	Allow creating the HTML documentation with texi2html or makeinfo.
 	* doc/texi2html: New file, from GNU gettext.
 	* doc/Makefile.in (TEXI2HTML): Invoke it.
