@@ -1,3 +1,7 @@
+2008-04-06  Bruno Haible  <bruno@clisp.org>
+
+	* tests/Makefile.in: Use "LC_ALL=C tr" instead of "tr".
+
 2007-09-08  Bruno Haible  <bruno@clisp.org>
 
 	Change generated code to avoid a warning by GCC 4.2 that the meaning
