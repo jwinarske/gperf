@@ -1,3 +1,9 @@
+2008-05-06  Bruno Haible  <bruno@clisp.org>
+
+	* doc/gperf.texi (Output Copyright): New section.
+	Reported by Mike Ingrassia <michael.ingrassia@motorola.com> and
+	Karice McIntyre <Karice_McIntyre@ca.ibm.com>.
+
 2008-04-06  Bruno Haible  <bruno@clisp.org>
 
 	* tests/Makefile.in: Use "LC_ALL=C tr" instead of "tr".
