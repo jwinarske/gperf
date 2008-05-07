@@ -9,12 +9,15 @@
 @end ifclear
 @end ifnottex
 @settitle Perfect Hash Function Generator
+@ifclear texi2html
+@firstparagraphindent insert
+@end ifclear
 @c @setchapternewpage odd
 @c %**end of header
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 31 March 2007
+@set UPDATED 6 May 2008
 @set EDITION 3.0.3
 @set VERSION 3.0.3
 @c ---------------------
@@ -1345,50 +1348,65 @@ C and C++ routines.
 @node Bibliography, Concept Index, Projects, Top
 @chapter Bibliography
 
+@noindent
 [1] Chang, C.C.: @i{A Scheme for Constructing Ordered Minimal Perfect
 Hashing Functions} Information Sciences 39(1986), 187-195.
 
+@noindent
 [2] Cichelli, Richard J. @i{Author's Response to ``On Cichelli's Minimal Perfect Hash
 Functions Method''} Communications of the ACM, 23, 12(December 1980), 729.
 
+@noindent
 [3] Cichelli, Richard J. @i{Minimal Perfect Hash Functions Made Simple}
 Communications of the ACM, 23, 1(January 1980), 17-19.
 
+@noindent
 [4] Cook, C. R. and Oldehoeft, R.R. @i{A Letter Oriented Minimal
 Perfect Hashing Function} SIGPLAN Notices, 17, 9(September 1982), 18-27.
 
+@noindent
 [5] Cormack, G. V. and Horspool, R. N. S. and Kaiserwerth, M.
 @i{Practical Perfect Hashing} Computer Journal, 28, 1(January 1985), 54-58.
 
+@noindent
 [6] Jaeschke, G. @i{Reciprocal Hashing: A Method for Generating Minimal
 Perfect Hashing Functions} Communications of the ACM, 24, 12(December
 1981), 829-833.
 
+@noindent
 [7] Jaeschke, G. and Osterburg, G. @i{On Cichelli's Minimal Perfect
 Hash Functions Method} Communications of the ACM, 23, 12(December 1980),
 728-729.
 
+@noindent
 [8] Sager, Thomas J. @i{A Polynomial Time Generator for Minimal Perfect
 Hash Functions} Communications of the ACM, 28, 5(December 1985), 523-532
 
+@noindent
 [9] Schmidt, Douglas C. @i{GPERF: A Perfect Hash Function Generator}
 Second USENIX C++ Conference Proceedings, April 1990.
 
+@noindent
 [10] Schmidt, Douglas C. @i{GPERF: A Perfect Hash Function Generator}
 C++ Report, SIGS 10 10 (November/December 1998).
 
+@noindent
 [11] Sebesta, R.W. and Taylor, M.A. @i{Minimal Perfect Hash Functions
 for Reserved Word Lists}  SIGPLAN Notices, 20, 12(September 1985), 47-53.
 
+@noindent
 [12] Sprugnoli, R. @i{Perfect Hashing Functions: A Single Probe
 Retrieving Method for Static Sets} Communications of the ACM, 20
 11(November 1977), 841-850.
 
+@noindent
 [13] Stallman, Richard M. @i{Using and Porting GNU CC} Free Software Foundation,
 1988.
 
+@noindent
 [14] Stroustrup, Bjarne @i{The C++ Programming Language.} Addison-Wesley, 1986.
 
+@noindent
 [15] Tiemann, Michael D. @i{User's Guide to GNU C++} Free Software
 Foundation, 1989.
 
