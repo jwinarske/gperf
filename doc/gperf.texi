@@ -878,8 +878,8 @@ Also, in this case the @samp{-c} option (or, equivalently, the
 by @code{gperf} to be under GPL.  The reason is that the output contains
 only small pieces of text that come directly from @code{gperf}'s source
 code -- only about 7 lines long, too small for being significant --, and
-therefore the output is not a ``derivative work'' of @code{gperf} (in the
-sense of U.S.@: copyright law).
+therefore the output is not a ``work based on @code{gperf}'' (in the
+sense of the GPL version 3).
 
 On the other hand, the output produced by @code{gperf} contains essentially
 all of the input file.  Therefore the output is under the same license, with

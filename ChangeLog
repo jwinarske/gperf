@@ -1,5 +1,9 @@
 2008-08-23  Bruno Haible  <bruno@clisp.org>
 
+	* doc/gperf.texi (Output Copyright): Adjust for GPLv3.
+
+2008-08-23  Bruno Haible  <bruno@clisp.org>
+
 	All source files are now under GPLv3+.
 	* COPYING: Replace with GPLv3.
 	* **/configure.ac, **/Makefile.*, **/*.h, **/*.c, **/*.cc, **/*.icc:
