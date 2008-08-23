@@ -2,10 +2,14 @@
 
 	All source files are now under GPLv3+.
 	* COPYING: Replace with GPLv3.
-	* **/configure.ac, **/Makefile.in, **/*.h, **/*.c, **/*.cc, **/*.icc:
+	* **/configure.ac, **/Makefile.*, **/*.h, **/*.c, **/*.cc, **/*.icc:
 	Change copyright notice to GPLv3+.
 	* src/options.cc (Options::parse_options): Update --version output
 	accordingly.
+	* doc/gperf.texi: Reference the GPLv3.
+	* doc/gpl-3.0.texi: New file, copied from the gnulib git repository.
+	* doc/gpl.texinfo: Remove file.
+	* doc/Makefile.in: Update.
 
 2008-05-06  Bruno Haible  <bruno@clisp.org>
 

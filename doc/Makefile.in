@@ -68,13 +68,13 @@ all : info ps pdf html
 
 info : $(srcdir)/gperf.info
 
-$(srcdir)/gperf.info : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+$(srcdir)/gperf.info : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(MAKEINFO) --no-split gperf.texi
 
 
 dvi : $(srcdir)/gperf.dvi
 
-$(srcdir)/gperf.dvi : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+$(srcdir)/gperf.dvi : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
 	cd $(srcdir) && $(TEXI2DVI) gperf.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
@@ -88,7 +88,7 @@ $(srcdir)/gperf.ps : $(srcdir)/gperf.dvi
 
 pdf : $(srcdir)/gperf.pdf
 
-$(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+$(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
 	cd $(srcdir) && $(TEXI2PDF) gperf.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
@@ -96,10 +96,10 @@ $(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 
 html : gperf.html gperf_toc.html
 
-gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(TEXI2HTML) -number -monolithic gperf.texi
 
-gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(RM) gperf_*.html
 	cd $(srcdir) && $(TEXI2HTML) -number -split_chapter gperf.texi
 
