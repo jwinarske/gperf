@@ -1,3 +1,12 @@
+2008-08-23  Bruno Haible  <bruno@clisp.org>
+
+	All source files are now under GPLv3+.
+	* COPYING: Replace with GPLv3.
+	* **/configure.ac, **/Makefile.in, **/*.h, **/*.c, **/*.cc, **/*.icc:
+	Change copyright notice to GPLv3+.
+	* src/options.cc (Options::parse_options): Update --version output
+	accordingly.
+
 2008-05-06  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.texi: Set @firstparagraphindent.
