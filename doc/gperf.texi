@@ -17,7 +17,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 23 August 2008
+@set UPDATED 24 August 2008
 @set EDITION 3.0.3
 @set VERSION 3.0.3
 @c ---------------------
@@ -881,9 +881,13 @@ code -- only about 7 lines long, too small for being significant --, and
 therefore the output is not a ``work based on @code{gperf}'' (in the
 sense of the GPL version 3).
 
-On the other hand, the output produced by @code{gperf} contains essentially
-all of the input file.  Therefore the output is under the same license, with
-the same copyright holder, as the input that was passed to @code{gperf}.
+On the other hand, the output produced by @code{gperf} contains
+essentially all of the input file.  Therefore the output is a
+``derivative work'' of the input (in the sense of U.S.@: copyright law);
+and its copyright status depends on the copyright of the input.  For most
+software licenses, the result is that the the output is under the same
+license, with the same copyright holder, as the input that was passed to
+@code{gperf}.
 
 @node Options, Bugs, Description, Top
 @chapter Invoking @code{gperf}
