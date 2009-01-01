@@ -1,3 +1,7 @@
+2009-01-01  Bruno Haible  <bruno@clisp.org>
+
+	* doc/gperf.texi (Gperf Declarations): Mention the C99 standard.
+
 2008-08-23  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.texi (Output Copyright): Reword more carefully.

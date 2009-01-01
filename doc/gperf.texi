@@ -17,7 +17,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 24 August 2008
+@set UPDATED 1 January 2009
 @set EDITION 3.0.3
 @set VERSION 3.0.3
 @c ---------------------
@@ -40,7 +40,7 @@
 This file documents the features of the GNU Perfect Hash Function
 Generator @value{VERSION}.
 
-Copyright @copyright{} 1989-2008 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2009 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -78,7 +78,7 @@ Software Foundation instead of in the original English.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1989-2008 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2009 Free Software Foundation, Inc.
 
 
 Permission is granted to make and distribute verbatim copies of
@@ -495,7 +495,8 @@ old-style C compilers, provided that you @code{#define const} to empty
 for compilers which don't know about this keyword.
 
 @item ANSI-C
-ANSI C.  This language is understood by ANSI C compilers and C++ compilers.
+ANSI C.  This language is understood by ANSI C (C89, ISO C90) compilers,
+ISO C99 compilers, and C++ compilers.
 
 @item C++
 C++.  This language is understood by C++ compilers.
