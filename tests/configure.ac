@@ -1,6 +1,6 @@
 dnl autoconf configuration for gperf/tests
 
-dnl Copyright (C) 1998, 2002, 2007 Free Software Foundation, Inc.
+dnl Copyright (C) 1998, 2002, 2007, 2009 Free Software Foundation, Inc.
 dnl Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 dnl and Bruno Haible <bruno@clisp.org>.
 dnl
@@ -20,7 +20,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.60])
-AC_INIT(c-parse.gperf)
+AC_INIT([c-parse.gperf])
 AC_PROG_MAKE_SET
 dnl
 dnl           checks for programs
@@ -38,8 +38,8 @@ if test $ac_cv_prog_gcc = yes -a $ac_cv_prog_gxx = yes; then
 else
   CHECK_LANG_SYNTAX=''
 fi
-AC_SUBST(CHECK_LANG_SYNTAX)
+AC_SUBST([CHECK_LANG_SYNTAX])
 dnl
 dnl           That's it.
 dnl
-AC_OUTPUT(Makefile)
+AC_OUTPUT([Makefile])

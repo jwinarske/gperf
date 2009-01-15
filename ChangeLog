@@ -1,3 +1,11 @@
+2009-01-14  Bruno Haible  <bruno@clisp.org>
+
+	* configure.ac: More consistent m4 quoting.
+	* src/configure.ac: Likewise.
+	* lib/configure.ac: Likewise.
+	* tests/configure.ac: Likewise.
+	* doc/configure.ac: Likewise.
+
 2009-01-01  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.texi (Gperf Declarations): Mention the C99 standard.

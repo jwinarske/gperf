@@ -1,6 +1,6 @@
 dnl autoconf configuration for gperf/lib
 
-dnl Copyright (C) 1998, 2002, 2005, 2007 Free Software Foundation, Inc.
+dnl Copyright (C) 1998, 2002, 2005, 2007, 2009 Free Software Foundation, Inc.
 dnl Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 dnl and Bruno Haible <bruno@clisp.org>.
 dnl
@@ -20,7 +20,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.60])
-AC_INIT(hash.cc)
+AC_INIT([hash.cc])
 AC_PROG_MAKE_SET
 dnl
 dnl           checks for programs
@@ -40,4 +40,4 @@ CL_PROG_INSTALL
 dnl
 dnl           That's it.
 dnl
-AC_OUTPUT(Makefile)
+AC_OUTPUT([Makefile])
