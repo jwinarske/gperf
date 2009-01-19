@@ -1,5 +1,5 @@
 /* Driver program for the hash function generator
-   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -104,6 +104,7 @@ main (int argc, char *argv[])
                           searcher._total_keys,
                           searcher._max_key_len,
                           searcher._min_key_len,
+                          searcher._hash_includes_len,
                           searcher._key_positions,
                           searcher._alpha_inc,
                           searcher._total_duplicates,

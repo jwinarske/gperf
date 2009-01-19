@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -82,9 +82,9 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 const char *verbatim_code, const char *verbatim_code_end,
                 unsigned int verbatim_code_lineno, bool charset_dependent,
                 int total_keys, int max_key_len, int min_key_len,
-                const Positions& positions, const unsigned int *alpha_inc,
-                int total_duplicates, unsigned int alpha_size,
-                const int *asso_values)
+                bool hash_includes_len, const Positions& positions,
+                const unsigned int *alpha_inc, int total_duplicates,
+                unsigned int alpha_size, const int *asso_values)
   : _head (head), _struct_decl (struct_decl),
     _struct_decl_lineno (struct_decl_lineno), _return_type (return_type),
     _struct_tag (struct_tag),
@@ -97,6 +97,7 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
     _charset_dependent (charset_dependent),
     _total_keys (total_keys),
     _max_key_len (max_key_len), _min_key_len (min_key_len),
+    _hash_includes_len (hash_includes_len),
     _key_positions (positions), _alpha_inc (alpha_inc),
     _total_duplicates (total_duplicates), _alpha_size (alpha_size),
     _asso_values (asso_values)
@@ -755,7 +756,7 @@ Output::output_hash_function () const
   if (/* The function does not use the 'str' argument?  */
       _key_positions.get_size() == 0
       || /* The function uses 'str', but not the 'len' argument?  */
-         (option[NOLENGTH]
+         (!_hash_includes_len
           && _key_positions[0] < _min_key_len
           && _key_positions[_key_positions.get_size() - 1] != Positions::LASTCHAR))
     /* Pacify lint.  */
@@ -817,7 +818,7 @@ Output::output_hash_function () const
     {
       /* Trivial case: No key positions at all.  */
       printf ("  return %s;\n",
-              option[NOLENGTH] ? "0" : "len");
+              _hash_includes_len ? "len" : "0");
     }
   else
     {
@@ -838,7 +839,7 @@ Output::output_hash_function () const
              contain 'unsigned char's or 'unsigned short's.  */
 
           printf ("  return %s",
-                  option[NOLENGTH] ? "" : "len + ");
+                  _hash_includes_len ? "len + " : "");
 
           if (_key_positions.get_size() == 2
               && _key_positions[0] == 0
@@ -873,8 +874,8 @@ Output::output_hash_function () const
                   "  switch (%s)\n"
                   "    {\n"
                   "      default:\n",
-                  option[NOLENGTH] ? "0" : "len",
-                  option[NOLENGTH] ? "len" : "hval");
+                  _hash_includes_len ? "len" : "0",
+                  _hash_includes_len ? "hval" : "len");
 
           while (key_pos != Positions::LASTCHAR && key_pos >= _max_key_len)
             if ((key_pos = iter.next ()) == PositionIterator::EOS)

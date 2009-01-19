@@ -2,7 +2,7 @@
 
 /* Search algorithm.
 
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -112,6 +112,9 @@ public:
 
   /* Minimum length of the shortest keyword.  */
   int                   _min_key_len;
+
+  /* Whether the hash function includes the length.  */
+  bool                  _hash_includes_len;
 
   /* User-specified or computed key positions.  */
   Positions             _key_positions;

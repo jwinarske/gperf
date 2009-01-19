@@ -1,3 +1,23 @@
+2009-01-19  Bruno Haible  <bruno@clisp.org>
+
+	Don't include the length in the hash function if all keywords have the
+	same length.
+	* src/search.h (Search): Add _hash_includes_len field.
+	* src/search.cc (Search::prepare): Initialize it.
+	(Search::count_duplicates_tuple, Search::count_duplicates_multiset,
+	Search::prepare_asso_values, Search::find_asso_values,
+	Search::compute_hash): Use it instead of !option[NOLENGTH].
+	* src/output.h (Output): New field _hash_includes_len. Add it as
+	constructor argument.
+	* src/output.cc (Output::Output): Add hash_includes_len argument.
+	(Output::output_hash_function): Use _hash_includes_len instead of
+	!option[NOLENGTH].
+	* src/main.cc (main): Pass _hash_includes_len from Search to Output.
+	* tests/permut2.exp: Updated expected test result.
+	* tests/permut3.exp: Likewise.
+	* tests/permutc2.exp: Likewise.
+	Reported by Behdad Esfahbod <behdad@behdad.org>.
+
 2009-01-14  Bruno Haible  <bruno@clisp.org>
 
 	* configure.ac: More consistent m4 quoting.

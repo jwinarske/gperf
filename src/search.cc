@@ -1,5 +1,5 @@
 /* Search algorithm.
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -64,7 +64,7 @@
    where Pos is a set of byte positions,
    each alpha_inc[i] is a nonnegative integer,
    each asso_values[c] is a nonnegative integer,
-   len (keyword) is the keyword's length if !option[NOLENGTH], or 0 otherwise.
+   len (keyword) is the keyword's length if _hash_includes_len, or 0 otherwise.
 
    Theorem 1: If all keywords are different, there is a set Pos such that
    all tuples (keyword[i] : i in Pos) are different.
@@ -103,7 +103,7 @@
      Map (A --> B) := Hom_Set (A, B) is the set of maps from A to B, and
      S(Pos) is the symmetric group over Pos.
 
-   This was the theory for option[NOLENGTH]; if !option[NOLENGTH], slight
+   This was the theory for !_hash_includes_len; if _hash_includes_len, slight
    modifications apply:
      proj1 : String --> Map (Pos --> N) x N
      proj2 : Map (Pos --> N) x N --> Map (Pos --> N) / S(Pos) x N
@@ -175,6 +175,9 @@ Search::prepare ()
               exit (1);
             }
       }
+
+  /* Determine whether the hash function shall include the length.  */
+  _hash_includes_len = !(option[NOLENGTH] || (_min_key_len == _max_key_len));
 }
 
 /* ====================== Finding good byte positions ====================== */
@@ -238,7 +241,7 @@ Search::count_duplicates_tuple (const Positions& positions, const unsigned int *
 
   unsigned int count = 0;
   {
-    Hash_Table representatives (_total_keys, option[NOLENGTH]);
+    Hash_Table representatives (_total_keys, !_hash_includes_len);
     for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
       {
         KeywordExt *keyword = temp->first();
@@ -590,7 +593,7 @@ Search::count_duplicates_multiset (const unsigned int *alpha_inc) const
 
   unsigned int count = 0;
   {
-    Hash_Table representatives (_total_keys, option[NOLENGTH]);
+    Hash_Table representatives (_total_keys, !_hash_includes_len);
     for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
       {
         KeywordExt *keyword = temp->first();
@@ -736,7 +739,7 @@ Search::prepare_asso_values ()
   _max_selchars_length = _key_positions.iterator(_max_key_len).remaining();
 
   /* Check for duplicates, i.e. keywords with the same _selchars array
-     (and - if !option[NOLENGTH] - also the same length).
+     (and - if _hash_includes_len - also the same length).
      We deal with these by building an equivalence class, so that only
      1 keyword is representative of the entire collection.  Only this
      representative remains in the keyword list; the others are accessible
@@ -747,7 +750,7 @@ Search::prepare_asso_values ()
     _list_len = _total_keys;
     _total_duplicates = 0;
     /* Make hash table for efficiency.  */
-    Hash_Table representatives (_list_len, option[NOLENGTH]);
+    Hash_Table representatives (_list_len, !_hash_includes_len);
 
     KeywordExt_List *prev = NULL; /* list node before temp */
     for (temp = _head; temp; )
@@ -847,7 +850,7 @@ Search::prepare_asso_values ()
 
   /* Given the bound for _asso_values[c], we have a bound for the possible
      hash values, as computed in compute_hash().  */
-  _max_hash_value = (option[NOLENGTH] ? 0 : _max_key_len)
+  _max_hash_value = (_hash_includes_len ? _max_key_len : 0)
                     + (_asso_value_max - 1) * _max_selchars_length;
   /* Allocate a sparse bit vector for detection of collisions of hash
      values.  */
@@ -1307,7 +1310,7 @@ Search::find_asso_values ()
                      the yet undetermined asso_values[].  */
                   int hashcode;
                   {
-                    int sum = option[NOLENGTH] ? 0 : keyword->_allchars_length;
+                    int sum = _hash_includes_len ? keyword->_allchars_length : 0;
                     const unsigned int *p = keyword->_selchars;
                     int i = keyword->_selchars_length;
                     for (; i > 0; p++, i--)
@@ -1407,7 +1410,7 @@ Search::find_asso_values ()
                           _asso_value_max = step->_asso_value_max;
                           /* Reinitialize _max_hash_value.  */
                           _max_hash_value =
-                            (option[NOLENGTH] ? 0 : _max_key_len)
+                            (_hash_includes_len ? _max_key_len : 0)
                             + (_asso_value_max - 1) * _max_selchars_length;
                           /* Reinitialize _collision_detector.  */
                           delete _collision_detector;
@@ -1470,7 +1473,7 @@ Search::find_asso_values ()
 inline int
 Search::compute_hash (KeywordExt *keyword) const
 {
-  int sum = option[NOLENGTH] ? 0 : keyword->_allchars_length;
+  int sum = _hash_includes_len ? keyword->_allchars_length : 0;
 
   const unsigned int *p = keyword->_selchars;
   int i = keyword->_selchars_length;

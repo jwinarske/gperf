@@ -2,7 +2,7 @@
 
 /* Output routines.
 
-   Copyright (C) 1989-1998, 2000, 2002-2003 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -49,6 +49,7 @@ public:
                                 bool charset_dependent,
                                 int total_keys,
                                 int max_key_len, int min_key_len,
+                                bool hash_includes_len,
                                 const Positions& positions,
                                 const unsigned int *alpha_inc,
                                 int total_duplicates,
@@ -133,6 +134,8 @@ private:
   int const             _max_key_len;
   /* Minimum length of the shortest keyword. */
   int const             _min_key_len;
+  /* Whether the hash function includes the length.  */
+  bool                  _hash_includes_len;
   /* Key positions.  */
   Positions const       _key_positions;
   /* Adjustments to add to bytes add specific key positions.  */
