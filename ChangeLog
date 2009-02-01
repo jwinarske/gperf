@@ -4,6 +4,7 @@
 	* src/version.cc: Bump to 3.0.4.
 	* tests/*.exp: Bump to 3.0.4 in header.
 	* doc/gperf.1: Regenerate with gperf 3.0.4.
+	* doc/gperf.texi: Adjust version.
 
 	* doc/texinfo.tex: Update to copy from texinfo-4.13.
 
