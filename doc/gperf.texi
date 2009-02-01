@@ -17,9 +17,9 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 1 January 2009
-@set EDITION 3.0.3
-@set VERSION 3.0.3
+@set UPDATED 1 February 2009
+@set EDITION 3.0.4
+@set VERSION 3.0.4
 @c ---------------------
 
 @c remove the black boxes generated in the GPL appendix.
