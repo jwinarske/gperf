@@ -1,6 +1,6 @@
 /* Current program version number.
 
-   Copyright (C) 1989-1998, 2000, 2002-2003, 2005, 2007 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003, 2005, 2007, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -23,4 +23,4 @@
 #include "version.h"
 
 /* Current release version. */
-const char *version_string = "3.0.3";
+const char *version_string = "3.0.4";

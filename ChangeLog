@@ -1,3 +1,12 @@
+2009-02-01  Brendan Kehoe  <brendan@zen.org>
+
+	* gperf-3.0.4 released.
+	* src/version.cc: Bump to 3.0.4.
+	* tests/*.exp: Bump to 3.0.4 in header.
+	* doc/gperf.1: Regenerate with gperf 3.0.4.
+
+	* doc/texinfo.tex: Update to copy from texinfo-4.13.
+
 2009-01-19  Bruno Haible  <bruno@clisp.org>
 
 	Don't include the length in the hash function if all keywords have the
