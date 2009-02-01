@@ -1840,7 +1840,7 @@ sub anchor {
 sub pretty_date {
     local(@MoY, $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst);
 
-    @MoY = ('January', 'Febuary', 'March', 'April', 'May', 'June',
+    @MoY = ('January', 'February', 'March', 'April', 'May', 'June',
 	    'July', 'August', 'September', 'October', 'November', 'December');
     ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time);
     $year += ($year < 70) ? 2000 : 1900;
