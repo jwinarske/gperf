@@ -33,6 +33,10 @@ CPP = @CPP@
 CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CXXCPP = @CXXCPP@
+# Both C and C++ compiler
+LDFLAGS = @LDFLAGS@
+OBJEXT = @OBJEXT@
+EXEEXT = @EXEEXT@
 # Other
 MV = mv
 LN = ln
@@ -66,7 +70,7 @@ check-link-c: force
 	@echo "performing some tests of the perfect hash generator"
 	$(CC) -c $(CFLAGS) $(srcdir)/test.c
 	$(GPERF) -c -l -S1 -I -o $(srcdir)/c.gperf > cinset.c
-	$(CC) $(CFLAGS) -o cout cinset.c test.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o cout cinset.c test.$(OBJEXT)
 
 check-link-c++: force
 
@@ -78,26 +82,26 @@ check-c:
 check-ada:
 	$(GPERF) -k1,4,'$$' -I $(srcdir)/ada.gperf > adainset.c
 # double '$$' is only there since make gets confused; program wants only 1 '$'
-	$(CC) $(CFLAGS) -o aout adainset.c test.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o aout adainset.c test.$(OBJEXT)
 	@echo "testing Ada reserved words, all items should be found in the set"
 	./aout -v < $(srcdir)/ada.gperf | LC_ALL=C tr -d '\r' > ada-res.out
 	diff $(srcdir)/ada-res.exp ada-res.out
 	$(GPERF) -D -k1,'$$' -s 2 -I -o $(srcdir)/adadefs.gperf > preinset.c
-	$(CC) $(CFLAGS) -o preout preinset.c test.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o preout preinset.c test.$(OBJEXT)
 	@echo "testing Ada predefined words, all items should be found in the set"
 	./preout -v < $(srcdir)/adadefs.gperf | LC_ALL=C tr -d '\r' > ada-pred.out
 	diff $(srcdir)/ada-pred.exp ada-pred.out
 
 check-modula3:
 	$(GPERF) -k1,2,'$$' -I -o $(srcdir)/modula3.gperf > m3inset.c
-	$(CC) $(CFLAGS) -o m3out m3inset.c test.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o m3out m3inset.c test.$(OBJEXT)
 	@echo "testing Modula3 reserved words, all items should be found in the set"
 	./m3out -v < $(srcdir)/modula3.gperf | LC_ALL=C tr -d '\r' > modula.out
 	diff $(srcdir)/modula.exp modula.out
 
 check-pascal:
 	$(GPERF) -o -S2 -I < $(srcdir)/pascal.gperf > pinset.c
-	$(CC) $(CFLAGS) -o pout pinset.c test.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o pout pinset.c test.$(OBJEXT)
 	@echo "testing Pascal reserved words, all items should be found in the set"
 	./pout -v < $(srcdir)/pascal.gperf | LC_ALL=C tr -d '\r' > pascal.out
 	diff $(srcdir)/pascal.exp pascal.out
@@ -105,7 +109,7 @@ check-pascal:
 # check for 8-bit cleanliness
 check-lang-utf8:
 	$(GPERF) -k1 -t -I -K foreign_name < $(srcdir)/lang-utf8.gperf > lu8inset.c
-	$(CC) $(CFLAGS) -o lu8out lu8inset.c test.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o lu8out lu8inset.c test.$(OBJEXT)
 	@echo "testing UTF-8 encoded languages, all items should be found in the set"
 	sed -e '1,6d' -e 's/,.*//' < $(srcdir)/lang-utf8.gperf | ./lu8out -v | LC_ALL=C tr -d '\r' > lang-utf8.out
 	diff $(srcdir)/lang-utf8.exp lang-utf8.out
@@ -114,7 +118,7 @@ check-lang-utf8:
 check-lang-ucs2:
 	$(CC) -c $(CFLAGS) $(srcdir)/test2.c
 	$(GPERF) -k4 -t -l -I -K foreign_name < $(srcdir)/lang-ucs2.gperf > lu2inset.c
-	$(CC) $(CFLAGS) -o lu2out lu2inset.c test2.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o lu2out lu2inset.c test2.$(OBJEXT)
 	@echo "testing UCS-2 encoded languages, all items should be found in the set"
 	./lu2out -v < $(srcdir)/lang-ucs2.in | LC_ALL=C tr -d '\r' > lang-ucs2.out
 	diff $(srcdir)/lang-ucs2.exp lang-ucs2.out
@@ -123,13 +127,13 @@ check-lang-ucs2:
 check-smtp:
 	@echo "testing SMTP keywords, case-insensitive"
 	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case $(srcdir)/smtp.gperf > smtp.c
-	$(CC) $(CFLAGS) -o smtp smtp.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o smtp smtp.c
 	./smtp
 	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case --compare-strncmp $(srcdir)/smtp.gperf > smtp.c
-	$(CC) $(CFLAGS) -o smtp smtp.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o smtp smtp.c
 	./smtp
 	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case --compare-lengths $(srcdir)/smtp.gperf > smtp.c
-	$(CC) $(CFLAGS) -o smtp smtp.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o smtp smtp.c
 	./smtp
 
 # these next 5 are demos that show off the generated code
@@ -325,7 +329,7 @@ check-lang-syntax : force
 mostlyclean : clean
 
 clean : force
-	$(RM) *.o core *inset.c output.* *.out aout cout lu2out lu8out m3out pout preout smtp.c smtp tmp-* valitest*
+	$(RM) *.$(OBJEXT) core *inset.c output.* *.out aout$(EXEEXT) cout$(EXEEXT) lu2out$(EXEEXT) lu8out$(EXEEXT) m3out$(EXEEXT) pout$(EXEEXT) preout$(EXEEXT) smtp.c smtp$(EXEEXT) tmp-* valitest*
 	$(RM) -r *.dSYM
 
 distclean : clean

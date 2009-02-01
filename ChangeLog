@@ -10,6 +10,12 @@
 
 2009-02-01  Bruno Haible  <bruno@clisp.org>
 
+	* tests/Makefile.in (LDFLAGS, OBJEXT, EXEEXT): New variables.
+	(check-link-c, check-ada, check-modula3, check-pascal, check-lang-utf8,
+	check-lang-ucs2): Use OBJEXT and LDFLAGS.
+	(check-smtp): Use LDFLAGS.
+	(clean): Use EXEEXT as suffix of programs to be removed.
+
 	* aclocal.m4 (CL_PROG_INSTALL): Fix detection of broken AIX installbsd
 	program.
 
