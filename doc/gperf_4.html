@@ -1,22 +1,23 @@
 <HTML>
 <HEAD>
-<!-- This HTML file has been created by texi2html 1.51
-     from gperf.texi on 31 March 2007 -->
+<!-- This HTML file has been created by texi2html 1.52b
+     from gperf.texi on 1 February 2009 -->
 
-<TITLE>Perfect Hash Function Generator - 2  Static search structures and GNU gperf</TITLE>
+<META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Perfect Hash Function Generator - 3  Static search structures and GNU gperf</TITLE>
 </HEAD>
 <BODY>
 Go to the <A HREF="gperf_1.html">first</A>, <A HREF="gperf_3.html">previous</A>, <A HREF="gperf_5.html">next</A>, <A HREF="gperf_10.html">last</A> section, <A HREF="gperf_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC6" HREF="gperf_toc.html#TOC6">2  Static search structures and GNU <CODE>gperf</CODE></A></H1>
+<H1><A NAME="SEC4" HREF="gperf_toc.html#TOC4">3  Static search structures and GNU <CODE>gperf</CODE></A></H1>
 <P>
 <A NAME="IDX2"></A>
 
 </P>
 <P>
-A <STRONG>static search structure</STRONG> is an Abstract Data Type with certain
+A <EM>static search structure</EM> is an Abstract Data Type with certain
 fundamental operations, e.g., <EM>initialize</EM>, <EM>insert</EM>,
 and <EM>retrieve</EM>.  Conceptually, all insertions occur before any
 retrievals.  In practice, <CODE>gperf</CODE> generates a <EM>static</EM> array
@@ -26,7 +27,7 @@ insertions.  It is a useful data structure for representing <EM>static
 search sets</EM>.  Static search sets occur frequently in software system
 applications.  Typical static search sets include compiler reserved
 words, assembler instruction opcodes, and built-in shell interpreter
-commands.  Search set members, called <STRONG>keywords</STRONG>, are inserted into
+commands.  Search set members, called <EM>keywords</EM>, are inserted into
 the structure only once, usually during program initialization, and are
 not generally modified at run-time.
 
@@ -55,13 +56,13 @@ function is defined by two properties:
 <LI>
 
 It allows keyword recognition in a static search set using at most
-<EM>one</EM> probe into the hash table.  This represents the "perfect"
+<EM>one</EM> probe into the hash table.  This represents the “perfect”
 property.
 <LI>
 
 The actual memory allocated to store the keywords is precisely large
 enough for the keyword set, and <EM>no larger</EM>.  This is the
-"minimal" property.
+“minimal” property.
 </UL>
 
 <P>
@@ -69,7 +70,7 @@ For most applications it is far easier to generate <EM>perfect</EM> hash
 functions than <EM>minimal perfect</EM> hash functions.  Moreover,
 non-minimal perfect hash functions frequently execute faster than
 minimal ones in practice.  This phenomena occurs since searching a
-sparse keyword table increases the probability of locating a "null"
+sparse keyword table increases the probability of locating a “null”
 entry, thereby reducing string comparisons.  <CODE>gperf</CODE>'s default
 behavior generates <EM>near-minimal</EM> perfect hash functions for
 keyword sets.  However, <CODE>gperf</CODE> provides many options that permit
