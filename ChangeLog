@@ -10,6 +10,9 @@
 
 2009-02-01  Bruno Haible  <bruno@clisp.org>
 
+	* aclocal.m4 (CL_PROG_INSTALL): Fix detection of broken AIX installbsd
+	program.
+
 	* tests/Makefile.in (clean): Remove *.dSYM directories left over by gcc
 	on MacOS X 10.5.
 
