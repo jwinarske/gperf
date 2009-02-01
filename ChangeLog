@@ -8,6 +8,10 @@
 
 	* doc/texinfo.tex: Update to copy from texinfo-4.13.
 
+2009-02-01  Bruno Haible  <bruno@clisp.org>
+
+	* src/options.cc (Options::parse_options): Bump copyright year.
+
 2009-01-19  Bruno Haible  <bruno@clisp.org>
 
 	Don't include the length in the hash function if all keywords have the
