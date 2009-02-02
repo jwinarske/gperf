@@ -1673,7 +1673,7 @@ else
 	    :
 	  else
 	    if test $ac_prog = installbsd &&
-	      grep src/bos $ac_dir/$ac_prog >/dev/null 2>&1; then
+	      strings $ac_dir/$ac_prog | grep src/bos >/dev/null 2>&1; then
 	      # AIX installbsd doesn't work without option "-g".
 	      :
 	    else
