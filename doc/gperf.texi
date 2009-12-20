@@ -502,7 +502,7 @@ ISO C99 compilers, and C++ compilers.
 C++.  This language is understood by C++ compilers.
 @end table
 
-The default is C.
+The default is ANSI-C.
 
 @item %define slot-name @var{name}
 @cindex @samp{%define slot-name}
@@ -985,7 +985,7 @@ ANSI C.  This language is understood by ANSI C compilers and C++ compilers.
 C++.  This language is understood by C++ compilers.
 @end table
 
-The default is C.
+The default is ANSI-C.
 
 @item -a
 This option is supported for compatibility with previous releases of

@@ -120,7 +120,7 @@ Options::long_usage (FILE * stream)
            "  -L, --language=LANGUAGE-NAME\n"
            "                         Generates code in the specified language. Languages\n"
            "                         handled are currently C++, ANSI-C, C, and KR-C. The\n"
-           "                         default is C.\n");
+           "                         default is ANSI-C.\n");
   fprintf (stream, "\n");
   fprintf (stream,
            "Details in the output code:\n");
@@ -448,7 +448,7 @@ PositionStringParser::nextPosition ()
 /* Sets the default Options.  */
 
 Options::Options ()
-  : _option_word (C),
+  : _option_word (ANSIC),
     _input_file_name (NULL),
     _output_file_name (NULL),
     _language (NULL),
@@ -574,9 +574,10 @@ Options::set_language (const char *language)
         _option_word |= CPLUSPLUS;
       else
         {
-          fprintf (stderr, "unsupported language option %s, defaulting to C\n",
+          fprintf (stderr,
+                   "unsupported language option %s, defaulting to ANSI-C\n",
                    language);
-          _option_word |= C;
+          _option_word |= ANSIC;
         }
     }
 }

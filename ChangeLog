@@ -1,5 +1,14 @@
 2009-12-20  Bruno Haible  <bruno@clisp.org>
 
+	Change the default language to ANSI-C.
+	* src/options.cc (Options::long_usage): Mention new default language.
+	(Options::Options): Change default of _option_word.
+	(Options::set_language): Change fallback.
+	* doc/gperf.texi (Gperf Declarations, Output Language): Mention new
+	default language.
+	* NEWS: Mention the change.
+	Reported by Albert Cahalan <acahalan@gmail.com>.
+
 	* src/version.cc (version_string): Bump to 3.1.
 	* doc/gperf.texi: Bump version.
 
