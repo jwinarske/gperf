@@ -6,7 +6,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
    This file documents the features of the GNU Perfect Hash Function
-Generator 3.0.4.
+Generator 3.1.
 
    Copyright (C) 1989-2009 Free Software Foundation, Inc.
 
@@ -1119,7 +1119,7 @@ line option, the command-line option's value prevails.
     `C++'
           C++.  This language is understood by C++ compilers.
 
-     The default is C.
+     The default is ANSI-C.
 
 `%define slot-name NAME'
      This declaration is only useful when option `-t' (or,
@@ -1584,7 +1584,7 @@ File: gperf.info,  Node: Output Language,  Next: Output Details,  Prev: Input De
     `C++'
           C++.  This language is understood by C++ compilers.
 
-     The default is C.
+     The default is ANSI-C.
 
 `-a'
      This option is supported for compatibility with previous releases
@@ -2064,33 +2064,33 @@ Concept Index
 
 
 Tag Table:
-Node: Top1237
-Node: Copying3374
-Node: Contributors40915
-Node: Motivation42108
-Node: Search Structures43240
-Node: Description46799
-Node: Input Format48757
-Node: Declarations49902
-Node: User-supplied Struct50490
-Node: Gperf Declarations52105
-Node: C Code Inclusion60897
-Node: Keywords61740
-Node: Functions63688
-Node: Controls for GNU indent64226
-Node: Output Format65177
-Node: Binary Strings67972
-Node: Output Copyright69148
-Node: Options70087
-Node: Output File70876
-Node: Input Details71268
-Node: Output Language73107
-Node: Output Details74526
-Node: Algorithmic Details81793
-Node: Verbosity87050
-Node: Bugs87761
-Node: Projects89357
-Node: Bibliography90489
-Node: Concept Index92504
+Node: Top1235
+Node: Copying3372
+Node: Contributors40913
+Node: Motivation42106
+Node: Search Structures43238
+Node: Description46797
+Node: Input Format48755
+Node: Declarations49900
+Node: User-supplied Struct50488
+Node: Gperf Declarations52103
+Node: C Code Inclusion60900
+Node: Keywords61743
+Node: Functions63691
+Node: Controls for GNU indent64229
+Node: Output Format65180
+Node: Binary Strings67975
+Node: Output Copyright69151
+Node: Options70090
+Node: Output File70879
+Node: Input Details71271
+Node: Output Language73110
+Node: Output Details74534
+Node: Algorithmic Details81801
+Node: Verbosity87058
+Node: Bugs87769
+Node: Projects89365
+Node: Bibliography90497
+Node: Concept Index92512
 
 End Tag Table

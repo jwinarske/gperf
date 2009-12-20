@@ -28,7 +28,7 @@ Language for the output code:
   -L, --language=LANGUAGE-NAME
                          Generates code in the specified language. Languages
                          handled are currently C++, ANSI-C, C, and KR-C. The
-                         default is C.
+                         default is ANSI-C.
 
 Details in the output code:
   -K, --slot-name=NAME   Select name of the keyword component in the keyword

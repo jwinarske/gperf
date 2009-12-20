@@ -1,5 +1,12 @@
 2009-12-20  Bruno Haible  <bruno@clisp.org>
 
+	* doc/gperf.info: Regenerated.
+	* doc/gperf*.html: Likewise.
+	* doc/gperf.dvi: Likewise.
+	* doc/gperf.ps: Likewise.
+	* doc/gperf.pdf: Likewise.
+	* tests/*.exp: Update.
+
 	Change the default language to ANSI-C.
 	* src/options.cc (Options::long_usage): Mention new default language.
 	(Options::Options): Change default of _option_word.
