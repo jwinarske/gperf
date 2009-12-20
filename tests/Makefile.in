@@ -60,26 +60,20 @@ installdirs :
 
 uninstall :
 
-check : check-link-c check-link-c++ check-c check-ada check-modula3 check-pascal check-lang-utf8 check-lang-ucs2 check-smtp check-test
+check : check-c check-ada check-modula3 check-pascal check-lang-utf8 check-lang-ucs2 check-smtp check-test
 	@true
 
 extracheck : @CHECK_LANG_SYNTAX@
 	@true
 
-check-link-c: force
-	@echo "performing some tests of the perfect hash generator"
-	$(CC) -c $(CFLAGS) $(srcdir)/test.c
+check-c: test.$(OBJEXT)
+	@echo "testing ANSI C reserved words, all items should be found in the set"
 	$(GPERF) -c -l -S1 -I -o $(srcdir)/c.gperf > cinset.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o cout cinset.c test.$(OBJEXT)
-
-check-link-c++: force
-
-check-c:
-	@echo "testing ANSI C reserved words, all items should be found in the set"
 	./cout -v < $(srcdir)/c.gperf | LC_ALL=C tr -d '\r' > c.out
 	diff $(srcdir)/c.exp c.out
 
-check-ada:
+check-ada: test.$(OBJEXT)
 	$(GPERF) -k1,4,'$$' -I $(srcdir)/ada.gperf > adainset.c
 # double '$$' is only there since make gets confused; program wants only 1 '$'
 	$(CC) $(CFLAGS) $(LDFLAGS) -o aout adainset.c test.$(OBJEXT)
@@ -92,14 +86,14 @@ check-ada:
 	./preout -v < $(srcdir)/adadefs.gperf | LC_ALL=C tr -d '\r' > ada-pred.out
 	diff $(srcdir)/ada-pred.exp ada-pred.out
 
-check-modula3:
+check-modula3: test.$(OBJEXT)
 	$(GPERF) -k1,2,'$$' -I -o $(srcdir)/modula3.gperf > m3inset.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o m3out m3inset.c test.$(OBJEXT)
 	@echo "testing Modula3 reserved words, all items should be found in the set"
 	./m3out -v < $(srcdir)/modula3.gperf | LC_ALL=C tr -d '\r' > modula.out
 	diff $(srcdir)/modula.exp modula.out
 
-check-pascal:
+check-pascal: test.$(OBJEXT)
 	$(GPERF) -o -S2 -I < $(srcdir)/pascal.gperf > pinset.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o pout pinset.c test.$(OBJEXT)
 	@echo "testing Pascal reserved words, all items should be found in the set"
@@ -107,21 +101,26 @@ check-pascal:
 	diff $(srcdir)/pascal.exp pascal.out
 
 # check for 8-bit cleanliness
-check-lang-utf8:
+check-lang-utf8: test.$(OBJEXT)
 	$(GPERF) -k1 -t -I -K foreign_name < $(srcdir)/lang-utf8.gperf > lu8inset.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o lu8out lu8inset.c test.$(OBJEXT)
 	@echo "testing UTF-8 encoded languages, all items should be found in the set"
 	sed -e '1,6d' -e 's/,.*//' < $(srcdir)/lang-utf8.gperf | ./lu8out -v | LC_ALL=C tr -d '\r' > lang-utf8.out
 	diff $(srcdir)/lang-utf8.exp lang-utf8.out
 
+test.$(OBJEXT) : $(srcdir)/test.c
+	$(CC) -c $(CFLAGS) $(srcdir)/test.c
+
 # check for binary keywords with NUL bytes
-check-lang-ucs2:
-	$(CC) -c $(CFLAGS) $(srcdir)/test2.c
+check-lang-ucs2: test2.$(OBJEXT)
 	$(GPERF) -k4 -t -l -I -K foreign_name < $(srcdir)/lang-ucs2.gperf > lu2inset.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o lu2out lu2inset.c test2.$(OBJEXT)
 	@echo "testing UCS-2 encoded languages, all items should be found in the set"
 	./lu2out -v < $(srcdir)/lang-ucs2.in | LC_ALL=C tr -d '\r' > lang-ucs2.out
 	diff $(srcdir)/lang-ucs2.exp lang-ucs2.out
+
+test2.$(OBJEXT) : $(srcdir)/test2.c
+	$(CC) -c $(CFLAGS) $(srcdir)/test2.c
 
 # check case-insensitive lookup
 check-smtp:

@@ -1,3 +1,14 @@
+2009-12-20  Bruno Haible  <bruno@clisp.org>
+
+	Allow processing the tests with parallel make.
+	* tests/Makefile.in (check-link-c, check-link-c++): Remove rules.
+	(test.$(OBJEXT), test2.$(OBJEXT)): New rules.
+	(check-c): Add commands for building cout. Depend on test.$(OBJEXT).
+	(check-ada, check-modula3, check-pascal, check-lang-utf8): Depend on
+	test.$(OBJEXT).
+	(check-lang-ucs2): Depend on test2.$(OBJEXT).
+	Reported by Bryan Østergaard <kloeri@exherbo.org>.
+
 2009-02-01  Brendan Kehoe  <brendan@zen.org>
 
 	* gperf-3.0.4 released.
