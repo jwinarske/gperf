@@ -1,5 +1,10 @@
 2009-12-20  Bruno Haible  <bruno@clisp.org>
 
+	* src/version.cc (version_string): Bump to 3.1.
+	* doc/gperf.texi: Bump version.
+
+2009-12-20  Bruno Haible  <bruno@clisp.org>
+
 	Allow processing the tests with parallel make.
 	* tests/Makefile.in (check-link-c, check-link-c++): Remove rules.
 	(test.$(OBJEXT), test2.$(OBJEXT)): New rules.
