@@ -279,7 +279,7 @@ Options::print_options () const
         {
           putchar (*arg);
           arg++;
-          if (*arg >= 'A' && *arg <= 'Z' || *arg >= 'a' && *arg <= 'z')
+          if ((*arg >= 'A' && *arg <= 'Z') || (*arg >= 'a' && *arg <= 'z'))
             {
               putchar (*arg);
               arg++;
@@ -291,7 +291,7 @@ Options::print_options () const
                   putchar (*arg);
                   arg++;
                 }
-              while (*arg >= 'A' && *arg <= 'Z' || *arg >= 'a' && *arg <= 'z' || *arg == '-');
+              while ((*arg >= 'A' && *arg <= 'Z') || (*arg >= 'a' && *arg <= 'z') || *arg == '-');
               if (*arg == '=')
                 {
                   putchar (*arg);

@@ -1,5 +1,11 @@
 2009-12-22  Bruno Haible  <bruno@clisp.org>
 
+	Avoid g++ warnings.
+	* src/options.cc (Options::print_options): Add parentheses.
+	* src/output.cc (Output::output_lookup_array): Cast fprintf argument.
+
+2009-12-22  Bruno Haible  <bruno@clisp.org>
+
 	Support CPPFLAGS as mandated by GNU standards.
 	* lib/Makefile.in (CPPFLAGS): Use autoconf determined value.
 	* src/Makefile.in (CPPFLAGS): Likewise.
