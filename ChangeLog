@@ -1,3 +1,15 @@
+2009-12-22  Bruno Haible  <bruno@clisp.org>
+
+	Support CPPFLAGS as mandated by GNU standards.
+	* lib/Makefile.in (CPPFLAGS): Use autoconf determined value.
+	* src/Makefile.in (CPPFLAGS): Likewise.
+	* tests/Makefile.in (CPPFLAGS): Likewise.
+	(check-c, check-ada, check-modula3, check-pascal, check-lang-utf8,
+	test.$(OBJEXT), check-lang-ucs2, test2.$(OBJEXT), check-smtp): Use
+	CPPFLAGS when compiling a .c file.
+	(VALIDATE): Pass also CPPFLAGS.
+	* tests/validate: Use CPPFLAGS when compiling a C or C++ file.
+
 2009-12-20  Bruno Haible  <bruno@clisp.org>
 
 	* doc/gperf.info: Regenerated.

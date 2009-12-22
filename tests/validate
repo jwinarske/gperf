@@ -26,34 +26,34 @@ for lang in `echo $languages | sed -e 's/,/ /g'`; do
       ${GPERF} -I -L KR-C "$@" > valitest.c
       grep -n ' const ' valitest.c /dev/null && exit 1
       if test $use_traditional = true; then
-        verbose ${CC} ${CFLAGS} -traditional valitest.c -o valitest
+        verbose ${CC} ${CFLAGS} ${CPPFLAGS} -traditional valitest.c -o valitest
         ./valitest
       fi
-      verbose ${CC} ${CFLAGS} -ansi -pedantic valitest.c -o valitest
+      verbose ${CC} ${CFLAGS} ${CPPFLAGS} -ansi -pedantic valitest.c -o valitest
       ./valitest
       ;;
     C )
       echo "${GPERF} -I -L C $@ > valitest.c"
       ${GPERF} -I -L C "$@" > valitest.c
       if test $use_traditional = true; then
-        verbose ${CC} ${CFLAGS} -traditional -Dconst= valitest.c -o valitest
+        verbose ${CC} ${CFLAGS} ${CPPFLAGS} -traditional -Dconst= valitest.c -o valitest
         ./valitest
       fi
-      verbose ${CC} ${CFLAGS} -ansi -pedantic -pedantic-errors valitest.c -o valitest
+      verbose ${CC} ${CFLAGS} ${CPPFLAGS} -ansi -pedantic -pedantic-errors valitest.c -o valitest
       ./valitest
       ;;
     ANSI-C )
       echo "${GPERF} -I -L ANSI-C $@ > valitest.c"
       ${GPERF} -I -L ANSI-C "$@" > valitest.c
-      verbose ${CC} ${CFLAGS} -ansi -pedantic -pedantic-errors valitest.c -o valitest
+      verbose ${CC} ${CFLAGS} ${CPPFLAGS} -ansi -pedantic -pedantic-errors valitest.c -o valitest
       ./valitest
-      verbose ${CXX} ${CXXFLAGS} -ansi -pedantic -pedantic-errors valitest.c -o valitest
+      verbose ${CXX} ${CXXFLAGS} ${CPPFLAGS} -ansi -pedantic -pedantic-errors valitest.c -o valitest
       ./valitest
       ;;
     "C++" )
       echo "${GPERF} -I -L C++ $@ > valitest.c"
       ${GPERF} -I -L C++ "$@" > valitest.c
-      verbose ${CXX} ${CXXFLAGS} -ansi -pedantic -pedantic-errors -DCPLUSPLUS_TEST valitest.c -o valitest
+      verbose ${CXX} ${CXXFLAGS} ${CPPFLAGS} -ansi -pedantic -pedantic-errors -DCPLUSPLUS_TEST valitest.c -o valitest
       ./valitest
       ;;
   esac

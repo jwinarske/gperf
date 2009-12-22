@@ -34,6 +34,7 @@ CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CXXCPP = @CXXCPP@
 # Both C and C++ compiler
+CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 OBJEXT = @OBJEXT@
 EXEEXT = @EXEEXT@
@@ -69,33 +70,33 @@ extracheck : @CHECK_LANG_SYNTAX@
 check-c: test.$(OBJEXT)
 	@echo "testing ANSI C reserved words, all items should be found in the set"
 	$(GPERF) -c -l -S1 -I -o $(srcdir)/c.gperf > cinset.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o cout cinset.c test.$(OBJEXT)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o cout cinset.c test.$(OBJEXT)
 	./cout -v < $(srcdir)/c.gperf | LC_ALL=C tr -d '\r' > c.out
 	diff $(srcdir)/c.exp c.out
 
 check-ada: test.$(OBJEXT)
 	$(GPERF) -k1,4,'$$' -I $(srcdir)/ada.gperf > adainset.c
 # double '$$' is only there since make gets confused; program wants only 1 '$'
-	$(CC) $(CFLAGS) $(LDFLAGS) -o aout adainset.c test.$(OBJEXT)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o aout adainset.c test.$(OBJEXT)
 	@echo "testing Ada reserved words, all items should be found in the set"
 	./aout -v < $(srcdir)/ada.gperf | LC_ALL=C tr -d '\r' > ada-res.out
 	diff $(srcdir)/ada-res.exp ada-res.out
 	$(GPERF) -D -k1,'$$' -s 2 -I -o $(srcdir)/adadefs.gperf > preinset.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o preout preinset.c test.$(OBJEXT)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o preout preinset.c test.$(OBJEXT)
 	@echo "testing Ada predefined words, all items should be found in the set"
 	./preout -v < $(srcdir)/adadefs.gperf | LC_ALL=C tr -d '\r' > ada-pred.out
 	diff $(srcdir)/ada-pred.exp ada-pred.out
 
 check-modula3: test.$(OBJEXT)
 	$(GPERF) -k1,2,'$$' -I -o $(srcdir)/modula3.gperf > m3inset.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o m3out m3inset.c test.$(OBJEXT)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o m3out m3inset.c test.$(OBJEXT)
 	@echo "testing Modula3 reserved words, all items should be found in the set"
 	./m3out -v < $(srcdir)/modula3.gperf | LC_ALL=C tr -d '\r' > modula.out
 	diff $(srcdir)/modula.exp modula.out
 
 check-pascal: test.$(OBJEXT)
 	$(GPERF) -o -S2 -I < $(srcdir)/pascal.gperf > pinset.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o pout pinset.c test.$(OBJEXT)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o pout pinset.c test.$(OBJEXT)
 	@echo "testing Pascal reserved words, all items should be found in the set"
 	./pout -v < $(srcdir)/pascal.gperf | LC_ALL=C tr -d '\r' > pascal.out
 	diff $(srcdir)/pascal.exp pascal.out
@@ -103,36 +104,36 @@ check-pascal: test.$(OBJEXT)
 # check for 8-bit cleanliness
 check-lang-utf8: test.$(OBJEXT)
 	$(GPERF) -k1 -t -I -K foreign_name < $(srcdir)/lang-utf8.gperf > lu8inset.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o lu8out lu8inset.c test.$(OBJEXT)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o lu8out lu8inset.c test.$(OBJEXT)
 	@echo "testing UTF-8 encoded languages, all items should be found in the set"
 	sed -e '1,6d' -e 's/,.*//' < $(srcdir)/lang-utf8.gperf | ./lu8out -v | LC_ALL=C tr -d '\r' > lang-utf8.out
 	diff $(srcdir)/lang-utf8.exp lang-utf8.out
 
 test.$(OBJEXT) : $(srcdir)/test.c
-	$(CC) -c $(CFLAGS) $(srcdir)/test.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(srcdir)/test.c
 
 # check for binary keywords with NUL bytes
 check-lang-ucs2: test2.$(OBJEXT)
 	$(GPERF) -k4 -t -l -I -K foreign_name < $(srcdir)/lang-ucs2.gperf > lu2inset.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o lu2out lu2inset.c test2.$(OBJEXT)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o lu2out lu2inset.c test2.$(OBJEXT)
 	@echo "testing UCS-2 encoded languages, all items should be found in the set"
 	./lu2out -v < $(srcdir)/lang-ucs2.in | LC_ALL=C tr -d '\r' > lang-ucs2.out
 	diff $(srcdir)/lang-ucs2.exp lang-ucs2.out
 
 test2.$(OBJEXT) : $(srcdir)/test2.c
-	$(CC) -c $(CFLAGS) $(srcdir)/test2.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(srcdir)/test2.c
 
 # check case-insensitive lookup
 check-smtp:
 	@echo "testing SMTP keywords, case-insensitive"
 	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case $(srcdir)/smtp.gperf > smtp.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o smtp smtp.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o smtp smtp.c
 	./smtp
 	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case --compare-strncmp $(srcdir)/smtp.gperf > smtp.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o smtp smtp.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o smtp smtp.c
 	./smtp
 	$(GPERF) --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case --compare-lengths $(srcdir)/smtp.gperf > smtp.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o smtp smtp.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o smtp smtp.c
 	./smtp
 
 # these next 5 are demos that show off the generated code
@@ -178,7 +179,7 @@ check-test:
 # usable. (There are still platforms where gcc-2.8.0's fixincludes does not
 # work well enough.)
 
-VALIDATE = CC='$(CC)' CFLAGS='$(CFLAGS)' CXX='$(CXX)' CXXFLAGS='$(CXXFLAGS)' GPERF='$(GPERF)' $(srcdir)/validate
+VALIDATE = CC='$(CC)' CFLAGS='$(CFLAGS)' CXX='$(CXX)' CXXFLAGS='$(CXXFLAGS)' CPPFLAGS='$(CPPFLAGS)' GPERF='$(GPERF)' $(srcdir)/validate
 
 check-lang-syntax : force
 	$(VALIDATE) KR-C,C,ANSI-C,C++ -k1,2 $(srcdir)/jstest1.gperf

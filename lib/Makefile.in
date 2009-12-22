@@ -1,6 +1,6 @@
 # Makefile for gperf/lib
 
-# Copyright (C) 1989, 1992, 1993, 1998, 2002 Free Software Foundation, Inc.
+# Copyright (C) 1989, 1992, 1993, 1998, 2002, 2009 Free Software Foundation, Inc.
 # Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 # and Bruno Haible <bruno@clisp.org>.
 #
@@ -61,7 +61,7 @@ SHELL = /bin/sh
 VPATH = $(srcdir)
 
 OBJECTS  = getopt.$(OBJEXT) getopt1.$(OBJEXT) getline.$(OBJEXT) hash.$(OBJEXT)
-CPPFLAGS = -I$(srcdir)
+CPPFLAGS = @CPPFLAGS@ -I$(srcdir)
 
 TARGETLIB = libgp.a
 

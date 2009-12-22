@@ -1,6 +1,6 @@
 # Makefile for gperf/src
 
-# Copyright (C) 1989, 1992, 1993, 1998, 2000, 2002, 2006 Free Software Foundation, Inc.
+# Copyright (C) 1989, 1992, 1993, 1998, 2000, 2002, 2006, 2009 Free Software Foundation, Inc.
 # Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 # and Bruno Haible <bruno@clisp.org>.
 #
@@ -64,7 +64,7 @@ VPATH = $(srcdir)
 OBJECTS  = version.$(OBJEXT) positions.$(OBJEXT) options.$(OBJEXT) keyword.$(OBJEXT) keyword-list.$(OBJEXT) \
            input.$(OBJEXT) bool-array.$(OBJEXT) hash-table.$(OBJEXT) search.$(OBJEXT) output.$(OBJEXT) main.$(OBJEXT)
 LIBS     = ../lib/libgp.a @GPERF_LIBM@
-CPPFLAGS = -I. -I$(srcdir)/../lib
+CPPFLAGS = @CPPFLAGS@ -I. -I$(srcdir)/../lib
 
 TARGETPROG = gperf$(EXEEXT)
 
