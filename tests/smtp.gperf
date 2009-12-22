@@ -183,10 +183,10 @@ main (argc, argv)
           if (len)
             {
               for (k = 0; k < len; k++)
-                if (isupper (s[k]))
-                  s[k] = tolower (s[k]);
-                else if (islower (s[k]))
-                  s[k] = toupper (s[k]);
+                if (isupper ((unsigned char) s[k]))
+                  s[k] = tolower ((unsigned char) s[k]);
+                else if (islower ((unsigned char) s[k]))
+                  s[k] = toupper ((unsigned char) s[k]);
               hs = header_entry (s, len);
               if (!(hs && my_case_strcmp (hs->field_name, s) == 0))
                 {

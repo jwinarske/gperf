@@ -15,6 +15,7 @@
 # undef O_BINARY
 #endif
 #if O_BINARY
+# include <io.h>
 # define SET_BINARY(f) setmode (f, O_BINARY)
 #else
 # define SET_BINARY(f) (void)0

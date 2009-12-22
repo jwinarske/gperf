@@ -1,3 +1,10 @@
+2009-12-22  Eric Blake  <ebb9@byu.net>  (tiny change)
+
+	Avoid gcc warnings on Cygwin.
+	* lib/getopt.c (_getopt_internal): Add braces. Fix indentation.
+	* tests/smtp.gperf: Cast arguments of <ctype.h> functions.
+	* tests/test2.c: Include <io.h>.
+
 2009-12-22  Bruno Haible  <bruno@clisp.org>
 
 	Avoid g++ warnings.
