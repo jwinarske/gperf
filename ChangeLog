@@ -1,3 +1,8 @@
+2010-03-30  Bruno Haible  <bruno@clisp.org>
+
+	Modernize README.woe32.
+	* README.woe32: Mention the mingw and Cygwin environments.
+
 2009-12-22  Eric Blake  <ebb9@byu.net>  (tiny change)
 
 	Avoid gcc warnings on Cygwin.
