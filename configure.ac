@@ -1,6 +1,6 @@
 dnl autoconf configuration for gperf
 
-dnl Copyright (C) 1998, 2002, 2003, 2005-2007, 2009 Free Software Foundation, Inc.
+dnl Copyright (C) 1998, 2002, 2003, 2005-2007, 2009-2010 Free Software Foundation, Inc.
 dnl Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 dnl and Bruno Haible <bruno@clisp.org>.
 dnl
@@ -25,7 +25,8 @@ AC_PROG_MAKE_SET
 AC_OBJEXT
 AC_EXEEXT
 
-dnl An autoconf-2.52 bug: AC_CONFIG_SUBDIRS requires AC_CONFIG_AUX_DIR_DEFAULT.
+dnl An autoconf-2.52 bug: AC_CONFIG_SUBDIRS requires AC_CONFIG_AUX_DIR_DEFAULT,
+dnl if the package does not ship with install-sh, install.sh, or shtool.
 ac_aux_dir=$srcdir
 AC_PROVIDE([AC_CONFIG_AUX_DIR_DEFAULT])
 AC_CONFIG_SUBDIRS([lib src tests doc])
