@@ -1,3 +1,14 @@
+2010-07-04  Bruno Haible  <bruno@clisp.org>
+
+	* configure: Regenerated with autoconf-2.66.
+	* doc/configure: Likewise.
+	* lib/configure: Likewise.
+	* src/configure: Likewise.
+	* tests/configure: Likewise.
+	* src/config.h.in: Likewise.
+	* src/config.h.msvc: Likewise.
+	* src/config.h_vms: Likewise.
+
 2010-03-30  Bruno Haible  <bruno@clisp.org>
 
 	Modernize README.woe32.
