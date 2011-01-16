@@ -1,6 +1,6 @@
 /* Inline Functions for options.{h,cc}.
 
-   Copyright (C) 1989-1998, 2000, 2002-2004 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2011 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -138,6 +138,13 @@ INLINE const char *
 Options::get_stringpool_name () const
 {
   return _stringpool_name;
+}
+
+/* Returns the prefix for the constants.  */
+INLINE const char *
+Options::get_constants_prefix () const
+{
+  return _constants_prefix;
 }
 
 /* Returns the string used to delimit keywords from other attributes.  */

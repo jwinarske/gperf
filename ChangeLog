@@ -1,5 +1,30 @@
 2011-01-11  Bruno Haible  <bruno@clisp.org>
 
+	New option --constants-prefix.
+	* src/options.h (Options): Add member functions get_constants_prefix,
+	set_constants_prefix. Add member _constants_prefix.
+	* src/options.icc (Options::get_constants_prefix): New functions.
+	* src/options.cc (DEFAULT_CONSTANTS_PREFIX): New constant.
+	(Options::long_usage): Document --constants-prefix option.
+	(Options::Options): Initialize _constants_prefix member.
+	(Options::set_constants_prefix): New function.
+	(long_options): Add --constants-prefix option.
+	(Options::parse_options): Handle --constants-prefix option.
+	* src/input.cc (Input::read_input): Handle %define constants-prefix
+	declaration.
+	* src/output.cc (output_constant): New function.
+	(Output::output_constants): Invoke it.
+	(Output::output_lookup_function_body): Prefix each reference to a
+	constant with the constants prefix.
+	* doc/gperf.texi: Bump copyright year.
+	(Gperf Declarations): Document %define constants-prefix.
+	(Controlling Identifiers): New section.
+	(Output Details): Document --constants-prefix option.
+	* NEWS: Mention the changes.
+	Reported by Julian Zubek <zubekj@gmail.com>.
+
+2011-01-11  Bruno Haible  <bruno@clisp.org>
+
 	* configure: Regenerated with autoconf-2.68.
 	* doc/configure: Likewise.
 	* lib/configure: Likewise.

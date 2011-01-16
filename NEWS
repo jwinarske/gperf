@@ -2,6 +2,8 @@ New in 3.1:
 * The generated C code is now in ANSI-C by default. If you want to support
   pre-ANSI-C compilers, you need to provide the option --language=C on the
   command line or %language=C in the source file.
+* Added option --constants-prefix.
+* Added declaration %define constants-prefix.
 
 New in 3.0.4:
 

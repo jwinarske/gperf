@@ -2,7 +2,7 @@
 
 /* Handles parsing the Options provided to the user.
 
-   Copyright (C) 1989-1998, 2000, 2002-2004 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2011 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -202,6 +202,11 @@ public:
   /* Sets the string pool name, if not already set.  */
   void                  set_stringpool_name (const char *name);
 
+  /* Returns the prefix for the constants.  */
+  const char *          get_constants_prefix () const;
+  /* Sets the prefix for the constants, if not already set.  */
+  void                  set_constants_prefix (const char *prefix);
+
   /* Returns the string used to delimit keywords from other attributes.  */
   const char *          get_delimiters () const;
   /* Sets the delimiters string, if not already set.  */
@@ -273,6 +278,9 @@ private:
 
   /* Name used for the string pool.  */
   const char *          _stringpool_name;
+
+  /* Prefix for the constants.  */
+  const char *          _constants_prefix;
 
   /* Separates keywords from other attributes.  */
   const char *          _delimiters;

@@ -1,5 +1,5 @@
 /* Input routines.
-   Copyright (C) 1989-1998, 2002-2004 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2002-2004, 2011 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -543,6 +543,11 @@ Input::read_input ()
 
                 if (is_declaration (line, line_end, lineno, "null-strings"))
                   option.set (NULLSTRINGS);
+                else
+
+                if (is_define_declaration (line, line_end, lineno,
+                                           "constants-prefix", &arg))
+                  option.set_constants_prefix (arg);
                 else
 
                 if (is_define_declaration (line, line_end, lineno,

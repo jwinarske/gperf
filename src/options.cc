@@ -1,5 +1,5 @@
 /* Handles parsing the Options provided to the user.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2009 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2009, 2011 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -61,6 +61,9 @@ static const char *const DEFAULT_LENGTHTABLE_NAME = "lengthtable";
 
 /* Default name for string pool.  */
 static const char *const DEFAULT_STRINGPOOL_NAME = "stringpool";
+
+/* Default prefix for constants.  */
+static const char *const DEFAULT_CONSTANTS_PREFIX = "";
 
 /* Default delimiters that separate keywords from their attributes.  */
 static const char *const DEFAULT_DELIMITERS = ",";
@@ -176,6 +179,9 @@ Options::long_usage (FILE * stream)
   fprintf (stream,
            "      --null-strings     Use NULL strings instead of empty strings for empty\n"
            "                         keyword table entries.\n");
+  fprintf (stream,
+           "      --constants-prefix=PREFIX\n"
+           "                         Specify prefix for the constants like TOTAL_KEYWORDS.\n");
   fprintf (stream,
            "  -W, --word-array-name=NAME\n"
            "                         Specify name of word list array. Default name is\n"
@@ -465,6 +471,7 @@ Options::Options ()
     _wordlist_name (DEFAULT_WORDLIST_NAME),
     _lengthtable_name (DEFAULT_LENGTHTABLE_NAME),
     _stringpool_name (DEFAULT_STRINGPOOL_NAME),
+    _constants_prefix (DEFAULT_CONSTANTS_PREFIX),
     _delimiters (DEFAULT_DELIMITERS),
     _key_positions ()
 {
@@ -649,6 +656,14 @@ Options::set_lengthtable_name (const char *name)
     _lengthtable_name = name;
 }
 
+/* Sets the prefix for the constants, if not already set.  */
+void
+Options::set_constants_prefix (const char *prefix)
+{
+  if (_constants_prefix == DEFAULT_CONSTANTS_PREFIX)
+    _constants_prefix = prefix;
+}
+
 /* Sets the string pool name, if not already set.  */
 void
 Options::set_stringpool_name (const char *name)
@@ -688,6 +703,7 @@ static const struct option long_options[] =
   { "enum", no_argument, NULL, 'E' },
   { "includes", no_argument, NULL, 'I' },
   { "global-table", no_argument, NULL, 'G' },
+  { "constants-prefix", required_argument, NULL, CHAR_MAX + 5 },
   { "word-array-name", required_argument, NULL, 'W' },
   { "length-table-name", required_argument, NULL, CHAR_MAX + 4 },
   { "switch", required_argument, NULL, 'S' },
@@ -1042,6 +1058,11 @@ There is NO WARRANTY, to the extent permitted by law.\n\
         case CHAR_MAX + 4:      /* Sets the name for the length table array.  */
           {
             _lengthtable_name = /*getopt*/optarg;
+            break;
+          }
+        case CHAR_MAX + 5:      /* Sets the prefix for the constants.  */
+          {
+            _constants_prefix = /*getopt*/optarg;
             break;
           }
         default:

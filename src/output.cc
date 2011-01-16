@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009, 2011 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -214,17 +214,29 @@ void Output_Enum::output_end ()
   printf ("%s  };\n\n", _indentation);
 }
 
+/* Outputs a constant in the given style.  */
+
+static void
+output_constant (struct Output_Constants& style, const char *name, int value)
+{
+  const char *prefix = option.get_constants_prefix ();
+  char combined_name[strlen (prefix) + strlen (name) + 1];
+  strcpy (combined_name, prefix);
+  strcpy (combined_name + strlen (prefix), name);
+  style.output_item (combined_name, value);
+}
+
 /* Outputs the maximum and minimum hash values etc.  */
 
 void
 Output::output_constants (struct Output_Constants& style) const
 {
   style.output_start ();
-  style.output_item ("TOTAL_KEYWORDS", _total_keys);
-  style.output_item ("MIN_WORD_LENGTH", _min_key_len);
-  style.output_item ("MAX_WORD_LENGTH", _max_key_len);
-  style.output_item ("MIN_HASH_VALUE", _min_hash_value);
-  style.output_item ("MAX_HASH_VALUE", _max_hash_value);
+  output_constant (style, "TOTAL_KEYWORDS", _total_keys);
+  output_constant (style, "MIN_WORD_LENGTH", _min_key_len);
+  output_constant (style, "MAX_WORD_LENGTH", _max_key_len);
+  output_constant (style, "MIN_HASH_VALUE", _min_hash_value);
+  output_constant (style, "MAX_HASH_VALUE", _max_hash_value);
   style.output_end ();
 }
 
@@ -1575,9 +1587,10 @@ output_switches (KeywordExt_List *list, int num_switches, int size, int min_hash
 void
 Output::output_lookup_function_body (const Output_Compare& comparison) const
 {
-  printf ("  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)\n"
+  printf ("  if (len <= %sMAX_WORD_LENGTH && len >= %sMIN_WORD_LENGTH)\n"
           "    {\n"
           "      register int key = %s (str, len);\n\n",
+          option.get_constants_prefix (), option.get_constants_prefix (),
           option.get_hash_name ());
 
   if (option[SWITCH])
@@ -1587,8 +1600,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
       if (num_switches > switch_size)
         num_switches = switch_size;
 
-      printf ("      if (key <= MAX_HASH_VALUE && key >= MIN_HASH_VALUE)\n"
-              "        {\n");
+      printf ("      if (key <= %sMAX_HASH_VALUE && key >= %sMIN_HASH_VALUE)\n"
+              "        {\n",
+              option.get_constants_prefix (), option.get_constants_prefix ());
       if (option[DUP] && _total_duplicates > 0)
         {
           if (option[LENTABLE])
@@ -1686,7 +1700,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
     }
   else
     {
-      printf ("      if (key <= MAX_HASH_VALUE && key >= 0)\n");
+      printf ("      if (key <= %sMAX_HASH_VALUE && key >= 0)\n",
+              option.get_constants_prefix ());
 
       if (option[DUP])
         {
@@ -1732,19 +1747,20 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
             }
           if (_total_duplicates > 0)
             {
-              printf ("%*s  else if (index < -TOTAL_KEYWORDS)\n"
+              printf ("%*s  else if (index < -%sTOTAL_KEYWORDS)\n"
                       "%*s    {\n"
-                      "%*s      register int offset = - 1 - TOTAL_KEYWORDS - index;\n",
-                      indent, "", indent, "", indent, "");
+                      "%*s      register int offset = - 1 - %sTOTAL_KEYWORDS - index;\n",
+                      indent, "", option.get_constants_prefix (), indent, "",
+                      indent, "", option.get_constants_prefix ());
               if (option[LENTABLE])
-                printf ("%*s      register %s%s *lengthptr = &%s[TOTAL_KEYWORDS + lookup[offset]];\n",
+                printf ("%*s      register %s%s *lengthptr = &%s[%sTOTAL_KEYWORDS + lookup[offset]];\n",
                         indent, "", const_always, smallest_integral_type (_max_key_len),
-                        option.get_lengthtable_name ());
+                        option.get_lengthtable_name (), option.get_constants_prefix ());
               printf ("%*s      register ",
                       indent, "");
               output_const_type (const_readonly_array, _wordlist_eltype);
-              printf ("*wordptr = &%s[TOTAL_KEYWORDS + lookup[offset]];\n",
-                      option.get_wordlist_name ());
+              printf ("*wordptr = &%s[%sTOTAL_KEYWORDS + lookup[offset]];\n",
+                      option.get_wordlist_name (), option.get_constants_prefix ());
               printf ("%*s      register ",
                       indent, "");
               output_const_type (const_readonly_array, _wordlist_eltype);
