@@ -1,4 +1,4 @@
-2011-01-11  Bruno Haible  <bruno@clisp.org>
+2011-01-16  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.cc (Options::parse_options): Bump copyright year.
 
@@ -25,7 +25,7 @@
 	* NEWS: Mention the changes.
 	Reported by Julian Zubek <zubekj@gmail.com>.
 
-2011-01-11  Bruno Haible  <bruno@clisp.org>
+2011-01-16  Bruno Haible  <bruno@clisp.org>
 
 	* configure: Regenerated with autoconf-2.68.
 	* doc/configure: Likewise.
