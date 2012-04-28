@@ -1,3 +1,11 @@
+2012-04-28  Bruno Haible  <bruno@clisp.org>
+
+	* configure: Regenerated with autoconf-2.69.
+	* doc/configure: Likewise.
+	* lib/configure: Likewise.
+	* src/configure: Likewise.
+	* tests/configure: Likewise.
+
 2011-01-16  Bruno Haible  <bruno@clisp.org>
 
 	* src/options.cc (Options::parse_options): Bump copyright year.
