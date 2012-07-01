@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009, 2011 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009, 2011-2012 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -28,6 +28,29 @@
 #include <limits.h> /* defines SCHAR_MAX etc. */
 #include "options.h"
 #include "version.h"
+#include "config.h"
+
+/* ============================== Portability ============================== */
+
+/* Dynamically allocated array with dynamic extent:
+
+   Example:
+       DYNAMIC_ARRAY (my_array, int, n);
+       ...
+       FREE_DYNAMIC_ARRAY (my_array);
+
+   Attention: depending on your implementation my_array is either the array
+   itself or a pointer to the array! Always use my_array only as expression!
+ */
+#if HAVE_DYNAMIC_ARRAY
+  #define DYNAMIC_ARRAY(var,eltype,size) eltype var[size]
+  #define FREE_DYNAMIC_ARRAY(var)
+#else
+  #define DYNAMIC_ARRAY(var,eltype,size) eltype *var = new eltype[size]
+  #define FREE_DYNAMIC_ARRAY(var) delete[] var
+#endif
+
+/* ========================================================================= */
 
 /* The "const " qualifier.  */
 static const char *const_always;
@@ -220,10 +243,11 @@ static void
 output_constant (struct Output_Constants& style, const char *name, int value)
 {
   const char *prefix = option.get_constants_prefix ();
-  char combined_name[strlen (prefix) + strlen (name) + 1];
+  DYNAMIC_ARRAY (combined_name, char, strlen (prefix) + strlen (name) + 1);
   strcpy (combined_name, prefix);
   strcpy (combined_name + strlen (prefix), name);
   style.output_item (combined_name, value);
+  FREE_DYNAMIC_ARRAY (combined_name);
 }
 
 /* Outputs the maximum and minimum hash values etc.  */

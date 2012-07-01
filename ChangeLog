@@ -1,5 +1,13 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Fix compilation error with MSVC.
+	* src/output.cc: Include config.h.
+	(DYNAMIC_ARRAY, FREE_DYNAMIC_ARRAY): New macros, copied from
+	src/search.cc.
+	(output_constant): Use them.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Remove old infrastructure for building with MSVC.
 	* autogen.sh: Don't remove src/config.h.msvc.
 	* Makefile.devel (src/config.h.msvc): Remove rule.
