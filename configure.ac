@@ -25,10 +25,6 @@ AC_PROG_MAKE_SET
 AC_OBJEXT
 AC_EXEEXT
 
-dnl An autoconf-2.52 bug: AC_CONFIG_SUBDIRS requires AC_CONFIG_AUX_DIR_DEFAULT,
-dnl if the package does not ship with install-sh, install.sh, or shtool.
-ac_aux_dir=$srcdir
-AC_PROVIDE([AC_CONFIG_AUX_DIR_DEFAULT])
 AC_CONFIG_SUBDIRS([lib src tests doc])
 
 dnl This piece of sed script replaces every line containing '@subdir@'

@@ -1,5 +1,13 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Distribute install-sh.
+	* autogen.sh: Fetch also install-sh.
+	* Makefile.in (IMPORTED_FILES): Add install-sh.
+	* configure.ac: Remove hack with AC_CONFIG_AUX_DIR_DEFAULT.
+	* .gitignore: Add install-sh.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Remove files distributed via gnulib from version control.
 	* autogen.sh: Fetch mkinstalldirs from the gnulib repository.
 	* mkinstalldirs: Remove file.
