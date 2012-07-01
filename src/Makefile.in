@@ -133,7 +133,7 @@ check : all
 mostlyclean : clean
 
 clean : force
-	$(RM) *~ *.s *.$(OBJEXT) *.a $(TARGETPROG) core
+	$(RM) *~ *.s *.$(OBJEXT) *.a $(TARGETPROG) $(TARGETPROG).manifest core
 
 distclean : clean
 	$(RM) config.status config.log config.cache Makefile config.h

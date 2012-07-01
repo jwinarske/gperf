@@ -1,5 +1,12 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Fix "make clean" with MSVC.
+	With MSVC 9, a program is created together with a .manifest file.
+	* src/Makefile.in (clean): Remove also the .manifest file.
+	* tests/Makefile.in (clean): Remove also the .manifest files.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Update expected test results.
 	* tests/test-6.exp: Expect to see --constants-prefix option.
 

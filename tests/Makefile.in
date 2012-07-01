@@ -329,7 +329,16 @@ check-lang-syntax : force
 mostlyclean : clean
 
 clean : force
-	$(RM) *.$(OBJEXT) core *inset.c output.* *.out aout$(EXEEXT) cout$(EXEEXT) lu2out$(EXEEXT) lu8out$(EXEEXT) m3out$(EXEEXT) pout$(EXEEXT) preout$(EXEEXT) smtp.c smtp$(EXEEXT) tmp-* valitest*
+	$(RM) *.$(OBJEXT) core *inset.c output.* *.out \
+	      aout$(EXEEXT) aout$(EXEEXT).manifest \
+	      cout$(EXEEXT) cout$(EXEEXT).manifest \
+	      lu2out$(EXEEXT) lu2out$(EXEEXT).manifest \
+	      lu8out$(EXEEXT) lu8out$(EXEEXT).manifest \
+	      m3out$(EXEEXT) m3out$(EXEEXT).manifest \
+	      pout$(EXEEXT) pout$(EXEEXT).manifest \
+	      preout$(EXEEXT) preout$(EXEEXT).manifest \
+	      smtp.c smtp$(EXEEXT) smtp$(EXEEXT).manifest \
+	      tmp-* valitest*
 	$(RM) -r *.dSYM
 
 distclean : clean
