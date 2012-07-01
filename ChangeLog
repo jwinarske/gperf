@@ -1,5 +1,17 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Remove distributed built files from version control.
+	* doc/.gitignore: New file.
+	* doc/gperf.info: Remove file.
+	* doc/gperf.dvi: Remove file.
+	* doc/gperf.ps: Remove file.
+	* doc/gperf.pdf: Remove file.
+	* doc/gperf.html: Remove file.
+	* doc/gperf_toc.html, doc/gperf_[0-9].html, doc/gperf_[0-9][0-9].html:
+	Remove files.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Allow editor backup files in git checkouts.
 	* .gitignore: New file.
 
