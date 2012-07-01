@@ -1,3 +1,24 @@
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
+	Create tarballs through an Automake-like "make dist" command.
+	* Makefile.in (SOURCE_FILES, IMPORTED_FILES, GENERATED_FILES,
+	DISTRIBUTED_BUILT_FILES, DISTFILES): New macros.
+	(distdir): New rule.
+	(PACKAGE, VERSION, TAR, GZIP): New macros.
+	(dist): New rule.
+	* doc/Makefile.in (SOURCE_FILES, IMPORTED_FILES, GENERATED_FILES,
+	DISTRIBUTED_BUILT_FILES, DISTFILES): New macros.
+	(distdir): New rule.
+	* lib/Makefile.in (SOURCE_FILES, IMPORTED_FILES, GENERATED_FILES,
+	DISTRIBUTED_BUILT_FILES, DISTFILES): New macros.
+	(distdir): New rule.
+	* src/Makefile.in (SOURCE_FILES, IMPORTED_FILES, GENERATED_FILES,
+	DISTRIBUTED_BUILT_FILES, DISTFILES): New macros.
+	(distdir): New rule.
+	* tests/Makefile.in (SOURCE_FILES, IMPORTED_FILES, GENERATED_FILES,
+	DISTRIBUTED_BUILT_FILES, DISTFILES): New macros.
+	(distdir): New rule.
+
 2012-04-28  Bruno Haible  <bruno@clisp.org>
 
 	* configure: Regenerated with autoconf-2.69.
