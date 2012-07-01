@@ -1,5 +1,20 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Turn doc/gperf.1 into a distributed built file.
+	* doc/gperf.1: Remove file.
+	* Makefile.devel (doc/gperf.1): Remove rule.
+	(all): Don't depend on it.
+	* doc/Makefile.in (man, gperf.1, gperf.1-update): New rules.
+	(all): Depend on man.
+	(distdir): Depend on gperf.1-update.
+	(GENERATED_FILES): Remove gperf.1.
+	(DISTRIBUTED_BUILT_FILES): Add gperf.1.
+	* doc/.gitignore: Add gperf.1.
+	* configure (AC_INIT): Rely on doc/gperf.texi, not doc/gperf.1.
+	* doc/configure (AC_INIT): Rely on gperf.texi, not gperf.1.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Remove distributed built files from version control.
 	* doc/.gitignore: New file.
 	* doc/gperf.info: Remove file.

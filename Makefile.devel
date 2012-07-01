@@ -4,7 +4,7 @@
 SHELL = /bin/sh
 MAKE = make
 
-all : configures src/config.h.in src/config.h.msvc src/config.h_vms doc/gperf.1
+all : configures src/config.h.in src/config.h.msvc src/config.h_vms
 
 CONFIGURES = configure lib/configure src/configure tests/configure doc/configure
 
@@ -36,9 +36,6 @@ src/config.h.msvc : src/config.h.in
 
 src/config.h_vms : src/config.h.in
 	cp src/config.h.in src/config.h_vms
-
-doc/gperf.1 : force
-	prog=`PATH=build/src:src:$$PATH which gperf`; if test -n "$$prog"; then doc/help2man --name='generate a perfect hash function from a key set' --section=1 $$prog > doc/gperf.1; fi
 
 force :
 
