@@ -1,4 +1,4 @@
 # Files brought in by gnulib-tool:
-install-sh
-mkinstalldirs
+/install-sh
+/mkinstalldirs
 
