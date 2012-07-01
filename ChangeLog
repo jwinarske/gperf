@@ -1,5 +1,14 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Support for building with MSVC much like for Unix.
+	* autogen.sh: Fetch also 'compile' and 'ar-lib'.
+	* Makefile.in (IMPORTED_FILES): Add build-aux/compile, build-aux/ar-lib.
+	* build-aux/.gitignore: Ignore also 'compile' and 'ar-lib'.
+	* lib/Makefile.in: Use $(OBJEXT) where suitable.
+	* README.woe32: Change instructions for compiling with MSVC.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Move build infrastructure files to build-aux/.
 	* autogen.sh: Copy install-sh and mkinstalldirst into build-aux/.
 	* configure.ac: Invoke AC_CONFIG_AUX_DIR.

@@ -1,4 +1,6 @@
 # Files brought in by gnulib-tool:
 /install-sh
 /mkinstalldirs
+/compile
+/ar-lib
 

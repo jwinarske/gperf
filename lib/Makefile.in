@@ -81,16 +81,16 @@ $(TARGETLIB): $(OBJECTS)
 #%.o : %.cc
 #	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
 
-getopt.o : getopt.c getopt.h
+getopt.$(OBJEXT) : getopt.c getopt.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(srcdir)/getopt.c
 
-getopt1.o : getopt1.c getopt.h
+getopt1.$(OBJEXT) : getopt1.c getopt.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(srcdir)/getopt1.c
 
-getline.o : getline.cc getline.h
+getline.$(OBJEXT) : getline.cc getline.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/getline.cc
 
-hash.o : hash.cc hash.h
+hash.$(OBJEXT) : hash.cc hash.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(srcdir)/hash.cc
 
 install : all
@@ -104,7 +104,7 @@ check : all
 mostlyclean : clean
 
 clean : force
-	$(RM) *~ *.s *.o *.a $(TARGETLIB) core
+	$(RM) *~ *.s *.$(OBJEXT) *.a $(TARGETLIB) core
 
 distclean : clean
 	$(RM) config.status config.log config.cache Makefile
