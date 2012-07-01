@@ -42,5 +42,5 @@ chmod a+x build-aux/install-sh build-aux/mkinstalldirs \
           build-aux/compile build-aux/ar-lib
 
 rm -f configure lib/configure src/configure tests/configure doc/configure
-rm -f src/config.h.in src/config.h.msvc src/config.h_vms
+rm -f src/config.h.in src/config.h_vms
 make -f Makefile.devel

@@ -1,5 +1,16 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Remove old infrastructure for building with MSVC.
+	* autogen.sh: Don't remove src/config.h.msvc.
+	* Makefile.devel (src/config.h.msvc): Remove rule.
+	(all): Don't depend on it.
+	* src/Makefile.in (GENERATED_FILES): Remove config.h.msvc.
+	* src/.gitignore: Remove config.h.msvc.
+	* Makefile.msvc: Remove file.
+	* Makefile.in (SOURCE_FILES): Remove Makefile.msvc.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Support for building with MSVC much like for Unix.
 	* autogen.sh: Fetch also 'compile' and 'ar-lib'.
 	* Makefile.in (IMPORTED_FILES): Add build-aux/compile, build-aux/ar-lib.

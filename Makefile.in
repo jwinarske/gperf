@@ -61,7 +61,7 @@ maintainer-clean : force
 # List of source files.
 SOURCE_FILES = \
   README README.woe32 README.vms NEWS AUTHORS \
-  configure.ac aclocal.m4 Makefile.in Makefile.msvc Makefile.vms \
+  configure.ac aclocal.m4 Makefile.in Makefile.vms \
   Makefile.devel ChangeLog
 # List of distributed files imported from other packages.
 IMPORTED_FILES = \
