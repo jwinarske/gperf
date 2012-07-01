@@ -5,6 +5,10 @@
 # autoconf.
 #
 # This script requires autoconf-2.60..2.69 in the PATH.
+# It also requires either
+#   - the GNULIB_TOOL environment variable pointing to the gnulib-tool script
+#     in a gnulib checkout, or
+#   - an internet connection.
 
 # Copyright (C) 2003-2012 Free Software Foundation, Inc.
 #
@@ -22,6 +26,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Usage: ./autogen.sh
+
+GNULIB_REPO_URL="http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;hb=HEAD;f="
+
+for file in mkinstalldirs; do
+  if test -n "$GNULIB_TOOL"; then
+    $GNULIB_TOOL--copy-file build-aux/$file $file
+  else
+    wget -q --timeout=5 -O $file.tmp "${GNULIB_REPO_URL}build-aux/$file" \
+      && mv $file.tmp $file
+  fi
+done
+chmod a+x mkinstalldirs
 
 rm -f configure lib/configure src/configure tests/configure doc/configure
 rm -f src/config.h.in src/config.h.msvc src/config.h_vms

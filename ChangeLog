@@ -1,5 +1,12 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Remove files distributed via gnulib from version control.
+	* autogen.sh: Fetch mkinstalldirs from the gnulib repository.
+	* mkinstalldirs: Remove file.
+	* .gitignore: Add mkinstalldirs.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Remove autotools generated files from version control.
 	* autogen.sh: New file.
 	* configure: Remove file.
