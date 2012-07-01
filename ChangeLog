@@ -1,5 +1,23 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Remove autotools generated files from version control.
+	* autogen.sh: New file.
+	* configure: Remove file.
+	* lib/configure: Remove file.
+	* src/configure: Remove file.
+	* tests/configure: Remove file.
+	* doc/configure: Remove file.
+	* src/config.h.in: Remove file.
+	* src/config.h.msvc: Remove file.
+	* src/config.h_vms: Remove file.
+	* .gitignore: Ignore configure.
+	* lib/.gitignore: New file.
+	* src/.gitignore: New file.
+	* tests/.gitignore: New file.
+	* doc/.gitignore: Ignore configure.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Turn doc/gperf.1 into a distributed built file.
 	* doc/gperf.1: Remove file.
 	* Makefile.devel (doc/gperf.1): Remove rule.
