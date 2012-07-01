@@ -53,7 +53,7 @@ RM = rm -f
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
-MKINSTALLDIRS = $(SHELL) $(srcdir)/../mkinstalldirs
+MKINSTALLDIRS = $(SHELL) $(srcdir)/../build-aux/mkinstalldirs
 
 #### End of system configuration section. ####
 

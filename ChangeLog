@@ -1,5 +1,17 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Move build infrastructure files to build-aux/.
+	* autogen.sh: Copy install-sh and mkinstalldirst into build-aux/.
+	* configure.ac: Invoke AC_CONFIG_AUX_DIR.
+	* Makefile.in (IMPORTED_FILES): Update.
+	(distdir): Create subdirectories as needed.
+	* doc/Makefile.in (MKINSTALLDIRS): Update.
+	* src/Makefile.in (MKINSTALLDIRS): Update.
+	* .gitgnore: Remove install-sh, mkinstalldirs.
+	* build-aux/.gitignore: New file.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Distribute install-sh.
 	* autogen.sh: Fetch also install-sh.
 	* Makefile.in (IMPORTED_FILES): Add install-sh.

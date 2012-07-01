@@ -21,6 +21,8 @@ dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.60])
 AC_INIT([doc/gperf.texi])
+AC_CONFIG_AUX_DIR([build-aux])
+
 AC_PROG_MAKE_SET
 AC_OBJEXT
 AC_EXEEXT

@@ -29,15 +29,15 @@
 
 GNULIB_REPO_URL="http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;hb=HEAD;f="
 
-for file in install-sh mkinstalldirs; do
+for file in build-aux/install-sh build-aux/mkinstalldirs; do
   if test -n "$GNULIB_TOOL"; then
-    $GNULIB_TOOL--copy-file build-aux/$file $file
+    $GNULIB_TOOL--copy-file $file $file
   else
-    wget -q --timeout=5 -O $file.tmp "${GNULIB_REPO_URL}build-aux/$file" \
+    wget -q --timeout=5 -O $file.tmp "${GNULIB_REPO_URL}$file" \
       && mv $file.tmp $file
   fi
 done
-chmod a+x install-sh mkinstalldirs
+chmod a+x build-aux/install-sh build-aux/mkinstalldirs
 
 rm -f configure lib/configure src/configure tests/configure doc/configure
 rm -f src/config.h.in src/config.h.msvc src/config.h_vms
