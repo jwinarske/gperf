@@ -68,6 +68,8 @@ Details in the output code:
                          Default name is 'stringpool'.
       --null-strings     Use NULL strings instead of empty strings for empty
                          keyword table entries.
+      --constants-prefix=PREFIX
+                         Specify prefix for the constants like TOTAL_KEYWORDS.
   -W, --word-array-name=NAME
                          Specify name of word list array. Default name is
                          'wordlist'.

@@ -1,5 +1,10 @@
 2012-07-01  Bruno Haible  <bruno@clisp.org>
 
+	Update expected test results.
+	* tests/test-6.exp: Expect to see --constants-prefix option.
+
+2012-07-01  Bruno Haible  <bruno@clisp.org>
+
 	Fix compilation error with MSVC.
 	* src/output.cc: Include config.h.
 	(DYNAMIC_ARRAY, FREE_DYNAMIC_ARRAY): New macros, copied from
