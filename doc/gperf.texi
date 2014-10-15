@@ -40,7 +40,7 @@
 This file documents the features of the GNU Perfect Hash Function
 Generator @value{VERSION}.
 
-Copyright @copyright{} 1989-2011 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2011, 2014 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -1190,7 +1190,7 @@ This reduces the startup time of programs using a shared library containing
 the generated code (but not as much as option @samp{-P}), at the expense
 of one more test-and-branch instruction at run time.
 
-@itemx --constants-prefix=@var{prefix}
+@item --constants-prefix=@var{prefix}
 @cindex Constants prefix
 Allows you to specify a prefix for the constants @code{TOTAL_KEYWORDS},
 @code{MIN_WORD_LENGTH}, @code{MAX_WORD_LENGTH}, and so on.  This option
@@ -1207,7 +1207,7 @@ hash table.  Default name is @samp{wordlist}.  This option permits the
 use of two hash tables in the same file, even when the option @samp{-G}
 (or, equivalently, the @samp{%global-table} declaration) is given.
 
-@itemx --length-table-name=@var{length-table-array-name}
+@item --length-table-name=@var{length-table-array-name}
 @cindex Array name
 Allows you to specify the name for the generated array containing the
 length table.  Default name is @samp{lengthtable}.  This option permits the
