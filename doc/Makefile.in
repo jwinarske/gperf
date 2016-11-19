@@ -50,6 +50,7 @@ DVIPS = dvips -D600
 TEXI2PDF = texi2pdf
 MAKEINFO = LANG= LC_MESSAGES= LC_ALL= LANGUAGE= makeinfo
 TEXI2HTML = perl $(srcdir)/texi2html
+TEXI2ANY = texi2any
 
 # Programs used by "make install":
 INSTALL = @INSTALL@
@@ -96,12 +97,18 @@ $(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 
 html : gperf.html gperf_toc.html
 
+# We still prefer texi2html over texi2any because it includes the titlepage.
+
 gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(TEXI2HTML) -number -monolithic gperf.texi
+#	cd $(srcdir) && $(TEXI2ANY) --html --no-headers --no-split gperf.texi
 
 gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(RM) gperf_*.html
 	cd $(srcdir) && $(TEXI2HTML) -number -split_chapter gperf.texi
+
+gperf_0.html : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
+	cd $(srcdir) && $(TEXI2ANY) --html --no-headers --split=chapter --no-node-files -o . gperf.texi
 
 
 man : gperf.1

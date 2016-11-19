@@ -1,5 +1,11 @@
 2016-11-19  Bruno Haible  <bruno@clisp.org>
 
+	doc: Prepare for possible use of GNU texi2any.
+	* doc/Makefile.in (TEXI2ANY): New variable.
+	(gperf_0.html): New rule.
+
+2016-11-19  Bruno Haible  <bruno@clisp.org>
+
 	doc: Don't generate Postscript-formatted doc by default.
 	* doc/Makefile.in (all): Don't depend on 'ps'.
 
