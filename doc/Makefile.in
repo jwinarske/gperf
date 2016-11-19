@@ -1,6 +1,6 @@
 # Makefile for gperf/doc
 
-# Copyright (C) 1998, 2000, 2002-2003, 2007, 2012 Free Software Foundation, Inc.
+# Copyright (C) 1998, 2000, 2002-2003, 2007, 2012, 2016 Free Software Foundation, Inc.
 # Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 # and Bruno Haible <bruno@clisp.org>.
 #
@@ -63,7 +63,7 @@ SHELL = /bin/sh
 
 VPATH = $(srcdir)
 
-all : info ps pdf html man
+all : info pdf html man
 
 
 info : $(srcdir)/gperf.info

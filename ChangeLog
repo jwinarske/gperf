@@ -1,3 +1,8 @@
+2016-11-19  Bruno Haible  <bruno@clisp.org>
+
+	doc: Don't generate Postscript-formatted doc by default.
+	* doc/Makefile.in (all): Don't depend on 'ps'.
+
 2014-10-15  Eric Blake  <eblake@redhat.com>
 
 	doc: fix invalid use of @itemx
