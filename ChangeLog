@@ -1,3 +1,9 @@
+2016-11-23  Bruno Haible  <bruno@clisp.org>
+
+	Drop the nickname "woe32".
+	* README.windows: Renamed from README.woe32.
+	* Makefile.in (SOURCE_FILES): Update.
+
 2016-11-19  Bruno Haible  <bruno@clisp.org>
 
 	doc: Prepare for possible use of GNU texi2any.

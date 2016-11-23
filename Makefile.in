@@ -1,6 +1,6 @@
 # Makefile for gperf
 
-# Copyright (C) 1989, 1992, 1993, 1998, 2002, 2012 Free Software Foundation, Inc.
+# Copyright (C) 1989, 1992, 1993, 1998, 2002, 2012, 2016 Free Software Foundation, Inc.
 # Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 # and Bruno Haible <bruno@clisp.org>.
 #
@@ -60,7 +60,7 @@ maintainer-clean : force
 
 # List of source files.
 SOURCE_FILES = \
-  README README.woe32 README.vms NEWS AUTHORS \
+  README README.windows README.vms NEWS AUTHORS \
   configure.ac aclocal.m4 Makefile.in Makefile.vms \
   Makefile.devel ChangeLog
 # List of distributed files imported from other packages.
