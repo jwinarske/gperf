@@ -1,5 +1,12 @@
 2016-11-23  Bruno Haible  <bruno@clisp.org>
 
+	Update installation instructions for Windows.
+	* README.windows: Assume a 64-bit Windows. Explain both 32-bit and
+	64-bit builds. Revamp instructions for the MS Visual C/C++ tool chain
+	and for Cygwin.
+
+2016-11-23  Bruno Haible  <bruno@clisp.org>
+
 	Drop the nickname "woe32".
 	* README.windows: Renamed from README.woe32.
 	* Makefile.in (SOURCE_FILES): Update.
