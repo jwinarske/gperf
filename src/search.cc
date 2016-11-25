@@ -1,5 +1,5 @@
 /* Search algorithm.
-   Copyright (C) 1989-1998, 2000, 2002, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002, 2009, 2016 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -160,21 +160,23 @@ Search::prepare ()
   /* Exit program if the characters in the keywords are not in the required
      range.  */
   if (option[SEVENBIT])
-    for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
-      {
-        KeywordExt *keyword = temp->first();
+    {
+      for (KeywordExt_List *temp = _head; temp; temp = temp->rest())
+        {
+          KeywordExt *keyword = temp->first();
 
-        const char *k = keyword->_allchars;
-        for (int i = keyword->_allchars_length; i > 0; k++, i--)
-          if (!(static_cast<unsigned char>(*k) < 128))
-            {
-              fprintf (stderr, "Option --seven-bit has been specified,\n"
-                       "but keyword \"%.*s\" contains non-ASCII characters.\n"
-                       "Try removing option --seven-bit.\n",
-                       keyword->_allchars_length, keyword->_allchars);
-              exit (1);
-            }
-      }
+          const char *k = keyword->_allchars;
+          for (int i = keyword->_allchars_length; i > 0; k++, i--)
+            if (!(static_cast<unsigned char>(*k) < 128))
+              {
+                fprintf (stderr, "Option --seven-bit has been specified,\n"
+                         "but keyword \"%.*s\" contains non-ASCII characters.\n"
+                         "Try removing option --seven-bit.\n",
+                         keyword->_allchars_length, keyword->_allchars);
+                exit (1);
+              }
+        }
+    }
 
   /* Determine whether the hash function shall include the length.  */
   _hash_includes_len = !(option[NOLENGTH] || (_min_key_len == _max_key_len));
@@ -413,29 +415,34 @@ Search::find_positions ()
 
       for (int i1 = imax; i1 >= -1; i1--)
         if (current.contains (i1) && !mandatory.contains (i1))
-          for (int i2 = imax; i2 >= -1; i2--)
-            if (current.contains (i2) && !mandatory.contains (i2) && i2 != i1)
-              for (int i3 = imax; i3 >= 0; i3--)
-                if (!current.contains (i3))
-                  {
-                    Positions tryal = current;
-                    tryal.remove (i1);
-                    tryal.remove (i2);
-                    tryal.add (i3);
-                    unsigned int try_duplicates_count =
-                      count_duplicates_tuple (tryal, alpha_unify);
-
-                    /* We prefer 'try' to 'best' if it produces less duplicates,
-                       or if it produces the same number of duplicates but with
-                       a more efficient hash function.  */
-                    if (try_duplicates_count < best_duplicates_count
-                        || (try_duplicates_count == best_duplicates_count
-                            && (i1 == -1 || i2 == -1 || i3 >= 0)))
+          {
+            for (int i2 = imax; i2 >= -1; i2--)
+              if (current.contains (i2) && !mandatory.contains (i2) && i2 != i1)
+                {
+                  for (int i3 = imax; i3 >= 0; i3--)
+                    if (!current.contains (i3))
                       {
-                        best = tryal;
-                        best_duplicates_count = try_duplicates_count;
+                        Positions tryal = current;
+                        tryal.remove (i1);
+                        tryal.remove (i2);
+                        tryal.add (i3);
+                        unsigned int try_duplicates_count =
+                          count_duplicates_tuple (tryal, alpha_unify);
+
+                        /* We prefer 'try' to 'best' if it produces less
+                           duplicates, or if it produces the same number
+                           of duplicates but with a more efficient hash
+                           function.  */
+                        if (try_duplicates_count < best_duplicates_count
+                            || (try_duplicates_count == best_duplicates_count
+                                && (i1 == -1 || i2 == -1 || i3 >= 0)))
+                          {
+                            best = tryal;
+                            best_duplicates_count = try_duplicates_count;
+                          }
                       }
-                  }
+                }
+          }
 
       /* Stop removing positions when it gives no improvement.  */
       if (best_duplicates_count > current_duplicates_count)
@@ -1636,9 +1643,11 @@ Search::optimize ()
 
   /* Propagate unified asso_values.  */
   if (_alpha_unify)
-    for (unsigned int c = 0; c < _alpha_size; c++)
-      if (_alpha_unify[c] != c)
-        _asso_values[c] = _asso_values[_alpha_unify[c]];
+    {
+      for (unsigned int c = 0; c < _alpha_size; c++)
+        if (_alpha_unify[c] != c)
+          _asso_values[c] = _asso_values[_alpha_unify[c]];
+    }
 }
 
 /* Prints out some diagnostics upon completion.  */

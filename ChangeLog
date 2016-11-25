@@ -1,5 +1,13 @@
 2016-11-25  Bruno Haible  <bruno@clisp.org>
 
+	Fix g++ -Wall warnings.
+	* src/search.cc (Search::prepare, Search::find_positions,
+	Search::optimize): Add braces in 'if (...) for (...)', to pacify
+	g++ 4.6.3 warnings "suggest explicit braces to avoid ambiguous 'else'"
+	(although there is no 'else'!).
+
+2016-11-25  Bruno Haible  <bruno@clisp.org>
+
 	Fix typo in autogen.sh, introduced on 2012-07-01.
 	* autogen.sh: Fix typo.
 
