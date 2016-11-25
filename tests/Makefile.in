@@ -1,6 +1,6 @@
 # Makefile for gperf/tests
 
-# Copyright (C) 1989, 1992-1993, 1995, 1998, 2000, 2002-2004, 2007-2009, 2012 Free Software Foundation, Inc.
+# Copyright (C) 1989, 1992-1993, 1995, 1998, 2000, 2002-2004, 2007-2009, 2012, 2016 Free Software Foundation, Inc.
 # Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 # and Bruno Haible <bruno@clisp.org>.
 #
@@ -137,7 +137,7 @@ check-smtp:
 	./smtp
 
 # these next 5 are demos that show off the generated code
-POSTPROCESS_FOR_MINGW = LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|../src/gperf|'
+POSTPROCESS_FOR_MINGW = LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|../src/gperf|'
 check-test:
 	$(GPERF) -L C -F ', 0, 0' -j1 -i 1 -g -o -t -G -N is_reserved_word -k1,3,'$$' < $(srcdir)/c-parse.gperf | $(POSTPROCESS_FOR_MINGW) > c-parse.out
 	diff $(srcdir)/c-parse.exp c-parse.out

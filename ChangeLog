@@ -1,3 +1,11 @@
+2016-11-25  Bruno Haible  <bruno@clisp.org>
+
+	Fix "make check" error on Mac OS X.
+	* tests/Makefile.in (POSTPROCESS_FOR_MINGW): Run 'sed' in the C locale.
+	This fixes an error "sed: RE error: illegal byte sequence" on Mac OS X
+	when producing languages.out.
+	Reported at <https://savannah.gnu.org/bugs/?45329>.
+
 2016-11-23  Bruno Haible  <bruno@clisp.org>
 
 	Update installation instructions for Windows.
