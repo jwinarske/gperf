@@ -1,5 +1,10 @@
 2016-11-25  Bruno Haible  <bruno@clisp.org>
 
+	Fix typo in autogen.sh, introduced on 2012-07-01.
+	* autogen.sh: Fix typo.
+
+2016-11-25  Bruno Haible  <bruno@clisp.org>
+
 	Fix "make check" error on Mac OS X.
 	* tests/Makefile.in (POSTPROCESS_FOR_MINGW): Run 'sed' in the C locale.
 	This fixes an error "sed: RE error: illegal byte sequence" on Mac OS X
