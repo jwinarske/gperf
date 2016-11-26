@@ -1,5 +1,13 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
+	Use proper 'ar' program when cross-compiling or when AR is specified.
+	* lib/configure.ac (AR): Determine through AC_CHECK_TOOL.
+	* lib/Makefile.in (AR): Use value determined by 'configure'.
+	Reported by György Andrasek <jurily@gmail.com>
+	at <http://lists.gnu.org/archive/html/bug-gperf/2014-04/msg00000.html>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
 	Avoid 'warning: cast from pointer to integer of different size'
 	in output code on 64-bit native Windows platforms.
 	* src/output.cc (output_keyword_entry): Cast pointer to 'size_t',

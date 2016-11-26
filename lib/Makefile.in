@@ -41,7 +41,7 @@ CXXCPP = @CXXCPP@
 # Both C and C++ compiler
 OBJEXT = @OBJEXT@
 # Other
-AR = ar
+AR = @AR@
 AR_FLAGS = rc
 RANLIB = @RANLIB@
 MV = mv
