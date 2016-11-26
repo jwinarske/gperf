@@ -1,5 +1,16 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
+	Avoid 'warning: use of old-style cast' in output code.
+	* src/output.h (Output::output_asso_values_index): New method
+	declaration.
+	* src/output.cc (Output::output_asso_values_index): New method,
+	extracted from Output::output_asso_values_ref.
+	(Output::output_asso_values_ref): Use it. In C++ mode, emit C++ style
+	cast syntax.
+	Reported at <https://savannah.gnu.org/bugs/?44887>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
 	Avoid 'warning: implicit conversion changes signedness' in output code.
 	* src/output.cc (Output::output_lookup_function_body): Emit declaration
 	of 'key' as 'unsigned int', not 'int'. Optimize comparison accordingly.

@@ -749,6 +749,21 @@ void Output_Compare_Memcmp::output_comparison (const Output_Expr& expr1,
 
 /* ------------------------------------------------------------------------- */
 
+/* Generates a C expression for an asso_values[] index.  */
+
+void
+Output::output_asso_values_index (int pos) const
+{
+  if (pos == Positions::LASTCHAR)
+    printf ("str[len - 1]");
+  else
+    {
+      printf ("str[%d]", pos);
+      if (_alpha_inc[pos])
+        printf ("+%u", _alpha_inc[pos]);
+    }
+}
+
 /* Generates a C expression for an asso_values[] reference.  */
 
 void
@@ -757,14 +772,18 @@ Output::output_asso_values_ref (int pos) const
   printf ("asso_values[");
   /* Always cast to unsigned char.  This is necessary when the alpha_inc
      is nonzero, and also avoids a gcc warning "subscript has type 'char'".  */
-  printf ("(unsigned char)");
-  if (pos == Positions::LASTCHAR)
-    printf ("str[len - 1]");
+  if (option[CPLUSPLUS])
+    {
+      /* In C++, a C style cast may lead to a 'warning: use of old-style cast'.
+         Therefore prefer the C++ style cast syntax.  */
+      printf ("static_cast<unsigned char>(");
+      output_asso_values_index (pos);
+      printf (")");
+    }
   else
     {
-      printf ("str[%d]", pos);
-      if (_alpha_inc[pos])
-        printf ("+%u", _alpha_inc[pos]);
+      printf ("(unsigned char)");
+      output_asso_values_index (pos);
     }
   printf ("]");
 }
