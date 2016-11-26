@@ -52,6 +52,9 @@
 
 /* ========================================================================= */
 
+/* The "register " storage-class specifier.  */
+static const char *register_scs;
+
 /* The "const " qualifier.  */
 static const char *const_always;
 
@@ -313,15 +316,16 @@ output_upperlower_strcmp ()
           "gperf_case_strcmp ");
   printf (option[KRC] ?
                "(s1, s2)\n"
-          "     register char *s1;\n"
-          "     register char *s2;\n" :
+          "     %schar *s1;\n"
+          "     %schar *s2;\n" :
           option[C] ?
                "(s1, s2)\n"
-          "     register const char *s1;\n"
-          "     register const char *s2;\n" :
+          "     %sconst char *s1;\n"
+          "     %sconst char *s2;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-               "(register const char *s1, register const char *s2)\n" :
-          "");
+               "(%sconst char *s1, %sconst char *s2)\n" :
+          "",
+          register_scs, register_scs);
   #if USE_DOWNCASE_TABLE
   printf ("{\n"
           "  for (;;)\n"
@@ -363,17 +367,18 @@ output_upperlower_strncmp ()
           "gperf_case_strncmp ");
   printf (option[KRC] ?
                "(s1, s2, n)\n"
-          "     register char *s1;\n"
-          "     register char *s2;\n"
-          "     register unsigned int n;\n" :
+          "     %schar *s1;\n"
+          "     %schar *s2;\n"
+          "     %sunsigned int n;\n" :
           option[C] ?
                "(s1, s2, n)\n"
-          "     register const char *s1;\n"
-          "     register const char *s2;\n"
-          "     register unsigned int n;\n" :
+          "     %sconst char *s1;\n"
+          "     %sconst char *s2;\n"
+          "     %sunsigned int n;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-               "(register const char *s1, register const char *s2, register unsigned int n)\n" :
-          "");
+               "(%sconst char *s1, %sconst char *s2, %sunsigned int n)\n" :
+          "",
+          register_scs, register_scs, register_scs);
   #if USE_DOWNCASE_TABLE
   printf ("{\n"
           "  for (; n > 0;)\n"
@@ -423,17 +428,18 @@ output_upperlower_memcmp ()
           "gperf_case_memcmp ");
   printf (option[KRC] ?
                "(s1, s2, n)\n"
-          "     register char *s1;\n"
-          "     register char *s2;\n"
-          "     register unsigned int n;\n" :
+          "     %schar *s1;\n"
+          "     %schar *s2;\n"
+          "     %sunsigned int n;\n" :
           option[C] ?
                "(s1, s2, n)\n"
-          "     register const char *s1;\n"
-          "     register const char *s2;\n"
-          "     register unsigned int n;\n" :
+          "     %sconst char *s1;\n"
+          "     %sconst char *s2;\n"
+          "     %sunsigned int n;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-               "(register const char *s1, register const char *s2, register unsigned int n)\n" :
-          "");
+               "(%sconst char *s1, %sconst char *s2, %sunsigned int n)\n" :
+          "",
+          register_scs, register_scs, register_scs);
   #if USE_DOWNCASE_TABLE
   printf ("{\n"
           "  for (; n > 0;)\n"
@@ -825,15 +831,16 @@ Output::output_hash_function () const
   printf ("%s ", option.get_hash_name ());
   printf (option[KRC] ?
                  "(str, len)\n"
-            "     register char *str;\n"
-            "     register unsigned int len;\n" :
+            "     %schar *str;\n"
+            "     %sunsigned int len;\n" :
           option[C] ?
                  "(str, len)\n"
-            "     register const char *str;\n"
-            "     register unsigned int len;\n" :
+            "     %sconst char *str;\n"
+            "     %sunsigned int len;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-                 "(register const char *str, register unsigned int len)\n" :
-          "");
+                 "(%sconst char *str, %sunsigned int len)\n" :
+          "",
+          register_scs, register_scs);
 
   /* Note that when the hash function is called, it has already been verified
      that  min_key_len <= len <= max_key_len.  */
@@ -927,11 +934,11 @@ Output::output_hash_function () const
           /* We've got to use the correct, but brute force, technique.  */
           /* It doesn't really matter whether hval is an 'int' or
              'unsigned int', but 'unsigned int' gives fewer warnings.  */
-          printf ("  register unsigned int hval = %s;\n\n"
+          printf ("  %sunsigned int hval = %s;\n\n"
                   "  switch (%s)\n"
                   "    {\n"
                   "      default:\n",
-                  _hash_includes_len ? "len" : "0",
+                  register_scs, _hash_includes_len ? "len" : "0",
                   _hash_includes_len ? "hval" : "len");
 
           while (key_pos != Positions::LASTCHAR && key_pos >= _max_key_len)
@@ -1634,9 +1641,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
 {
   printf ("  if (len <= %sMAX_WORD_LENGTH && len >= %sMIN_WORD_LENGTH)\n"
           "    {\n"
-          "      register unsigned int key = %s (str, len);\n\n",
+          "      %sunsigned int key = %s (str, len);\n\n",
           option.get_constants_prefix (), option.get_constants_prefix (),
-          option.get_hash_name ());
+          register_scs, option.get_hash_name ());
 
   if (option[SWITCH])
     {
@@ -1655,24 +1662,28 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
       if (option[DUP] && _total_duplicates > 0)
         {
           if (option[LENTABLE])
-            printf ("          register %s%s *lengthptr;\n",
-                    const_always, smallest_integral_type (_max_key_len));
-          printf ("          register ");
+            printf ("          %s%s%s *lengthptr;\n",
+                    register_scs, const_always,
+                    smallest_integral_type (_max_key_len));
+          printf ("          %s",
+                  register_scs);
           output_const_type (const_readonly_array, _wordlist_eltype);
           printf ("*wordptr;\n");
-          printf ("          register ");
+          printf ("          %s",
+                  register_scs);
           output_const_type (const_readonly_array, _wordlist_eltype);
           printf ("*wordendptr;\n");
         }
       if (option[TYPE])
         {
-          printf ("          register ");
+          printf ("          %s",
+                  register_scs);
           output_const_type (const_readonly_array, _struct_tag);
           printf ("*resword;\n\n");
         }
       else
-        printf ("          register %sresword;\n\n",
-                _struct_tag);
+        printf ("          %s%sresword;\n\n",
+                register_scs, _struct_tag);
 
       output_switches (_head, num_switches, switch_size, _min_hash_value, _max_hash_value, 10);
 
@@ -1691,8 +1702,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                       indent, "", indent, "");
               indent += 4;
             }
-          printf ("%*s      register %schar *s = ",
-                  indent, "", const_always);
+          printf ("%*s      %s%schar *s = ",
+                  indent, "", register_scs, const_always);
           if (option[TYPE])
             printf ("wordptr->%s", option.get_slot_name ());
           else
@@ -1726,8 +1737,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
       if (option[TYPE])
         {
           printf ("          {\n"
-                  "            register %schar *s = resword->%s",
-                  const_always, option.get_slot_name ());
+                  "            %s%schar *s = resword->%s",
+                  register_scs, const_always, option.get_slot_name ());
           if (option[SHAREDLIB])
             printf (" + %s",
                     option.get_stringpool_name ());
@@ -1756,9 +1767,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
         {
           int indent = 8;
           printf ("%*s{\n"
-                  "%*s  register int index = lookup[key];\n\n"
+                  "%*s  %sint index = lookup[key];\n\n"
                   "%*s  if (index >= 0)\n",
-                  indent, "", indent, "", indent, "");
+                  indent, "", indent, "", register_scs, indent, "");
           if (option[LENTABLE])
             {
               printf ("%*s    {\n"
@@ -1767,9 +1778,10 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
               indent += 4;
             }
           printf ("%*s    {\n"
-                  "%*s      register %schar *s = %s[index]",
+                  "%*s      %s%schar *s = %s[index]",
                   indent, "",
-                  indent, "", const_always, option.get_wordlist_name ());
+                  indent, "", register_scs, const_always,
+                  option.get_wordlist_name ());
           if (option[TYPE])
             printf (".%s", option.get_slot_name ());
           if (option[SHAREDLIB])
@@ -1798,20 +1810,20 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
             {
               printf ("%*s  else if (index < -%sTOTAL_KEYWORDS)\n"
                       "%*s    {\n"
-                      "%*s      register int offset = - 1 - %sTOTAL_KEYWORDS - index;\n",
+                      "%*s      %sint offset = - 1 - %sTOTAL_KEYWORDS - index;\n",
                       indent, "", option.get_constants_prefix (), indent, "",
-                      indent, "", option.get_constants_prefix ());
+                      indent, "", register_scs, option.get_constants_prefix ());
               if (option[LENTABLE])
-                printf ("%*s      register %s%s *lengthptr = &%s[%sTOTAL_KEYWORDS + lookup[offset]];\n",
-                        indent, "", const_always, smallest_integral_type (_max_key_len),
+                printf ("%*s      %s%s%s *lengthptr = &%s[%sTOTAL_KEYWORDS + lookup[offset]];\n",
+                        indent, "", register_scs, const_always, smallest_integral_type (_max_key_len),
                         option.get_lengthtable_name (), option.get_constants_prefix ());
-              printf ("%*s      register ",
-                      indent, "");
+              printf ("%*s      %s",
+                      indent, "", register_scs);
               output_const_type (const_readonly_array, _wordlist_eltype);
               printf ("*wordptr = &%s[%sTOTAL_KEYWORDS + lookup[offset]];\n",
                       option.get_wordlist_name (), option.get_constants_prefix ());
-              printf ("%*s      register ",
-                      indent, "");
+              printf ("%*s      %s",
+                      indent, "", register_scs);
               output_const_type (const_readonly_array, _wordlist_eltype);
               printf ("*wordendptr = wordptr + -lookup[offset + 1];\n\n");
               printf ("%*s      while (wordptr < wordendptr)\n"
@@ -1824,8 +1836,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                           indent, "", indent, "");
                   indent += 4;
                 }
-              printf ("%*s          register %schar *s = ",
-                      indent, "", const_always);
+              printf ("%*s          %s%schar *s = ",
+                      indent, "", register_scs, const_always);
               if (option[TYPE])
                 printf ("wordptr->%s", option.get_slot_name ());
               else
@@ -1873,9 +1885,10 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
               if (!option[LENTABLE])
                 {
                   printf ("%*s{\n"
-                          "%*s  register int o = %s[key]",
+                          "%*s  %sint o = %s[key]",
                           indent, "",
-                          indent, "", option.get_wordlist_name ());
+                          indent, "", register_scs,
+                          option.get_wordlist_name ());
                   if (option[TYPE])
                     printf (".%s", option.get_slot_name ());
                   printf (";\n"
@@ -1884,8 +1897,8 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                           indent, "",
                           indent, "");
                   indent += 4;
-                  printf ("%*s  register %schar *s = o",
-                          indent, "", const_always);
+                  printf ("%*s  %s%schar *s = o",
+                          indent, "", register_scs, const_always);
                 }
               else
                 {
@@ -1893,9 +1906,9 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
                      (len == lengthtable[key]) test already guarantees that
                      key points to nonempty table entry.  */
                   printf ("%*s{\n"
-                          "%*s  register %schar *s = %s[key]",
+                          "%*s  %s%schar *s = %s[key]",
                           indent, "",
-                          indent, "", const_always,
+                          indent, "", register_scs, const_always,
                           option.get_wordlist_name ());
                   if (option[TYPE])
                     printf (".%s", option.get_slot_name ());
@@ -1906,9 +1919,10 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
           else
             {
               printf ("%*s{\n"
-                      "%*s  register %schar *s = %s[key]",
+                      "%*s  %s%schar *s = %s[key]",
                       indent, "",
-                      indent, "", const_always, option.get_wordlist_name ());
+                      indent, "", register_scs, const_always,
+                      option.get_wordlist_name ());
               if (option[TYPE])
                 printf (".%s", option.get_slot_name ());
             }
@@ -1971,15 +1985,16 @@ Output::output_lookup_function () const
   printf ("%s ", option.get_function_name ());
   printf (option[KRC] ?
                  "(str, len)\n"
-            "     register char *str;\n"
-            "     register unsigned int len;\n" :
+            "     %schar *str;\n"
+            "     %sunsigned int len;\n" :
           option[C] ?
                  "(str, len)\n"
-            "     register const char *str;\n"
-            "     register unsigned int len;\n" :
+            "     %sconst char *str;\n"
+            "     %sunsigned int len;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-                 "(register const char *str, register unsigned int len)\n" :
-          "");
+                 "(%sconst char *str, %sunsigned int len)\n" :
+          "",
+          register_scs, register_scs);
 
   /* Output the function's body.  */
   printf ("{\n");
@@ -2017,6 +2032,13 @@ void
 Output::output ()
 {
   compute_min_max ();
+
+  if (option[CPLUSPLUS])
+    /* The 'register' keyword is removed from C++17.
+       See http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4340  */
+    register_scs = "";
+  else
+    register_scs = "register ";
 
   if (option[C] | option[ANSIC] | option[CPLUSPLUS])
     {

@@ -1,5 +1,16 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
+	Don't use 'register' storage-class specifier in C++ output code.
+	* src/output.cc (register_scs): New variable.
+	(Output::Output): Initialize it.
+	(output_upperlower_strcmp, output_upperlower_strncmp,
+	output_upperlower_memcmp, Output::output_hash_function,
+	Output::output_lookup_function_body, Output::output_lookup_function):
+	Use it.
+	Reported at <https://savannah.gnu.org/bugs/?44887>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
 	Avoid 'warning: use of old-style cast' in output code.
 	* src/output.h (Output::output_asso_values_index): New method
 	declaration.
