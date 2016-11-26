@@ -1974,22 +1974,11 @@ void
 Output::output_lookup_function () const
 {
   /* Output the function's head.  */
-  if (option[KRC] | option[C] | option[ANSIC])
-    /* GCC 4.3 and above with -std=c99 or -std=gnu99 implements ISO C99
-       inline semantics, unless -fgnu89-inline is used.  It defines a macro
-       __GNUC_STDC_INLINE__ to indicate this situation or a macro
-       __GNUC_GNU_INLINE__ to indicate the opposite situation.
-       GCC 4.2 with -std=c99 or -std=gnu99 implements the GNU C inline
-       semantics but warns, unless -fgnu89-inline is used:
-         warning: C99 inline functions are not supported; using GNU89
-         warning: to disable this warning use -fgnu89-inline or the gnu_inline function attribute
-       It defines a macro __GNUC_GNU_INLINE__ to indicate this situation.  */
-    printf ("#ifdef __GNUC__\n"
-            "__inline\n"
-            "#if defined __GNUC_STDC_INLINE__ || defined __GNUC_GNU_INLINE__\n"
-            "__attribute__ ((__gnu_inline__))\n"
-            "#endif\n"
-            "#endif\n");
+  /* We don't declare the lookup function 'static' because we cannot make
+     assumptions about the compilation units of the user.
+     Since we don't make it 'static', it makes no sense to declare it 'inline',
+     because non-static inline functions must not reference static functions or
+     variables, see ISO C 99 section 6.7.4.(3).  */
 
   printf ("%s%s\n",
           const_for_struct, _return_type);

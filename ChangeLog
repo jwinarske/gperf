@@ -1,5 +1,21 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
+	Drop the inline specifiers from the generated lookup function.
+	It's not adequate because
+	- this lookup function is quite large in fact, not worth inlining,
+	- with gcc -O0, it leads to link errors, see
+	  <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=41194#c2>
+	- the hash function is 'static', the lookup function is non-static,
+	  but references from non-static inline functions to static functions
+	  and variables are forbidden, see ISO C 99 section 6.7.4.(3).
+	* src/output.cc (Output::output_lookup_function): Don't emit an inline
+	specifier.
+	* tests/*.exp: Update.
+	Reported by Sebastian Freundt and Sergii Strelkovskyi
+	at <https://savannah.gnu.org/bugs/?37071>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
 	Change mailing list address to <bug-gperf@gnu.org>.
 	* src/output.cc (Output::output): Change bug report address to
 	<bug-gperf@gnu.org>.
