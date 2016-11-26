@@ -1169,7 +1169,20 @@ output_keyword_entry (KeywordExt *temp, int stringpool_index, const char *indent
   if (option[TYPE])
     printf ("{");
   if (option[SHAREDLIB])
-    printf ("(int)(long)&((struct %s_t *)0)->%s_str%d",
+    /* How to determine a certain offset in stringpool at compile time?
+       - The standard way would be to use the 'offsetof' macro.  But it is only
+         defined in <stddef.h>, and <stddef.h> is not among the prerequisite
+         header files that the user must #include.
+       - The next best way would be to take the address and cast to 'intptr_t'
+         or 'uintptr_t'.  But these types are only defined in <stdint.h>, and
+         <stdint.h> is not among the prerequisite header files that the user
+         must #include.
+       - The next best approximation of 'uintptr_t' is 'size_t'.  It is defined
+         in the prerequisite header <string.h>.
+       - The types 'long' and 'unsigned long' do work as well, but on 64-bit
+         native Windows platforms, they don't have the same size as pointers
+         and therefore generate warnings.  */
+    printf ("(int)(size_t)&((struct %s_t *)0)->%s_str%d",
             option.get_stringpool_name (), option.get_stringpool_name (),
             stringpool_index);
   else

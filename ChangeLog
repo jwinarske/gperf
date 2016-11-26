@@ -1,5 +1,14 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
+	Avoid 'warning: cast from pointer to integer of different size'
+	in output code on 64-bit native Windows platforms.
+	* src/output.cc (output_keyword_entry): Cast pointer to 'size_t',
+	not to 'long', before casting it further to 'int'.
+	* tests/*.exp: Update.
+	Reported at <https://savannah.gnu.org/bugs/?45330>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
 	Don't use 'register' storage-class specifier in C++ output code.
 	* src/output.cc (register_scs): New variable.
 	(Output::Output): Initialize it.
