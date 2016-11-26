@@ -137,4 +137,4 @@ Informative output:
   -d, --debug            Enables the debugging option (produces verbose
                          output to the standard error).
 
-Report bugs to <bug-gnu-gperf@gnu.org>.
+Report bugs to <bug-gperf@gnu.org>.

@@ -1,5 +1,5 @@
 /* Handles parsing the Options provided to the user.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2009, 2011 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2009, 2011, 2016 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -266,7 +266,7 @@ Options::long_usage (FILE * stream)
            "                         output to the standard error).\n");
   fprintf (stream, "\n");
   fprintf (stream,
-           "Report bugs to <bug-gnu-gperf@gnu.org>.\n");
+           "Report bugs to <bug-gperf@gnu.org>.\n");
 }
 
 /* Prints the given options.  */

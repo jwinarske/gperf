@@ -1,5 +1,17 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
+	Change mailing list address to <bug-gperf@gnu.org>.
+	* src/output.cc (Output::output): Change bug report address to
+	<bug-gperf@gnu.org>.
+	* src/options.cc (Options::long_usage): Likewise.
+	* README: Likewise.
+	* doc/gperf.texi (Contributors): Likewise.
+	* tests/*.{c,exp,out}: Update.
+	Reported by Eric Blake <eblake@redhat.com>
+	at <http://lists.gnu.org/archive/html/bug-gperf/2014-10/msg00000.html>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
 	Change the 'len' parameter type to 'size_t'.
 	* src/output.cc (output_upperlower_strncmp, output_upperlower_memcmp,
 	Output::output_hash_function, Output::output_lookup_function,

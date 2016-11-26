@@ -2123,7 +2123,7 @@ Output::output ()
               "      && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \\\n"
               "      && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))\n"
               "/* The character set is not based on ISO-646.  */\n");
-      printf ("%s \"gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>.\"\n", option[KRC] || option[C] ? "error" : "#error");
+      printf ("%s \"gperf generated tables don't work with this execution character set. Please report a bug to <bug-gperf@gnu.org>.\"\n", option[KRC] || option[C] ? "error" : "#error");
       printf ("#endif\n\n");
     }
 
