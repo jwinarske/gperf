@@ -369,14 +369,14 @@ output_upperlower_strncmp ()
                "(s1, s2, n)\n"
           "     %schar *s1;\n"
           "     %schar *s2;\n"
-          "     %sunsigned int n;\n" :
+          "     %ssize_t n;\n" :
           option[C] ?
                "(s1, s2, n)\n"
           "     %sconst char *s1;\n"
           "     %sconst char *s2;\n"
-          "     %sunsigned int n;\n" :
+          "     %ssize_t n;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-               "(%sconst char *s1, %sconst char *s2, %sunsigned int n)\n" :
+               "(%sconst char *s1, %sconst char *s2, %ssize_t n)\n" :
           "",
           register_scs, register_scs, register_scs);
   #if USE_DOWNCASE_TABLE
@@ -430,14 +430,14 @@ output_upperlower_memcmp ()
                "(s1, s2, n)\n"
           "     %schar *s1;\n"
           "     %schar *s2;\n"
-          "     %sunsigned int n;\n" :
+          "     %ssize_t n;\n" :
           option[C] ?
                "(s1, s2, n)\n"
           "     %sconst char *s1;\n"
           "     %sconst char *s2;\n"
-          "     %sunsigned int n;\n" :
+          "     %ssize_t n;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-               "(%sconst char *s1, %sconst char *s2, %sunsigned int n)\n" :
+               "(%sconst char *s1, %sconst char *s2, %ssize_t n)\n" :
           "",
           register_scs, register_scs, register_scs);
   #if USE_DOWNCASE_TABLE
@@ -797,7 +797,7 @@ Output::output_asso_values_ref (int pos) const
 /* Generates C code for the hash function that returns the
    proper encoding for each keyword.
    The hash function has the signature
-     unsigned int <hash> (const char *str, unsigned int len).  */
+     unsigned int <hash> (const char *str, size_t len).  */
 
 void
 Output::output_hash_function () const
@@ -832,13 +832,13 @@ Output::output_hash_function () const
   printf (option[KRC] ?
                  "(str, len)\n"
             "     %schar *str;\n"
-            "     %sunsigned int len;\n" :
+            "     %ssize_t len;\n" :
           option[C] ?
                  "(str, len)\n"
             "     %sconst char *str;\n"
-            "     %sunsigned int len;\n" :
+            "     %ssize_t len;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-                 "(%sconst char *str, %sunsigned int len)\n" :
+                 "(%sconst char *str, %ssize_t len)\n" :
           "",
           register_scs, register_scs);
 
@@ -1999,13 +1999,13 @@ Output::output_lookup_function () const
   printf (option[KRC] ?
                  "(str, len)\n"
             "     %schar *str;\n"
-            "     %sunsigned int len;\n" :
+            "     %ssize_t len;\n" :
           option[C] ?
                  "(str, len)\n"
             "     %sconst char *str;\n"
-            "     %sunsigned int len;\n" :
+            "     %ssize_t len;\n" :
           option[ANSIC] | option[CPLUSPLUS] ?
-                 "(%sconst char *str, %sunsigned int len)\n" :
+                 "(%sconst char *str, %ssize_t len)\n" :
           "",
           register_scs, register_scs);
 
@@ -2178,9 +2178,9 @@ Output::output ()
     printf ("class %s\n"
             "{\n"
             "private:\n"
-            "  static inline unsigned int %s (const char *str, unsigned int len);\n"
+            "  static inline unsigned int %s (const char *str, size_t len);\n"
             "public:\n"
-            "  static %s%s%s (const char *str, unsigned int len);\n"
+            "  static %s%s%s (const char *str, size_t len);\n"
             "};\n"
             "\n",
             option.get_class_name (), option.get_hash_name (),

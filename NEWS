@@ -2,6 +2,9 @@ New in 3.1:
 * The generated C code is now in ANSI-C by default. If you want to support
   pre-ANSI-C compilers, you need to provide the option --language=C on the
   command line or %language=C in the source file.
+* The 'len' parameter of the hash function and of the lookup function is now
+  of type 'size_t' instead of 'unsigned int'. This makes it safe to call these
+  functions with strings of length > 4 GB, on 64-bit machines.
 * Added option --constants-prefix.
 * Added declaration %define constants-prefix.
 

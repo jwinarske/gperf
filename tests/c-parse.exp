@@ -49,7 +49,7 @@ inline
 static unsigned int
 hash (str, len)
      register const char *str;
-     register unsigned int len;
+     register size_t len;
 {
   static unsigned char asso_values[] =
     {
@@ -206,7 +206,7 @@ __attribute__ ((__gnu_inline__))
 struct resword *
 is_reserved_word (str, len)
      register const char *str;
-     register unsigned int len;
+     register size_t len;
 {
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {

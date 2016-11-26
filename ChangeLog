@@ -1,5 +1,19 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
+	Change the 'len' parameter type to 'size_t'.
+	* src/output.cc (output_upperlower_strncmp, output_upperlower_memcmp,
+	Output::output_hash_function, Output::output_lookup_function,
+	Output::output): Emit declarations with 'size_t len' instead of
+	'unsigned int len'.
+	* tests/*.exp: Update.
+	* doc/gperf.texi (Output Format): Change declarations of 'hash' and
+	'in_word_set'.
+	* NEWS: Mention the change.
+	Reported by Pedro Giffuni <pfg@FreeBSD.org>
+	at <http://lists.gnu.org/archive/html/bug-gperf/2014-08/msg00000.html>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
 	Use proper 'ar' program when cross-compiling or when AR is specified.
 	* lib/configure.ac (AR): Determine through AC_CHECK_TOOL.
 	* lib/Makefile.in (AR): Use value determined by 'configure'.

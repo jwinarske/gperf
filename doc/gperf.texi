@@ -17,7 +17,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 11 January 2011
+@set UPDATED 26 November 2016
 @set EDITION 3.1
 @set VERSION 3.1
 @c ---------------------
@@ -40,7 +40,7 @@
 This file documents the features of the GNU Perfect Hash Function
 Generator @value{VERSION}.
 
-Copyright @copyright{} 1989-2011, 2014 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2016 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -78,7 +78,7 @@ Software Foundation instead of in the original English.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1989-2011 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2016 Free Software Foundation, Inc.
 
 
 Permission is granted to make and distribute verbatim copies of
@@ -804,7 +804,7 @@ option.  Both functions require two arguments, a string, @code{char *}
 @var{str}, and a length parameter, @code{int} @var{len}.  Their default 
 function prototypes are as follows:
 
-@deftypefun {unsigned int} hash (const char * @var{str}, unsigned int @var{len})
+@deftypefun {unsigned int} hash (const char * @var{str}, size_t @var{len})
 By default, the generated @code{hash} function returns an integer value
 created by adding @var{len} to several user-specified @var{str} byte
 positions indexed into an @dfn{associated values} table stored in a
@@ -815,7 +815,7 @@ into @var{str}) are specified via the @samp{-k} option when running
 @code{gperf}, as detailed in the @emph{Options} section below (@pxref{Options}).
 @end deftypefun
 
-@deftypefun {} in_word_set (const char * @var{str}, unsigned int @var{len})
+@deftypefun {} in_word_set (const char * @var{str}, size_t @var{len})
 If @var{str} is in the keyword set, returns a pointer to that
 keyword.  More exactly, if the option @samp{-t} (or, equivalently, the
 @samp{%struct-type} declaration) was given, it returns

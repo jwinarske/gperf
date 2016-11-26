@@ -47,7 +47,7 @@ inline
 static unsigned int
 hash (str, len)
      register const char *str;
-     register unsigned int len;
+     register size_t len;
 {
   static unsigned short asso_values[] =
     {
@@ -185,7 +185,7 @@ __attribute__ ((__gnu_inline__))
 struct resword *
 in_word_set (str, len)
      register const char *str;
-     register unsigned int len;
+     register size_t len;
 {
   enum
     {

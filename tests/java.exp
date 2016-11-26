@@ -73,7 +73,7 @@ inline
 static unsigned int
 hash (str, len)
      register const char *str;
-     register unsigned int len;
+     register size_t len;
 {
   static unsigned char asso_values[] =
     {
@@ -128,7 +128,7 @@ __attribute__ ((__gnu_inline__))
 struct java_keyword *
 java_keyword (str, len)
      register const char *str;
-     register unsigned int len;
+     register size_t len;
 {
   static struct java_keyword wordlist[] =
     {

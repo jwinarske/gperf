@@ -47,7 +47,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (register const char *str, register unsigned int len)
+hash (register const char *str, register size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -100,7 +100,7 @@ __attribute__ ((__gnu_inline__))
 #endif
 #endif
 struct resword *
-is_reserved_word (register const char *str, register unsigned int len)
+is_reserved_word (register const char *str, register size_t len)
 {
   static struct resword wordlist[] =
     {
