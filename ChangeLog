@@ -1,6 +1,14 @@
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
 	Avoid 'warning: implicit conversion changes signedness' in output code.
+	* src/output.cc (Output::output_lookup_function_body): Emit declaration
+	of 'key' as 'unsigned int', not 'int'. Optimize comparison accordingly.
+	* tests/*.exp: Update.
+	Reported at <https://savannah.gnu.org/bugs/?44887>.
+
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
+	Avoid 'warning: implicit conversion changes signedness' in output code.
 	* src/output.cc (Output::output_hash_function): Emit declaration of
 	'hval' as 'unsigned int', not 'int'.
 	* tests/*.exp: Update.

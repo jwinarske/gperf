@@ -1615,7 +1615,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
 {
   printf ("  if (len <= %sMAX_WORD_LENGTH && len >= %sMIN_WORD_LENGTH)\n"
           "    {\n"
-          "      register int key = %s (str, len);\n\n",
+          "      register unsigned int key = %s (str, len);\n\n",
           option.get_constants_prefix (), option.get_constants_prefix (),
           option.get_hash_name ());
 
@@ -1626,9 +1626,13 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
       if (num_switches > switch_size)
         num_switches = switch_size;
 
-      printf ("      if (key <= %sMAX_HASH_VALUE && key >= %sMIN_HASH_VALUE)\n"
-              "        {\n",
-              option.get_constants_prefix (), option.get_constants_prefix ());
+      printf ("      if (key <= %sMAX_HASH_VALUE",
+              option.get_constants_prefix ());
+      if (_min_hash_value > 0)
+        printf (" && key >= %sMIN_HASH_VALUE",
+                option.get_constants_prefix ());
+      printf (")\n"
+              "        {\n");
       if (option[DUP] && _total_duplicates > 0)
         {
           if (option[LENTABLE])
@@ -1726,7 +1730,7 @@ Output::output_lookup_function_body (const Output_Compare& comparison) const
     }
   else
     {
-      printf ("      if (key <= %sMAX_HASH_VALUE && key >= 0)\n",
+      printf ("      if (key <= %sMAX_HASH_VALUE)\n",
               option.get_constants_prefix ());
 
       if (option[DUP])
