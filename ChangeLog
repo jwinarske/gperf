@@ -1,3 +1,11 @@
+2016-11-26  Bruno Haible  <bruno@clisp.org>
+
+	Avoid 'warning: implicit conversion changes signedness' in output code.
+	* src/output.cc (Output::output_hash_function): Emit declaration of
+	'hval' as 'unsigned int', not 'int'.
+	* tests/*.exp: Update.
+	Reported at <https://savannah.gnu.org/bugs/?44887>.
+
 2016-11-25  Bruno Haible  <bruno@clisp.org>
 
 	Fix g++ -Wall warnings.

@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009, 2011-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009, 2011-2012, 2016 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -906,7 +906,9 @@ Output::output_hash_function () const
       else
         {
           /* We've got to use the correct, but brute force, technique.  */
-          printf ("  register int hval = %s;\n\n"
+          /* It doesn't really matter whether hval is an 'int' or
+             'unsigned int', but 'unsigned int' gives fewer warnings.  */
+          printf ("  register unsigned int hval = %s;\n\n"
                   "  switch (%s)\n"
                   "    {\n"
                   "      default:\n",

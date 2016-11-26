@@ -104,7 +104,7 @@ hash (str, len)
       77, 77, 77, 77, 77, 77, 77, 77, 77, 77,
       77, 77, 77, 77, 77, 77
     };
-  register int hval = len;
+  register unsigned int hval = len;
 
   switch (hval)
     {

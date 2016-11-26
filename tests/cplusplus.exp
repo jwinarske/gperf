@@ -80,7 +80,7 @@ hash (str, len)
       164, 164, 164, 164, 164, 164, 164, 164, 164, 164,
       164, 164, 164, 164, 164, 164
     };
-  register int hval = len;
+  register unsigned int hval = len;
 
   switch (hval)
     {
