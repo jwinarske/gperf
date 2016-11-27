@@ -2,8 +2,8 @@
 
 	Assume the available C compiler supports ANSI C. Remove K&R C cruft.
 	* lib/getopt.h: Assume 'const' is defined. Use ANSI C prototypes.
-	* lib/getopt.c: Assume 'const' is defined, 'strlen' is declared. Use
-	ANSI C prototypes.
+	* lib/getopt.c: Assume 'const' is defined. Use ANSI C prototypes.
+	Include <stddef.h>. Declare strcmp and strlen.
 	* lib/getopt1.c: Assume 'const' and NULL are defined. Use ANSI C
 	prototypes.
 	* lib/getopt.h.patch: Remove file.

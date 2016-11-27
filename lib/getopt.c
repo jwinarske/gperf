@@ -50,6 +50,9 @@
 #ifndef ELIDE_CODE
 
 
+/* Get size_t.  */
+#include <stddef.h>
+
 /* This needs to come after some library #include
    to get __GNU_LIBRARY__ defined.  */
 #ifdef	__GNU_LIBRARY__
@@ -205,6 +208,9 @@ my_index (const char *str, int chr)
     }
   return 0;
 }
+
+extern int strcmp (const char *, const char *);
+extern size_t strlen (const char *);
 
 #endif /* not __GNU_LIBRARY__ */
 
