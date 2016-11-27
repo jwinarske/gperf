@@ -59,12 +59,7 @@ with, 53
 %%
 #include <stdlib.h>
 #include <string.h>
-#if defined(__STDC__) || defined(__cplusplus)
-#define CONST const
-#else
-#define CONST
-#endif
-static CONST char* testdata[] = {
+static const char* testdata[] = {
   "bogus",
   "abstract",
   "boolean",
@@ -126,9 +121,9 @@ int main ()
   for (i = 0; i < sizeof(testdata)/sizeof(testdata[0]); i++)
     {
 #ifdef CPLUSPLUS_TEST
-      CONST struct js_keyword * resword = Perfect_Hash::in_word_set(testdata[i],strlen(testdata[i]));
+      const struct js_keyword * resword = Perfect_Hash::in_word_set(testdata[i],strlen(testdata[i]));
 #else
-      CONST struct js_keyword * resword = in_word_set(testdata[i],strlen(testdata[i]));
+      const struct js_keyword * resword = in_word_set(testdata[i],strlen(testdata[i]));
 #endif
       if (i > 0)
         {

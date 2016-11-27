@@ -1,3 +1,21 @@
+2016-11-27  Bruno Haible  <bruno@clisp.org>
+
+	Assume the available C compiler supports ANSI C. Remove K&R C cruft.
+	* lib/getopt.h: Assume 'const' is defined. Use ANSI C prototypes.
+	* lib/getopt.c: Assume 'const' is defined, 'strlen' is declared. Use
+	ANSI C prototypes.
+	* lib/getopt1.c: Assume 'const' and NULL are defined. Use ANSI C
+	prototypes.
+	* lib/getopt.h.patch: Remove file.
+	* lib/getopt.c.patch: Remove file.
+	* lib/Makefile.in (SOURCE_FILES): Remove them.
+	* tests/jstest*.gperf: Assume 'const' is defined.
+	* tests/test.c: Use ANSI C prototypes.
+	(in_word_set): Fix prototype.
+	* tests/test2.c: Use ANSI C prototypes.
+	(in_word_set): Fix prototype.
+	Reported by Erik Johansson at <https://savannah.gnu.org/patch/?7382>.
+
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
 	Drop the inline specifiers from the generated lookup function.

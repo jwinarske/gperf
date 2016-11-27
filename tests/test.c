@@ -7,18 +7,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined __STDC__ || defined __cplusplus
-extern char * in_word_set (const char *, int);
-#else
-extern char * in_word_set ();
-#endif
+extern const char * in_word_set (const char *, size_t);
 
 #define MAX_LEN 80
 
 int
-main (argc, argv)
-     int   argc;
-     char *argv[];
+main (int argc, char *argv[])
 {
   int  verbose = argc > 1 ? 1 : 0;
   char buf[MAX_LEN];

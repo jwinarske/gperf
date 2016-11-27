@@ -1,5 +1,5 @@
 /* Declarations for getopt.
-   Copyright (C) 1989-1998, 2000 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    This program is free software: you can redistribute it and/or modify
@@ -76,11 +76,7 @@ extern int optopt;
 
 struct option
 {
-#if (defined (__STDC__) && __STDC__) || defined (__cplusplus)
   const char *name;
-#else
-  char *name;
-#endif
   /* has_arg can't be an enum because some compilers complain about
      type mismatches in all the code that assumes it is an int.  */
   int has_arg;
@@ -94,7 +90,6 @@ struct option
 #define required_argument	1
 #define optional_argument	2
 
-#if (defined (__STDC__) && __STDC__) || defined (__cplusplus)
 #ifdef __cplusplus
 /* SunOS4 declares getopt with the following prototype:
    extern int getopt (int argc, const char *const *argv, const char *shortopts);
@@ -121,13 +116,6 @@ extern int _getopt_internal (int argc, char *const *argv,
 			     const char *shortopts,
 		             const struct option *longopts, int *longind,
 			     int long_only);
-#else /* not __STDC__ */
-extern int getopt ();
-extern int getopt_long ();
-extern int getopt_long_only ();
-
-extern int _getopt_internal ();
-#endif /* __STDC__ */
 
 #ifdef	__cplusplus
 }
