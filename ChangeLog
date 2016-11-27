@@ -1,5 +1,10 @@
 2016-11-27  Bruno Haible  <bruno@clisp.org>
 
+	Fix build with mingw.
+	* README.windows: Augment PATH for mingw, so that it finds libstdc++.
+
+2016-11-27  Bruno Haible  <bruno@clisp.org>
+
 	Assume the available C compiler supports ANSI C. Remove K&R C cruft.
 	* lib/getopt.h: Assume 'const' is defined. Use ANSI C prototypes.
 	* lib/getopt.c: Assume 'const' is defined. Use ANSI C prototypes.
