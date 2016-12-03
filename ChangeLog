@@ -1,3 +1,9 @@
+2016-12-03  Bruno Haible  <bruno@clisp.org>
+
+	Make Makefile.devel more useful for the users of the released tarball.
+	* Makefile.devel (totally-clean): New target.
+	* autogen.sh: Invoke it and 'all'.
+
 2016-11-27  Bruno Haible  <bruno@clisp.org>
 
 	Fix build with mingw.

@@ -34,5 +34,9 @@ src/config.h.in : src/configure.ac aclocal.m4
 src/config.h_vms : src/config.h.in
 	cp src/config.h.in src/config.h_vms
 
+totally-clean : force
+	rm -f $(CONFIGURES)
+	rm -f src/config.h.in src/config.h_vms
+
 force :
 
