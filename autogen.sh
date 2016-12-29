@@ -41,4 +41,6 @@ done
 chmod a+x build-aux/install-sh build-aux/mkinstalldirs \
           build-aux/compile build-aux/ar-lib
 
-make -f Makefile.devel totally-clean all
+make -f Makefile.devel totally-clean all || exit $?
+
+echo "$0: done.  Now you can run './configure'."
