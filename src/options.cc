@@ -1021,7 +1021,7 @@ License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
 There is NO WARRANTY, to the extent permitted by law.\n\
 ",
-                   "1989-2011");
+                   "1989-2017");
           fprintf (stdout, "Written by %s and %s.\n",
                    "Douglas C. Schmidt", "Bruno Haible");
           exit (0);
