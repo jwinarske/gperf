@@ -1,6 +1,6 @@
 /* Current program version number.
 
-   Copyright (C) 1989-1998, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 

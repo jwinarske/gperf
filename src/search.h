@@ -2,7 +2,7 @@
 
 /* Search algorithm.
 
-   Copyright (C) 1989-1998, 2000, 2002, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 

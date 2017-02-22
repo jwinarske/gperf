@@ -1,6 +1,6 @@
 /* Keyword list.
 
-   Copyright (C) 2002 Free Software Foundation, Inc.
+   Copyright (C) 2002-2003 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>.
 
    This file is part of GNU GPERF.
