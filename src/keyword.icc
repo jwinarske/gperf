@@ -1,6 +1,6 @@
 /* Inline Functions for keyword.{h,cc}.
 
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002, 2017 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -23,8 +23,10 @@
 
 /* Constructor.  */
 INLINE
-Keyword::Keyword (const char *allchars, int allchars_length, const char *rest)
-  : _allchars (allchars), _allchars_length (allchars_length), _rest (rest)
+Keyword::Keyword (const char *allchars, int allchars_length,
+                  const char *rest, unsigned int lineno)
+  : _allchars (allchars), _allchars_length (allchars_length),
+    _rest (rest), _lineno (lineno)
 {
 }
 
@@ -33,8 +35,9 @@ Keyword::Keyword (const char *allchars, int allchars_length, const char *rest)
 
 /* Constructor.  */
 INLINE
-KeywordExt::KeywordExt (const char *allchars, int allchars_length, const char *rest)
-  : Keyword (allchars, allchars_length, rest),
+KeywordExt::KeywordExt (const char *allchars, int allchars_length,
+                        const char *rest, unsigned int lineno)
+  : Keyword (allchars, allchars_length, rest, lineno),
     _final_index (-1)
 {
 }

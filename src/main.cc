@@ -1,5 +1,5 @@
 /* Driver program for the hash function generator
-   Copyright (C) 1989-1998, 2000, 2002-2003, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2003, 2009, 2017 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -34,13 +34,14 @@
 class KeywordExt_Factory : public Keyword_Factory
 {
 virtual Keyword *       create_keyword (const char *allchars, int allchars_length,
-                                        const char *rest);
+                                        const char *rest, unsigned int lineno);
 };
 
 Keyword *
-KeywordExt_Factory::create_keyword (const char *allchars, int allchars_length, const char *rest)
+KeywordExt_Factory::create_keyword (const char *allchars, int allchars_length,
+                                    const char *rest, unsigned int lineno)
 {
-  return new KeywordExt (allchars, allchars_length, rest);
+  return new KeywordExt (allchars, allchars_length, rest, lineno);
 }
 
 /* ------------------------------------------------------------------------- */

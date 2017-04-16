@@ -972,8 +972,7 @@ Input::read_input ()
 
             /* Allocate Keyword and add it to the list.  */
             Keyword *new_kw = _factory->create_keyword (keyword, keyword_length,
-                                                        rest);
-            new_kw->_lineno = lineno;
+                                                        rest, lineno);
             *list_tail = new Keyword_List (new_kw);
             list_tail = &(*list_tail)->rest();
           }

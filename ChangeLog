@@ -1,3 +1,15 @@
+2017-04-16  Bruno Haible  <bruno@clisp.org>
+
+	Initialize the Keyword::_lineno field through the constructor.
+	* src/keyword.h (struct Keyword, struct KeywordExt): Add lineno argument
+	to constructor.
+	(Keyword_Factory::create_keyword): Add lineno argument.
+	* src/keyword.icc (struct Keyword, struct KeywordExt): Add lineno
+	argument to constructor.
+	* src/main.cc (KeywordExt_Factory::create_keyword): Pass lineno argument
+	to KeywordExt constructor.
+	* src/input.cc (Input::read_input): Pass lineno to create_keyword.
+
 2017-03-31  Bruno Haible  <bruno@clisp.org>
 
 	Fix doc build error with perl 5.22.
