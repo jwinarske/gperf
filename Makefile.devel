@@ -11,25 +11,25 @@ CONFIGURES = configure lib/configure src/configure tests/configure doc/configure
 configures : $(CONFIGURES)
 
 configure : configure.ac aclocal.m4
-	autoconf -I .
+	autoconf -I . && rm -rf autom4te.cache
 
 lib/configure : lib/configure.ac aclocal.m4
-	cd lib && autoconf -I ..
+	cd lib && autoconf -I .. && rm -rf autom4te.cache
 
 src/configure : src/configure.ac aclocal.m4
-	cd src && autoconf -I ..
+	cd src && autoconf -I .. && rm -rf autom4te.cache
 
 tests/configure : tests/configure.ac aclocal.m4
-	cd tests && autoconf -I ..
+	cd tests && autoconf -I .. && rm -rf autom4te.cache
 
 doc/configure : doc/configure.ac aclocal.m4
-	cd doc && autoconf -I ..
+	cd doc && autoconf -I .. && rm -rf autom4te.cache
 
 check-configures : $(CONFIGURES)
 	set -e; for f in $(CONFIGURES); do bash -x -n $$f; done
 
 src/config.h.in : src/configure.ac aclocal.m4
-	cd src && autoheader -I ..
+	cd src && autoheader -I .. && rm -rf autom4te.cache
 
 src/config.h_vms : src/config.h.in
 	cp src/config.h.in src/config.h_vms
