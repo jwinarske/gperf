@@ -1,3 +1,8 @@
+2018-01-23  Bruno Haible  <bruno@clisp.org>
+
+	Don't use an undocumented Autoconf macro.
+	* src/configure.ac: Use AC_CONFIG_HEADERS instead of AC_CONFIG_HEADER.
+
 2017-07-15  Bruno Haible  <bruno@clisp.org>
 
 	Get rid of autom4te.cache directories (left over from autoconf).

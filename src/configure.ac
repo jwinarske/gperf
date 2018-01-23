@@ -1,6 +1,6 @@
 dnl autoconf configuration for gperf/src
 
-dnl Copyright (C) 1998, 2000, 2002-2003, 2007, 2009 Free Software Foundation, Inc.
+dnl Copyright (C) 1998, 2000, 2002-2003, 2007, 2009, 2018 Free Software Foundation, Inc.
 dnl Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
 dnl and Bruno Haible <bruno@clisp.org>.
 dnl
@@ -21,7 +21,7 @@ dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.60])
 AC_INIT([main.cc])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_PROG_MAKE_SET
 dnl
 dnl           checks for programs
