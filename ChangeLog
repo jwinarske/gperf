@@ -1,3 +1,10 @@
+2018-01-27  Bruno Haible  <bruno@clisp.org>
+
+	Rename some files.
+	* INSTALL.windows: Renamed from README.windows.
+	* INSTALL.vms: Renamed from README.vms.
+	* Makefile.in (SOURCE_FILES): Update.
+
 2018-01-23  Bruno Haible  <bruno@clisp.org>
 
 	Don't use an undocumented Autoconf macro.
