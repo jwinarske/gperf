@@ -1,3 +1,9 @@
+New in 3.2:
+* The input file may now use Windows line terminators (CR/LF) instead of
+  Unix line terminators (LF).
+  Note: This is an incompatible change. If you want to use a keyword that
+  ends in a CR byte, such as xyz<CR>, write it as "xyz\r".
+
 New in 3.1:
 * The generated C code is now in ANSI-C by default. If you want to support
   pre-ANSI-C compilers, you need to provide the option --language=C on the

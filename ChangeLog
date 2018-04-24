@@ -1,3 +1,9 @@
+2018-04-24  Bruno Haible  <bruno@clisp.org>
+
+	Support input files with CR/LF line terminators.
+	Reported at <https://savannah.gnu.org/bugs/?53732>.
+	* src/input.cc (Input::read_input): Convert CR/LF sequences to LF.
+
 2018-01-27  Bruno Haible  <bruno@clisp.org>
 
 	Rename some files.
