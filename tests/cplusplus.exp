@@ -86,11 +86,21 @@ hash (str, len)
     {
       default:
         hval += asso_values[(unsigned char)str[6]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 6:
       case 5:
       case 4:
         hval += asso_values[(unsigned char)str[3]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 3:
       case 2:

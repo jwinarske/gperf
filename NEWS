@@ -3,6 +3,8 @@ New in 3.2:
   Unix line terminators (LF).
   Note: This is an incompatible change. If you want to use a keyword that
   ends in a CR byte, such as xyz<CR>, write it as "xyz\r".
+* The generated code avoids "implicit fallthrough" warnings in 'switch'
+  statements.
 
 New in 3.1:
 * The generated C code is now in ANSI-C by default. If you want to support

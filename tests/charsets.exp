@@ -93,6 +93,11 @@ hash (register const char *str, register size_t len)
     {
       default:
         hval += asso_values[(unsigned char)str[21]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 21:
       case 20:
@@ -106,33 +111,83 @@ hash (register const char *str, register size_t len)
       case 12:
       case 11:
         hval += asso_values[(unsigned char)str[10]+1];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 10:
         hval += asso_values[(unsigned char)str[9]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 9:
         hval += asso_values[(unsigned char)str[8]+1];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 8:
         hval += asso_values[(unsigned char)str[7]+3];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 7:
         hval += asso_values[(unsigned char)str[6]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 6:
         hval += asso_values[(unsigned char)str[5]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 5:
         hval += asso_values[(unsigned char)str[4]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 4:
         hval += asso_values[(unsigned char)str[3]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 3:
         hval += asso_values[(unsigned char)str[2]];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 2:
         hval += asso_values[(unsigned char)str[1]+1];
+#if defined __cplusplus && __cplusplus >= 201703L
+      [[fallthrough]];
+#elif defined __GNUC__ && __GNUC__ >= 7
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 1:
         hval += asso_values[(unsigned char)str[0]];

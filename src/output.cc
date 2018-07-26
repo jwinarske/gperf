@@ -1,5 +1,5 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009, 2011-2012, 2016 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009, 2011-2012, 2016, 2018 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
@@ -932,6 +932,15 @@ Output::output_hash_function () const
       else
         {
           /* We've got to use the correct, but brute force, technique.  */
+          /* Pseudo-statement or comment that avoids a compiler warning or
+             lint warning.  */
+          const char * const fallthrough_marker =
+            "#if defined __cplusplus && __cplusplus >= 201703L\n"
+            "      [[fallthrough]];\n"
+            "#elif defined __GNUC__ && __GNUC__ >= 7\n"
+            "      __attribute__ ((__fallthrough__));\n"
+            "#endif\n"
+            "      /*FALLTHROUGH*/\n";
           /* It doesn't really matter whether hval is an 'int' or
              'unsigned int', but 'unsigned int' gives fewer warnings.  */
           printf ("  %sunsigned int hval = %s;\n\n"
@@ -951,7 +960,7 @@ Output::output_hash_function () const
               do
                 {
                   if (i > key_pos)
-                    printf ("      /*FALLTHROUGH*/\n"); /* Pacify lint.  */
+                    printf ("%s", fallthrough_marker);
                   for ( ; i > key_pos; i--)
                     printf ("      case %d:\n", i);
 
@@ -964,7 +973,7 @@ Output::output_hash_function () const
               while (key_pos != PositionIterator::EOS && key_pos != Positions::LASTCHAR);
 
               if (i >= _min_key_len)
-                printf ("      /*FALLTHROUGH*/\n"); /* Pacify lint.  */
+                printf ("%s", fallthrough_marker);
               for ( ; i >= _min_key_len; i--)
                 printf ("      case %d:\n", i);
             }
