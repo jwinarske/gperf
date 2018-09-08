@@ -1,5 +1,13 @@
 2018-09-08  Bruno Haible  <bruno@clisp.org>
 
+	Don't print uninitialized hash values in debug mode.
+	Reported by Frank Wojcik <frankw@touristinresidence.com> in
+	<https://savannah.gnu.org/patch/?9560>.
+	* src/output.cc (output_keyword_entry): Add an 'is_duplicate' argument.
+	(Output::output_keyword_table): Update callers.
+
+2018-09-08  Bruno Haible  <bruno@clisp.org>
+
 	Improve the speed of the positions search.
 	Reported by Frank Wojcik <frankw@touristinresidence.com> in
 	<https://savannah.gnu.org/patch/?9562>.

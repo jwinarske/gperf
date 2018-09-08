@@ -1172,7 +1172,7 @@ Output::output_string_pool () const
 /* ------------------------------------------------------------------------- */
 
 static void
-output_keyword_entry (KeywordExt *temp, int stringpool_index, const char *indent)
+output_keyword_entry (KeywordExt *temp, int stringpool_index, const char *indent, bool is_duplicate)
 {
   if (option[TYPE])
     output_line_directive (temp->_lineno);
@@ -1205,8 +1205,14 @@ output_keyword_entry (KeywordExt *temp, int stringpool_index, const char *indent
       printf ("}");
     }
   if (option[DEBUG])
-    printf (" /* hash value = %d, index = %d */",
-            temp->_hash_value, temp->_final_index);
+    {
+      printf (" /* ");
+      if (is_duplicate)
+        printf ("hash value duplicate, ");
+      else
+        printf ("hash value = %d, ", temp->_hash_value);
+      printf ("index = %d */", temp->_final_index);
+    }
 }
 
 static void
@@ -1297,7 +1303,7 @@ Output::output_keyword_table () const
 
       keyword->_final_index = index;
 
-      output_keyword_entry (keyword, index, indent);
+      output_keyword_entry (keyword, index, indent, false);
 
       /* Deal with duplicates specially.  */
       if (keyword->_duplicate_link) // implies option[DUP]
@@ -1311,7 +1317,7 @@ Output::output_keyword_table () const
                           keyword->_allchars_length) == 0
                ? keyword->_final_index
                : links->_final_index);
-            output_keyword_entry (links, stringpool_index, indent);
+            output_keyword_entry (links, stringpool_index, indent, true);
           }
 
       index++;
