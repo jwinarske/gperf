@@ -1,5 +1,14 @@
 2018-09-08  Bruno Haible  <bruno@clisp.org>
 
+	Really prefer more efficient hash functions over less efficient ones.
+	Reported by Frank Wojcik <frankw@touristinresidence.com> in
+	<https://savannah.gnu.org/patch/?9561>.
+	* src/search.cc (Search::find_positions): In step 4, make sure a less
+	efficient hash function does not replace a more efficient one. Also,
+	include i3 = -1 among the search.
+
+2018-09-08  Bruno Haible  <bruno@clisp.org>
+
 	Correct width of columns when outputting the asso_values array.
 	Patch by Frank Wojcik <frankw@touristinresidence.com>.
 	* src/output.cc (Output::output_hash_function): Increase the

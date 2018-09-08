@@ -419,7 +419,7 @@ Search::find_positions ()
             for (int i2 = imax; i2 >= -1; i2--)
               if (current.contains (i2) && !mandatory.contains (i2) && i2 != i1)
                 {
-                  for (int i3 = imax; i3 >= 0; i3--)
+                  for (int i3 = imax; i3 >= -1; i3--)
                     if (!current.contains (i3))
                       {
                         Positions tryal = current;
@@ -435,7 +435,7 @@ Search::find_positions ()
                            function.  */
                         if (try_duplicates_count < best_duplicates_count
                             || (try_duplicates_count == best_duplicates_count
-                                && (i1 == -1 || i2 == -1 || i3 >= 0)))
+                                && (i1 == -1 || i2 == -1) && i3 >= 0))
                           {
                             best = tryal;
                             best_duplicates_count = try_duplicates_count;
