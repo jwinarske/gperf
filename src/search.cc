@@ -413,11 +413,13 @@ Search::find_positions ()
       Positions best;
       unsigned int best_duplicates_count = UINT_MAX;
 
+      /* Loop over all pairs { i1, i2 } of currently selected positions.
+         W.l.o.g. we can assume i1 > i2.  */
       for (int i1 = imax; i1 >= -1; i1--)
         if (current.contains (i1) && !mandatory.contains (i1))
           {
-            for (int i2 = imax; i2 >= -1; i2--)
-              if (current.contains (i2) && !mandatory.contains (i2) && i2 != i1)
+            for (int i2 = i1 - 1; i2 >= -1; i2--)
+              if (current.contains (i2) && !mandatory.contains (i2))
                 {
                   for (int i3 = imax; i3 >= -1; i3--)
                     if (!current.contains (i3))
