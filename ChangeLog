@@ -1,5 +1,21 @@
 2018-09-08  Bruno Haible  <bruno@clisp.org>
 
+	Avoid "implicit fallthrough" warnings also from clang.
+	Reported by Nico Weber <thakis@chromium.org> in
+	<https://savannah.gnu.org/bugs/?53029>.
+	Clang emits these warnings in C++11 mode only, see
+	<https://clang.llvm.org/docs/AttributeReference.html#fallthrough>,
+	and only in clang 3.9 or newer, see
+	<http://releases.llvm.org/3.9.0/tools/clang/docs/ReleaseNotes.html>.
+	To avoid them, either [[fallthrough]] or the (nearly equivalent) older
+	[[clang::fallthrough]] can be used, see
+	<http://llvm.org/viewvc/llvm-project?view=revision&revision=262881>.
+	* src/output.cc (Output::output_hash_function): Enhance the fallthrough
+	marker.
+	* tests/*.exp: Update.
+
+2018-09-08  Bruno Haible  <bruno@clisp.org>
+
 	Fix failure of "make check -j2".
 	Reported and fix provided by Bernhard M. Wiedemann in
 	<https://savannah.gnu.org/bugs/?53208>.

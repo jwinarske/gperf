@@ -81,7 +81,7 @@ hash (register const char *str, register size_t len)
     {
       default:
         hval += asso_values[(unsigned char)str[7]];
-#if defined __cplusplus && __cplusplus >= 201703L
+#if defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang_major__ && defined __clang_minor__ && __clang_major__ + (__clang_minor__ >= 9) > 3))
       [[fallthrough]];
 #elif defined __GNUC__ && __GNUC__ >= 7
       __attribute__ ((__fallthrough__));
@@ -89,7 +89,7 @@ hash (register const char *str, register size_t len)
       /*FALLTHROUGH*/
       case 7:
         hval += asso_values[(unsigned char)str[6]];
-#if defined __cplusplus && __cplusplus >= 201703L
+#if defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang_major__ && defined __clang_minor__ && __clang_major__ + (__clang_minor__ >= 9) > 3))
       [[fallthrough]];
 #elif defined __GNUC__ && __GNUC__ >= 7
       __attribute__ ((__fallthrough__));
@@ -97,7 +97,7 @@ hash (register const char *str, register size_t len)
       /*FALLTHROUGH*/
       case 6:
         hval += asso_values[(unsigned char)str[5]];
-#if defined __cplusplus && __cplusplus >= 201703L
+#if defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang_major__ && defined __clang_minor__ && __clang_major__ + (__clang_minor__ >= 9) > 3))
       [[fallthrough]];
 #elif defined __GNUC__ && __GNUC__ >= 7
       __attribute__ ((__fallthrough__));
@@ -105,7 +105,7 @@ hash (register const char *str, register size_t len)
       /*FALLTHROUGH*/
       case 5:
         hval += asso_values[(unsigned char)str[4]];
-#if defined __cplusplus && __cplusplus >= 201703L
+#if defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang_major__ && defined __clang_minor__ && __clang_major__ + (__clang_minor__ >= 9) > 3))
       [[fallthrough]];
 #elif defined __GNUC__ && __GNUC__ >= 7
       __attribute__ ((__fallthrough__));
@@ -113,7 +113,7 @@ hash (register const char *str, register size_t len)
       /*FALLTHROUGH*/
       case 4:
         hval += asso_values[(unsigned char)str[3]];
-#if defined __cplusplus && __cplusplus >= 201703L
+#if defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang_major__ && defined __clang_minor__ && __clang_major__ + (__clang_minor__ >= 9) > 3))
       [[fallthrough]];
 #elif defined __GNUC__ && __GNUC__ >= 7
       __attribute__ ((__fallthrough__));
@@ -121,7 +121,7 @@ hash (register const char *str, register size_t len)
       /*FALLTHROUGH*/
       case 3:
         hval += asso_values[(unsigned char)str[2]];
-#if defined __cplusplus && __cplusplus >= 201703L
+#if defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang_major__ && defined __clang_minor__ && __clang_major__ + (__clang_minor__ >= 9) > 3))
       [[fallthrough]];
 #elif defined __GNUC__ && __GNUC__ >= 7
       __attribute__ ((__fallthrough__));
@@ -129,7 +129,7 @@ hash (register const char *str, register size_t len)
       /*FALLTHROUGH*/
       case 2:
         hval += asso_values[(unsigned char)str[1]];
-#if defined __cplusplus && __cplusplus >= 201703L
+#if defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang_major__ && defined __clang_minor__ && __clang_major__ + (__clang_minor__ >= 9) > 3))
       [[fallthrough]];
 #elif defined __GNUC__ && __GNUC__ >= 7
       __attribute__ ((__fallthrough__));
