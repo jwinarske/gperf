@@ -1,5 +1,12 @@
 2018-09-08  Bruno Haible  <bruno@clisp.org>
 
+	Fix failure of "make check -j2".
+	Reported and fix provided by Bernhard M. Wiedemann in
+	<https://savannah.gnu.org/bugs/?53208>.
+	* tests/Makefile.in (check-test): Depend on 'check-ada'.
+
+2018-09-08  Bruno Haible  <bruno@clisp.org>
+
 	Don't print uninitialized hash values in debug mode.
 	Reported by Frank Wojcik <frankw@touristinresidence.com> in
 	<https://savannah.gnu.org/patch/?9560>.
