@@ -851,6 +851,8 @@ Output::output_hash_function () const
   /* First the asso_values array.  */
   if (_key_positions.get_size() > 0)
     {
+      /* The values in the asso_values array are all unsigned integers
+         <= MAX_HASH_VALUE + 1.  */
       printf ("  static %s%s asso_values[] =\n"
               "    {",
               const_readonly_array,
@@ -858,9 +860,9 @@ Output::output_hash_function () const
 
       const int columns = 10;
 
-      /* Calculate maximum number of digits required for MAX_HASH_VALUE.  */
+      /* Calculate maximum number of digits required for MAX_HASH_VALUE + 1.  */
       int field_width = 2;
-      for (int trunc = _max_hash_value; (trunc /= 10) > 0;)
+      for (int trunc = _max_hash_value + 1; (trunc /= 10) > 0;)
         field_width++;
 
       for (unsigned int count = 0; count < _alpha_size; count++)
