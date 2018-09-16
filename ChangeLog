@@ -1,3 +1,10 @@
+2018-09-16  Bruno Haible  <bruno@clisp.org>
+
+	Fix "Unescaped left brace in regex" warnings from Perl 5.26.
+	Reported and patch by Jehan <jehan@girinstud.io> <jehan@zemarmot.net> at
+	<https://savannah.gnu.org/bugs/?54088>.
+	* doc/texi2html: Escape braces in regular expressions.
+
 2018-09-14  Bruno Haible  <bruno@clisp.org>
 
 	doc: Assume texinfo 4.0 or newer.
