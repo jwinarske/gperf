@@ -17,7 +17,7 @@
 
 @c some day we should @include version.texi instead of defining
 @c these values at hand.
-@set UPDATED 26 November 2016
+@set UPDATED 17 September 2018
 @set EDITION 3.1
 @set VERSION 3.1
 @c ---------------------
@@ -40,7 +40,7 @@
 This file documents the features of the GNU Perfect Hash Function
 Generator @value{VERSION}.
 
-Copyright @copyright{} 1989-2016 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2018 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -78,7 +78,7 @@ Software Foundation instead of in the original English.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1989-2016 Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2018 Free Software Foundation, Inc.
 
 
 Permission is granted to make and distribute verbatim copies of
@@ -212,7 +212,7 @@ the lookup table.
 lexical analyzers in several production and research compilers and
 language processing tools, including GNU C, GNU C++, GNU Java, GNU Pascal,
 GNU Modula 3, and GNU indent.  Complete C++ source code for @code{gperf} is
-available from @code{http://ftp.gnu.org/pub/gnu/gperf/}.
+available from @code{https://ftp.gnu.org/pub/gnu/gperf/}.
 A paper describing @code{gperf}'s design and implementation in greater
 detail is available in the Second USENIX C++ Conference proceedings
 or from @code{http://www.cs.wustl.edu/~schmidt/resume.html}.

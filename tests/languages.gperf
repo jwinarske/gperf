@@ -1,7 +1,7 @@
 %{
 /* gperf -CDEGTlot -H language_hash -K code -L ANSI-C -N language_entry */
 /* Generated from ISO 639 language data from http://lcweb.loc.gov/standards/iso639-2/langhome.html
-   and from IANA registry at http://www.iana.org/assignments/language-tags
+   and from IANA registry at https://www.iana.org/assignments/language-tags
    by %M%
 */
 /* englangn.html Updated: August 14, 2002 */

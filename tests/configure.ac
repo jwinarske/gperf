@@ -17,7 +17,7 @@ dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl GNU General Public License for more details.
 dnl
 dnl You should have received a copy of the GNU General Public License
-dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
+dnl along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.60])
 AC_INIT([c-parse.gperf])

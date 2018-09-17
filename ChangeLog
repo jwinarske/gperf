@@ -18,10 +18,10 @@
 	Clang emits these warnings in C++11 mode only, see
 	<https://clang.llvm.org/docs/AttributeReference.html#fallthrough>,
 	and only in clang 3.9 or newer, see
-	<http://releases.llvm.org/3.9.0/tools/clang/docs/ReleaseNotes.html>.
+	<https://releases.llvm.org/3.9.0/tools/clang/docs/ReleaseNotes.html>.
 	To avoid them, either [[fallthrough]] or the (nearly equivalent) older
 	[[clang::fallthrough]] can be used, see
-	<http://llvm.org/viewvc/llvm-project?view=revision&revision=262881>.
+	<https://llvm.org/viewvc/llvm-project?view=revision&revision=262881>.
 	* src/output.cc (Output::output_hash_function): Enhance the fallthrough
 	marker.
 	* tests/*.exp: Update.
@@ -183,7 +183,7 @@
 	* doc/gperf.texi (Contributors): Likewise.
 	* tests/*.{c,exp,out}: Update.
 	Reported by Eric Blake <eblake@redhat.com>
-	at <http://lists.gnu.org/archive/html/bug-gperf/2014-10/msg00000.html>.
+	at <https://lists.gnu.org/archive/html/bug-gperf/2014-10/msg00000.html>.
 
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
@@ -197,7 +197,7 @@
 	'in_word_set'.
 	* NEWS: Mention the change.
 	Reported by Pedro Giffuni <pfg@FreeBSD.org>
-	at <http://lists.gnu.org/archive/html/bug-gperf/2014-08/msg00000.html>.
+	at <https://lists.gnu.org/archive/html/bug-gperf/2014-08/msg00000.html>.
 
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 
@@ -205,7 +205,7 @@
 	* lib/configure.ac (AR): Determine through AC_CHECK_TOOL.
 	* lib/Makefile.in (AR): Use value determined by 'configure'.
 	Reported by György Andrasek <jurily@gmail.com>
-	at <http://lists.gnu.org/archive/html/bug-gperf/2014-04/msg00000.html>.
+	at <https://lists.gnu.org/archive/html/bug-gperf/2014-04/msg00000.html>.
 
 2016-11-26  Bruno Haible  <bruno@clisp.org>
 

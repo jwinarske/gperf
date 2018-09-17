@@ -1,5 +1,5 @@
 %{
-/* Generated from IANA charset data from http://www.iana.org/assignments/character-sets by charsets.awk */
+/* Generated from IANA charset data from https://www.iana.org/assignments/character-sets by charsets.awk */
 /* last updated 2002-06-14 */
 /* process with:
 	gperf -CDEGTlot -H charset_hash -K name -L ANSI-C -N charset_entry
