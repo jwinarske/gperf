@@ -42,6 +42,7 @@ file(GLOB gperf_src_files src/*.cc)
 add_executable(gperf ${gperf_src_files})
 target_include_directories(gperf PUBLIC lib src)
 target_link_libraries(gperf gp-lib)
+add_dependencies(gperf gp-lib)
 set_target_properties(gperf PROPERTIES 
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
@@ -56,8 +57,12 @@ install (TARGETS gp-lib gperf
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
+install (FILES 
+    ${CMAKE_SOURCE_DIR}/lib/getline.h
+    ${CMAKE_SOURCE_DIR}/lib/getopt.h
+    ${CMAKE_SOURCE_DIR}/lib/hash.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# uninstall
 add_custom_target(
     uninstall "${CMAKE_COMMAND}" -P "${CMAKE_SOURCE_DIR}/cmake/make_uninstall.cmake"
 )
